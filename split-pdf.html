@@ -10,7 +10,6 @@
     
     <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <!-- Library for creating ZIP files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <style>
@@ -20,7 +19,7 @@
         *, *::before, *::after { box-sizing: border-box; }
         .hidden { display: none !important; }
 
-        /* --- THEME DEFINITIONS --- */
+        /* --- THEME DEFINITIONS (Same as before) --- */
         [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
         [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
         [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
@@ -49,7 +48,8 @@
         /* Page Previews */
         #page-preview-container { margin-top: 2rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .page-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem; }
-        .page-preview-grid.selection-disabled { pointer-events: none; opacity: 0.7; }
+        .page-preview-grid.selection-disabled .page-item { cursor: not-allowed; }
+        .page-preview-grid.selection-disabled { filter: grayscale(50%); opacity: 0.7; }
         .page-item { position: relative; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; cursor: pointer; }
         .page-item canvas { display: block; width: 100%; height: auto; } .page-item.deselected { border-color: #aaa; filter: grayscale(80%); } .page-item.deselected .page-tick-icon { display: none; } .page-tick-icon { position: absolute; top: 8px; right: 8px; font-size: 1.5rem; color: white; background-color: var(--primary-color); border-radius: 50%; padding: 0.25rem; } .page-info { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); color: white; font-size: 0.8rem; text-align: center; padding: 4px 0; }
         
@@ -60,12 +60,16 @@
         
         #result-container { display: flex; flex-direction: column; gap: 1rem; padding-top: 1.5rem; width:100%; align-items: center; border-top: 2px solid #eee; }
         .dark-mode #result-container { border-top-color: #333; }
+        .result-buttons { display: flex; gap: 1rem; justify-content: center; align-items: center; }
         .download-button { display: inline-block; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
+        .start-over-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
         
-        .split-options { display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem; background-color: #f0f0f0; padding: 1rem; border-radius: 8px; width: 100%; max-width: 500px;}
+        .split-options { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; background-color: #f0f0f0; padding: 1rem; border-radius: 8px; width: 100%; max-width: 500px;}
         .dark-mode .split-options { background-color: #2a2a3a; }
         .split-options label { font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
         .split-options p { font-size: 0.9rem; color: #6c757d; margin: 0 0 0 1.7rem; }
+        .range-inputs { display: flex; gap: 0.5rem; align-items: center; margin: 0.25rem 0 0 1.7rem; }
+        .range-inputs input { width: 70px; padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc; font-family: 'Poppins', sans-serif; }
         
         .navigation-buttons { text-align: center; margin-top: 3rem; }
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; margin: 0 0.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
@@ -83,9 +87,8 @@
         <div id="upload-stage">
             <div class='tool-header'>
                 <h2>Split PDF</h2>
-                <p>Extract pages or split your PDF into multiple documents.</p>
+                <p>Extract pages, split by range, or create single-page documents.</p>
             </div>
-            <!-- REMOVED 'multiple' to allow only one file -->
             <input type="file" id="file-input" class="hidden" accept=".pdf"/>
             <div id="dropzone">
                 <i class="fa-solid fa-file-arrow-up"></i>
@@ -95,7 +98,7 @@
 
         <div id="edit-stage" class="hidden">
             <div id="page-preview-container">
-                 <p style="text-align:center; color:#6c757d; margin:0 0 1rem 0;">Click pages to select/deselect them for extraction.</p>
+                 <p id="page-preview-instruction" style="text-align:center; color:#6c757d; margin:0 0 1rem 0;">Click pages to select/deselect them for extraction.</p>
                  <div class="page-preview-grid"></div>
             </div>
 
@@ -105,7 +108,18 @@
                         <label>
                             <input type="radio" name="split-mode" value="extract" checked> Extract selected pages
                         </label>
-                        <p>All selected pages will be combined into one new PDF.</p>
+                        <p>Combines all selected pages into one new PDF.</p>
+                    </div>
+                    <!-- NEW: Range selection option -->
+                    <div id="range-option-container">
+                        <label>
+                            <input type="radio" name="split-mode" value="range"> Split by range
+                        </label>
+                        <div class="range-inputs hidden">
+                            <input type="number" id="range-from" placeholder="From" min="1">
+                            <span>-</span>
+                            <input type="number" id="range-to" placeholder="To" min="1">
+                        </div>
                     </div>
                     <div>
                         <label>
@@ -150,6 +164,10 @@
     const editStage = document.getElementById('edit-stage');
     const resultContainer = document.getElementById('result-container');
     const pagePreviewGrid = editStage.querySelector('.page-preview-grid');
+    const pagePreviewInstruction = document.getElementById('page-preview-instruction');
+    const rangeInputsContainer = document.querySelector('.range-inputs');
+    const rangeFromInput = document.getElementById('range-from');
+    const rangeToInput = document.getElementById('range-to');
 
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
     let allPages = [];
@@ -164,6 +182,24 @@
     
     processBtn.addEventListener('click', processAndDisplay);
     splitModeRadios.forEach(radio => radio.addEventListener('change', updateInterface));
+    rangeFromInput.addEventListener('input', updateInterface);
+    rangeToInput.addEventListener('input', updateInterface);
+
+    function resetTool() {
+        allPages = [];
+        originalPdfData = { fileData: null, pdfDoc: null };
+        fileInput.value = null;
+        pagePreviewGrid.innerHTML = '';
+        
+        editStage.classList.add('hidden');
+        uploadStage.classList.remove('hidden');
+        resultContainer.classList.add('hidden');
+        processBtn.classList.remove('hidden');
+        
+        // Reset radio to default
+        document.querySelector('input[name="split-mode"][value="extract"]').checked = true;
+        updateInterface();
+    }
 
     async function handleFile(files) {
         if (files.length === 0) return;
@@ -174,33 +210,33 @@
         const file = files[0];
         if (file.type !== "application/pdf") return;
 
-        // Reset state for new file
-        allPages = [];
-        pagePreviewGrid.innerHTML = 'Processing file...';
-        fileInput.value = null; // Allow re-uploading the same file
+        resetTool(); // Reset state before processing new file
 
         uploadStage.classList.add('hidden');
         editStage.classList.remove('hidden');
-        resultContainer.classList.add('hidden');
-        processBtn.classList.remove('hidden');
 
         try {
+            pagePreviewGrid.innerHTML = 'Processing file...';
             const arrayBuffer = await file.arrayBuffer();
             const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-
+            
             originalPdfData = { fileData: arrayBuffer, pdfDoc };
+            const totalPages = pdfDoc.numPages;
 
-            for (let i = 1; i <= pdfDoc.numPages; i++) {
+            for (let i = 1; i <= totalPages; i++) {
                 allPages.push({ pageNum: i, isSelected: true });
             }
+
+            // Set max values for range inputs
+            rangeFromInput.max = totalPages;
+            rangeToInput.max = totalPages;
 
             await renderPagePreviews();
             updateInterface();
         } catch (error) {
             console.error("Error handling file:", error);
             alert("Could not read the PDF file. It might be corrupted or protected.");
-            uploadStage.classList.remove('hidden');
-            editStage.classList.add('hidden');
+            resetTool();
         }
     }
     
@@ -226,15 +262,31 @@
     function updateInterface() {
         const selectedMode = document.querySelector('input[name="split-mode"]:checked').value;
         const selectedPagesCount = allPages.filter(p => p.isSelected).length;
+        const totalPages = allPages.length;
+
+        pagePreviewGrid.classList.remove('selection-disabled');
+        pagePreviewInstruction.classList.remove('hidden');
+        rangeInputsContainer.classList.add('hidden');
 
         if (selectedMode === 'extract') {
-            pagePreviewGrid.classList.remove('selection-disabled');
             processBtn.disabled = selectedPagesCount === 0;
-            processBtn.textContent = `Extract ${selectedPagesCount} Pages`;
+            processBtn.textContent = selectedPagesCount > 0 ? `Extract ${selectedPagesCount} Pages` : 'Select pages to extract';
+        } else if (selectedMode === 'range') {
+            pagePreviewGrid.classList.add('selection-disabled');
+            pagePreviewInstruction.classList.add('hidden');
+            rangeInputsContainer.classList.remove('hidden');
+
+            const from = parseInt(rangeFromInput.value);
+            const to = parseInt(rangeToInput.value);
+            const isValidRange = from && to && from > 0 && to <= totalPages && from <= to;
+
+            processBtn.disabled = !isValidRange;
+            processBtn.textContent = isValidRange ? `Split Pages ${from} to ${to}` : 'Enter a valid page range';
         } else { // split-all
             pagePreviewGrid.classList.add('selection-disabled');
-            processBtn.disabled = allPages.length === 0;
-            processBtn.textContent = `Split into ${allPages.length} Files`;
+            pagePreviewInstruction.classList.add('hidden');
+            processBtn.disabled = totalPages === 0;
+            processBtn.textContent = `Split into ${totalPages} Files`;
         }
     }
 
@@ -258,22 +310,34 @@
 
         const { PDFDocument } = PDFLib;
         const selectedMode = document.querySelector('input[name="split-mode"]:checked').value;
-        const sourceDoc = await PDFDocument.load(originalPdfData.fileData);
         
         try {
+            const sourceDoc = await PDFDocument.load(originalPdfData.fileData);
+            let downloadUrl, downloadFilename, downloadButtonText;
+
             if (selectedMode === 'extract') {
                 const selectedPages = allPages.filter(p => p.isSelected).map(p => p.pageNum - 1);
-                if (selectedPages.length === 0) {
-                     alert("Please select at least one page to extract.");
-                     return; // No finally block needed here, just return
-                }
                 const newPdfDoc = await PDFDocument.create();
                 const copiedPages = await newPdfDoc.copyPages(sourceDoc, selectedPages);
                 copiedPages.forEach(page => newPdfDoc.addPage(page));
-                
                 const finalBytes = await newPdfDoc.save();
-                resultContainer.innerHTML = `<a href="${URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }))}" class="download-button" download="jkm-edit-extracted.pdf">Download Extracted PDF</a>`;
-
+                downloadUrl = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
+                downloadFilename = 'jkm-edit-extracted.pdf';
+                downloadButtonText = 'Download Extracted PDF';
+            } else if (selectedMode === 'range') {
+                const from = parseInt(rangeFromInput.value);
+                const to = parseInt(rangeToInput.value);
+                const pageIndices = [];
+                for(let i = from - 1; i < to; i++) {
+                    pageIndices.push(i);
+                }
+                const newPdfDoc = await PDFDocument.create();
+                const copiedPages = await newPdfDoc.copyPages(sourceDoc, pageIndices);
+                copiedPages.forEach(page => newPdfDoc.addPage(page));
+                const finalBytes = await newPdfDoc.save();
+                downloadUrl = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
+                downloadFilename = `jkm-edit-range-${from}-${to}.pdf`;
+                downloadButtonText = 'Download Ranged PDF';
             } else { // split-all
                 const zip = new JSZip();
                 for (const pageObj of allPages) {
@@ -284,17 +348,26 @@
                     zip.file(`page_${pageObj.pageNum}.pdf`, pdfBytes);
                 }
                 const zipBlob = await zip.generateAsync({ type: "blob" });
-                resultContainer.innerHTML = `<a href="${URL.createObjectURL(zipBlob)}" class="download-button" download="jkm-edit-split-files.zip">Download All Pages (.zip)</a>`;
+                downloadUrl = URL.createObjectURL(zipBlob);
+                downloadFilename = 'jkm-edit-split-files.zip';
+                downloadButtonText = 'Download All Pages (.zip)';
             }
 
+            // Display results
+            resultContainer.innerHTML = `
+                <div class="result-buttons">
+                    <a href="${downloadUrl}" class="download-button" download="${downloadFilename}">${downloadButtonText}</a>
+                    <button id="start-over-btn" class="action-button secondary-button start-over-button">Start Over</button>
+                </div>`;
+            document.getElementById('start-over-btn').addEventListener('click', resetTool);
+            
             processBtn.classList.add('hidden');
             resultContainer.classList.remove('hidden');
 
         } catch (error) {
             console.error("Error during PDF processing:", error);
             alert("An error occurred while splitting the PDF. Please try again.");
-            // Reset UI on error
-            processBtn.disabled = false;
+            processBtn.disabled = false; // Re-enable on error
             updateInterface();
         }
     }
