@@ -110,7 +110,6 @@
                         </label>
                         <p>Combines all selected pages into one new PDF.</p>
                     </div>
-                    <!-- NEW: Range selection option -->
                     <div id="range-option-container">
                         <label>
                             <input type="radio" name="split-mode" value="range"> Split by range
@@ -196,7 +195,6 @@
         resultContainer.classList.add('hidden');
         processBtn.classList.remove('hidden');
         
-        // Reset radio to default
         document.querySelector('input[name="split-mode"][value="extract"]').checked = true;
         updateInterface();
     }
@@ -210,7 +208,7 @@
         const file = files[0];
         if (file.type !== "application/pdf") return;
 
-        resetTool(); // Reset state before processing new file
+        resetTool(); 
 
         uploadStage.classList.add('hidden');
         editStage.classList.remove('hidden');
@@ -218,16 +216,21 @@
         try {
             pagePreviewGrid.innerHTML = 'Processing file...';
             const arrayBuffer = await file.arrayBuffer();
-            const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
             
+            // *** FIX: CLONE THE BUFFER ***
+            // Give pdf.js a CLONE of the buffer so it doesn't interfere with pdf-lib.
+            const pdfjsBuffer = arrayBuffer.slice(0);
+            const pdfDoc = await pdfjsLib.getDocument({ data: pdfjsBuffer }).promise;
+            
+            // Store the ORIGINAL, untouched buffer for pdf-lib to use later.
             originalPdfData = { fileData: arrayBuffer, pdfDoc };
+            
             const totalPages = pdfDoc.numPages;
 
             for (let i = 1; i <= totalPages; i++) {
                 allPages.push({ pageNum: i, isSelected: true });
             }
 
-            // Set max values for range inputs
             rangeFromInput.max = totalPages;
             rangeToInput.max = totalPages;
 
@@ -353,7 +356,6 @@
                 downloadButtonText = 'Download All Pages (.zip)';
             }
 
-            // Display results
             resultContainer.innerHTML = `
                 <div class="result-buttons">
                     <a href="${downloadUrl}" class="download-button" download="${downloadFilename}">${downloadButtonText}</a>
@@ -367,7 +369,7 @@
         } catch (error) {
             console.error("Error during PDF processing:", error);
             alert("An error occurred while splitting the PDF. Please try again.");
-            processBtn.disabled = false; // Re-enable on error
+            processBtn.disabled = false;
             updateInterface();
         }
     }
