@@ -148,13 +148,14 @@
             <div class="actions-panel">
                 <p style="text-align:center; color:#6c757d; margin:0;">Click pages to select/deselect. Drag to reorder.</p>
                 <div class="compression-settings">
-                     <p style="margin:0;"><strong>Compression Quality</strong> (Lower quality means smaller file size)</p>
+                     <p style="margin:0 0 0.5rem 0;"><strong>Compression Quality</strong></p>
                      <div class="slider-container">
-                        <label for="compression-slider">1%</label>
+                        <label for="compression-slider">Low</label>
                         <input type="range" id="compression-slider" min="1" max="100" value="80" step="1" style="width:100%;">
-                        <label for="compression-slider">100%</label>
+                        <label for="compression-slider">High</label>
                         <strong id="compression-level" style="min-width: 40px;">80%</strong>
                      </div>
+                     <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">Estimated Size: <strong id="estimated-size-display">...</strong></p>
                 </div>
                 <div class="button-group">
                     <button id="add-more-files-btn" class="action-button secondary-button"><i class="fa-solid fa-plus"></i> Add More Files</button>
@@ -170,7 +171,7 @@
         </div>
 
         <div class="navigation-buttons">
-            <a href="javascript:location.reload()" class="nav-btn secondary-button"><i class="fa-solid fa-arrow-left"></i> Start Over</a>
+            <a href="javascript:history.back()" class="nav-btn secondary-button"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
             <a href="https://jkmpdf.github.io/JKMEDIT/" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
         </div>
     </main>
@@ -182,9 +183,7 @@
     <script>
     // --- Standard Theme, Dark Mode & Modal Logic ---
     document.addEventListener('DOMContentLoaded', () => { 
-        // Theme and Dark Mode
-        const themePicker = document.getElementById('theme-picker');
-        const htmlElement = document.documentElement;
+        const themePicker = document.getElementById('theme-picker'), htmlElement = document.documentElement;
         const setTheme = (theme) => { htmlElement.dataset.theme = theme; localStorage.setItem('jkm-edit-theme', theme); };
         if (themePicker) {
             themePicker.addEventListener('change', () => setTheme(themePicker.value));
@@ -196,40 +195,29 @@
         const disableDarkMode = () => { body.classList.remove('dark-mode'); localStorage.setItem('jkm-edit-mode', 'light'); };
         if (darkModeToggle) darkModeToggle.addEventListener('click', () => body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode());
         const savedMode = localStorage.getItem('jkm-edit-mode');
-        savedMode === 'dark' ? enableDarkMode() : disableDarkMode();
-        
-        // Modal Logic
-        const aboutModal = document.getElementById('about-modal');
-        const contactModal = document.getElementById('contact-modal');
-        const aboutBtn = document.getElementById('about-btn');
-        const contactBtn = document.getElementById('contact-btn');
+        if (savedMode === 'dark') enableDarkMode();
+
+        const aboutModal = document.getElementById('about-modal'), contactModal = document.getElementById('contact-modal');
+        const aboutBtn = document.getElementById('about-btn'), contactBtn = document.getElementById('contact-btn');
         const closeBtns = document.querySelectorAll('.close-btn');
-        const openModal = (modal) => { modal.classList.add('show-modal'); };
-        const closeModal = (modal) => { modal.classList.remove('show-modal'); };
-        aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
-        contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+        const openModal = (modal) => modal.classList.add('show-modal');
+        const closeModal = (modal) => modal.classList.remove('show-modal');
+        if(aboutBtn) aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+        if(contactBtn) contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
         closeBtns.forEach(btn => btn.addEventListener('click', () => { closeModal(aboutModal); closeModal(contactModal); }));
         window.addEventListener('click', (e) => { if (e.target === aboutModal) closeModal(aboutModal); if (e.target === contactModal) closeModal(contactModal); });
     });
 
     // --- Advanced PDF Tool Logic ---
-    const fileInput = document.getElementById('file-input');
-    const dropzone = document.getElementById('dropzone');
-    const addMoreFilesBtn = document.getElementById('add-more-files-btn');
-    const processBtn = document.getElementById('process-btn');
-    const slider = document.getElementById('compression-slider');
-    const levelText = document.getElementById('compression-level');
-
-    const uploadStage = document.getElementById('upload-stage');
-    const editStage = document.getElementById('edit-stage');
-    const resultArea = document.getElementById('result-area');
-    const finalResultPanel = document.getElementById('final-result');
-    const pagePreviewGrid = editStage.querySelector('.page-preview-grid');
+    const fileInput = document.getElementById('file-input'), dropzone = document.getElementById('dropzone');
+    const addMoreFilesBtn = document.getElementById('add-more-files-btn'), processBtn = document.getElementById('process-btn');
+    const slider = document.getElementById('compression-slider'), levelText = document.getElementById('compression-level'), estimatedSizeDisplay = document.getElementById('estimated-size-display');
+    const uploadStage = document.getElementById('upload-stage'), editStage = document.getElementById('edit-stage'), resultArea = document.getElementById('result-area');
+    const finalResultPanel = document.getElementById('final-result'), pagePreviewGrid = editStage.querySelector('.page-preview-grid');
     
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
 
-    let allPages = [];
-    let fileCounter = 0;
+    let allPages = [], fileCounter = 0;
     
     // --- Event Listeners ---
     dropzone.addEventListener('click', () => fileInput.click());
@@ -239,7 +227,7 @@
     dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
     dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
     
-    slider.addEventListener('input', () => levelText.textContent = slider.value + '%');
+    slider.addEventListener('input', () => { levelText.textContent = slider.value + '%'; updateEstimatedSize(); });
     processBtn.addEventListener('click', processPdf);
 
     async function handleFiles(files) {
@@ -249,42 +237,60 @@
         for (const file of files) {
             if (file.type !== "application/pdf") continue;
             fileCounter++;
-            const fileId = fileCounter;
-            const arrayBuffer = await file.arrayBuffer();
+            const fileId = fileCounter, arrayBuffer = await file.arrayBuffer();
             const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-
             for (let i = 1; i <= pdfDoc.numPages; i++) {
-                allPages.push({ id: `${fileId}-${i}`, fileId, fileData: arrayBuffer, originalFile: file, originalPageIndex: i - 1, pageLabel: `F${fileId}, P${i}`, isSelected: true, pdfDoc });
+                allPages.push({ id: `${fileId}-${i}`, fileId, fileData: arrayBuffer, originalFile: file, originalPageIndex: i - 1, pageLabel: `F${fileId},P${i}`, isSelected: true, pdfDoc });
             }
         }
         await renderPagePreviews();
         updateUIState();
     }
     
-    function formatBytes(bytes, decimals = 2) { if (!+bytes) return '0 Bytes'; const k=1024,dm=decimals<0?0:decimals,sizes=['Bytes','KB','MB','GB'],i=Math.floor(Math.log(bytes)/Math.log(k)); return `${parseFloat((bytes/Math.pow(k,i)).toFixed(dm))} ${sizes[i]}`; }
+    function formatBytes(bytes, d=2) {if(!+bytes)return'0 Bytes';const k=1024,i=Math.floor(Math.log(bytes)/Math.log(k));return`${parseFloat((bytes/Math.pow(k,i)).toFixed(d<0?0:d))} ${['Bytes','KB','MB','GB'][i]}`}
 
     async function renderPagePreviews() {
-        pagePreviewGrid.innerHTML = ''; // Clear existing previews
+        pagePreviewGrid.innerHTML = '';
         for (const pageObj of allPages) {
             const pageItem = document.createElement('div');
             pageItem.className = 'page-item';
             if (!pageObj.isSelected) pageItem.classList.add('deselected');
-            pageItem.dataset.id = pageObj.id;
-            pageItem.draggable = true;
-
+            pageItem.dataset.id = pageObj.id; pageItem.draggable = true;
             pageItem.innerHTML = `<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;
             pagePreviewGrid.appendChild(pageItem);
-
             const canvas = pageItem.querySelector('canvas');
             const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
             const viewport = page.getViewport({ scale: 0.4 });
-            canvas.getContext('2d').canvas.height = viewport.height;
-            canvas.getContext('2d').canvas.width = viewport.width;
+            canvas.height = viewport.height; canvas.width = viewport.width;
             await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
         }
     }
     
-    function updateUIState() { processBtn.disabled = allPages.filter(p => p.isSelected).length < 1; }
+    function updateUIState() {
+        const selectedCount = allPages.filter(p => p.isSelected).length;
+        processBtn.disabled = selectedCount < 1;
+        updateEstimatedSize();
+    }
+
+    function updateEstimatedSize() {
+        const selectedPages = allPages.filter(p => p.isSelected);
+        if (selectedPages.length === 0) {
+            estimatedSizeDisplay.textContent = '...';
+            return;
+        }
+        const seenFiles = new Set();
+        let originalSelectedSize = 0;
+        selectedPages.forEach(p => {
+            if(!seenFiles.has(p.fileId)) {
+                originalSelectedSize += p.originalFile.size;
+                seenFiles.add(p.fileId);
+            }
+        });
+        // This is a rough estimation. JPEG compression isn't linear, but this gives a good idea.
+        // We multiply by a factor (e.g., 0.2) because image conversion is very effective.
+        const estimatedSize = originalSelectedSize * (parseInt(slider.value) / 100) * 0.2;
+        estimatedSizeDisplay.textContent = `~ ${formatBytes(estimatedSize)}`;
+    }
 
     pagePreviewGrid.addEventListener('click', (e) => {
         const pageItem = e.target.closest('.page-item');
@@ -293,100 +299,34 @@
         if (pageObj) { pageObj.isSelected = !pageObj.isSelected; pageItem.classList.toggle('deselected'); updateUIState(); }
     });
     
-    // --- New, Robust Drag & Drop Logic ---
     let draggedItem = null;
-    pagePreviewGrid.addEventListener('dragstart', (e) => {
-        if (e.target.classList.contains('page-item')) {
-            draggedItem = e.target;
-            setTimeout(() => e.target.classList.add('dragging'), 0); // Add class after a tick for visual feedback
-        }
-    });
-
-    pagePreviewGrid.addEventListener('dragend', (e) => {
-        if(draggedItem) {
-            draggedItem.classList.remove('dragging');
-            draggedItem = null;
-            // Update the internal array order after dropping
-            const newOrder = [...document.querySelectorAll('.page-item')].map(item => allPages.find(f => f.id === item.dataset.id));
-            allPages = newOrder;
-        }
-    });
+    pagePreviewGrid.addEventListener('dragstart', (e) => { if (e.target.classList.contains('page-item')) { draggedItem = e.target; setTimeout(() => e.target.classList.add('dragging'), 0); } });
+    pagePreviewGrid.addEventListener('dragend', () => { if(draggedItem) { draggedItem.classList.remove('dragging'); draggedItem = null; const newOrder = [...document.querySelectorAll('.page-item')].map(item => allPages.find(f => f.id === item.dataset.id)); allPages = newOrder; } });
+    pagePreviewGrid.addEventListener('dragover', (e) => { e.preventDefault(); if (!draggedItem) return; const afterElement = getDragAfterElement(pagePreviewGrid, e.clientY); if (afterElement == null) { pagePreviewGrid.appendChild(draggedItem); } else { pagePreviewGrid.insertBefore(draggedItem, afterElement); } });
+    function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
     
-    pagePreviewGrid.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        if (!draggedItem) return;
-        const afterElement = getDragAfterElement(pagePreviewGrid, e.clientY);
-        if (afterElement == null) {
-            pagePreviewGrid.appendChild(draggedItem);
-        } else {
-            pagePreviewGrid.insertBefore(draggedItem, afterElement);
-        }
-    });
-
-    function getDragAfterElement(container, y) {
-        const draggableElements = [...container.querySelectorAll('.page-item:not(.dragging)')];
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = y - box.top - box.height / 2;
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-    
-    // --- New Combined Processing Logic ---
+    // --- FASTER, OPTIMIZED Processing Logic ---
     async function processPdf() {
         editStage.classList.add('hidden');
         resultArea.classList.remove('hidden');
-        finalResultPanel.innerHTML = `<h3><i class="fa-solid fa-spinner fa-spin"></i> Processing PDF... Please wait.</h3><p>Merging and compressing your selected pages.</p>`;
+        finalResultPanel.innerHTML = `<h3><i class="fa-solid fa-spinner fa-spin"></i> Processing... Please wait.</h3><p>This will be quick!</p>`;
 
         const { PDFDocument } = PDFLib;
         const selectedPages = allPages.filter(p => p.isSelected);
-        let originalSelectedSize = 0; 
-        const seenFiles = new Set();
-        selectedPages.forEach(p => {
-            if(!seenFiles.has(p.fileId)) {
-                originalSelectedSize += p.originalFile.size;
-                seenFiles.add(p.fileId);
-            }
-        });
+        let originalSelectedSize = 0; const seenFiles = new Set();
+        selectedPages.forEach(p => { if(!seenFiles.has(p.fileId)) { originalSelectedSize += p.originalFile.size; seenFiles.add(p.fileId); } });
 
-        // 1. Merge Pages
-        const finalPdfDoc = await PDFDocument.create();
-        const loadedPdfLibDocs = new Map();
-        for (const pageObj of selectedPages) {
-            let sourcePdfDoc = loadedPdfLibDocs.get(pageObj.fileId);
-            if (!sourcePdfDoc) {
-                sourcePdfDoc = await PDFDocument.load(pageObj.fileData, { ignoreEncryption: true });
-                loadedPdfLibDocs.set(pageObj.fileId, sourcePdfDoc);
-            }
-            const [copiedPage] = await finalPdfDoc.copyPages(sourcePdfDoc, [pageObj.originalPageIndex]);
-            finalPdfDoc.addPage(copiedPage);
-        }
-        const mergedPdfBytes = await finalPdfDoc.save({ useObjectStreams: false }); // Disable object streams for better compatibility
-
-        // 2. Compress the Merged PDF
-        finalResultPanel.innerHTML = `<h3><i class="fa-solid fa-spinner fa-spin"></i> Compressing merged file...</h3>`;
         const quality = parseInt(slider.value) / 100;
-        const pdfToCompress = await PDFDocument.load(mergedPdfBytes);
         const compressedPdfDoc = await PDFDocument.create();
 
-        for(let i=0; i<pdfToCompress.getPageCount(); i++){
-            const tempPdf = await PDFDocument.create();
-            const [copiedPage] = await tempPdf.copyPages(pdfToCompress, [i]);
-            tempPdf.addPage(copiedPage);
-            const tempBytes = await tempPdf.save();
-            const pdfjsDoc = await pdfjsLib.getDocument({data: tempBytes}).promise;
-            const page = await pdfjsDoc.getPage(1);
-            const viewport = page.getViewport({scale: 1.5}); // Use a good scale for rendering
-
+        // Directly render and add pages without creating an intermediate merged file
+        for (const pageObj of selectedPages) {
+            const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
+            const viewport = page.getViewport({ scale: 1.5 }); // Use a good scale for rendering quality
             const canvas = document.createElement('canvas');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            await page.render({canvasContext: canvas.getContext('2d'), viewport: viewport}).promise;
-
+            canvas.height = viewport.height; canvas.width = viewport.width;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+            
             const jpegImageBytes = await compressedPdfDoc.embedJpg(canvas.toDataURL('image/jpeg', quality));
             const newPage = compressedPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
             newPage.drawImage(jpegImageBytes, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
@@ -395,7 +335,7 @@
         const compressedBytes = await compressedPdfDoc.save();
         const finalDownloadUrl = URL.createObjectURL(new Blob([compressedBytes], { type: 'application/pdf' }));
         
-        // 3. Display Final Result
+        // Display Final Result
         finalResultPanel.innerHTML = `
             <h3>Processing Complete!</h3>
             <div class="size-comparison">
@@ -406,7 +346,6 @@
             <a href="${finalDownloadUrl}" class="download-button" download="jkm-edit-final.pdf">Download PDF</a>
         `;
     }
-
     </script>
 </body>
 </html>
