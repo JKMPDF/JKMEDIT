@@ -29,47 +29,39 @@
         [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
         .dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
 
-        /* --- Header --- */
+        /* --- Header & Modals --- */
         .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); z-index: 100; position: sticky; top: 0; }
         .logo-container { display: flex; align-items: center; gap: 0.75rem; }
         .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); }
         .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
         .main-nav { display: flex; align-items: center; gap: 1.5rem; }
-        .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; transition: color var(--transition-speed); }
-        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width var(--transition-speed); }
-        .nav-link:hover { color: var(--primary-color); }
+        .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width .3s; }
         .nav-link:hover::after { width: 100%; }
-        #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
+        #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); }
         #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
         #dark-mode-toggle .fa-sun { display: none; }
         .dark-mode #dark-mode-toggle .fa-sun { display: inline; }
         .dark-mode #dark-mode-toggle .fa-moon { display: none; }
-
-        /* --- Modal Styles --- */
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
         .modal.show-modal { display: flex; align-items: center; justify-content: center; }
         .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
         .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .close-btn:hover,.close-btn:focus { color: var(--text-color); }
-        .modal-content h2 { color: var(--primary-color); margin-top: 0; }
-        .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
-        .contact-email:hover { transform: scale(1.05); }
+        .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         /* --- Tool Layout --- */
         .tool-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; text-align: center; }
         #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); }
-        #dropzone.drag-over { border-color: var(--primary-color); }
         #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
         
         /* Page Previews */
         #page-preview-container { margin-top: 2rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .page-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem; }
-        .page-item { position: relative; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; cursor: grab; box-shadow: 0 2px 8px rgba(0,0,0,0.07); transition: opacity 0.2s ease-in-out; }
+        .page-item { position: relative; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; cursor: grab; }
         .page-item.dragging { opacity: 0.4; }
         .page-item canvas { display: block; width: 100%; height: auto; }
         .page-item.deselected { border-color: #aaa; filter: grayscale(80%); }
@@ -77,26 +69,19 @@
         .page-tick-icon { position: absolute; top: 8px; right: 8px; font-size: 1.5rem; color: white; background-color: var(--primary-color); border-radius: 50%; padding: 0.25rem; }
         .page-info { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); color: white; font-size: 0.8rem; text-align: center; padding: 4px 0; }
         
-        /* Actions & Buttons */
+        /* Actions & Results Panel */
         .actions-panel { margin-top: 1.5rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;}
-        .button-group { display: flex; gap: 1rem; justify-content: center; width: 100%; }
+        .button-group, #result-container { display: flex; gap: 1rem; justify-content: center; width: 100%; align-items: center; }
         .action-button { display: block; width: 100%; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; }
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .secondary-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
-        
-        /* Compression Slider in Action Panel */
         .compression-settings { width: 100%; max-width: 500px; text-align: center; }
         .slider-container { display: flex; align-items: center; gap: 1rem; margin: 0.5rem auto; }
-        
-        /* Result Section */
-        #result-area { margin-top: 2rem; text-align: center; }
-        .result-panel { padding: 2rem; background: var(--surface-color); border-radius: 10px; }
+        #result-container { flex-direction: column; gap: 1rem; padding-top: 1.5rem; border-top: 2px solid #eee; }
+        .dark-mode #result-container { border-top-color: #333; }
         .size-info { font-weight: 600; color: var(--primary-color); }
-        .size-comparison { display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 1rem 0; font-size: 1.1rem; }
-        .download-button { display: inline-block; padding: 1rem 3rem; margin-top: 1rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
-        .recompress-controls { margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid #eee; }
-        .dark-mode .recompress-controls { border-top-color: #333; }
-
+        .size-comparison { display: flex; justify-content: center; align-items: center; gap: 1rem; font-size: 1.1rem; }
+        .download-button { display: inline-block; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
         .navigation-buttons { text-align: center; margin-top: 3rem; }
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; margin: 0 0.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
         .primary-nav-btn { background: var(--gradient); color: white !important; }
@@ -104,7 +89,6 @@
 </head>
 <body>
     <header class='main-header'>
-        <!-- Header content is identical, no changes needed -->
         <div class='logo-container'><a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'><div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div><h1>JKM Edit</h1></a></div>
         <nav class='main-nav'><div class='theme-selector'><label for='theme-picker'>Theme:</label><select id='theme-picker'><option value='corporate-blue'>Corporate Blue</option><option value='forest-green'>Forest Green</option><option value='sunset-gradient'>Sunset Gradient</option><option value='tech-noir'>Tech Noir</option><option value='minty-fresh'>Minty Fresh</option><option value='royal-purple'>Royal Purple</option><option value='graphite-gray'>Graphite Gray</option><option value='crimson-red'>Crimson Red</option></select></div><button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'><i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i></button><a href='#' id='about-btn' class='nav-link'>About</a><a href='#' id='contact-btn' class='nav-link'>Contact Us</a></nav>
     </header>
@@ -129,7 +113,7 @@
             <div class="actions-panel">
                 <p style="text-align:center; color:#6c757d; margin:0;">Click pages to select/deselect. Drag to reorder.</p>
                 <div class="compression-settings">
-                     <p style="margin:0 0 0.5rem 0;"><strong>Initial Compression Quality</strong></p>
+                     <p style="margin:0 0 0.5rem 0;"><strong>Compression Quality</strong></p>
                      <div class="slider-container">
                         <label for="compression-slider">Low</label>
                         <input type="range" id="compression-slider" min="1" max="100" value="80" step="1" style="width:100%;">
@@ -137,150 +121,78 @@
                         <strong id="compression-level" style="min-width: 40px;">80%</strong>
                      </div>
                 </div>
-                <div class="button-group">
+                <div class="button-group" id="action-buttons">
                     <button id="add-more-files-btn" class="action-button secondary-button"><i class="fa-solid fa-plus"></i> Add More Files</button>
                     <button id="process-btn" class="action-button" disabled>Merge & Compress PDF</button>
+                </div>
+                <div id="result-container" class="hidden">
+                    <!-- Result content will be injected here by JavaScript -->
                 </div>
             </div>
         </div>
         
-        <div id="result-area" class="hidden">
-            <div id="final-result" class="result-panel">
-                 <!-- Content will be generated by JavaScript -->
-            </div>
-        </div>
-
         <div class="navigation-buttons">
             <a href="javascript:history.back()" class="nav-btn secondary-button"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
             <a href="https://jkmpdf.github.io/JKMEDIT/" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
         </div>
     </main>
     
-    <!-- Modals (Copied from Main) -->
+    <!-- Modals -->
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
     <script>
     // --- Standard Theme, Dark Mode & Modal Logic ---
     document.addEventListener('DOMContentLoaded', () => { 
-        const themePicker = document.getElementById('theme-picker'), htmlElement = document.documentElement;
-        const setTheme = (theme) => { htmlElement.dataset.theme = theme; localStorage.setItem('jkm-edit-theme', theme); };
-        if (themePicker) {
-            themePicker.addEventListener('change', () => setTheme(themePicker.value));
-            const savedTheme = localStorage.getItem('jkm-edit-theme');
-            if (savedTheme) { setTheme(savedTheme); themePicker.value = savedTheme; } else { themePicker.value = 'corporate-blue'; }
-        }
-        const darkModeToggle = document.getElementById('dark-mode-toggle'), body = document.body;
-        const enableDarkMode = () => { body.classList.add('dark-mode'); localStorage.setItem('jkm-edit-mode', 'dark'); };
-        const disableDarkMode = () => { body.classList.remove('dark-mode'); localStorage.setItem('jkm-edit-mode', 'light'); };
-        if (darkModeToggle) darkModeToggle.addEventListener('click', () => body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode());
-        const savedMode = localStorage.getItem('jkm-edit-mode');
-        if (savedMode === 'dark') enableDarkMode();
-
-        const aboutModal = document.getElementById('about-modal'), contactModal = document.getElementById('contact-modal');
-        const aboutBtn = document.getElementById('about-btn'), contactBtn = document.getElementById('contact-btn');
-        const closeBtns = document.querySelectorAll('.close-btn');
-        const openModal = (modal) => modal.classList.add('show-modal');
-        const closeModal = (modal) => modal.classList.remove('show-modal');
-        if(aboutBtn) aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
-        if(contactBtn) contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
-        closeBtns.forEach(btn => btn.addEventListener('click', () => { closeModal(aboutModal); closeModal(contactModal); }));
-        window.addEventListener('click', (e) => { if (e.target === aboutModal) closeModal(aboutModal); if (e.target === contactModal) closeModal(contactModal); });
+        const themePicker=document.getElementById('theme-picker'),htmlElement=document.documentElement;const setTheme=(t)=>{htmlElement.dataset.theme=t;localStorage.setItem('jkm-edit-theme',t)};if(themePicker){themePicker.addEventListener('change',()=>setTheme(themePicker.value));const t=localStorage.getItem('jkm-edit-theme');if(t){setTheme(t);themePicker.value=t}else{themePicker.value='corporate-blue'}}
+        const darkModeToggle=document.getElementById('dark-mode-toggle'),body=document.body;const enableDarkMode=()=>{body.classList.add('dark-mode');localStorage.setItem('jkm-edit-mode','dark')};const disableDarkMode=()=>{body.classList.remove('dark-mode');localStorage.setItem('jkm-edit-mode','light')};if(darkModeToggle)darkModeToggle.addEventListener('click',()=>body.classList.contains('dark-mode')?disableDarkMode():enableDarkMode());if(localStorage.getItem('jkm-edit-mode')==='dark')enableDarkMode();
+        const aboutModal=document.getElementById('about-modal'),contactModal=document.getElementById('contact-modal'),aboutBtn=document.getElementById('about-btn'),contactBtn=document.getElementById('contact-btn'),closeBtns=document.querySelectorAll('.close-btn');const openModal=(t)=>t.classList.add('show-modal');const closeModal=(t)=>t.classList.remove('show-modal');if(aboutBtn)aboutBtn.addEventListener('click',t=>{t.preventDefault();openModal(aboutModal)});if(contactBtn)contactBtn.addEventListener('click',t=>{t.preventDefault();openModal(contactModal)});closeBtns.forEach(t=>t.addEventListener('click',()=>{closeModal(aboutModal);closeModal(contactModal)}));window.addEventListener('click',t=>{if(t.target===aboutModal)closeModal(aboutModal);if(t.target===contactModal)closeModal(contactModal)});
     });
 
     // --- Advanced PDF Tool Logic ---
-    const fileInput = document.getElementById('file-input'), dropzone = document.getElementById('dropzone');
-    const addMoreFilesBtn = document.getElementById('add-more-files-btn'), processBtn = document.getElementById('process-btn');
-    const initialSlider = document.getElementById('compression-slider'), initialLevelText = document.getElementById('compression-level');
-    const uploadStage = document.getElementById('upload-stage'), editStage = document.getElementById('edit-stage'), resultArea = document.getElementById('result-area');
-    const finalResultPanel = document.getElementById('final-result'), pagePreviewGrid = editStage.querySelector('.page-preview-grid');
-    
+    const fileInput=document.getElementById('file-input'),dropzone=document.getElementById('dropzone');const addMoreFilesBtn=document.getElementById('add-more-files-btn'),processBtn=document.getElementById('process-btn');const slider=document.getElementById('compression-slider'),levelText=document.getElementById('compression-level');const uploadStage=document.getElementById('upload-stage'),editStage=document.getElementById('edit-stage');const actionButtonsContainer=document.getElementById('action-buttons'),resultContainer=document.getElementById('result-container'),pagePreviewGrid=editStage.querySelector('.page-preview-grid');
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
-
-    let allPages = [], fileCounter = 0;
-    let renderedPageCanvases = []; // Store rendered pages for FAST re-compression
-    let originalTotalSize = 0;
+    let allPages=[],fileCounter=0;
     
     // --- Event Listeners ---
-    dropzone.addEventListener('click', () => fileInput.click());
-    addMoreFilesBtn.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
-    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
-    dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
-    
-    initialSlider.addEventListener('input', () => { initialLevelText.textContent = initialSlider.value + '%'; });
-    processBtn.addEventListener('click', runInitialProcess);
+    dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
+    slider.addEventListener('input',()=>levelText.textContent=slider.value+'%');processBtn.addEventListener('click',processAndDisplay);
 
-    async function handleFiles(files) {
-        uploadStage.classList.add('hidden');
-        editStage.classList.remove('hidden');
-        for (const file of files) {
-            if (file.type !== "application/pdf") continue;
-            fileCounter++; const fileId = fileCounter, arrayBuffer = await file.arrayBuffer();
-            const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            for (let i = 1; i <= pdfDoc.numPages; i++) {
-                allPages.push({ id: `${fileId}-${i}`, fileId, originalFile: file, originalPageIndex: i - 1, pageLabel: `F${fileId},P${i}`, isSelected: true, pdfDoc });
-            }
-        }
-        await renderPagePreviews(); updateUIState();
-    }
-    
+    async function handleFiles(files){uploadStage.classList.add('hidden');editStage.classList.remove('hidden');for(const file of files){if(file.type!=="application/pdf")continue;fileCounter++;const fileId=fileCounter,arrayBuffer=await file.arrayBuffer();const pdfDoc=await pdfjsLib.getDocument({data:arrayBuffer}).promise;for(let i=1;i<=pdfDoc.numPages;i++){allPages.push({id:`${fileId}-${i}`,fileId,originalFile:file,originalPageIndex:i-1,pageLabel:`F${fileId},P${i}`,isSelected:true,pdfDoc})}}
+    await renderPagePreviews();updateUIState()}
     function formatBytes(b,d=2){if(!+b)return'0 Bytes';const k=1024,i=Math.floor(Math.log(b)/Math.log(k));return`${parseFloat((b/Math.pow(k,i)).toFixed(d<0?0:d))} ${['Bytes','KB','MB','GB'][i]}`}
-
-    async function renderPagePreviews() {
-        pagePreviewGrid.innerHTML = '';
-        for (const pageObj of allPages) {
-            const pageItem=document.createElement('div'); pageItem.className='page-item'; if(!pageObj.isSelected)pageItem.classList.add('deselected'); pageItem.dataset.id=pageObj.id; pageItem.draggable=true; pageItem.innerHTML=`<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`; pagePreviewGrid.appendChild(pageItem);
-            const canvas=pageItem.querySelector('canvas'), page=await pageObj.pdfDoc.getPage(pageObj.originalPageIndex+1), viewport=page.getViewport({scale:0.4}); canvas.height=viewport.height; canvas.width=viewport.width; await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
-        }
-    }
     
-    function updateUIState() { processBtn.disabled = allPages.filter(p => p.isSelected).length < 1; }
-
-    pagePreviewGrid.addEventListener('click', (e) => {
-        const pageItem = e.target.closest('.page-item'); if (!pageItem) return;
-        const pageObj = allPages.find(p => p.id === pageItem.dataset.id); if (pageObj) { pageObj.isSelected = !pageObj.isSelected; pageItem.classList.toggle('deselected'); updateUIState(); }
-    });
+    async function renderPagePreviews(){pagePreviewGrid.innerHTML='';for(const pageObj of allPages){const pageItem=document.createElement('div');pageItem.className='page-item';if(!pageObj.isSelected)pageItem.classList.add('deselected');pageItem.dataset.id=pageObj.id;pageItem.draggable=true;pageItem.innerHTML=`<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;pagePreviewGrid.appendChild(pageItem);
+    const canvas=pageItem.querySelector('canvas'),page=await pageObj.pdfDoc.getPage(pageObj.originalPageIndex+1),viewport=page.getViewport({scale:0.4});canvas.height=viewport.height;canvas.width=viewport.width;await page.render({canvasContext:canvas.getContext('2d'),viewport:viewport}).promise;}}
+    function updateUIState(){processBtn.disabled=allPages.filter(p=>p.isSelected).length<1;resultContainer.classList.add('hidden');actionButtonsContainer.classList.remove('hidden')}
     
-    let draggedItem = null;
-    pagePreviewGrid.addEventListener('dragstart', (e) => { if (e.target.classList.contains('page-item')) { draggedItem = e.target; setTimeout(() => e.target.classList.add('dragging'), 0); } });
-    pagePreviewGrid.addEventListener('dragend', () => { if(draggedItem) { draggedItem.classList.remove('dragging'); draggedItem = null; const newOrder = [...document.querySelectorAll('.page-item')].map(item => allPages.find(f => f.id === item.dataset.id)); allPages = newOrder; } });
-    pagePreviewGrid.addEventListener('dragover', (e) => { e.preventDefault(); if (!draggedItem) return; const a=getDragAfterElement(pagePreviewGrid,e.clientY); if(a==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,a)} });
-    function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
+    pagePreviewGrid.addEventListener('click',t=>{const e=t.target.closest('.page-item');if(!e)return;const o=allPages.find(t=>t.id===e.dataset.id);if(o){o.isSelected=!o.isSelected;e.classList.toggle('deselected');updateUIState()}});
+    let draggedItem=null;pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});pagePreviewGrid.addEventListener('dragend',()=>{if(draggedItem){draggedItem.classList.remove('dragging');draggedItem=null;const t=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));allPages=t}});pagePreviewGrid.addEventListener('dragover',t=>{t.preventDefault();if(!draggedItem)return;const e=getDragAfterElement(pagePreviewGrid,t.clientY);if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}});function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
     
-    async function runInitialProcess() {
-        editStage.classList.add('hidden');
-        resultArea.classList.remove('hidden');
-        finalResultPanel.innerHTML = `<h3><i class="fa-solid fa-spinner fa-spin"></i> Reading Pages...</h3><p>This initial step prepares your files for fast compression.</p>`;
+    async function processAndDisplay(){
+        // 1. Update UI to show processing state
+        addMoreFilesBtn.disabled = true;
+        slider.disabled = true;
+        processBtn.disabled = true;
+        processBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+        resultContainer.classList.add('hidden');
 
+        const { PDFDocument } = PDFLib;
         const selectedPages = allPages.filter(p => p.isSelected);
-        originalTotalSize = 0; const seenFiles = new Set();
-        selectedPages.forEach(p => { if(!seenFiles.has(p.fileId)) { originalTotalSize += p.originalFile.size; seenFiles.add(p.fileId); } });
+        let originalSelectedSize = 0; const seenFiles = new Set();
+        selectedPages.forEach(p => { if(!seenFiles.has(p.fileId)) { originalSelectedSize += p.originalFile.size; seenFiles.add(p.fileId); } });
 
-        // RENDER ALL PAGES TO CANVAS (THE SLOW PART) - DO THIS ONLY ONCE
-        renderedPageCanvases = [];
+        const quality = parseInt(slider.value) / 100;
+        const compressedPdfDoc = await PDFDocument.create();
+
+        // 2. Perform the fast merge-compress operation
         for (const pageObj of selectedPages) {
             const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
             const viewport = page.getViewport({ scale: 1.5 });
             const canvas = document.createElement('canvas');
             canvas.height = viewport.height; canvas.width = viewport.width;
             await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
-            renderedPageCanvases.push(canvas);
-        }
-        
-        // Now run the compression for the first time
-        await compressAndDisplay(parseInt(initialSlider.value));
-    }
-
-    async function compressAndDisplay(qualityValue) {
-        finalResultPanel.innerHTML = `<h3><i class="fa-solid fa-spinner fa-spin"></i> Compressing at ${qualityValue}%...</h3>`;
-        
-        const { PDFDocument } = PDFLib;
-        const quality = qualityValue / 100;
-        const compressedPdfDoc = await PDFDocument.create();
-
-        for (const canvas of renderedPageCanvases) {
+            
             const jpegImageBytes = await compressedPdfDoc.embedJpg(canvas.toDataURL('image/jpeg', quality));
             const newPage = compressedPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
             newPage.drawImage(jpegImageBytes, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
@@ -289,38 +201,19 @@
         const compressedBytes = await compressedPdfDoc.save();
         const finalDownloadUrl = URL.createObjectURL(new Blob([compressedBytes], { type: 'application/pdf' }));
         
-        // Display Final Result with RE-COMPRESS controls
-        finalResultPanel.innerHTML = `
-            <h3>Processing Complete!</h3>
+        // 3. Update UI to show results
+        actionButtonsContainer.classList.add('hidden'); // Hide original buttons
+        resultContainer.innerHTML = `
             <div class="size-comparison">
-                <span>Original: <strong class="size-info">${formatBytes(originalTotalSize)}</strong></span>
+                <span>Original: <strong class="size-info">${formatBytes(originalSelectedSize)}</strong></span>
                 <i class="fa-solid fa-arrow-right-long"></i>
                 <span>Final: <strong class="size-info">${formatBytes(compressedBytes.length)}</strong></span>
             </div>
-            <a href="${finalDownloadUrl}" id="download-link" class="download-button" download="jkm-edit-compressed.pdf">Download PDF</a>
-            
-            <div class="recompress-controls">
-                <p>Not the right size? Adjust quality and re-compress instantly.</p>
-                <div class="compression-settings">
-                     <div class="slider-container">
-                        <label for="recompress-slider">Low</label>
-                        <input type="range" id="recompress-slider" min="1" max="100" value="${qualityValue}" step="1" style="width:100%;">
-                        <label for="recompress-slider">High</label>
-                        <strong id="recompress-level" style="min-width: 40px;">${qualityValue}%</strong>
-                     </div>
-                </div>
-                <button id="recompress-btn" class="action-button secondary-button" style="max-width:300px; margin: 1rem auto;">Re-compress</button>
-            </div>
+            <a href="${finalDownloadUrl}" class="download-button" download="jkm-edit-compressed.pdf">Download PDF</a>
         `;
-        
-        // Add event listeners for the new controls
-        document.getElementById('recompress-slider').addEventListener('input', (e) => {
-            document.getElementById('recompress-level').textContent = e.target.value + '%';
-        });
-        document.getElementById('recompress-btn').addEventListener('click', () => {
-            const newQuality = parseInt(document.getElementById('recompress-slider').value);
-            compressAndDisplay(newQuality); // This will be super fast
-        });
+        resultContainer.classList.remove('hidden'); // Show results
+        addMoreFilesBtn.disabled = false; // Re-enable for further use if needed
+        slider.disabled = false;
     }
     </script>
 </body>
