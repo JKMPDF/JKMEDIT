@@ -152,7 +152,11 @@
     
     // --- Event Listeners ---
     dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
-    slider.addEventListener('input',updateInterface);processBtn.addEventListener('click',processAndDisplay);
+    
+    // FIX #2: Changed 'input' to 'change' to only update UI when the user releases the slider
+    slider.addEventListener('change', updateInterface);
+    
+    processBtn.addEventListener('click',processAndDisplay);
 
     async function handleFiles(files){
         uploadStage.classList.add('hidden');
@@ -164,7 +168,17 @@
             const arrayBuffer = await file.arrayBuffer();
             const pdfDoc = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
             for (let i = 1; i <= pdfDoc.numPages; i++){
-                allPages.push({id:`${fileId}-${i}`, fileId, fileData:arrayBuffer, originalPageIndex: i - 1, pageLabel:`F${fileId},P${i}`, isSelected:true, pdfDoc});
+                // FIX #1: Added fileSize property directly from the original file object
+                allPages.push({
+                    id:`${fileId}-${i}`, 
+                    fileId, 
+                    fileData:arrayBuffer, 
+                    fileSize: file.size, // This is the reliable file size
+                    originalPageIndex: i - 1, 
+                    pageLabel:`F${fileId},P${i}`, 
+                    isSelected:true, 
+                    pdfDoc
+                });
             }
         }
         await renderPagePreviews();
@@ -194,7 +208,8 @@
         const seenFiles = new Set();
         selectedPages.forEach(p => {
             if (!seenFiles.has(p.fileId)) {
-                originalSelectedSize += p.fileData.byteLength;
+                // FIX #1: Use the reliable fileSize property instead of byteLength
+                originalSelectedSize += p.fileSize;
                 seenFiles.add(p.fileId);
             }
         });
@@ -210,7 +225,6 @@
         } else {
             levelText.textContent = `${compressionLevel}% Compression`;
             processBtn.textContent = "Merge & Compress PDF";
-            // A slightly more realistic estimation factor
             const estimatedFinalSize = originalSelectedSize * (1 - (compressionLevel / 100 * 0.8));
             finalSizeDisplay.textContent = formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0);
         }
@@ -228,44 +242,49 @@
         const finalPdfDoc = await PDFDocument.create();
         let finalBytes;
 
-        if (compressionLevel === 0) { // FAST MERGE-ONLY PATH
-            const loadedPdfDocs = new Map();
-            for (const pageObj of selectedPages) {
-                let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
-                if (!sourceDoc) {
-                    sourceDoc = await PDFDocument.load(pageObj.fileData);
-                    loadedPdfDocs.set(pageObj.fileId, sourceDoc);
+        try {
+            if (compressionLevel === 0) { // FAST MERGE-ONLY PATH
+                const loadedPdfDocs = new Map();
+                for (const pageObj of selectedPages) {
+                    let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
+                    if (!sourceDoc) {
+                        sourceDoc = await PDFDocument.load(pageObj.fileData);
+                        loadedPdfDocs.set(pageObj.fileId, sourceDoc);
+                    }
+                    const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
+                    finalPdfDoc.addPage(copiedPage);
                 }
-                const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
-                finalPdfDoc.addPage(copiedPage);
+            } else { // COMPRESSION PATH
+                const quality = 1 - (compressionLevel / 100);
+                for (const pageObj of selectedPages) {
+                    const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    const canvas = document.createElement('canvas');
+                    canvas.height = viewport.height; canvas.width = viewport.width;
+                    await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+                    
+                    const jpegImageBytes = await finalPdfDoc.embedJpg(canvas.toDataURL('image/jpeg', quality < 0.1 ? 0.1 : quality));
+                    const newPage = finalPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
+                    newPage.drawImage(jpegImageBytes, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
+                }
             }
-        } else { // COMPRESSION PATH
-            const quality = 1 - (compressionLevel / 100);
-            for (const pageObj of selectedPages) {
-                const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
-                const viewport = page.getViewport({ scale: 1.5 });
-                const canvas = document.createElement('canvas');
-                canvas.height = viewport.height; canvas.width = viewport.width;
-                await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
-                
-                const jpegImageBytes = await finalPdfDoc.embedJpg(canvas.toDataURL('image/jpeg', quality < 0.1 ? 0.1 : quality));
-                const newPage = finalPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
-                newPage.drawImage(jpegImageBytes, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
-            }
-        }
-        finalBytes = await finalPdfDoc.save();
+            finalBytes = await finalPdfDoc.save();
 
-        let originalSelectedSize = 0; const seenFiles = new Set();
-        selectedPages.forEach(p => { if(!seenFiles.has(p.fileId)) { originalSelectedSize += p.fileData.byteLength; seenFiles.add(p.fileId); } });
-        
-        finalSizeDisplay.textContent = formatBytes(finalBytes.length); // Update with 100% accurate size
-        sizePreviewNote.textContent = '(Processing complete!)';
-        
-        actionButtonsContainer.classList.add('hidden');
-        resultContainer.innerHTML = `<a href="${URL.createObjectURL(new Blob([finalBytes],{type:'application/pdf'}))}" class="download-button" download="jkm-edit-final.pdf">Download PDF</a>`;
-        resultContainer.classList.remove('hidden');
-        
-        addMoreFilesBtn.disabled=false; slider.disabled=false;
+            finalSizeDisplay.textContent = formatBytes(finalBytes.length);
+            sizePreviewNote.textContent = 'Processing complete!';
+            
+            actionButtonsContainer.classList.add('hidden');
+            resultContainer.innerHTML = `<a href="${URL.createObjectURL(new Blob([finalBytes],{type:'application/pdf'}))}" class="download-button" download="jkm-edit-final.pdf">Download PDF</a>`;
+            resultContainer.classList.remove('hidden');
+        } catch (error) {
+            console.error("Error processing PDF:", error);
+            alert("An error occurred while processing the PDF. Please check the console for details.");
+        } finally {
+            // FIX #3: Re-enable buttons and reset the process button text by calling updateInterface
+            addMoreFilesBtn.disabled = false; 
+            slider.disabled = false;
+            updateInterface();
+        }
     }
     </script>
 </body>
