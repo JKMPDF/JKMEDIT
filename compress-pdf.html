@@ -87,7 +87,6 @@
         <nav class='main-nav'>
             <div class='theme-selector'>
                 <label for='theme-picker'>Theme:</label>
-                <!-- FIX: Restored all theme options -->
                 <select id='theme-picker'>
                     <option value='corporate-blue'>Corporate Blue</option>
                     <option value='forest-green'>Forest Green</option>
@@ -231,21 +230,30 @@
 
     async function handleFiles(files) {
         resetTool();
-        for (const file of files) {
-            if (file.type !== "application/pdf") continue;
-            const arrayBuffer = await file.arrayBuffer();
-            uploadedFiles.push({
-                name: file.name,
-                fileData: arrayBuffer,
-                pdfjsBuffer: arrayBuffer.slice(0) // Clone for pdf.js previews
-            });
-        }
+        try {
+            const filePromises = Array.from(files)
+                .filter(file => file.type === "application/pdf")
+                .map(async file => {
+                    const arrayBuffer = await file.arrayBuffer();
+                    return {
+                        name: file.name,
+                        fileData: arrayBuffer,
+                        pdfjsBuffer: arrayBuffer.slice(0) // Clone for pdf.js previews
+                    };
+                });
+            
+            uploadedFiles = await Promise.all(filePromises);
 
-        if (uploadedFiles.length > 0) {
-            uploadStage.classList.add('hidden');
-            editStage.classList.remove('hidden');
-            await renderPagePreviews();
-            updateInterface();
+            if (uploadedFiles.length > 0) {
+                uploadStage.classList.add('hidden');
+                editStage.classList.remove('hidden');
+                await renderPagePreviews();
+                updateInterface();
+            }
+        } catch(err) {
+            console.error("Error reading files:", err);
+            alert("One or more files could not be read. They may be corrupted or not valid PDFs. Please try again.");
+            resetTool();
         }
     }
 
@@ -254,7 +262,7 @@
         for (const file of uploadedFiles) {
             try {
                 const pdfDoc = await pdfjsLib.getDocument({ data: file.pdfjsBuffer }).promise;
-                const page = await pdfDoc.getPage(1); // Preview first page only
+                const page = await pdfDoc.getPage(1);
                 
                 const pageItem = document.createElement('div');
                 pageItem.className = 'page-item';
@@ -293,34 +301,23 @@
         if (targetSizeValue > 0) {
             slider.disabled = true;
             const multiplier = targetSizeUnit.value === 'MB' ? 1024 * 1024 : 1024;
-            finalSizeDisplay.textContent = formatBytes(targetSizeValue * multiplier);
+            finalSizeDisplay.textContent = `~ ${formatBytes(targetSizeValue * multiplier)}`;
         } else {
             slider.disabled = false;
             const compressionLevel = parseInt(slider.value); // 0-100
             const estimatedFinalSize = originalSize * (1 - (compressionLevel / 100 * 0.7)); 
-            finalSizeDisplay.textContent = formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0);
+            finalSizeDisplay.textContent = `~ ${formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0)}`;
         }
     }
 
-    async function getQualityForTargetSize(targetBytes, totalOriginalSize) {
+    function getQualityForTargetSize(targetBytes, totalOriginalSize) {
         if (targetBytes >= totalOriginalSize) return 1.0; 
-
-        // This is a simplified estimation. A more accurate method is complex.
-        // We'll calculate a quality based on the desired reduction ratio.
         const reductionRatio = targetBytes / totalOriginalSize;
-        
-        // Map the reduction ratio to a JPEG quality setting (non-linear)
-        // A reduction to 50% (0.5) might need a quality of 0.7
-        // A reduction to 10% (0.1) might need a quality of 0.2
-        // We can use a power curve to approximate this.
         let quality = Math.pow(reductionRatio, 0.5);
-
-        if (quality > 1.0) quality = 1.0;
-        if (quality < 0.1) quality = 0.1; // Set a minimum quality floor
-
+        if (quality > 0.95) quality = 0.95; // Don't use perfect quality
+        if (quality < 0.1) quality = 0.1;
         return quality;
     }
-
 
     async function processAndDisplay() {
         processBtn.disabled = true;
@@ -335,35 +332,42 @@
         if (targetSizeValue > 0) {
             const multiplier = targetSizeUnit.value === 'MB' ? 1024 * 1024 : 1024;
             const targetBytes = targetSizeValue * multiplier;
-            quality = await getQualityForTargetSize(targetBytes, totalOriginalSize);
+            quality = getQualityForTargetSize(targetBytes, totalOriginalSize);
         } else {
             const compressionLevel = parseInt(slider.value);
-            quality = 1 - (compressionLevel / 100);
+            quality = 1.0 - (compressionLevel / 100);
         }
         
-        // Clamp quality to a safe range
         if (quality < 0.1) quality = 0.1; 
         if (quality > 1.0) quality = 1.0;
 
         try {
             for (const file of uploadedFiles) {
-                // FIX: Create a fresh clone of the original data for pdf.js to use in this process.
-                const processClone = file.fileData.slice(0);
-                const pdfDoc = await pdfjsLib.getDocument({ data: processClone }).promise;
-
+                const pdfDoc = await pdfjsLib.getDocument({ data: file.fileData.slice(0) }).promise;
                 for (let i = 1; i <= pdfDoc.numPages; i++) {
-                    const page = await pdfDoc.getPage(i);
-                    const viewport = page.getViewport({ scale: 1.5 });
-                    const canvas = document.createElement('canvas');
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
-                    const context = canvas.getContext('2d');
-                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+                    try {
+                        const page = await pdfDoc.getPage(i);
+                        const viewport = page.getViewport({ scale: 1.5 });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        const context = canvas.getContext('2d');
+                        await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-                    const jpegImageBytes = await finalPdfDoc.embedJpg(canvas.toDataURL('image/jpeg', quality));
-                    const newPage = finalPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
-                    newPage.drawImage(jpegImageBytes, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
+                        const jpegImageBytes = await finalPdfDoc.embedJpg(canvas.toDataURL('image/jpeg', quality));
+                        const newPage = finalPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
+                        newPage.drawImage(jpegImageBytes, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
+                    } catch (pageError) {
+                        console.error(`Skipping page ${i} of file ${file.name} due to an error:`, pageError);
+                        continue; // Skip this page and continue with the next
+                    }
                 }
+            }
+
+            if (finalPdfDoc.getPageCount() === 0) {
+                alert("Could not compress any pages from the uploaded file(s). Please check if they are valid PDFs.");
+                resetTool();
+                return;
             }
 
             const finalBytes = await finalPdfDoc.save();
