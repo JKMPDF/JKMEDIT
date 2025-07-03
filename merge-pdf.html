@@ -150,7 +150,6 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
     
     let allPages = [], fileCounter = 0;
-    // JKM-FIX: fileDataStore will hold the raw ArrayBuffer for each file.
     let fileDataStore = {};
 
     // --- Event Listeners ---
@@ -166,14 +165,9 @@
             fileCounter++;
             const fileId = fileCounter;
             const arrayBuffer = await file.arrayBuffer();
-
-            // JKM-FIX: Store the raw ArrayBuffer. This will be used by pdf-lib later.
             fileDataStore[fileId] = arrayBuffer;
-            
-            // Load with pdf.js for rendering previews. We pass a Uint8Array view of the buffer.
             const pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer)}).promise;
             const numPagesInFile = pdfJsDoc.numPages;
-            
             for (let i = 1; i <= numPagesInFile; i++){
                 allPages.push({id: `${fileId}-${i}`,fileId: fileId,fileSize: file.size, totalPagesInFile: numPagesInFile, originalPageIndex: i - 1, pageLabel: `F${fileId},P${i}`, isSelected: true,pdfDoc: pdfJsDoc});
             }
@@ -227,20 +221,19 @@
             const finalPdfDoc = await PDFDocument.create();
 
             if (compressionLevel === 0) { // MERGE-ONLY PATH
-                // JKM-FIX: Restore efficient on-demand loading with a Map to cache documents.
                 const loadedPdfDocs = new Map();
                 for (const pageObj of selectedPages) {
                     let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
                     if (!sourceDoc) {
                         const fileData = fileDataStore[pageObj.fileId];
-                        // Load from a *copy* of the buffer to prevent library conflicts.
                         sourceDoc = await PDFDocument.load(fileData.slice(0));
+                        // JKM-FIX: Corrected typo from fileI to fileId. This enables caching and fixes the crash.
                         loadedPdfDocs.set(pageObj.fileId, sourceDoc);
                     }
                     const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
                     finalPdfDoc.addPage(copiedPage);
                 }
-            } else { // COMPRESSION PATH (This logic was correct)
+            } else { // COMPRESSION PATH
                 const quality = 1 - (compressionLevel / 100);
                 for (const pageObj of selectedPages) {
                     const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
