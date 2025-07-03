@@ -165,8 +165,14 @@
             fileCounter++;
             const fileId = fileCounter;
             const arrayBuffer = await file.arrayBuffer();
+            
+            // Store the original, pristine buffer for pdf-lib to use later.
             fileDataStore[fileId] = arrayBuffer;
-            const pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer)}).promise;
+
+            // JKM-FIX: Give pdf.js (for previews) a *copy* of the buffer.
+            // This prevents the two libraries from conflicting over the same data.
+            const pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer.slice(0))}).promise;
+            
             const numPagesInFile = pdfJsDoc.numPages;
             for (let i = 1; i <= numPagesInFile; i++){
                 allPages.push({id: `${fileId}-${i}`,fileId: fileId,fileSize: file.size, totalPagesInFile: numPagesInFile, originalPageIndex: i - 1, pageLabel: `F${fileId},P${i}`, isSelected: true,pdfDoc: pdfJsDoc});
@@ -225,15 +231,15 @@
                 for (const pageObj of selectedPages) {
                     let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
                     if (!sourceDoc) {
+                        // Load the pristine, untouched buffer from fileDataStore.
                         const fileData = fileDataStore[pageObj.fileId];
-                        sourceDoc = await PDFDocument.load(fileData.slice(0));
-                        // JKM-FIX: Corrected typo from fileI to fileId. This enables caching and fixes the crash.
+                        sourceDoc = await PDFDocument.load(fileData);
                         loadedPdfDocs.set(pageObj.fileId, sourceDoc);
                     }
                     const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
                     finalPdfDoc.addPage(copiedPage);
                 }
-            } else { // COMPRESSION PATH
+            } else { // COMPRESSION PATH (This logic was already correct)
                 const quality = 1 - (compressionLevel / 100);
                 for (const pageObj of selectedPages) {
                     const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
