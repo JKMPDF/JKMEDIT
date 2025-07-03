@@ -148,14 +148,14 @@
     // --- Advanced PDF Tool Logic ---
     const fileInput=document.getElementById('file-input'),dropzone=document.getElementById('dropzone');const addMoreFilesBtn=document.getElementById('add-more-files-btn'),processBtn=document.getElementById('process-btn');const slider=document.getElementById('compression-slider'),levelText=document.getElementById('compression-level-text');const uploadStage=document.getElementById('upload-stage'),editStage=document.getElementById('edit-stage');const actionButtonsContainer=document.getElementById('action-buttons'),resultContainer=document.getElementById('result-container'),pagePreviewGrid=editStage.querySelector('.page-preview-grid');const sizePreview=document.getElementById('size-preview'),originalSizeDisplay=document.getElementById('original-size-display'),finalSizeDisplay=document.getElementById('final-size-display'),sizePreviewNote=document.getElementById('size-preview-note');
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
-    let allPages=[],fileCounter=0;
     
+    let allPages = [], fileCounter = 0;
+    // JKM-FIX: Store file data (ArrayBuffer) separately to avoid massive memory duplication.
+    let fileDataStore = {};
+
     // --- Event Listeners ---
     dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
-    
-    // FIX #2: Changed 'input' to 'change' to only update UI when the user releases the slider
-    slider.addEventListener('change', updateInterface);
-    
+    slider.addEventListener('input', updateInterface); // 'input' for live feedback as slider moves
     processBtn.addEventListener('click',processAndDisplay);
 
     async function handleFiles(files){
@@ -166,18 +166,25 @@
             fileCounter++;
             const fileId = fileCounter;
             const arrayBuffer = await file.arrayBuffer();
-            const pdfDoc = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-            for (let i = 1; i <= pdfDoc.numPages; i++){
-                // FIX #1: Added fileSize property directly from the original file object
+            
+            // JKM-FIX: Store the file data once per file, using its unique ID as the key.
+            fileDataStore[fileId] = arrayBuffer;
+            
+            // Use a Uint8Array view for pdf.js for better compatibility.
+            const pdfDoc = await pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer)}).promise;
+            const numPagesInFile = pdfDoc.numPages;
+
+            for (let i = 1; i <= numPagesInFile; i++){
                 allPages.push({
-                    id:`${fileId}-${i}`, 
-                    fileId, 
-                    fileData:arrayBuffer, 
-                    fileSize: file.size, // This is the reliable file size
+                    id: `${fileId}-${i}`,
+                    fileId: fileId,
+                    // JKM-FIX: Do NOT store the large arrayBuffer here. We get it from fileDataStore when needed.
+                    fileSize: file.size, 
+                    totalPagesInFile: numPagesInFile, // Store total pages for accurate size calculation.
                     originalPageIndex: i - 1, 
-                    pageLabel:`F${fileId},P${i}`, 
-                    isSelected:true, 
-                    pdfDoc
+                    pageLabel: `F${fileId},P${i}`, 
+                    isSelected: true,
+                    pdfDoc: pdfDoc // Store the parsed pdf.js document for rendering previews.
                 });
             }
         }
@@ -187,8 +194,7 @@
 
     function formatBytes(b,d=2){if(!+b)return'0 Bytes';const k=1024,i=Math.floor(Math.log(b)/Math.log(k));return`${parseFloat((b/Math.pow(k,i)).toFixed(d<0?0:d))} ${['Bytes','KB','MB','GB'][i]}`}
     
-    async function renderPagePreviews(){pagePreviewGrid.innerHTML='';for(const pageObj of allPages){const pageItem=document.createElement('div');pageItem.className='page-item';if(!pageObj.isSelected)pageItem.classList.add('deselected');pageItem.dataset.id=pageObj.id;pageItem.draggable=true;pageItem.innerHTML=`<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;pagePreviewGrid.appendChild(pageItem);
-    const canvas=pageItem.querySelector('canvas'),page=await pageObj.pdfDoc.getPage(pageObj.originalPageIndex+1),viewport=page.getViewport({scale:0.4});canvas.height=viewport.height;canvas.width=viewport.width;await page.render({canvasContext:canvas.getContext('2d'),viewport:viewport}).promise;}}
+    async function renderPagePreviews(){pagePreviewGrid.innerHTML='';for(const pageObj of allPages){const pageItem=document.createElement('div');pageItem.className='page-item';if(!pageObj.isSelected)pageItem.classList.add('deselected');pageItem.dataset.id=pageObj.id;pageItem.draggable=true;pageItem.innerHTML=`<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;pagePreviewGrid.appendChild(pageItem);const canvas=pageItem.querySelector('canvas'),page=await pageObj.pdfDoc.getPage(pageObj.originalPageIndex+1),viewport=page.getViewport({scale:0.4});canvas.height=viewport.height;canvas.width=viewport.width;await page.render({canvasContext:canvas.getContext('2d'),viewport:viewport}).promise;}}
     
     function updateInterface(){
         const selectedPages = allPages.filter(p => p.isSelected);
@@ -204,13 +210,12 @@
 
         sizePreview.classList.remove('hidden');
         
+        // JKM-FIX: Calculate original size based on the sum of average page sizes for *selected* pages.
+        // This makes the size estimate dynamic when pages are deselected.
         let originalSelectedSize = 0;
-        const seenFiles = new Set();
         selectedPages.forEach(p => {
-            if (!seenFiles.has(p.fileId)) {
-                // FIX #1: Use the reliable fileSize property instead of byteLength
-                originalSelectedSize += p.fileSize;
-                seenFiles.add(p.fileId);
+            if (p.totalPagesInFile > 0) { // Avoid division by zero
+                originalSelectedSize += p.fileSize / p.totalPagesInFile;
             }
         });
         originalSizeDisplay.textContent = formatBytes(originalSelectedSize);
@@ -225,7 +230,8 @@
         } else {
             levelText.textContent = `${compressionLevel}% Compression`;
             processBtn.textContent = "Merge & Compress PDF";
-            const estimatedFinalSize = originalSelectedSize * (1 - (compressionLevel / 100 * 0.8));
+            // Estimate size reduction. JPEGs compress well, but this is a rough guess.
+            const estimatedFinalSize = originalSelectedSize * (1 - (compressionLevel / 100 * 0.7)); 
             finalSizeDisplay.textContent = formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0);
         }
     }
@@ -239,48 +245,67 @@
         const { PDFDocument } = PDFLib;
         const selectedPages = allPages.filter(p => p.isSelected);
         const compressionLevel = parseInt(slider.value);
-        const finalPdfDoc = await PDFDocument.create();
         let finalBytes;
 
         try {
+            const finalPdfDoc = await PDFDocument.create();
+
             if (compressionLevel === 0) { // FAST MERGE-ONLY PATH
                 const loadedPdfDocs = new Map();
                 for (const pageObj of selectedPages) {
                     let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
                     if (!sourceDoc) {
-                        sourceDoc = await PDFDocument.load(pageObj.fileData);
+                        // JKM-FIX: Retrieve the correct ArrayBuffer from our memory-efficient store.
+                        const fileData = fileDataStore[pageObj.fileId];
+                        sourceDoc = await PDFDocument.load(fileData);
                         loadedPdfDocs.set(pageObj.fileId, sourceDoc);
                     }
                     const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
                     finalPdfDoc.addPage(copiedPage);
                 }
-            } else { // COMPRESSION PATH
+            } else { // COMPRESSION PATH (Re-render pages as images)
                 const quality = 1 - (compressionLevel / 100);
                 for (const pageObj of selectedPages) {
                     const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
-                    const viewport = page.getViewport({ scale: 1.5 });
+                    // Use a slightly larger scale for better quality, but not too large to avoid memory issues.
+                    const viewport = page.getViewport({ scale: 1.5 }); 
                     const canvas = document.createElement('canvas');
-                    canvas.height = viewport.height; canvas.width = viewport.width;
-                    await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+                    canvas.height = viewport.height; 
+                    canvas.width = viewport.width;
+                    const context = canvas.getContext('2d');
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
                     
-                    const jpegImageBytes = await finalPdfDoc.embedJpg(canvas.toDataURL('image/jpeg', quality < 0.1 ? 0.1 : quality));
+                    const dataUrl = canvas.toDataURL('image/jpeg', quality < 0.1 ? 0.1 : quality);
+                    
+                    // JKM-FIX: Add robustness check to skip blank pages that might cause errors.
+                    if (!dataUrl || dataUrl === 'data:,') {
+                        console.warn(`Skipping potentially blank or invalid page: ${pageObj.pageLabel}`);
+                        continue;
+                    }
+
+                    const jpegImageBytes = await finalPdfDoc.embedJpg(dataUrl);
                     const newPage = finalPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
                     newPage.drawImage(jpegImageBytes, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
                 }
             }
             finalBytes = await finalPdfDoc.save();
 
+            // Update UI with final, accurate size and show download button
             finalSizeDisplay.textContent = formatBytes(finalBytes.length);
             sizePreviewNote.textContent = 'Processing complete!';
-            
             actionButtonsContainer.classList.add('hidden');
-            resultContainer.innerHTML = `<a href="${URL.createObjectURL(new Blob([finalBytes],{type:'application/pdf'}))}" class="download-button" download="jkm-edit-final.pdf">Download PDF</a>`;
+            resultContainer.innerHTML = `<a href="${URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }))}" class="download-button" download="jkm-edit-final.pdf">Download PDF</a>`;
             resultContainer.classList.remove('hidden');
+            
         } catch (error) {
             console.error("Error processing PDF:", error);
-            alert("An error occurred while processing the PDF. Please check the console for details.");
+            alert("An error occurred while processing the PDF. This can happen with very complex or corrupted files. Please try again or check the console for details.");
+            // Reset UI to allow user to try again
+            resultContainer.classList.add('hidden');
+            actionButtonsContainer.classList.remove('hidden');
         } finally {
-            // FIX #3: Re-enable buttons and reset the process button text by calling updateInterface
+            // JKM-FIX: Re-enable controls and reset button text by calling updateInterface,
+            // which correctly handles the button's state and text content.
             addMoreFilesBtn.disabled = false; 
             slider.disabled = false;
             updateInterface();
