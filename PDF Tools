@@ -1,1 +1,63 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <!-- Change the title for the new page -->
+    <title>PDF Tools - JKM Edit</title>
+    
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    <link href='css/style.css' rel='stylesheet' />
+</head>
+<body>
+    <!-- Placeholder for the header -->
+    <div id="header-placeholder"></div>
 
+    <!-- MAIN CONTENT FOR THE PDF TOOLS PAGE -->
+    <main class='dashboard-container'>
+        <div class='dashboard-header'>
+            <!-- Update the header for this page -->
+            <h2>PDF Tools</h2>
+            <p>All your PDF functions in one place.</p>
+        </div>
+        
+        <!-- You can create a new grid for specific PDF functions -->
+        <div class='tools-grid function-grid'>
+            <a href='#' class='tool-card'><i class='fa-solid fa-compress tool-icon'></i><h3>Compress PDF</h3><p>Reduce the file size of your PDF.</p></a>
+            <a href='#' class='tool-card'><i class='fa-solid fa-object-ungroup tool-icon'></i><h3>Merge PDF</h3><p>Combine multiple PDFs into one.</p></a>
+            <a href='#' class='tool-card'><i class='fa-solid fa-file-word tool-icon'></i><h3>PDF to Word</h3><p>Convert your PDF to an editable Word doc.</p></a>
+            <!-- Add more PDF tool cards here -->
+        </div>
+        
+        <!-- A button to go back to the main dashboard -->
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="index.html" class="back-to-dashboard-btn">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </main>
+    <!-- END OF PDF TOOLS CONTENT -->
+
+    <!-- Placeholder for the footer and modals -->
+    <div id="footer-placeholder"></div>
+
+    <!-- This small script loads the header and footer -->
+    <script>
+        fetch('partials/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
+
+        fetch('partials/footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-placeholder').innerHTML = data;
+                const scriptTag = document.createElement('script');
+                scriptTag.src = 'js/app.js';
+                document.body.appendChild(scriptTag);
+            });
+    </script>
+</body>
+</html>
