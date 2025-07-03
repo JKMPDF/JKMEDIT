@@ -21,6 +21,12 @@
         /* --- THEME DEFINITIONS --- */
         [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
         [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
+        [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
+        [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-gradient(45deg, #4a00e0, #8e2de2); }
+        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
+        [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
+        [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
+        [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
         .dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
 
         /* --- Header & Modals (Minimized for brevity) --- */
@@ -78,7 +84,25 @@
 <body>
     <header class='main-header'>
         <div class='logo-container'><a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'><div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div><h1>JKM Edit</h1></a></div>
-        <nav class='main-nav'><div class='theme-selector'><label for='theme-picker'>Theme:</label><select id='theme-picker'><option value='corporate-blue'>Corporate Blue</option><option value='forest-green'>Forest Green</option></select></div><button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'><i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i></button><a href='#' id='about-btn' class='nav-link'>About</a><a href='#' id='contact-btn' class='nav-link'>Contact Us</a></nav>
+        <nav class='main-nav'>
+            <div class='theme-selector'>
+                <label for='theme-picker'>Theme:</label>
+                <!-- FIX: Restored all theme options -->
+                <select id='theme-picker'>
+                    <option value='corporate-blue'>Corporate Blue</option>
+                    <option value='forest-green'>Forest Green</option>
+                    <option value='sunset-gradient'>Sunset Gradient</option>
+                    <option value='tech-noir'>Tech Noir</option>
+                    <option value='minty-fresh'>Minty Fresh</option>
+                    <option value='royal-purple'>Royal Purple</option>
+                    <option value='graphite-gray'>Graphite Gray</option>
+                    <option value='crimson-red'>Crimson Red</option>
+                </select>
+            </div>
+            <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'><i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i></button>
+            <a href='#' id='about-btn' class='nav-link'>About</a>
+            <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
+        </nav>
     </header>
 
     <main class='tool-container'>
@@ -186,7 +210,7 @@
 
     processBtn.addEventListener('click', processAndDisplay);
     slider.addEventListener('input', () => {
-        targetSizeInput.value = ''; // Clear target size when slider is used
+        targetSizeInput.value = ''; 
         updateInterface();
     });
     targetSizeInput.addEventListener('input', updateInterface);
@@ -213,7 +237,7 @@
             uploadedFiles.push({
                 name: file.name,
                 fileData: arrayBuffer,
-                pdfjsBuffer: arrayBuffer.slice(0) // Clone for pdf.js
+                pdfjsBuffer: arrayBuffer.slice(0) // Clone for pdf.js previews
             });
         }
 
@@ -228,19 +252,27 @@
     async function renderPagePreviews() {
         pagePreviewGrid.innerHTML = '';
         for (const file of uploadedFiles) {
-            const pdfDoc = await pdfjsLib.getDocument({ data: file.pdfjsBuffer }).promise;
-            const page = await pdfDoc.getPage(1); // Preview first page only
-            
-            const pageItem = document.createElement('div');
-            pageItem.className = 'page-item';
-            pageItem.innerHTML = `<canvas></canvas><div class="page-info">${file.name}</div>`;
-            pagePreviewGrid.appendChild(pageItem);
+            try {
+                const pdfDoc = await pdfjsLib.getDocument({ data: file.pdfjsBuffer }).promise;
+                const page = await pdfDoc.getPage(1); // Preview first page only
+                
+                const pageItem = document.createElement('div');
+                pageItem.className = 'page-item';
+                pageItem.innerHTML = `<canvas></canvas><div class="page-info">${file.name}</div>`;
+                pagePreviewGrid.appendChild(pageItem);
 
-            const canvas = pageItem.querySelector('canvas');
-            const viewport = page.getViewport({ scale: 0.4 });
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+                const canvas = pageItem.querySelector('canvas');
+                const viewport = page.getViewport({ scale: 0.4 });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+            } catch(e) {
+                console.error("Could not render preview for", file.name, e);
+                const pageItem = document.createElement('div');
+                pageItem.className = 'page-item';
+                pageItem.innerHTML = `<div class="page-info" style="position:relative; background: #e74c3c; padding: 1rem;">Error previewing<br>${file.name}</div>`;
+                pagePreviewGrid.appendChild(pageItem);
+            }
         }
     }
 
@@ -265,42 +297,27 @@
         } else {
             slider.disabled = false;
             const compressionLevel = parseInt(slider.value); // 0-100
-            // Estimate size. This is a very rough guess.
             const estimatedFinalSize = originalSize * (1 - (compressionLevel / 100 * 0.7)); 
             finalSizeDisplay.textContent = formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0);
         }
     }
 
-    async function getQualityForTargetSize(targetBytes) {
-        if (uploadedFiles.length === 0) return 0.5; // Default
-        const { PDFDocument } = PDFLib;
-        let quality = 0.5;
-        let low = 0.01;
-        let high = 1.0;
-        const totalOriginalSize = uploadedFiles.reduce((acc, file) => acc + file.fileData.byteLength, 0);
-        
-        // If target size is larger than original, no need to compress
+    async function getQualityForTargetSize(targetBytes, totalOriginalSize) {
         if (targetBytes >= totalOriginalSize) return 1.0; 
 
-        // Use a quick binary search to find the best quality setting
-        for (let i = 0; i < 8; i++) { // 8 iterations is usually enough
-            quality = (low + high) / 2;
-            
-            // Create a small test PDF with just the first page of the first file
-            const testDoc = await PDFDocument.create();
-            const sourceDoc = await PDFDocument.load(uploadedFiles[0].fileData);
-            const [copiedPage] = await testDoc.copyPages(sourceDoc, [0]);
-            testDoc.addPage(copiedPage);
+        // This is a simplified estimation. A more accurate method is complex.
+        // We'll calculate a quality based on the desired reduction ratio.
+        const reductionRatio = targetBytes / totalOriginalSize;
+        
+        // Map the reduction ratio to a JPEG quality setting (non-linear)
+        // A reduction to 50% (0.5) might need a quality of 0.7
+        // A reduction to 10% (0.1) might need a quality of 0.2
+        // We can use a power curve to approximate this.
+        let quality = Math.pow(reductionRatio, 0.5);
 
-            const testBytes = await testDoc.save();
-            const estimatedFullSize = testBytes.length / sourceDoc.getPageCount() * uploadedFiles.reduce((acc, f, idx) => acc + sourceDoc.getPageCount(), 0);
+        if (quality > 1.0) quality = 1.0;
+        if (quality < 0.1) quality = 0.1; // Set a minimum quality floor
 
-            if (estimatedFullSize > targetBytes) {
-                high = quality; // Too big, need more compression (lower quality)
-            } else {
-                low = quality; // Too small, can afford better quality
-            }
-        }
         return quality;
     }
 
@@ -312,25 +329,31 @@
         const { PDFDocument } = PDFLib;
         const finalPdfDoc = await PDFDocument.create();
         let quality;
+        const totalOriginalSize = uploadedFiles.reduce((acc, file) => acc + file.fileData.byteLength, 0);
 
         const targetSizeValue = parseFloat(targetSizeInput.value);
         if (targetSizeValue > 0) {
             const multiplier = targetSizeUnit.value === 'MB' ? 1024 * 1024 : 1024;
             const targetBytes = targetSizeValue * multiplier;
-            quality = await getQualityForTargetSize(targetBytes);
+            quality = await getQualityForTargetSize(targetBytes, totalOriginalSize);
         } else {
-            const compressionLevel = parseInt(slider.value); // 0-100
+            const compressionLevel = parseInt(slider.value);
             quality = 1 - (compressionLevel / 100);
-            if (quality < 0.01) quality = 0.01; // Ensure quality is not zero
-            if (quality > 1.0) quality = 1.0;
         }
+        
+        // Clamp quality to a safe range
+        if (quality < 0.1) quality = 0.1; 
+        if (quality > 1.0) quality = 1.0;
 
         try {
             for (const file of uploadedFiles) {
-                const pdfDoc = await pdfjsLib.getDocument({ data: file.pdfjsBuffer }).promise;
+                // FIX: Create a fresh clone of the original data for pdf.js to use in this process.
+                const processClone = file.fileData.slice(0);
+                const pdfDoc = await pdfjsLib.getDocument({ data: processClone }).promise;
+
                 for (let i = 1; i <= pdfDoc.numPages; i++) {
                     const page = await pdfDoc.getPage(i);
-                    const viewport = page.getViewport({ scale: 1.5 }); // Use a decent scale for quality
+                    const viewport = page.getViewport({ scale: 1.5 });
                     const canvas = document.createElement('canvas');
                     canvas.width = viewport.width;
                     canvas.height = viewport.height;
@@ -345,7 +368,7 @@
 
             const finalBytes = await finalPdfDoc.save();
             const finalSize = finalBytes.length;
-            finalSizeDisplay.textContent = formatBytes(finalSize);
+            finalSizeDisplay.textContent = `${formatBytes(finalSize)} (${((1 - finalSize / totalOriginalSize) * 100).toFixed(0)}% smaller)`;
 
             actionButtonContainer.classList.add('hidden');
             resultContainer.classList.remove('hidden');
