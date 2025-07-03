@@ -45,6 +45,28 @@
         #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); }
         #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
         
+        /* --- NEW: Ad Box Styling --- */
+        .ad-container {
+            max-width: 728px; /* Standard leaderboard size */
+            width: 100%;      /* Responsive: shrinks on smaller screens */
+            height: 90px;
+            margin: 0 auto 2rem auto; /* Center horizontally, add bottom margin */
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .dark-mode .ad-container {
+            background-color: #2a2a3a;
+            border-color: #444;
+            color: #666;
+        }
+
         /* Page Previews */
         #page-preview-container { margin-top: 2rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .page-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem; }
@@ -84,6 +106,20 @@
     </header>
 
     <main class='tool-container'>
+        <!-- NEW: Ad Box HTML -->
+        <div class="ad-container">
+            <span><script type="text/javascript">
+	atOptions = {
+		'key' : 'ee4e31cf24b130732767b94f62d603a1',
+		'format' : 'iframe',
+		'height' : 90,
+		'width' : 728,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/ee4e31cf24b130732767b94f62d603a1/invoke.js"></script></span>
+        </div>
+
         <div id="upload-stage">
             <div class='tool-header'>
                 <h2>Split PDF</h2>
@@ -217,7 +253,6 @@
             pagePreviewGrid.innerHTML = 'Processing file...';
             const arrayBuffer = await file.arrayBuffer();
             
-            // *** FIX: CLONE THE BUFFER ***
             // Give pdf.js a CLONE of the buffer so it doesn't interfere with pdf-lib.
             const pdfjsBuffer = arrayBuffer.slice(0);
             const pdfDoc = await pdfjsLib.getDocument({ data: pdfjsBuffer }).promise;
