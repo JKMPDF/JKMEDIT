@@ -3,7 +3,7 @@
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>Organize & Merge PDF - JKM Edit</title>
+    <title>Organize, Merge & Compress PDF - JKM Edit</title>
     
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
@@ -35,11 +35,27 @@
         .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); }
         .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
         .main-nav { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; transition: color var(--transition-speed); }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width var(--transition-speed); }
+        .nav-link:hover { color: var(--primary-color); }
+        .nav-link:hover::after { width: 100%; }
         #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
         #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
         #dark-mode-toggle .fa-sun { display: none; }
         .dark-mode #dark-mode-toggle .fa-sun { display: inline; }
         .dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+        /* --- Modal Styles (Copied from Main) --- */
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
+        .modal.show-modal { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
+        .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover,.close-btn:focus { color: var(--text-color); }
+        .modal-content h2 { color: var(--primary-color); margin-top: 0; }
+        .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
+        .contact-email:hover { transform: scale(1.05); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         /* --- Tool Layout --- */
         .tool-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
@@ -53,8 +69,8 @@
         /* Page Previews */
         #page-preview-container { margin-top: 2rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .page-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem; }
-        .page-item { position: relative; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; cursor: grab; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
-        .page-item.dragging { opacity: 0.4; }
+        .page-item { position: relative; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; cursor: grab; box-shadow: 0 2px 8px rgba(0,0,0,0.07); transition: opacity 0.2s ease-in-out; }
+        .page-item.dragging { opacity: 0.4; } /* Class for item being dragged */
         .page-item canvas { display: block; width: 100%; height: auto; }
         .page-item.deselected { border-color: #aaa; filter: grayscale(80%); }
         .page-item.deselected .page-tick-icon { display: none; }
@@ -62,19 +78,22 @@
         .page-info { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); color: white; font-size: 0.8rem; text-align: center; padding: 4px 0; }
         
         /* Actions & Buttons */
-        .actions-panel { margin-top: 1.5rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; }
-        .button-group { display: flex; gap: 1rem; justify-content: center; }
-        .action-button { display: block; width: 100%; padding: 1rem; margin-top: 1.5rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; }
+        .actions-panel { margin-top: 1.5rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;}
+        .button-group { display: flex; gap: 1rem; justify-content: center; width: 100%; }
+        .action-button { display: block; width: 100%; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; }
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .secondary-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
         
-        /* Result & Compression Section */
+        /* Compression Slider in Action Panel */
+        .compression-settings { width: 100%; max-width: 500px; text-align: center; }
+        .slider-container { display: flex; align-items: center; gap: 1rem; margin: 0.5rem auto; }
+        
+        /* Result Section */
         #result-area { margin-top: 2rem; text-align: center; }
-        .compression-panel { padding: 2rem; background: var(--surface-color); border-radius: 10px; }
-        .compression-panel p { margin-top: 0; }
-        .size-info { font-weight: 600; }
-        .slider-container { display: flex; align-items: center; gap: 1rem; max-width: 500px; margin: 1.5rem auto; }
-        .download-button { display: inline-block; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
+        .result-panel { padding: 2rem; background: var(--surface-color); border-radius: 10px; }
+        .size-info { font-weight: 600; color: var(--primary-color); }
+        .size-comparison { display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 1rem 0; font-size: 1.1rem; }
+        .download-button { display: inline-block; padding: 1rem 3rem; margin-top: 1rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
 
         .navigation-buttons { text-align: center; margin-top: 3rem; }
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; margin: 0 0.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
@@ -104,14 +123,16 @@
                 </select>
             </div>
             <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'><i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i></button>
+            <a href='#' id='about-btn' class='nav-link'>About</a>
+            <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
         </nav>
     </header>
 
     <main class='tool-container'>
         <div id="upload-stage">
             <div class='tool-header'>
-                <h2>Organize & Merge PDF</h2>
-                <p>Rearrange, remove, and merge pages from multiple PDF files.</p>
+                <h2>Organize, Merge & Compress PDF</h2>
+                <p>Rearrange, remove, and merge pages, then compress the final PDF.</p>
             </div>
             <input type="file" id="file-input" class="hidden" multiple accept=".pdf"/>
             <div id="dropzone">
@@ -125,46 +146,43 @@
                  <div class="page-preview-grid"></div>
             </div>
             <div class="actions-panel">
-                <p style="text-align:center; color:#6c757d; margin:0 0 1rem 0;">Click pages to deselect. Drag to reorder.</p>
+                <p style="text-align:center; color:#6c757d; margin:0;">Click pages to select/deselect. Drag to reorder.</p>
+                <div class="compression-settings">
+                     <p style="margin:0;"><strong>Compression Quality</strong> (Lower quality means smaller file size)</p>
+                     <div class="slider-container">
+                        <label for="compression-slider">1%</label>
+                        <input type="range" id="compression-slider" min="1" max="100" value="80" step="1" style="width:100%;">
+                        <label for="compression-slider">100%</label>
+                        <strong id="compression-level" style="min-width: 40px;">80%</strong>
+                     </div>
+                </div>
                 <div class="button-group">
                     <button id="add-more-files-btn" class="action-button secondary-button"><i class="fa-solid fa-plus"></i> Add More Files</button>
-                    <button id="merge-btn" class="action-button" disabled>Merge PDF</button>
+                    <button id="process-btn" class="action-button" disabled>Merge & Compress PDF</button>
                 </div>
             </div>
         </div>
         
         <div id="result-area" class="hidden">
-            <div id="merged-result" class="compression-panel">
-                 <h3>PDF Merged Successfully!</h3>
-                 <p>Original Size: <span id="original-size-result" class="size-info"></span></p>
-                 <a href="#" id="download-merged-btn" class="download-button" download="jkm-edit-merged.pdf">Download Merged PDF</a>
-                 <hr style="margin: 2rem auto; max-width: 400px; border: 1px solid #eee;">
-                 <h4>Optional: Compress Your PDF</h4>
-                 <p>Reduce file size by converting pages to images. This may affect text quality.</p>
-                 <div class="slider-container">
-                    <label for="compression-slider">Quality:</label>
-                    <input type="range" id="compression-slider" min="0" max="100" value="75" step="1">
-                    <span id="compression-level">75%</span>
-                 </div>
-                 <p>Estimated Compressed Size: <strong id="estimated-size"></strong></p>
-                 <button id="compress-btn" class="action-button secondary-button" style="max-width:300px; margin: 1rem auto;">Compress PDF</button>
-            </div>
-             <div id="compressed-result" class="compression-panel hidden">
-                <h3>PDF Compressed Successfully!</h3>
-                <p>Final Size: <span id="final-size-result" class="size-info"></span></p>
-                <a href="#" id="download-compressed-btn" class="download-button" download="jkm-edit-compressed.pdf">Download Compressed PDF</a>
+            <div id="final-result" class="result-panel">
+                 <!-- Content will be generated by JavaScript -->
             </div>
         </div>
 
         <div class="navigation-buttons">
-            <a href="javascript:history.back()" class="nav-btn secondary-button"><i class="fa-solid fa-arrow-left"></i> Previous</a>
+            <a href="javascript:location.reload()" class="nav-btn secondary-button"><i class="fa-solid fa-arrow-left"></i> Start Over</a>
             <a href="https://jkmpdf.github.io/JKMEDIT/" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
         </div>
     </main>
     
+    <!-- Modals (Copied from Main) -->
+    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
+    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
+
     <script>
-    // --- Standard Theme & Dark Mode Logic ---
+    // --- Standard Theme, Dark Mode & Modal Logic ---
     document.addEventListener('DOMContentLoaded', () => { 
+        // Theme and Dark Mode
         const themePicker = document.getElementById('theme-picker');
         const htmlElement = document.documentElement;
         const setTheme = (theme) => { htmlElement.dataset.theme = theme; localStorage.setItem('jkm-edit-theme', theme); };
@@ -179,31 +197,40 @@
         if (darkModeToggle) darkModeToggle.addEventListener('click', () => body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode());
         const savedMode = localStorage.getItem('jkm-edit-mode');
         savedMode === 'dark' ? enableDarkMode() : disableDarkMode();
+        
+        // Modal Logic
+        const aboutModal = document.getElementById('about-modal');
+        const contactModal = document.getElementById('contact-modal');
+        const aboutBtn = document.getElementById('about-btn');
+        const contactBtn = document.getElementById('contact-btn');
+        const closeBtns = document.querySelectorAll('.close-btn');
+        const openModal = (modal) => { modal.classList.add('show-modal'); };
+        const closeModal = (modal) => { modal.classList.remove('show-modal'); };
+        aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+        contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+        closeBtns.forEach(btn => btn.addEventListener('click', () => { closeModal(aboutModal); closeModal(contactModal); }));
+        window.addEventListener('click', (e) => { if (e.target === aboutModal) closeModal(aboutModal); if (e.target === contactModal) closeModal(contactModal); });
     });
 
     // --- Advanced PDF Tool Logic ---
     const fileInput = document.getElementById('file-input');
     const dropzone = document.getElementById('dropzone');
     const addMoreFilesBtn = document.getElementById('add-more-files-btn');
-    const mergeBtn = document.getElementById('merge-btn');
-    const compressBtn = document.getElementById('compress-btn');
+    const processBtn = document.getElementById('process-btn');
     const slider = document.getElementById('compression-slider');
     const levelText = document.getElementById('compression-level');
-    const estimatedSizeElem = document.getElementById('estimated-size');
 
     const uploadStage = document.getElementById('upload-stage');
     const editStage = document.getElementById('edit-stage');
     const resultArea = document.getElementById('result-area');
-    const mergedResult = document.getElementById('merged-result');
-    const compressedResult = document.getElementById('compressed-result');
+    const finalResultPanel = document.getElementById('final-result');
     const pagePreviewGrid = editStage.querySelector('.page-preview-grid');
     
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
 
     let allPages = [];
     let fileCounter = 0;
-    let mergedPdfBytes = null;
-
+    
     // --- Event Listeners ---
     dropzone.addEventListener('click', () => fileInput.click());
     addMoreFilesBtn.addEventListener('click', () => fileInput.click());
@@ -212,9 +239,8 @@
     dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
     dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
     
-    slider.addEventListener('input', updateCompressionText);
-    mergeBtn.addEventListener('click', mergePdfs);
-    compressBtn.addEventListener('click', compressPdf);
+    slider.addEventListener('input', () => levelText.textContent = slider.value + '%');
+    processBtn.addEventListener('click', processPdf);
 
     async function handleFiles(files) {
         uploadStage.classList.add('hidden');
@@ -228,7 +254,7 @@
             const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
             for (let i = 1; i <= pdfDoc.numPages; i++) {
-                allPages.push({ id: `${fileId}-${i}`, fileId, fileData: arrayBuffer, originalFile: file, originalPageIndex: i - 1, pageLabel: `File ${fileId}, P${i}`, isSelected: true, pdfDoc });
+                allPages.push({ id: `${fileId}-${i}`, fileId, fileData: arrayBuffer, originalFile: file, originalPageIndex: i - 1, pageLabel: `F${fileId}, P${i}`, isSelected: true, pdfDoc });
             }
         }
         await renderPagePreviews();
@@ -238,7 +264,7 @@
     function formatBytes(bytes, decimals = 2) { if (!+bytes) return '0 Bytes'; const k=1024,dm=decimals<0?0:decimals,sizes=['Bytes','KB','MB','GB'],i=Math.floor(Math.log(bytes)/Math.log(k)); return `${parseFloat((bytes/Math.pow(k,i)).toFixed(dm))} ${sizes[i]}`; }
 
     async function renderPagePreviews() {
-        pagePreviewGrid.innerHTML = '';
+        pagePreviewGrid.innerHTML = ''; // Clear existing previews
         for (const pageObj of allPages) {
             const pageItem = document.createElement('div');
             pageItem.className = 'page-item';
@@ -258,8 +284,7 @@
         }
     }
     
-    function updateUIState() { mergeBtn.disabled = allPages.filter(p => p.isSelected).length < 1; }
-    function updateCompressionText() { levelText.textContent = slider.value + '%'; if(mergedPdfBytes) { estimatedSizeElem.textContent = `~${formatBytes(mergedPdfBytes.length * (slider.value / 100))}`; } }
+    function updateUIState() { processBtn.disabled = allPages.filter(p => p.isSelected).length < 1; }
 
     pagePreviewGrid.addEventListener('click', (e) => {
         const pageItem = e.target.closest('.page-item');
@@ -268,66 +293,99 @@
         if (pageObj) { pageObj.isSelected = !pageObj.isSelected; pageItem.classList.toggle('deselected'); updateUIState(); }
     });
     
-    let draggedItem=null; pagePreviewGrid.addEventListener('dragstart',e=>{if(e.target.classList.contains('page-item')){draggedItem=e.target;setTimeout(()=>e.target.classList.add('dragging'),0);}}); pagePreviewGrid.addEventListener('dragend',e=>{if(draggedItem){draggedItem.classList.remove('dragging');}}); pagePreviewGrid.addEventListener('dragover',e=>{e.preventDefault();const afterElement=getDragAfterElement(pagePreviewGrid,e.clientY);if(draggedItem){if(afterElement==null){pagePreviewGrid.appendChild(draggedItem);}else{pagePreviewGrid.insertBefore(draggedItem,afterElement);}}}); pagePreviewGrid.addEventListener('drop',()=>{const newOrder=[...document.querySelectorAll('.page-item')].map(item=>allPages.find(f=>f.id===item.dataset.id));allPages=newOrder;}); function getDragAfterElement(container,y){const draggableElements=[...container.querySelectorAll('.page-item:not(.dragging)')];return draggableElements.reduce((closest,child)=>{const box=child.getBoundingClientRect(),offset=y-box.top-box.height/2;if(offset<0&&offset>closest.offset){return{offset:offset,element:child};}else{return closest;}},{offset:Number.NEGATIVE_INFINITY}).element;}
+    // --- New, Robust Drag & Drop Logic ---
+    let draggedItem = null;
+    pagePreviewGrid.addEventListener('dragstart', (e) => {
+        if (e.target.classList.contains('page-item')) {
+            draggedItem = e.target;
+            setTimeout(() => e.target.classList.add('dragging'), 0); // Add class after a tick for visual feedback
+        }
+    });
 
-    async function mergePdfs() {
+    pagePreviewGrid.addEventListener('dragend', (e) => {
+        if(draggedItem) {
+            draggedItem.classList.remove('dragging');
+            draggedItem = null;
+            // Update the internal array order after dropping
+            const newOrder = [...document.querySelectorAll('.page-item')].map(item => allPages.find(f => f.id === item.dataset.id));
+            allPages = newOrder;
+        }
+    });
+    
+    pagePreviewGrid.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (!draggedItem) return;
+        const afterElement = getDragAfterElement(pagePreviewGrid, e.clientY);
+        if (afterElement == null) {
+            pagePreviewGrid.appendChild(draggedItem);
+        } else {
+            pagePreviewGrid.insertBefore(draggedItem, afterElement);
+        }
+    });
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.page-item:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+    
+    // --- New Combined Processing Logic ---
+    async function processPdf() {
         editStage.classList.add('hidden');
         resultArea.classList.remove('hidden');
-        mergedResult.classList.remove('hidden');
-        compressedResult.classList.add('hidden');
-        mergedResult.innerHTML = `<h3><i class="fa-solid fa-spinner fa-spin"></i> Merging...</h3>`;
+        finalResultPanel.innerHTML = `<h3><i class="fa-solid fa-spinner fa-spin"></i> Processing PDF... Please wait.</h3><p>Merging and compressing your selected pages.</p>`;
 
         const { PDFDocument } = PDFLib;
-        const finalPdfDoc = await PDFDocument.create();
         const selectedPages = allPages.filter(p => p.isSelected);
-        const loadedPdfLibDocs = new Map();
-        let originalSelectedSize = 0; const seenFiles = new Set();
+        let originalSelectedSize = 0; 
+        const seenFiles = new Set();
+        selectedPages.forEach(p => {
+            if(!seenFiles.has(p.fileId)) {
+                originalSelectedSize += p.originalFile.size;
+                seenFiles.add(p.fileId);
+            }
+        });
 
+        // 1. Merge Pages
+        const finalPdfDoc = await PDFDocument.create();
+        const loadedPdfLibDocs = new Map();
         for (const pageObj of selectedPages) {
-            if (!seenFiles.has(pageObj.fileId)) { originalSelectedSize += pageObj.originalFile.size; seenFiles.add(pageObj.fileId); }
             let sourcePdfDoc = loadedPdfLibDocs.get(pageObj.fileId);
-            if (!sourcePdfDoc) { sourcePdfDoc = await PDFDocument.load(pageObj.fileData, { ignoreEncryption: true }); loadedPdfLibDocs.set(pageObj.fileId, sourcePdfDoc); }
+            if (!sourcePdfDoc) {
+                sourcePdfDoc = await PDFDocument.load(pageObj.fileData, { ignoreEncryption: true });
+                loadedPdfLibDocs.set(pageObj.fileId, sourcePdfDoc);
+            }
             const [copiedPage] = await finalPdfDoc.copyPages(sourcePdfDoc, [pageObj.originalPageIndex]);
             finalPdfDoc.addPage(copiedPage);
         }
-        
-        mergedPdfBytes = await finalPdfDoc.save({ useObjectStreams: true });
-        
-        document.getElementById('original-size-result').textContent = formatBytes(originalSelectedSize);
-        document.getElementById('download-merged-btn').href = URL.createObjectURL(new Blob([mergedPdfBytes], { type: 'application/pdf' }));
-        updateCompressionText(); // Update estimated size now that we have the merged file
-        mergedResult.innerHTML = `<h3>PDF Merged Successfully!</h3><p>Merged Size: <span class="size-info">${formatBytes(mergedPdfBytes.length)}</span></p><a href="${URL.createObjectURL(new Blob([mergedPdfBytes],{type:'application/pdf'}))}" id="download-merged-btn" class="download-button" download="jkm-edit-merged.pdf">Download Merged PDF</a><hr style="margin:2rem auto;max-width:400px;border:1px solid #eee;"><h4>Optional: Compress Your PDF</h4><p>Reduce file size by converting pages to images. This may affect text quality.</p><div class="slider-container"><label for="compression-slider">Quality:</label><input type="range" id="compression-slider" min="0" max="100" value="75" step="1"><span id="compression-level">75%</span></div><p>Estimated Compressed Size: <strong id="estimated-size">${formatBytes(mergedPdfBytes.length*0.75)}</strong></p><button id="compress-btn" class="action-button secondary-button" style="max-width:300px; margin: 1rem auto;">Compress PDF</button>`;
-        // Re-bind listeners to newly created elements
-        document.getElementById('compression-slider').addEventListener('input', updateCompressionText);
-        document.getElementById('compress-btn').addEventListener('click', compressPdf);
-    }
-    
-    async function compressPdf() {
-        if (!mergedPdfBytes) return;
-        mergedResult.classList.add('hidden');
-        compressedResult.classList.remove('hidden');
-        compressedResult.innerHTML = `<h3><i class="fa-solid fa-spinner fa-spin"></i> Compressing...</h3>`;
+        const mergedPdfBytes = await finalPdfDoc.save({ useObjectStreams: false }); // Disable object streams for better compatibility
 
-        const { PDFDocument } = PDFLib;
+        // 2. Compress the Merged PDF
+        finalResultPanel.innerHTML = `<h3><i class="fa-solid fa-spinner fa-spin"></i> Compressing merged file...</h3>`;
         const quality = parseInt(slider.value) / 100;
         const pdfToCompress = await PDFDocument.load(mergedPdfBytes);
         const compressedPdfDoc = await PDFDocument.create();
-        const pages = pdfToCompress.getPages();
 
-        for(let i=0; i<pages.length; i++){
+        for(let i=0; i<pdfToCompress.getPageCount(); i++){
             const tempPdf = await PDFDocument.create();
             const [copiedPage] = await tempPdf.copyPages(pdfToCompress, [i]);
             tempPdf.addPage(copiedPage);
             const tempBytes = await tempPdf.save();
             const pdfjsDoc = await pdfjsLib.getDocument({data: tempBytes}).promise;
             const page = await pdfjsDoc.getPage(1);
-            const viewport = page.getViewport({scale: 1.5}); // Higher scale for better quality
+            const viewport = page.getViewport({scale: 1.5}); // Use a good scale for rendering
 
             const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
             canvas.height = viewport.height;
             canvas.width = viewport.width;
-            await page.render({canvasContext: context, viewport: viewport}).promise;
+            await page.render({canvasContext: canvas.getContext('2d'), viewport: viewport}).promise;
 
             const jpegImageBytes = await compressedPdfDoc.embedJpg(canvas.toDataURL('image/jpeg', quality));
             const newPage = compressedPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
@@ -335,9 +393,18 @@
         }
         
         const compressedBytes = await compressedPdfDoc.save();
-        document.getElementById('final-size-result').textContent = formatBytes(compressedBytes.length);
-        document.getElementById('download-compressed-btn').href = URL.createObjectURL(new Blob([compressedBytes],{type:'application/pdf'}));
-        compressedResult.innerHTML = `<h3>PDF Compressed Successfully!</h3><p>Final Size: <span class="size-info">${formatBytes(compressedBytes.length)}</span></p><a href="${URL.createObjectURL(new Blob([compressedBytes],{type:'application/pdf'}))}" id="download-compressed-btn" class="download-button" download="jkm-edit-compressed.pdf">Download Compressed PDF</a>`;
+        const finalDownloadUrl = URL.createObjectURL(new Blob([compressedBytes], { type: 'application/pdf' }));
+        
+        // 3. Display Final Result
+        finalResultPanel.innerHTML = `
+            <h3>Processing Complete!</h3>
+            <div class="size-comparison">
+                <span>Original: <strong class="size-info">${formatBytes(originalSelectedSize)}</strong></span>
+                <i class="fa-solid fa-arrow-right-long"></i>
+                <span>Final: <strong class="size-info">${formatBytes(compressedBytes.length)}</strong></span>
+            </div>
+            <a href="${finalDownloadUrl}" class="download-button" download="jkm-edit-final.pdf">Download PDF</a>
+        `;
     }
 
     </script>
