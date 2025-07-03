@@ -62,31 +62,16 @@
         .tool-card p { font-size: 0.9rem; line-height: 1.5; color: #6c757d; }
         .dark-mode .tool-card p { color: #a0a0a0; }
 
-        /* --- NEW: 3-column function grid --- */
+        /* --- 3-column function grid --- */
         .function-grid { grid-template-columns: repeat(3, 1fr); }
         @media (max-width: 992px) { .function-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 576px) { .function-grid { grid-template-columns: 1fr; } }
-
-        /* --- Ad Box Style --- */
-        .ad-card { border: 2px dashed var(--accent-color); background-color: color-mix(in srgb, var(--surface-color) 95%, var(--accent-color) 5%); justify-content: center; align-items: center; min-height: 230px; }
-        .dark-mode .ad-card { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--accent-color) 10%); }
-        .ad-card h3, .ad-card p, .ad-card i { display: none; }
-        .ad-card:empty h3, .ad-card:empty p, .ad-card:empty i { display: block; }
         
-        /* --- NEW: Back to Dashboard Button --- */
+        /* --- Back to Dashboard Button --- */
         .back-to-dashboard-btn { display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
 
-        /* --- Services & Modal Styles (Unchanged) --- */
-        .services-section { padding: 4rem 2rem; background-color: var(--surface-color); margin-top: 4rem; border-top: 1px solid color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%); }
-        .services-container { max-width: 1100px; margin: auto; text-align: center; }
-        .services-container h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--primary-color); }
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; margin-top: 3rem; text-align: left; }
-        .service-item { display: flex; align-items: flex-start; gap: 1rem; }
-        .service-item i { font-size: 1.5rem; color: var(--primary-color); margin-top: 5px; min-width: 25px; }
-        .service-item h4 { margin: 0 0 0.25rem 0; font-size: 1.1rem; }
-        .service-item p { margin: 0; font-size: 0.9rem; color: #6c757d; }
-        .dark-mode .service-item p { color: #a0a0a0; }
+        /* --- Modal Styles --- */
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
         .modal.show-modal { display: flex; align-items: center; justify-content: center; }
         .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
@@ -101,7 +86,7 @@
     </style>
 </head>
 <body>
-    <!-- Header Section (Unchanged) -->
+    <!-- Header Section (Identical to homepage) -->
     <header class='main-header'>
         <div class='logo-container'>
             <a href='/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
@@ -138,28 +123,28 @@
             <p>A complete suite of tools to manage your PDF files. Fast, easy, and free.</p>
         </div>
 
-        <!-- The 'function-grid' class ensures a 3-column layout on desktops -->
+        <!-- The 'function-grid' class applies the 3-column layout -->
         <div class='tools-grid function-grid'>
-            <!-- Each 'a' tag is a tool. Update href="#" to the actual tool page later. -->
+            <!-- Each 'a' tag is a tool. You will later change href="#" to the actual page for each tool. -->
             <a href='#' class='tool-card'><i class='fa-solid fa-object-group tool-icon'></i><h3>Merge PDF</h3><p>Combine multiple PDF files into a single document.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-scissors tool-icon'></i><h3>Split PDF</h3><p>Extract a range of pages or every page into separate PDFs.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-file-zipper tool-icon'></i><h3>Compress PDF</h3><p>Reduce the file size of your PDF while optimizing for quality.</p></a>
             
             <a href='#' class='tool-card'><i class='fa-solid fa-file-word tool-icon'></i><h3>PDF to Word</h3><p>Convert your PDF files to editable DOCX documents.</p></a>
-            <a href='#' class='tool-card'><i class='fa-solid fa-file-excel tool-icon'></i><h3>PDF to Excel</h3><p>Convert PDF data to easily editable XLSX spreadsheets.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-file-powerpoint tool-icon'></i><h3>PDF to PowerPoint</h3><p>Turn your PDFs into easy-to-edit PPTX slideshows.</p></a>
+            <a href='#' class='tool-card'><i class='fa-solid fa-file-excel tool-icon'></i><h3>PDF to Excel</h3><p>Convert PDF data to easily editable XLSX spreadsheets.</p></a>
 
             <a href='#' class='tool-card'><i class='fa-solid fa-file-image tool-icon'></i><h3>PDF to JPG</h3><p>Convert each PDF page into a high-quality JPG image.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-file-lines tool-icon'></i><h3>Word to PDF</h3><p>Convert DOCX documents to professional PDF files.</p></a>
-            <a href='#' class='tool-card'><i class='fa-solid fa-table-cells tool-icon'></i><h3>Excel to PDF</h3><p>Convert XLSX spreadsheets into easily shareable PDFs.</p></a>
+            <a href='#' class='tool-card'><i class='fa-solid fa-presentation-screen tool-icon'></i><h3>PowerPoint to PDF</h3><p>Convert PPTX presentations to easily shareable PDFs.</p></a>
 
+            <a href='#' class='tool-card'><i class='fa-solid fa-table-cells tool-icon'></i><h3>Excel to PDF</h3><p>Convert XLSX spreadsheets into easily shareable PDFs.</p></a>
+            <a href='#' class='tool-card'><i class='fa-solid fa-image tool-icon'></i><h3>JPG to PDF</h3><p>Combine multiple JPG images into a single PDF file.</p></a>
+            <a href='#' class='tool-card'><i class='fa-solid fa-signature tool-icon'></i><h3>Sign PDF</h3><p>Sign your PDF documents yourself or request signatures.</p></a>
+            
             <a href='#' class='tool-card'><i class='fa-solid fa-list-ol tool-icon'></i><h3>Add Page Numbers</h3><p>Insert page numbers into your PDF files with ease.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-rotate tool-icon'></i><h3>Rotate PDF</h3><p>Rotate all or specific pages in your PDF document.</p></a>
-            <a href='#' class='tool-card'><i class='fa-solid fa-lock-open tool-icon'></i><h3>Unlock PDF</h3><p>Remove passwords and restrictions from your PDF files.</p></a>
-            
             <a href='#' class='tool-card'><i class='fa-solid fa-lock tool-icon'></i><h3>Protect PDF</h3><p>Add a password and encrypt your PDF file to secure it.</p></a>
-            <a href='#' class='tool-card'><i class='fa-solid fa-layer-group tool-icon'></i><h3>Organize PDF</h3><p>Reorder, add, or remove pages from your PDF document.</p></a>
-            <a href='#' class='tool-card'><i class='fa-solid fa-heart-pulse tool-icon'></i><h3>Repair PDF</h3><p>Attempt to recover data from a corrupted or damaged PDF.</p></a>
         </div>
 
         <div style='text-align: center; margin-top: 3rem;'>
@@ -167,11 +152,11 @@
         </div>
     </main>
     
-    <!-- Modals (Unchanged) -->
+    <!-- Modals (Identical to homepage) -->
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
-    <!-- JavaScript (Unchanged) -->
+    <!-- JavaScript (Identical to homepage) -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const aboutModal = document.getElementById('about-modal');
