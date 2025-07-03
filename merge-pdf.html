@@ -164,7 +164,6 @@
             const arrayBuffer = await file.arrayBuffer();
             const pdfDoc = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
             for (let i = 1; i <= pdfDoc.numPages; i++){
-                // THIS IS THE CORRECTED LINE - originalPageIndex is now included
                 allPages.push({id:`${fileId}-${i}`, fileId, fileData:arrayBuffer, originalPageIndex: i - 1, pageLabel:`F${fileId},P${i}`, isSelected:true, pdfDoc});
             }
         }
@@ -177,9 +176,45 @@
     async function renderPagePreviews(){pagePreviewGrid.innerHTML='';for(const pageObj of allPages){const pageItem=document.createElement('div');pageItem.className='page-item';if(!pageObj.isSelected)pageItem.classList.add('deselected');pageItem.dataset.id=pageObj.id;pageItem.draggable=true;pageItem.innerHTML=`<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;pagePreviewGrid.appendChild(pageItem);
     const canvas=pageItem.querySelector('canvas'),page=await pageObj.pdfDoc.getPage(pageObj.originalPageIndex+1),viewport=page.getViewport({scale:0.4});canvas.height=viewport.height;canvas.width=viewport.width;await page.render({canvasContext:canvas.getContext('2d'),viewport:viewport}).promise;}}
     
-    function updateInterface(){const selectedPages=allPages.filter(p=>p.isSelected);const hasSelection=selectedPages.length>0;processBtn.disabled=!hasSelection;resultContainer.classList.add('hidden');actionButtonsContainer.classList.remove('hidden');if(!hasSelection){sizePreview.classList.add('hidden');return}
-    sizePreview.classList.remove('hidden');let originalSelectedSize=0;const seenFiles=new Set();selectedPages.forEach(p=>{if(!seenFiles.has(p.fileId)){originalSelectedSize+=p.fileData.byteLength;seenFiles.add(p.fileId)}});originalSizeDisplay.textContent=formatBytes(originalSelectedSize);
-    const compressionLevel=parseInt(slider.value);sizePreviewNote.textContent='(Final size is estimated until processing)';if(compressionLevel===0){levelText.textContent="Merge Only (No Compression)";processBtn.textContent="Merge PDF";finalSizeDisplay.textContent=formatBytes(originalSelectedSize)}else{levelText.textContent=`${compressionLevel}% Compression`;processBtn.textContent="Merge & Compress PDF";const estimatedFinalSize=originalSelectedSize*(1-(compressionLevel/100*0.8));finalSizeDisplay.textContent=formatBytes(estimatedFinalSize)}}
+    function updateInterface(){
+        const selectedPages = allPages.filter(p => p.isSelected);
+        const hasSelection = selectedPages.length > 0;
+        processBtn.disabled = !hasSelection;
+        resultContainer.classList.add('hidden');
+        actionButtonsContainer.classList.remove('hidden');
+        
+        if (!hasSelection) {
+            sizePreview.classList.add('hidden');
+            return;
+        }
+
+        sizePreview.classList.remove('hidden');
+        
+        let originalSelectedSize = 0;
+        const seenFiles = new Set();
+        selectedPages.forEach(p => {
+            if (!seenFiles.has(p.fileId)) {
+                originalSelectedSize += p.fileData.byteLength;
+                seenFiles.add(p.fileId);
+            }
+        });
+        originalSizeDisplay.textContent = formatBytes(originalSelectedSize);
+        
+        const compressionLevel = parseInt(slider.value);
+        sizePreviewNote.textContent = '(Final size is estimated until processing)';
+        
+        if (compressionLevel === 0) {
+            levelText.textContent = "Merge Only (No Compression)";
+            processBtn.textContent = "Merge PDF";
+            finalSizeDisplay.textContent = formatBytes(originalSelectedSize);
+        } else {
+            levelText.textContent = `${compressionLevel}% Compression`;
+            processBtn.textContent = "Merge & Compress PDF";
+            // A slightly more realistic estimation factor
+            const estimatedFinalSize = originalSelectedSize * (1 - (compressionLevel / 100 * 0.8));
+            finalSizeDisplay.textContent = formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0);
+        }
+    }
     
     pagePreviewGrid.addEventListener('click',t=>{const e=t.target.closest('.page-item');if(!e)return;const o=allPages.find(t=>t.id===e.dataset.id);if(o){o.isSelected=!o.isSelected;e.classList.toggle('deselected');updateInterface()}});
     let draggedItem=null;pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});pagePreviewGrid.addEventListener('dragend',()=>{if(draggedItem){draggedItem.classList.remove('dragging');draggedItem=null;const t=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));allPages=t;updateInterface()}});pagePreviewGrid.addEventListener('dragover',t=>{t.preventDefault();if(!draggedItem)return;const e=getDragAfterElement(pagePreviewGrid,t.clientY);if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}});function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
@@ -205,7 +240,7 @@
                 finalPdfDoc.addPage(copiedPage);
             }
         } else { // COMPRESSION PATH
-            const quality = 1 - (compressionLevel / 100); // Invert: 100 compression = 0 quality
+            const quality = 1 - (compressionLevel / 100);
             for (const pageObj of selectedPages) {
                 const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
                 const viewport = page.getViewport({ scale: 1.5 });
