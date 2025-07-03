@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>Split PDF - JKM Edit</title>
+    
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <!-- Library for creating ZIP files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <style>
+        /* --- Basic Setup & Core Styles --- */
+        :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
+        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- THEME DEFINITIONS --- */
+        [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
+        [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
+        [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
+        [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-gradient(45deg, #4a00e0, #8e2de2); }
+        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
+        [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
+        [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
+        [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
+        .dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
+
+        /* --- Header & Modals (Minimized for brevity) --- */
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); z-index: 100; position: sticky; top: 0; }
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); }
+        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+        .main-nav { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; } .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width .3s; } .nav-link:hover::after { width: 100%; } #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); } #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; } #dark-mode-toggle .fa-sun { display: none; } .dark-mode #dark-mode-toggle .fa-sun { display: inline; } .dark-mode #dark-mode-toggle .fa-moon { display: none; } .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; } .modal.show-modal { display: flex; align-items: center; justify-content: center; } .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; } .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; } .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* --- Tool Layout --- */
+        .tool-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
+        .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; text-align: center; }
+        #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+        
+        /* Page Previews */
+        #page-preview-container { margin-top: 2rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .page-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem; }
+        .page-preview-grid.selection-disabled { pointer-events: none; opacity: 0.7; }
+        .page-item { position: relative; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; cursor: pointer; }
+        .page-item canvas { display: block; width: 100%; height: auto; } .page-item.deselected { border-color: #aaa; filter: grayscale(80%); } .page-item.deselected .page-tick-icon { display: none; } .page-tick-icon { position: absolute; top: 8px; right: 8px; font-size: 1.5rem; color: white; background-color: var(--primary-color); border-radius: 50%; padding: 0.25rem; } .page-info { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); color: white; font-size: 0.8rem; text-align: center; padding: 4px 0; }
+        
+        /* Actions & Results Panel */
+        .actions-panel { margin-top: 1.5rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;}
+        .action-button { display: block; width: 100%; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; max-width: 500px; }
+        .action-button:disabled { background: #ccc; cursor: not-allowed; }
+        
+        #result-container { display: flex; flex-direction: column; gap: 1rem; padding-top: 1.5rem; width:100%; align-items: center; border-top: 2px solid #eee; }
+        .dark-mode #result-container { border-top-color: #333; }
+        .download-button { display: inline-block; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
+        
+        .split-options { display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem; background-color: #f0f0f0; padding: 1rem; border-radius: 8px; width: 100%; max-width: 500px;}
+        .dark-mode .split-options { background-color: #2a2a3a; }
+        .split-options label { font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
+        .split-options p { font-size: 0.9rem; color: #6c757d; margin: 0 0 0 1.7rem; }
+        
+        .navigation-buttons { text-align: center; margin-top: 3rem; }
+        .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; margin: 0 0.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
+        .secondary-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .primary-nav-btn { background: var(--gradient); color: white !important; }
+    </style>
+</head>
+<body>
+    <header class='main-header'>
+        <div class='logo-container'><a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'><div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div><h1>JKM Edit</h1></a></div>
+        <nav class='main-nav'><div class='theme-selector'><label for='theme-picker'>Theme:</label><select id='theme-picker'><option value='corporate-blue'>Corporate Blue</option><option value='forest-green'>Forest Green</option><option value='sunset-gradient'>Sunset Gradient</option><option value='tech-noir'>Tech Noir</option><option value='minty-fresh'>Minty Fresh</option><option value='royal-purple'>Royal Purple</option><option value='graphite-gray'>Graphite Gray</option><option value='crimson-red'>Crimson Red</option></select></div><button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'><i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i></button><a href='#' id='about-btn' class='nav-link'>About</a><a href='#' id='contact-btn' class='nav-link'>Contact Us</a></nav>
+    </header>
+
+    <main class='tool-container'>
+        <div id="upload-stage">
+            <div class='tool-header'>
+                <h2>Split PDF</h2>
+                <p>Extract pages or split your PDF into multiple documents.</p>
+            </div>
+            <!-- REMOVED 'multiple' to allow only one file -->
+            <input type="file" id="file-input" class="hidden" accept=".pdf"/>
+            <div id="dropzone">
+                <i class="fa-solid fa-file-arrow-up"></i>
+                <p>Drag & drop a single PDF file here or click to select</p>
+            </div>
+        </div>
+
+        <div id="edit-stage" class="hidden">
+            <div id="page-preview-container">
+                 <p style="text-align:center; color:#6c757d; margin:0 0 1rem 0;">Click pages to select/deselect them for extraction.</p>
+                 <div class="page-preview-grid"></div>
+            </div>
+
+            <div class="actions-panel">
+                <div class="split-options">
+                    <div>
+                        <label>
+                            <input type="radio" name="split-mode" value="extract" checked> Extract selected pages
+                        </label>
+                        <p>All selected pages will be combined into one new PDF.</p>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="radio" name="split-mode" value="split-all"> Split every page
+                        </label>
+                        <p>Creates a ZIP file containing each page as a separate PDF.</p>
+                    </div>
+                </div>
+                
+                <button id="process-btn" class="action-button" disabled>Split PDF</button>
+
+                <div id="result-container" class="hidden">
+                    <!-- Result content will be injected here by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn secondary-button"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="https://jkmpdf.github.io/JKMEDIT/" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+    </main>
+    
+    <!-- Modals -->
+    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
+    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
+
+    <script>
+    // --- Standard Theme, Dark Mode & Modal Logic (minified) ---
+    document.addEventListener('DOMContentLoaded', () => { 
+        const themePicker=document.getElementById('theme-picker'),htmlElement=document.documentElement;const setTheme=(t)=>{htmlElement.dataset.theme=t;localStorage.setItem('jkm-edit-theme',t)};if(themePicker){themePicker.addEventListener('change',()=>setTheme(themePicker.value));const t=localStorage.getItem('jkm-edit-theme');if(t){setTheme(t);themePicker.value=t}else{themePicker.value='corporate-blue'}}
+        const darkModeToggle=document.getElementById('dark-mode-toggle'),body=document.body;const enableDarkMode=()=>{body.classList.add('dark-mode');localStorage.setItem('jkm-edit-mode','dark')};const disableDarkMode=()=>{body.classList.remove('dark-mode');localStorage.setItem('jkm-edit-mode','light')};if(darkModeToggle)darkModeToggle.addEventListener('click',()=>body.classList.contains('dark-mode')?disableDarkMode():enableDarkMode());if(localStorage.getItem('jkm-edit-mode')==='dark')enableDarkMode();
+        const aboutModal=document.getElementById('about-modal'),contactModal=document.getElementById('contact-modal'),aboutBtn=document.getElementById('about-btn'),contactBtn=document.getElementById('contact-btn'),closeBtns=document.querySelectorAll('.close-btn');const openModal=(t)=>t.classList.add('show-modal');const closeModal=(t)=>t.classList.remove('show-modal');if(aboutBtn)aboutBtn.addEventListener('click',t=>{t.preventDefault();openModal(aboutModal)});if(contactBtn)contactBtn.addEventListener('click',t=>{t.preventDefault();openModal(contactModal)});closeBtns.forEach(t=>t.addEventListener('click',()=>{closeModal(aboutModal);closeModal(contactModal)}));window.addEventListener('click',t=>{if(t.target===aboutModal)closeModal(aboutModal);if(t.target===contactModal)closeModal(contactModal)});
+    });
+
+    // --- Advanced PDF Tool Logic for SPLITTING ---
+    const fileInput = document.getElementById('file-input');
+    const dropzone = document.getElementById('dropzone');
+    const processBtn = document.getElementById('process-btn');
+    const splitModeRadios = document.querySelectorAll('input[name="split-mode"]');
+    const uploadStage = document.getElementById('upload-stage');
+    const editStage = document.getElementById('edit-stage');
+    const resultContainer = document.getElementById('result-container');
+    const pagePreviewGrid = editStage.querySelector('.page-preview-grid');
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
+    let allPages = [];
+    let originalPdfData = { fileData: null, pdfDoc: null };
+
+    // --- Event Listeners ---
+    dropzone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => handleFile(e.target.files));
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+    dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('drag-over'); handleFile(e.dataTransfer.files); });
+    
+    processBtn.addEventListener('click', processAndDisplay);
+    splitModeRadios.forEach(radio => radio.addEventListener('change', updateInterface));
+
+    async function handleFile(files) {
+        if (files.length === 0) return;
+        if (files.length > 1) {
+            alert("Please select only one PDF file at a time for splitting.");
+            return;
+        }
+        const file = files[0];
+        if (file.type !== "application/pdf") return;
+
+        // Reset state for new file
+        allPages = [];
+        pagePreviewGrid.innerHTML = 'Processing file...';
+        fileInput.value = null; // Allow re-uploading the same file
+
+        uploadStage.classList.add('hidden');
+        editStage.classList.remove('hidden');
+        resultContainer.classList.add('hidden');
+        processBtn.classList.remove('hidden');
+
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+            originalPdfData = { fileData: arrayBuffer, pdfDoc };
+
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                allPages.push({ pageNum: i, isSelected: true });
+            }
+
+            await renderPagePreviews();
+            updateInterface();
+        } catch (error) {
+            console.error("Error handling file:", error);
+            alert("Could not read the PDF file. It might be corrupted or protected.");
+            uploadStage.classList.remove('hidden');
+            editStage.classList.add('hidden');
+        }
+    }
+    
+    async function renderPagePreviews() {
+        pagePreviewGrid.innerHTML = '';
+        for (const pageObj of allPages) {
+            const pageItem = document.createElement('div');
+            pageItem.className = 'page-item';
+            if (!pageObj.isSelected) pageItem.classList.add('deselected');
+            pageItem.dataset.pageNum = pageObj.pageNum;
+            pageItem.innerHTML = `<canvas></canvas><div class="page-info">Page ${pageObj.pageNum}</div><i class="fa-solid fa-check page-tick-icon"></i>`;
+            pagePreviewGrid.appendChild(pageItem);
+
+            const canvas = pageItem.querySelector('canvas');
+            const page = await originalPdfData.pdfDoc.getPage(pageObj.pageNum);
+            const viewport = page.getViewport({ scale: 0.4 });
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+        }
+    }
+
+    function updateInterface() {
+        const selectedMode = document.querySelector('input[name="split-mode"]:checked').value;
+        const selectedPagesCount = allPages.filter(p => p.isSelected).length;
+
+        if (selectedMode === 'extract') {
+            pagePreviewGrid.classList.remove('selection-disabled');
+            processBtn.disabled = selectedPagesCount === 0;
+            processBtn.textContent = `Extract ${selectedPagesCount} Pages`;
+        } else { // split-all
+            pagePreviewGrid.classList.add('selection-disabled');
+            processBtn.disabled = allPages.length === 0;
+            processBtn.textContent = `Split into ${allPages.length} Files`;
+        }
+    }
+
+    pagePreviewGrid.addEventListener('click', (e) => {
+        const pageItem = e.target.closest('.page-item');
+        if (!pageItem || pagePreviewGrid.classList.contains('selection-disabled')) return;
+        
+        const pageNum = parseInt(pageItem.dataset.pageNum);
+        const pageObj = allPages.find(p => p.pageNum === pageNum);
+        
+        if (pageObj) {
+            pageObj.isSelected = !pageObj.isSelected;
+            pageItem.classList.toggle('deselected');
+            updateInterface();
+        }
+    });
+
+    async function processAndDisplay() {
+        processBtn.disabled = true;
+        processBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+
+        const { PDFDocument } = PDFLib;
+        const selectedMode = document.querySelector('input[name="split-mode"]:checked').value;
+        const sourceDoc = await PDFDocument.load(originalPdfData.fileData);
+        
+        try {
+            if (selectedMode === 'extract') {
+                const selectedPages = allPages.filter(p => p.isSelected).map(p => p.pageNum - 1);
+                if (selectedPages.length === 0) {
+                     alert("Please select at least one page to extract.");
+                     return; // No finally block needed here, just return
+                }
+                const newPdfDoc = await PDFDocument.create();
+                const copiedPages = await newPdfDoc.copyPages(sourceDoc, selectedPages);
+                copiedPages.forEach(page => newPdfDoc.addPage(page));
+                
+                const finalBytes = await newPdfDoc.save();
+                resultContainer.innerHTML = `<a href="${URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }))}" class="download-button" download="jkm-edit-extracted.pdf">Download Extracted PDF</a>`;
+
+            } else { // split-all
+                const zip = new JSZip();
+                for (const pageObj of allPages) {
+                    const newPdfDoc = await PDFDocument.create();
+                    const [copiedPage] = await newPdfDoc.copyPages(sourceDoc, [pageObj.pageNum - 1]);
+                    newPdfDoc.addPage(copiedPage);
+                    const pdfBytes = await newPdfDoc.save();
+                    zip.file(`page_${pageObj.pageNum}.pdf`, pdfBytes);
+                }
+                const zipBlob = await zip.generateAsync({ type: "blob" });
+                resultContainer.innerHTML = `<a href="${URL.createObjectURL(zipBlob)}" class="download-button" download="jkm-edit-split-files.zip">Download All Pages (.zip)</a>`;
+            }
+
+            processBtn.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+
+        } catch (error) {
+            console.error("Error during PDF processing:", error);
+            alert("An error occurred while splitting the PDF. Please try again.");
+            // Reset UI on error
+            processBtn.disabled = false;
+            updateInterface();
+        }
+    }
+    </script>
+</body>
+</html>
