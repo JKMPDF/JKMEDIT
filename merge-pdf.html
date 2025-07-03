@@ -39,6 +39,28 @@
 
         /* --- Tool Layout --- */
         .tool-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
+        
+        /* --- Ad Box Placeholder Style --- */
+        .ad-placeholder {
+            max-width: 728px;
+            width: 100%;
+            height: 90px;
+            background-color: #f0f0f0;
+            border: 1px dashed #ccc;
+            margin: 0 auto 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 0.9rem;
+            border-radius: 8px;
+        }
+        .dark-mode .ad-placeholder {
+            background-color: #2a2a38;
+            border-color: #444;
+            color: #777;
+        }
+
         .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; }
         .tool-header p { font-size: 1.1rem; color: #6c757d; text-align: center; }
         #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); }
@@ -81,6 +103,12 @@
 
     <main class='tool-container'>
         <div id="upload-stage">
+            
+            <!-- Ad Placeholder Box -->
+            <div class="ad-placeholder">
+                <span>Advertisement (728x90)</span>
+            </div>
+
             <div class='tool-header'>
                 <h2>Organize, Merge & Compress PDF</h2>
                 <p>Rearrange, remove, and merge pages, then compress the final PDF.</p>
@@ -169,8 +197,7 @@
             // Store the original, pristine buffer for pdf-lib to use later.
             fileDataStore[fileId] = arrayBuffer;
 
-            // JKM-FIX: Give pdf.js (for previews) a *copy* of the buffer.
-            // This prevents the two libraries from conflicting over the same data.
+            // Give pdf.js (for previews) a *copy* of the buffer.
             const pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer.slice(0))}).promise;
             
             const numPagesInFile = pdfJsDoc.numPages;
@@ -231,7 +258,6 @@
                 for (const pageObj of selectedPages) {
                     let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
                     if (!sourceDoc) {
-                        // Load the pristine, untouched buffer from fileDataStore.
                         const fileData = fileDataStore[pageObj.fileId];
                         sourceDoc = await PDFDocument.load(fileData);
                         loadedPdfDocs.set(pageObj.fileId, sourceDoc);
@@ -239,7 +265,7 @@
                     const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
                     finalPdfDoc.addPage(copiedPage);
                 }
-            } else { // COMPRESSION PATH (This logic was already correct)
+            } else { // COMPRESSION PATH
                 const quality = 1 - (compressionLevel / 100);
                 for (const pageObj of selectedPages) {
                     const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
