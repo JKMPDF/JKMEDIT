@@ -191,7 +191,7 @@
 
     // --- Event Listeners ---
     dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
-    slider.addEventListener('input', updateInterface);
+    slider.addEventListener('input', () => updateInterface()); // Made async
     processBtn.addEventListener('click',processAndDisplay);
 
     async function handleFiles(files){
@@ -212,20 +212,26 @@
             }
         }
         await renderPagePreviews();
-        updateInterface();
+        await updateInterface();
     }
 
     function formatBytes(b,d=2){if(!+b)return'0 Bytes';const k=1024,i=Math.floor(Math.log(b)/Math.log(k));return`${parseFloat((b/Math.pow(k,i)).toFixed(d<0?0:d))} ${['Bytes','KB','MB','GB'][i]}`}
     
     async function renderPagePreviews(){pagePreviewGrid.innerHTML='';for(const pageObj of allPages){const pageItem=document.createElement('div');pageItem.className='page-item';if(!pageObj.isSelected)pageItem.classList.add('deselected');pageItem.dataset.id=pageObj.id;pageItem.draggable=true;pageItem.innerHTML=`<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;pagePreviewGrid.appendChild(pageItem);const canvas=pageItem.querySelector('canvas'),page=await pageObj.pdfDoc.getPage(pageObj.originalPageIndex+1),viewport=page.getViewport({scale:0.4});canvas.height=viewport.height;canvas.width=viewport.width;await page.render({canvasContext:canvas.getContext('2d'),viewport:viewport}).promise;}}
     
-    function updateInterface(){
+    // --- FUNDAMENTAL FIX: The whole estimation logic is rewritten ---
+    async function updateInterface(){
         const selectedPages = allPages.filter(p => p.isSelected);
         const hasSelection = selectedPages.length > 0;
+        
         processBtn.disabled = !hasSelection;
         resultContainer.classList.add('hidden');
         actionButtonsContainer.classList.remove('hidden');
-        if (!hasSelection) { sizePreview.classList.add('hidden'); return; }
+
+        if (!hasSelection) {
+            sizePreview.classList.add('hidden');
+            return;
+        }
         sizePreview.classList.remove('hidden');
         
         let originalSelectedSize = 0;
@@ -243,17 +249,37 @@
             levelText.textContent = `${compressionLevel}% Compression`;
             processBtn.textContent = "Merge & Compress PDF";
             
-            // --- MODIFICATION: New, more realistic estimation formula ---
-            // This formula assumes a maximum potential size reduction of 85% at the highest compression setting.
-            // This provides a much better estimate for the `scale: 1.0` rendering process.
-            const reductionFactor = 0.85; 
-            const estimatedFinalSize = originalSelectedSize * (1 - (compressionLevel / 100 * reductionFactor));
-            finalSizeDisplay.textContent = formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0);
+            let totalEstimatedSize = 0;
+            const quality = 1 - (compressionLevel / 100);
+
+            // This new logic estimates size based on OUTPUT (pixels), not INPUT (file size).
+            for (const pageObj of selectedPages) {
+                const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
+                const viewport = page.getViewport({ scale: 1.0 }); // Use the same scale as the processing step
+                const pixels = viewport.width * viewport.height;
+                
+                // This formula models JPEG compression. It has a base size and a factor that grows non-linearly with quality.
+                // The constants (0.02, 0.25) are tuned to give a realistic estimate for typical documents.
+                const bytesPerPixelFactor = 0.02 + (Math.pow(quality, 2) * 0.25);
+                const estimatedPageSize = pixels * bytesPerPixelFactor;
+                totalEstimatedSize += estimatedPageSize;
+            }
+            finalSizeDisplay.textContent = formatBytes(totalEstimatedSize > 0 ? totalEstimatedSize : 0);
         }
     }
     
-    pagePreviewGrid.addEventListener('click',t=>{const e=t.target.closest('.page-item');if(!e)return;const o=allPages.find(t=>t.id===e.dataset.id);if(o){o.isSelected=!o.isSelected;e.classList.toggle('deselected');updateInterface()}});
-    let draggedItem=null;pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});pagePreviewGrid.addEventListener('dragend',()=>{if(draggedItem){draggedItem.classList.remove('dragging');draggedItem=null;const t=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));allPages=t;updateInterface()}});pagePreviewGrid.addEventListener('dragover',t=>{t.preventDefault();if(!draggedItem)return;const e=getDragAfterElement(pagePreviewGrid,t.clientY);if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}});function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
+    pagePreviewGrid.addEventListener('click', async (t) => {
+        const e=t.target.closest('.page-item');
+        if(!e)return;
+        const o=allPages.find(t=>t.id===e.dataset.id);
+        if(o){
+            o.isSelected=!o.isSelected;
+            e.classList.toggle('deselected');
+            await updateInterface(); // Made async
+        }
+    });
+    
+    let draggedItem=null;pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});pagePreviewGrid.addEventListener('dragend', async ()=>{if(draggedItem){draggedItem.classList.remove('dragging');draggedItem=null;const t=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));allPages=t; await updateInterface()}});pagePreviewGrid.addEventListener('dragover',t=>{t.preventDefault();if(!draggedItem)return;const e=getDragAfterElement(pagePreviewGrid,t.clientY);if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}});function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
     
     function resetApp() {
         allPages = [];
@@ -301,8 +327,7 @@
                 const quality = 1 - (compressionLevel / 100);
                 for (const pageObj of selectedPages) {
                     const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
-                    // --- CRITICAL FIX: Render at native 1.0 scale to prevent size inflation ---
-                    const viewport = page.getViewport({ scale: 1.0 }); 
+                    const viewport = page.getViewport({ scale: 1.0 }); // Using 1.0 scale
                     const canvas = document.createElement('canvas');
                     canvas.height = viewport.height; 
                     canvas.width = viewport.width;
@@ -323,7 +348,6 @@
 
             sizePreviewNote.textContent = 'Processing complete!';
             actionButtonsContainer.classList.add('hidden');
-            
             resultContainer.innerHTML = ''; 
 
             const resultActionsContainer = document.createElement('div');
