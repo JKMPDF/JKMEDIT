@@ -122,6 +122,7 @@
             </div>
             <!-- Results and compression panel -->
             <div id="result-panel" class="actions-panel hidden">
+                <!-- Content generated dynamically -->
             </div>
         </div>
         
@@ -160,7 +161,7 @@
 
     // --- Event Listeners ---
     dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
-    processBtn.addEventListener('click', () => handleProcessing(0, false));
+    processBtn.addEventListener('click', () => handleProcessing(0));
 
     async function handleFiles(files){
         for (const file of files){
@@ -262,9 +263,7 @@
                 finalPdfDoc.addPage(copiedPage);
             }
         } else {
-            // Non-linear mapping for better control. A level of 100 is max compression (quality 0).
             const quality = 1 - Math.pow(compressionLevel / 100, 2);
-
             for (const pageObj of selectedPages) {
                 const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
                 const viewport = page.getViewport({ scale: 1.0 });
@@ -273,7 +272,7 @@
                 canvas.width = viewport.width;
                 const context = canvas.getContext('2d');
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
-                const dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.01, quality)); // Ensure quality is not absolute zero
+                const dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.01, quality));
                 if (!dataUrl || dataUrl === 'data:,') continue;
                 const jpegImageBytes = await finalPdfDoc.embedJpg(dataUrl);
                 const newPage = finalPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
@@ -311,6 +310,7 @@
                 const finalSizeResultDisplay = document.getElementById('final-size-result');
                 const downloadBtn = document.getElementById('download-btn');
                 finalSizeResultDisplay.textContent = formatBytes(finalBytes.length);
+                if (downloadBtn.href) URL.revokeObjectURL(downloadBtn.href);
                 downloadBtn.href = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
             }
         } catch (error) {
@@ -328,7 +328,7 @@
         resultPanel.classList.remove('hidden');
 
         resultPanel.innerHTML = `
-            <div class="size-comparison">
+            <div id="result-size-comparison" class="size-comparison">
                 <span>Original: <strong class="size-info">${formatBytes(originalSize)}</strong></span>
                 <i class="fa-solid fa-arrow-right-long"></i>
                 <span>Final: <strong id="final-size-result" class="size-info">${formatBytes(finalSize)}</strong></span>
@@ -342,33 +342,30 @@
                  </div>
                  <strong id="compression-level-text-result">Merge Only (No Compression)</strong>
             </div>
-            <div id="result-buttons-container" class="button-group" style="flex-wrap: wrap;"></div>
+            <button id="apply-compression-btn" class="action-button" style="max-width: 500px;" disabled>Apply Compression</button>
+            <div id="result-buttons-container" class="button-group" style="flex-wrap: wrap; max-width: 500px;"></div>
         `;
 
         const sliderResult = resultPanel.querySelector('#compression-slider-result');
         const levelTextResult = resultPanel.querySelector('#compression-level-text-result');
         const buttonsContainer = resultPanel.querySelector('#result-buttons-container');
         const finalSizeResultDisplay = resultPanel.querySelector('#final-size-result');
-
-        const applyBtn = document.createElement('button');
-        applyBtn.id = 'apply-compression-btn';
-        applyBtn.className = 'action-button';
-        applyBtn.textContent = 'Apply Compression';
-        applyBtn.disabled = true;
+        const applyBtn = resultPanel.querySelector('#apply-compression-btn');
 
         const downloadBtn = document.createElement('a');
         downloadBtn.id = 'download-btn';
         downloadBtn.className = 'download-button';
+        downloadBtn.style.flex = '1';
         downloadBtn.download = 'jkm-edit-final.pdf';
         downloadBtn.innerHTML = `<i class="fa-solid fa-download"></i> Download PDF`;
         downloadBtn.href = mergedOnlyBlobUrl;
 
         const startOverBtn = document.createElement('button');
-        startOverBtn.className = 'action-button secondary-button';
+        startOverBtn.className = 'download-button'; // Make it look like the download button
         startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
+        startOverBtn.style.flex = '1'; 
         startOverBtn.addEventListener('click', resetApp);
         
-        buttonsContainer.appendChild(applyBtn);
         buttonsContainer.appendChild(downloadBtn);
         buttonsContainer.appendChild(startOverBtn);
 
@@ -376,9 +373,7 @@
             const level = parseInt(sliderResult.value);
             if (level === 0) {
                 levelTextResult.textContent = "Merge Only (No Compression)";
-                applyBtn.disabled = true;
-                finalSizeResultDisplay.textContent = formatBytes(mergedOnlyBytes.length);
-                downloadBtn.href = mergedOnlyBlobUrl;
+                applyBtn.disabled = true; // No need to apply 0%
             } else {
                 levelTextResult.textContent = `${level}% Compression`;
                 applyBtn.disabled = false;
@@ -387,7 +382,14 @@
         
         applyBtn.addEventListener('click', () => {
             const level = parseInt(sliderResult.value);
-            if(level > 0) {
+            // If slider is at 0, revert to the original merged file.
+            if (level === 0) {
+                if (mergedOnlyBlobUrl) {
+                    finalSizeResultDisplay.textContent = formatBytes(mergedOnlyBytes.length);
+                    if (downloadBtn.href) URL.revokeObjectURL(downloadBtn.href);
+                    downloadBtn.href = mergedOnlyBlobUrl;
+                }
+            } else {
                 handleProcessing(level, true);
             }
         });
