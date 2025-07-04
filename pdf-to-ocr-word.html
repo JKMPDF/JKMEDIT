@@ -8,7 +8,7 @@
     <!-- SEO & META TAGS - FOR PDF to OCR WORD TOOL -->
     <!-- =================================================================== -->
     <title>Free PDF to Word with OCR - Convert Scanned PDF | JKM Edit</title>
-    <meta name="description" content="Convert your PDF files, including scanned documents, to editable Word (DOCX) files using a high-quality online converter. Free, fast, and secure."/>
+    <meta name="description" content="Convert your PDF files, including scanned documents, to editable Word (DOCX) files using our high-quality online converter. Free, fast, and secure."/>
     <meta name="keywords" content="pdf to word, ocr, pdf to docx, convert pdf, high quality pdf to word, free ocr, online converter, jkm edit"/>
     <meta name="author" content="JKM Edit"/>
     <meta name="robots" content="index, follow"/>
@@ -140,7 +140,7 @@
     <!-- [END] --- UNIVERSAL PAGE SCRIPT --- -->
 
 
-    <!-- [START] --- PDF TO WORD (API-POWERED) LOGIC --- -->
+    <!-- [START] --- PDF TO WORD (BACKEND-POWERED) LOGIC --- -->
     <script>
         const fileInput = document.getElementById('file-input');
         const dropzone = document.getElementById('dropzone');
@@ -148,10 +148,8 @@
         const processingPanel = document.getElementById('processing-panel');
 
         let uploadedFile = null;
-
-        // --- IMPORTANT: PASTE YOUR API SECRET HERE ---
-        const CONVERT_API_SECRET = 'YOUR_API_SECRET_HERE'; // Get from https://www.convertapi.com/a
         
+        // --- Event Listeners for File Input ---
         dropzone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
         dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.borderColor = 'var(--primary-color)'; });
@@ -185,11 +183,7 @@
         async function handleConversion() {
             if (!uploadedFile) return;
 
-            if (CONVERT_API_SECRET === 'YOUR_API_SECRET_HERE') {
-                 alert('API Secret is not configured. Please edit the HTML file to add your ConvertAPI secret.');
-                 return;
-            }
-
+            // --- UI Update: Show processing state ---
             const convertBtn = document.getElementById('convert-btn');
             convertBtn.disabled = true;
             convertBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Converting...`;
@@ -202,29 +196,40 @@
                 </div>
             `;
 
+            // --- Prepare file for upload to your backend ---
             const formData = new FormData();
-            formData.append('File', uploadedFile);
+            // IMPORTANT: The key 'file' must match what your backend expects (e.g., using multer: upload.single('file'))
+            formData.append('file', uploadedFile);
 
-            // The API URL tells ConvertAPI to convert from PDF to DOCX with OCR enabled
-            const apiUrl = `https://v2.convertapi.com/convert/pdf/to/docx?Secret=${CONVERT_API_SECRET}&Ocr=true`;
+            // The API URL now points to your custom backend server.
+            const apiUrl = 'https://jkmedit.onrender.com/convert/pdf-to-ocr-word';
 
             try {
+                // --- Call your backend API ---
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     body: formData
                 });
 
+                const result = await response.json();
+
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                    // Throw an error with the message from the backend
+                    throw new Error(result.error || `Server responded with status: ${response.status}`);
+                }
+                
+                // --- Handle successful response from your backend ---
+                // We expect a response like: { success: true, downloadUrl: '...', fileName: '...' }
+                if (result.success && result.downloadUrl) {
+                    displayResult(result.downloadUrl, result.fileName);
+                } else {
+                    // Handle cases where the backend reports a failure
+                    throw new Error(result.error || 'Conversion failed on the server.');
                 }
 
-                const result = await response.json();
-                const convertedFile = result.Files[0];
-                displayResult(convertedFile.Url, convertedFile.FileName);
-
             } catch (error) {
-                console.error("Error during API conversion:", error);
+                // --- Handle any errors (network, server, etc.) ---
+                console.error("Error during backend conversion:", error);
                 processingPanel.innerHTML = `
                     <p style="color:red; text-align:center; font-weight:bold;">Conversion Failed</p>
                     <p style="text-align:center;">${error.message}. Please try again.</p>
@@ -233,6 +238,7 @@
                 document.getElementById('retry-btn').addEventListener('click', () => {
                     uploadStage.classList.remove('hidden');
                     processingPanel.classList.add('hidden');
+                    processingPanel.innerHTML = ''; // Clear old content
                 });
             }
         }
@@ -248,6 +254,6 @@
             `;
         }
     </script>
-    <!-- [END] --- PDF TO WORD (API-POWERED) LOGIC --- -->
+    <!-- [END] --- PDF TO WORD (BACKEND-POWERED) LOGIC --- -->
 </body>
 </html>
