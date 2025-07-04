@@ -113,7 +113,6 @@
             <div id="page-preview-container">
                  <div class="page-preview-grid"></div>
             </div>
-            <!-- Initial configuration panel -->
             <div id="config-panel" class="actions-panel">
                 <p style="text-align:center; color:#6c757d; margin:0;">Click pages to select/deselect. Drag to reorder.</p>
                 <div id="size-preview" class="hidden">
@@ -124,7 +123,6 @@
                     <button id="process-btn" class="action-button" disabled>Merge PDF</button>
                 </div>
             </div>
-            <!-- Results and compression panel -->
             <div id="result-panel" class="actions-panel hidden">
             </div>
         </div>
@@ -135,7 +133,6 @@
         </div>
     </main>
     
-    <!-- Modals -->
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
@@ -267,7 +264,8 @@
                 finalPdfDoc.addPage(copiedPage);
             }
         } else {
-            const quality = 1 - Math.pow(compressionLevel / 100, 2);
+            // FIX: Simple linear mapping for quality. 100% compression = 0 quality.
+            const quality = 1 - (compressionLevel / 100);
             for (const pageObj of selectedPages) {
                 const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
                 const viewport = page.getViewport({ scale: 1.0 });
@@ -332,7 +330,7 @@
     function displayResultPanel(originalSize, finalSize) {
         configPanel.classList.add('hidden');
         resultPanel.classList.remove('hidden');
-        pagePreviewGrid.classList.add('locked'); // Lock the page grid
+        pagePreviewGrid.classList.add('locked');
 
         resultPanel.innerHTML = `
             <div class="size-comparison">
@@ -370,7 +368,7 @@
         downloadBtn.href = mergedOnlyBlobUrl;
 
         const startOverBtn = document.createElement('button');
-        startOverBtn.className = 'download-button';
+        startOverBtn.className = 'download-button'; 
         startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
         startOverBtn.style.flex = '1'; 
         startOverBtn.addEventListener('click', resetApp);
@@ -410,6 +408,7 @@
             }
         });
     }
+
     </script>
 </body>
 </html>
