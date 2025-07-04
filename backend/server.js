@@ -15,7 +15,7 @@ app.post('/ocr', upload.single('pdf'), async (req, res) => {
       format: "png",
     });
 
-    const pageImage = await convert(1); // Page 1 only
+    const pageImage = await convert(1);
     const result = await Tesseract.recognize(pageImage.path, 'eng');
     res.send({ text: result.data.text });
   } catch (err) {
