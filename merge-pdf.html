@@ -50,6 +50,7 @@
         
         #page-preview-container { margin-top: 2rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .page-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem; }
+        .page-preview-grid.locked { pointer-events: none; opacity: 0.6; }
         .page-item { position: relative; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; cursor: grab; }
         .page-item.dragging { opacity: 0.4; } .page-item canvas { display: block; width: 100%; height: auto; } .page-item.deselected { border-color: #aaa; filter: grayscale(80%); } .page-item.deselected .page-tick-icon { display: none; } .page-tick-icon { position: absolute; top: 8px; right: 8px; font-size: 1.5rem; color: white; background-color: var(--primary-color); border-radius: 50%; padding: 0.25rem; } .page-info { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); color: white; font-size: 0.8rem; text-align: center; padding: 4px 0; }
         
@@ -69,7 +70,6 @@
         .slider-container { display: flex; align-items: center; gap: 1rem; margin: 0.5rem auto; }
         .download-button { display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
         
-        /* NEW: Stepper button styles */
         .stepper-btn { background: #e9ecef; border: 1px solid #ccc; color: #333; font-weight: bold; cursor: pointer; border-radius: 50%; width: 30px; height: 30px; flex-shrink: 0; }
         .dark-mode .stepper-btn { background: #333; border-color: #555; color: #eee;}
 
@@ -117,7 +117,7 @@
             <div id="config-panel" class="actions-panel">
                 <p style="text-align:center; color:#6c757d; margin:0;">Click pages to select/deselect. Drag to reorder.</p>
                 <div id="size-preview" class="hidden">
-                     <span>Original Size: <strong id="original-size-display" class="size-info">...</strong></span>
+                     <span>Original Size (Selected Pages): <strong id="original-size-display" class="size-info">...</strong></span>
                 </div>
                 <div class="button-group">
                     <button id="add-more-files-btn" class="action-button secondary-button"><i class="fa-solid fa-plus"></i> Add More</button>
@@ -218,7 +218,7 @@
     
     pagePreviewGrid.addEventListener('click', (t) => {
         const e=t.target.closest('.page-item');
-        if(!e)return;
+        if(!e || pagePreviewGrid.classList.contains('locked')) return;
         const o=allPages.find(t=>t.id===e.dataset.id);
         if(o){
             o.isSelected=!o.isSelected;
@@ -239,6 +239,7 @@
         if (fileInput) fileInput.value = ''; 
         
         pagePreviewGrid.innerHTML = '';
+        pagePreviewGrid.classList.remove('locked');
         resultPanel.innerHTML = '';
         resultPanel.classList.add('hidden');
         configPanel.classList.remove('hidden');
@@ -313,12 +314,14 @@
                 const finalSizeResultDisplay = document.getElementById('final-size-result');
                 const downloadBtn = document.getElementById('download-btn');
                 finalSizeResultDisplay.textContent = formatBytes(finalBytes.length);
-                if (downloadBtn.href) URL.revokeObjectURL(downloadBtn.href);
+                if (downloadBtn.href && downloadBtn.href !== mergedOnlyBlobUrl) {
+                    URL.revokeObjectURL(downloadBtn.href);
+                }
                 downloadBtn.href = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
             }
         } catch (error) {
             console.error("Error processing PDF:", error);
-            alert("An error occurred while processing the PDF. Please try again.");
+            alert("An error occurred while processing the PDF. Please try again or check the console for details.");
         } finally {
             button.disabled = false;
             button.innerHTML = originalText;
@@ -329,10 +332,11 @@
     function displayResultPanel(originalSize, finalSize) {
         configPanel.classList.add('hidden');
         resultPanel.classList.remove('hidden');
+        pagePreviewGrid.classList.add('locked'); // Lock the page grid
 
         resultPanel.innerHTML = `
             <div class="size-comparison">
-                <span>Original: <strong class="size-info">${formatBytes(originalSize)}</strong></span>
+                <span>Original (Selected): <strong class="size-info">${formatBytes(originalSize)}</strong></span>
                 <i class="fa-solid fa-arrow-right-long"></i>
                 <span>Final: <strong id="final-size-result" class="size-info">${formatBytes(finalSize)}</strong></span>
             </div>
@@ -366,7 +370,7 @@
         downloadBtn.href = mergedOnlyBlobUrl;
 
         const startOverBtn = document.createElement('button');
-        startOverBtn.className = 'download-button'; 
+        startOverBtn.className = 'download-button';
         startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
         startOverBtn.style.flex = '1'; 
         startOverBtn.addEventListener('click', resetApp);
@@ -394,10 +398,11 @@
         applyBtn.addEventListener('click', () => {
             const level = parseInt(sliderResult.value);
             if (level === 0) {
-                // Revert to original merged file
-                if (mergedOnlyBlobUrl) {
+                if (mergedOnlyBytes && mergedOnlyBlobUrl) {
                     finalSizeResultDisplay.textContent = formatBytes(mergedOnlyBytes.length);
-                    if (downloadBtn.href) URL.revokeObjectURL(downloadBtn.href);
+                    if (downloadBtn.href && downloadBtn.href !== mergedOnlyBlobUrl) {
+                        URL.revokeObjectURL(downloadBtn.href);
+                    }
                     downloadBtn.href = mergedOnlyBlobUrl;
                 }
             } else {
@@ -405,7 +410,6 @@
             }
         });
     }
-
     </script>
 </body>
 </html>
