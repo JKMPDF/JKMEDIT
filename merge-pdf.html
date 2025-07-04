@@ -40,57 +40,33 @@
         /* --- Tool Layout --- */
         .tool-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
         
-        /* --- Ad Box Placeholder Style --- */
-        .ad-placeholder {
-            max-width: 728px;
-            width: 100%;
-            height: 90px;
-            background-color: #f0f0f0;
-            border: 1px dashed #ccc;
-            margin: 0 auto 2rem auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #aaa;
-            font-size: 0.9rem;
-            border-radius: 8px;
-        }
-        .dark-mode .ad-placeholder {
-            background-color: #2a2a38;
-            border-color: #444;
-            color: #777;
-        }
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 0 auto 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
+        .dark-mode .ad-placeholder { background-color: #2a2a38; border-color: #444; color: #777; }
 
         .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; }
         .tool-header p { font-size: 1.1rem; color: #6c757d; text-align: center; }
         #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); }
         #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
         
-        /* Page Previews */
         #page-preview-container { margin-top: 2rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .page-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem; }
         .page-item { position: relative; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; cursor: grab; }
         .page-item.dragging { opacity: 0.4; } .page-item canvas { display: block; width: 100%; height: auto; } .page-item.deselected { border-color: #aaa; filter: grayscale(80%); } .page-item.deselected .page-tick-icon { display: none; } .page-tick-icon { position: absolute; top: 8px; right: 8px; font-size: 1.5rem; color: white; background-color: var(--primary-color); border-radius: 50%; padding: 0.25rem; } .page-info { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); color: white; font-size: 0.8rem; text-align: center; padding: 4px 0; }
         
-        /* Actions & Results Panel */
         .actions-panel { margin-top: 1.5rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;}
         .button-group { display: flex; gap: 1rem; justify-content: center; width: 100%; }
         .action-button { display: block; width: 100%; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; }
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .secondary-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
         
-        #size-preview { width: 100%; text-align: center; margin-bottom: 1rem; padding-bottom: 1.5rem; border-bottom: 2px solid #eee; }
-        .dark-mode #size-preview { border-bottom-color: #333; }
+        .size-info { font-weight: 600; color: var(--primary-color); }
+        .size-comparison { display: flex; justify-content: center; align-items: center; gap: 1rem; font-size: 1.1rem; width: 100%; }
+        #size-preview { width: 100%; text-align: center; }
+        #result-panel .size-comparison { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; }
+        .dark-mode #result-panel .size-comparison { border-bottom-color: #333; }
         
         .compression-settings { width: 100%; max-width: 500px; text-align: center; }
         .slider-container { display: flex; align-items: center; gap: 1rem; margin: 0.5rem auto; }
-        
-        #result-container { display: flex; flex-direction: column; gap: 1rem; width:100%; align-items: center; }
-        .size-info { font-weight: 600; color: var(--primary-color); }
-        .size-comparison { display: flex; justify-content: center; align-items: center; gap: 1rem; font-size: 1.1rem; width: 100%; }
-        #result-container .size-comparison { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; }
-        .dark-mode #result-container .size-comparison { border-bottom-color: #333; }
-        
         .download-button { display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
         
         .navigation-buttons { text-align: center; margin-top: 3rem; }
@@ -133,32 +109,20 @@
             <div id="page-preview-container">
                  <div class="page-preview-grid"></div>
             </div>
-            <div id="actions-panel" class="actions-panel">
+            <!-- Initial configuration panel -->
+            <div id="config-panel" class="actions-panel">
                 <p style="text-align:center; color:#6c757d; margin:0;">Click pages to select/deselect. Drag to reorder.</p>
-
                 <div id="size-preview" class="hidden">
-                    <div class="size-comparison">
-                        <span>Original: <strong id="original-size-display" class="size-info">...</strong></span>
-                        <i class="fa-solid fa-arrow-right-long"></i>
-                        <span>Final (Est.): <strong id="final-size-display" class="size-info">...</strong></span>
-                    </div>
+                     <span>Original Size: <strong id="original-size-display" class="size-info">...</strong></span>
                 </div>
-                                
-                <div class="compression-settings">
-                     <p style="margin:0 0 0.5rem 0;"><strong>Compression Level</strong></p>
-                     <div class="slider-container">
-                        <label for="compression-slider">0</label>
-                        <input type="range" id="compression-slider" min="0" max="100" value="0" step="1" style="width:100%;">
-                        <label for="compression-slider">100</label>
-                     </div>
-                     <strong id="compression-level-text">Merge Only (No Compression)</strong>
-                </div>
-                <div class="button-group" id="action-buttons">
-                    <button id="add-more-files-btn" class="action-button secondary-button"><i class="fa-solid fa-plus"></i> Add More Files</button>
+                <div class="button-group">
+                    <button id="add-more-files-btn" class="action-button secondary-button"><i class="fa-solid fa-plus"></i> Add More</button>
                     <button id="process-btn" class="action-button" disabled>Merge PDF</button>
                 </div>
             </div>
-            <div id="result-container" class="actions-panel hidden">
+            <!-- Results and compression panel -->
+            <div id="result-panel" class="actions-panel hidden">
+                <!-- Content generated dynamically -->
             </div>
         </div>
         
@@ -181,20 +145,22 @@
     });
 
     // --- Advanced PDF Tool Logic ---
-    const fileInput=document.getElementById('file-input'),dropzone=document.getElementById('dropzone');const addMoreFilesBtn=document.getElementById('add-more-files-btn'),processBtn=document.getElementById('process-btn');const slider=document.getElementById('compression-slider'),levelText=document.getElementById('compression-level-text');const uploadStage=document.getElementById('upload-stage'),editStage=document.getElementById('edit-stage');const actionsPanel=document.getElementById('actions-panel'),resultContainer=document.getElementById('result-container'),pagePreviewGrid=editStage.querySelector('.page-preview-grid');
+    const fileInput=document.getElementById('file-input'),dropzone=document.getElementById('dropzone');const addMoreFilesBtn=document.getElementById('add-more-files-btn'),processBtn=document.getElementById('process-btn');
+    const uploadStage=document.getElementById('upload-stage'),editStage=document.getElementById('edit-stage');
+    const configPanel=document.getElementById('config-panel'),resultPanel=document.getElementById('result-panel');
+    const pagePreviewGrid=editStage.querySelector('.page-preview-grid');
     const sizePreview = document.getElementById('size-preview');
     const originalSizeDisplay = document.getElementById('original-size-display');
-    const finalSizeDisplay = document.getElementById('final-size-display');
     
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
     
     let allPages = [], fileCounter = 0;
     let fileDataStore = {};
+    let currentProcessedBytes = null; // To hold the bytes of the most recently processed PDF
 
     // --- Event Listeners ---
     dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
-    slider.addEventListener('input', updateInterface);
-    processBtn.addEventListener('click',processAndDisplay);
+    processBtn.addEventListener('click', () => handleProcessing(0)); // Initial click is always merge-only
 
     async function handleFiles(files){
         for (const file of files){
@@ -206,7 +172,6 @@
             const pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer.slice(0))}).promise;
             const numPagesInFile = pdfJsDoc.numPages;
 
-            // Store file info with buffer, size, and page count
             fileDataStore[fileId] = { buffer: arrayBuffer, size: file.size, pageCount: numPagesInFile };
             
             for (let i = 1; i <= numPagesInFile; i++){
@@ -233,7 +198,6 @@
         processBtn.disabled = !hasSelection;
         
         if (hasSelection) {
-            // --- FIX: Calculate size based on a per-page average ---
             let originalSelectedSize = 0;
             selectedPages.forEach(p => {
                 const fileInfo = fileDataStore[p.fileId];
@@ -242,18 +206,6 @@
                 }
             });
             originalSizeDisplay.textContent = formatBytes(originalSelectedSize);
-            
-            const compressionLevel = parseInt(slider.value);
-            if (compressionLevel === 0) {
-                finalSizeDisplay.textContent = formatBytes(originalSelectedSize);
-                levelText.textContent = "Merge Only (No Compression)";
-                processBtn.textContent = "Merge PDF";
-            } else {
-                const estimatedFinalSize = originalSelectedSize * (1 - (compressionLevel / 100 * 0.75));
-                finalSizeDisplay.textContent = formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0);
-                levelText.textContent = `${compressionLevel}% Compression`;
-                processBtn.textContent = "Merge & Compress PDF";
-            }
             sizePreview.classList.remove('hidden');
         } else {
             sizePreview.classList.add('hidden');
@@ -267,7 +219,7 @@
         if(o){
             o.isSelected=!o.isSelected;
             e.classList.toggle('deselected');
-            updateInterface(); // Recalculate sizes on every selection change
+            updateInterface();
         }
     });
     
@@ -277,121 +229,164 @@
         allPages = [];
         fileCounter = 0;
         fileDataStore = {};
+        currentProcessedBytes = null;
         if (fileInput) fileInput.value = ''; 
         
         pagePreviewGrid.innerHTML = '';
-        resultContainer.innerHTML = '';
-        resultContainer.classList.add('hidden');
-        actionsPanel.classList.remove('hidden');
+        resultPanel.innerHTML = '';
+        resultPanel.classList.add('hidden');
+        configPanel.classList.remove('hidden');
         sizePreview.classList.add('hidden');
         
-        // --- FIX: Ensure controls are fully re-enabled on reset ---
-        slider.disabled = false;
-        addMoreFilesBtn.disabled = false;
-        processBtn.disabled = true; // Disabled initially until files are added
-        slider.value = 0;
-
         editStage.classList.add('hidden');
         uploadStage.classList.remove('hidden');
         updateInterface();
     }
 
-    async function processAndDisplay(){
-        processBtn.disabled=true;
-        processBtn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
-        addMoreFilesBtn.disabled = true;
-        slider.disabled = true;
-
+    async function processPdf(compressionLevel) {
         const { PDFDocument } = PDFLib;
         const selectedPages = allPages.filter(p => p.isSelected);
-        const compressionLevel = parseInt(slider.value);
-        let finalBytes;
+        const finalPdfDoc = await PDFDocument.create();
         
-        // --- FIX: Calculate the original size based on selected pages *at the time of processing* ---
-        let processedOriginalSize = 0;
+        let originalSize = 0;
         selectedPages.forEach(p => {
             const fileInfo = fileDataStore[p.fileId];
             if (fileInfo && fileInfo.pageCount > 0) {
-                processedOriginalSize += fileInfo.size / fileInfo.pageCount;
+                originalSize += fileInfo.size / fileInfo.pageCount;
             }
         });
 
+        if (compressionLevel === 0) {
+            const loadedPdfDocs = new Map();
+            for (const pageObj of selectedPages) {
+                let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
+                if (!sourceDoc) {
+                    sourceDoc = await PDFDocument.load(fileDataStore[pageObj.fileId].buffer);
+                    loadedPdfDocs.set(pageObj.fileId, sourceDoc);
+                }
+                const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
+                finalPdfDoc.addPage(copiedPage);
+            }
+        } else {
+            const quality = 1 - (compressionLevel / 100);
+            for (const pageObj of selectedPages) {
+                const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
+                const viewport = page.getViewport({ scale: 1.0 });
+                const canvas = document.createElement('canvas');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                const context = canvas.getContext('2d');
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+                const dataUrl = canvas.toDataURL('image/jpeg', quality < 0.1 ? 0.1 : quality);
+                if (!dataUrl || dataUrl === 'data:,') continue;
+                const jpegImageBytes = await finalPdfDoc.embedJpg(dataUrl);
+                const newPage = finalPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
+                newPage.drawImage(jpegImageBytes, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
+            }
+        }
+        const finalBytes = await finalPdfDoc.save();
+        return { finalBytes, originalSize };
+    }
+    
+    async function handleProcessing(compressionLevel) {
+        const button = compressionLevel === 0 ? processBtn : resultPanel.querySelector('#apply-compression-btn');
+        const originalText = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+        if (compressionLevel === 0) addMoreFilesBtn.disabled = true;
+
         try {
-            const finalPdfDoc = await PDFDocument.create();
+            const { finalBytes, originalSize } = await processPdf(compressionLevel);
+            currentProcessedBytes = finalBytes; // Store the latest processed file
             
             if (compressionLevel === 0) {
-                const loadedPdfDocs = new Map();
-                for (const pageObj of selectedPages) {
-                    let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
-                    if (!sourceDoc) {
-                        sourceDoc = await PDFDocument.load(fileDataStore[pageObj.fileId].buffer);
-                        loadedPdfDocs.set(pageObj.fileId, sourceDoc);
-                    }
-                    const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
-                    finalPdfDoc.addPage(copiedPage);
-                }
+                // This is the first time, so we build the result panel
+                displayResultPanel(originalSize, finalBytes.length);
             } else {
-                const quality = 1 - (compressionLevel / 100);
-                 for (const pageObj of selectedPages) {
-                    const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
-                    const viewport = page.getViewport({ scale: 1.0 });
-                    const canvas = document.createElement('canvas');
-                    canvas.height = viewport.height; 
-                    canvas.width = viewport.width;
-                    const context = canvas.getContext('2d');
-                    await page.render({ canvasContext: context, viewport: viewport }).promise;
-                    
-                    const dataUrl = canvas.toDataURL('image/jpeg', quality < 0.1 ? 0.1 : quality);
-                    if (!dataUrl || dataUrl === 'data:,') { continue; }
-                    const jpegImageBytes = await finalPdfDoc.embedJpg(dataUrl);
-                    const newPage = finalPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
-                    newPage.drawImage(jpegImageBytes, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
-                }
+                // This is a re-compression, just update the existing result panel
+                const finalSizeResultDisplay = document.getElementById('final-size-result');
+                const downloadBtn = document.getElementById('download-btn');
+                finalSizeResultDisplay.textContent = formatBytes(finalBytes.length);
+                downloadBtn.href = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
             }
-            finalBytes = await finalPdfDoc.save();
 
-            actionsPanel.classList.add('hidden');
-            resultContainer.innerHTML = `
-                <div class="size-comparison">
-                    <span>Original: <strong class="size-info">${formatBytes(processedOriginalSize)}</strong></span>
-                    <i class="fa-solid fa-arrow-right-long"></i>
-                    <span>Final: <strong class="size-info">${formatBytes(finalBytes.length)}</strong></span>
-                </div>
-                <div id="result-buttons-container" style="display: flex; gap: 1rem; justify-content: center; width:100%; max-width: 500px;"></div>
-            `;
-            
-            const resultButtonsContainer = resultContainer.querySelector('#result-buttons-container');
-            const downloadLink = document.createElement('a');
-            downloadLink.href = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
-            downloadLink.className = 'download-button';
-            downloadLink.style.flexGrow = '1';
-            downloadLink.download = 'jkm-edit-final.pdf';
-            downloadLink.innerHTML = `<i class="fa-solid fa-download"></i> Download PDF`;
-
-            const startOverBtn = document.createElement('button');
-            startOverBtn.className = 'action-button secondary-button';
-            startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
-            startOverBtn.style.width = 'auto'; 
-            startOverBtn.addEventListener('click', resetApp);
-
-            resultButtonsContainer.appendChild(downloadLink);
-            resultButtonsContainer.appendChild(startOverBtn);
-            
-            resultContainer.classList.remove('hidden');
-            
         } catch (error) {
             console.error("Error processing PDF:", error);
             alert("An error occurred while processing the PDF. Please try again or check the console for details.");
-            actionsPanel.classList.remove('hidden');
         } finally {
-            if (resultContainer.classList.contains('hidden')) {
-                processBtn.disabled = false;
-                addMoreFilesBtn.disabled = false;
-                slider.disabled = false;
-                updateInterface();
-            }
+            button.disabled = false;
+            button.innerHTML = originalText;
+            if (compressionLevel === 0) addMoreFilesBtn.disabled = false;
         }
     }
+
+    function displayResultPanel(originalSize, finalSize) {
+        configPanel.classList.add('hidden');
+        resultPanel.classList.remove('hidden');
+
+        resultPanel.innerHTML = `
+            <div id="result-size-comparison" class="size-comparison">
+                <span>Original: <strong class="size-info">${formatBytes(originalSize)}</strong></span>
+                <i class="fa-solid fa-arrow-right-long"></i>
+                <span>Final: <strong id="final-size-result" class="size-info">${formatBytes(finalSize)}</strong></span>
+            </div>
+            <div class="compression-settings">
+                 <p style="margin:0 0 0.5rem 0;"><strong>Compression Level</strong></p>
+                 <div class="slider-container">
+                    <label for="compression-slider-result">0</label>
+                    <input type="range" id="compression-slider-result" min="0" max="100" value="0" step="1" style="width:100%;">
+                    <label for="compression-slider-result">100</label>
+                 </div>
+                 <strong id="compression-level-text-result">Merge Only (No Compression)</strong>
+            </div>
+            <div id="result-buttons-container" class="button-group" style="flex-wrap: wrap;"></div>
+        `;
+
+        const sliderResult = resultPanel.querySelector('#compression-slider-result');
+        const levelTextResult = resultPanel.querySelector('#compression-level-text-result');
+        const buttonsContainer = resultPanel.querySelector('#result-buttons-container');
+
+        const applyBtn = document.createElement('button');
+        applyBtn.id = 'apply-compression-btn';
+        applyBtn.className = 'action-button';
+        applyBtn.textContent = 'Apply Compression';
+        applyBtn.disabled = true; // Disabled initially
+
+        const downloadBtn = document.createElement('a');
+        downloadBtn.id = 'download-btn';
+        downloadBtn.className = 'download-button';
+        downloadBtn.download = 'jkm-edit-final.pdf';
+        downloadBtn.innerHTML = `<i class="fa-solid fa-download"></i> Download PDF`;
+        downloadBtn.href = URL.createObjectURL(new Blob([currentProcessedBytes], { type: 'application/pdf' }));
+
+        const startOverBtn = document.createElement('button');
+        startOverBtn.className = 'action-button secondary-button';
+        startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
+        startOverBtn.addEventListener('click', resetApp);
+        
+        buttonsContainer.appendChild(applyBtn);
+        buttonsContainer.appendChild(downloadBtn);
+        buttonsContainer.appendChild(startOverBtn);
+
+        sliderResult.addEventListener('input', () => {
+            const level = parseInt(sliderResult.value);
+            if (level === 0) {
+                levelTextResult.textContent = "Merge Only (No Compression)";
+                applyBtn.disabled = true;
+            } else {
+                levelTextResult.textContent = `${level}% Compression`;
+                applyBtn.disabled = false;
+            }
+        });
+        
+        applyBtn.addEventListener('click', () => {
+            const level = parseInt(sliderResult.value);
+            if(level > 0) {
+                handleProcessing(level);
+            }
+        });
+    }
+
     </script>
 </body>
 </html>
