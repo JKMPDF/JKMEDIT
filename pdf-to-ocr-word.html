@@ -1,186 +1,346 @@
-# Creating the complete HTML file with fixed OCR logic and preserved theme design for download.
-html_content = """
 <!DOCTYPE html>
-<html lang="en" data-theme="minty-fresh">
+<html lang='en' data-theme='corporate-blue'>
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PDF to OCR Word - JKM Edit</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-  <style>
-    /* Minified version of your CSS is kept here for brevity */
-    body{margin:0;font-family:'Poppins',sans-serif;}
-    [data-theme='minty-fresh']{
-      --primary-color:#1abc9c;--secondary-color:#16a085;
-      --bg-color:#f1fefb;--surface-color:#fff;--text-color:#3d524d;
-      --accent-color:#f39c12;--gradient:linear-gradient(45deg,#1abc9c,#1dd3b0);
-    }
-    .main-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background:var(--surface-color);border-bottom:3px solid var(--primary-color);}
-    .logo-container{display:flex;align-items:center;gap:0.75rem;}
-    .logo-icon-3d{font-size:2rem;color:var(--primary-color);}
-    .main-nav{display:flex;align-items:center;gap:1.5rem;}
-    .nav-link{text-decoration:none;color:var(--text-color);font-weight:600;}
-    .theme-selector{display:flex;align-items:center;gap:0.5rem;}
-    .tool-container{max-width:650px;margin:3rem auto;padding:3rem;background:var(--surface-color);border-radius:10px;text-align:center;}
-    .tool-container h2{color:var(--primary-color);}
-    .upload-zone{cursor:pointer;margin-bottom:1rem;}
-    .upload-icon-container{margin:0 auto 1rem;width:80px;height:80px;display:flex;justify-content:center;align-items:center;}
-    .upload-icon-container i{font-size:2.5rem;color:#fff;background:var(--primary-color);padding:1rem;border-radius:15px;}
-    .action-button{padding:0.8rem 2.5rem;background:var(--gradient);color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:600;}
-    .progress-area{margin-top:1rem;display:none;}
-    .progress-bar-container{width:100%;height:10px;background:#e9ecef;border-radius:5px;overflow:hidden;}
-    .progress-bar{height:100%;background:var(--gradient);width:0%;transition:width 0.3s;}
-    #download-area{margin-top:1rem;display:none;}
-  </style>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    
+    <!-- =================================================================== -->
+    <!-- SEO & META TAGS - FOR PDF to OCR WORD TOOL -->
+    <!-- =================================================================== -->
+    <title>Free PDF to Word with OCR - Convert Scanned PDF | JKM Edit</title>
+    <meta name="description" content="Convert your PDF files, including scanned documents, to editable Word (DOCX) files using powerful OCR technology. Free, online, and secure."/>
+    <meta name="keywords" content="pdf to word, ocr, pdf to docx, convert pdf, scanned pdf to word, free ocr, online ocr tool, jkm edit"/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="robots" content="index, follow"/>
+    <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/pdf-to-ocr-word.html"/>
+    <meta property="og:title" content="Free PDF to Word with OCR - Convert Scanned PDF | JKM Edit"/>
+    <meta property="og:description" content="Turn any PDF into an editable Word document. Our free online OCR tool extracts text from scanned pages, right in your browser."/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/pdf-to-ocr-word.html"/>
+    <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="Free PDF to Word with OCR - Convert Scanned PDF | JKM Edit"/>
+    <meta name="twitter:description" content="Turn any PDF into an editable Word document. Our free online OCR tool extracts text from scanned pages, right in your browser."/>
+    <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <!-- =================================================================== -->
+
+    <!-- SCRIPT TO PREVENT THEME AND BACKGROUND FLICKERING (KEEP THIS) -->
+    <script>
+        (function() {
+            try {
+                const themeBgColors = {
+                    'corporate-blue': { light: '#f4f5f7', dark: '#121212' },'forest-green':   { light: '#f0f3f2', dark: '#121212' },'sunset-gradient':{ light: '#fff8f2', dark: '#121212' },'tech-noir':      { light: '#1a1a2e', dark: '#0f0f1e' },'minty-fresh':    { light: '#f1fefb', dark: '#121212' },'royal-purple':   { light: '#f8f7fa', dark: '#121212' },'graphite-gray':  { light: '#e9ecef', dark: '#121212' },'crimson-red':    { light: '#fdf5f6', dark: '#121212' }
+                };
+                const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
+                const mode = localStorage.getItem('jkm-edit-mode') || 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                if (mode === 'dark') { document.documentElement.classList.add('dark-mode'); }
+                const bgColor = (themeBgColors[theme] && themeBgColors[theme][mode]) || '#f4f5f7';
+                const style = document.createElement('style');
+                style.innerHTML = `html { background-color: ${bgColor} !important; }`;
+                document.head.appendChild(style);
+            } catch (e) { console.error("Error applying initial theme:", e); }
+        })();
+    </script>
+    
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <!-- Core Processing Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
+    <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+
+
+    <style>
+        /* --- Basic Setup & Core Styles (Identical to other pages) --- */
+        :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
+        html { background-color: var(--bg-color); }
+        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- THEME DEFINITIONS (Identical to other pages) --- */
+        [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
+        [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
+        [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
+        [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-gradient(45deg, #4a00e0, #8e2de2); }
+        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
+        [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
+        [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
+        [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
+        html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
+        
+        /* --- HEADER & MODAL STYLES (Identical to other pages) --- */
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); z-index: 100; position: sticky; top: 0; }
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); }
+        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+        .main-nav { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; } .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width .3s; } .nav-link:hover::after { width: 100%; } #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); } #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; } #dark-mode-toggle .fa-sun { display: none; } html.dark-mode #dark-mode-toggle .fa-sun { display: inline; } html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; } .modal.show-modal { display: flex; align-items: center; justify-content: center; } .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; } .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; } .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* --- TOOL-SPECIFIC STYLES --- */
+        .tool-container { padding: 2rem 4rem; max-width: 900px; margin: auto; }
+        .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; text-align: center; margin-bottom: 2rem; }
+        html.dark-mode .tool-header p { color: #a0a0a0; }
+        #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); transition: background-color var(--transition-speed), border-color var(--transition-speed); }
+        #dropzone:hover { border-color: var(--primary-color); }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+        
+        #processing-panel { margin-top: 2rem; padding: 2rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1.5rem; align-items: center; }
+        .file-info-card { font-weight: 600; font-size: 1.1rem; color: var(--text-color); background: var(--bg-color); padding: 0.75rem 1.5rem; border-radius: 8px; width: 100%; text-align: center; word-break: break-all; }
+        .action-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; max-width: 500px; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .action-button:disabled { background: #ccc; cursor: not-allowed; }
+        .action-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .progress-indicator { width: 100%; text-align: center; }
+        .progress-indicator p { font-weight: 600; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .progress-bar-container { width: 100%; background-color: #e9ecef; border-radius: 8px; overflow: hidden; }
+        .progress-bar { height: 10px; width: 0%; background-color: var(--primary-color); transition: width 0.4s ease; }
+        html.dark-mode .progress-bar-container { background-color: #333; }
+        
+        .navigation-buttons { display: flex; justify-content: center; align-items: center; gap: 1rem; text-align: center; margin-top: 3rem; }
+        .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
+        .primary-nav-btn { background: var(--gradient); color: white !important; }
+        .back-secondary-btn { background: transparent; color: var(--primary-color) !important; border: 2px solid var(--primary-color); }
+
+        /* --- PAGE TRANSITION ANIMATIONS (Identical to other pages) --- */
+        body { animation: fadeInPage 0.5s ease-in-out; }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+        @media (max-width: 768px) { .tool-container { padding: 2rem 1.5rem; } .main-header { flex-direction: column; gap: 1rem; }}
+    </style>
 </head>
 <body>
-  <header class="main-header">
-    <div class="logo-container">
-      <div class="logo-icon-3d"><i class="fa-solid fa-cube"></i></div>
-      <h1>JKM Edit</h1>
-    </div>
-    <nav class="main-nav">
-      <div class="theme-selector">
-        <label for="theme-picker">Theme:</label>
-        <select id="theme-picker">
-          <option value="minty-fresh" selected>Minty Fresh</option>
-        </select>
-      </div>
-    </nav>
-  </header>
+    <header class='main-header'>
+        <div class='logo-container'><a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'><div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div><h1>JKM Edit</h1></a></div>
+        <nav class='main-nav'><div class='theme-selector'><label for='theme-picker'>Theme:</label><select id='theme-picker'><option value='corporate-blue'>Corporate Blue</option><option value='forest-green'>Forest Green</option><option value='sunset-gradient'>Sunset Gradient</option><option value='tech-noir'>Tech Noir</option><option value='minty-fresh'>Minty Fresh</option><option value='royal-purple'>Royal Purple</option><option value='graphite-gray'>Graphite Gray</option><option value='crimson-red'>Crimson Red</option></select></div><button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'><i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i></button><a href='#' id='about-btn' class='nav-link'>About</a><a href='#' id='contact-btn' class='nav-link'>Contact Us</a></nav>
+    </header>
 
-  <main>
-    <div class="tool-container">
-      <h2>PDF to OCR Word Converter</h2>
-      <p class="subtitle">Extract text from any PDF and convert to editable Word (.docx)</p>
-      <input type="file" id="pdf-upload" accept=".pdf" style="display:none;" />
-      <label for="pdf-upload" class="upload-zone">
-        <div class="upload-icon-container">
-          <i class="fa-solid fa-file-arrow-up"></i>
+    <main class='tool-container'>
+        <div id="upload-stage">
+            <div class='tool-header'>
+                <h2>PDF to OCR Word</h2>
+                <p>Convert your PDFs, including scanned pages, into editable Word documents.</p>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept=".pdf"/>
+            <div id="dropzone">
+                <i class="fa-solid fa-file-arrow-up"></i>
+                <p>Drag & drop a PDF file here or click to select</p>
+            </div>
         </div>
-        <p>Click or drag & drop your PDF here</p>
-      </label>
-      <div id="file-name-display"></div>
-      <button id="convert-btn" class="action-button" disabled>Convert to Word</button>
-      <div id="progress-area" class="progress-area">
-        <p id="progress-text">Initializing...</p>
-        <div class="progress-bar-container">
-          <div id="progress-bar" class="progress-bar"></div>
+
+        <div id="processing-panel" class="hidden">
+             <!-- Content generated by JavaScript -->
         </div>
-      </div>
-      <div id="download-area">
-        <a id="download-link" class="action-button" href="#" download>Download Word File</a>
-      </div>
-    </div>
-  </main>
+        
+        <div class="navigation-buttons">
+            <a href="pdf-tools.html" class="nav-btn back-secondary-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="https://jkmpdf.github.io/JKMEDIT/" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+    </main>
+    
+    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
+    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-  <script src="https://unpkg.com/tesseract.js@5.0.3/dist/tesseract.min.js"></script>
-  <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
-  <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js`;
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const convertBtn = document.getElementById("convert-btn");
-      const pdfUpload = document.getElementById("pdf-upload");
-      const fileNameDisplay = document.getElementById("file-name-display");
-      const progressText = document.getElementById("progress-text");
-      const progressBar = document.getElementById("progress-bar");
-      const progressArea = document.getElementById("progress-area");
-      const downloadArea = document.getElementById("download-area");
-      const downloadLink = document.getElementById("download-link");
-      let selectedPdfFile = null;
-
-      pdfUpload.addEventListener("change", (e) => {
-        if (e.target.files.length > 0) {
-          selectedPdfFile = e.target.files[0];
-          fileNameDisplay.textContent = selectedPdfFile.name;
-          convertBtn.disabled = false;
-          progressArea.style.display = "none";
-          downloadArea.style.display = "none";
-        }
-      });
-
-      convertBtn.addEventListener("click", () => {
-        if (selectedPdfFile) {
-          convertPdfToOcrWord(selectedPdfFile);
-        }
-      });
-
-      async function convertPdfToOcrWord(file) {
-        convertBtn.disabled = true;
-        progressArea.style.display = "block";
-        progressText.textContent = "Starting OCR...";
-        progressBar.style.width = "0%";
-        downloadArea.style.display = "none";
-
-        const worker = Tesseract.createWorker({
-          logger: m => {
-            if (m.status === 'recognizing text') {
-              progressText.textContent = `OCR Progress: ${(m.progress * 100).toFixed(1)}%`;
-              progressBar.style.width = `${(m.progress * 100).toFixed(0)}%`;
+    <!-- [START] --- UNIVERSAL PAGE SCRIPT --- -->
+    <script>
+        // FIX FOR BFCACHE: Ensures page is visible on back navigation
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                document.body.classList.remove('fade-out');
             }
-          }
         });
 
-        try {
-          await worker.load();
-          await worker.loadLanguage("eng");
-          await worker.initialize("eng");
+        // Theme, Modal, and Page Transition Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const themePicker = document.getElementById('theme-picker');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const htmlElement = document.documentElement;
 
-          const fileData = await file.arrayBuffer();
-          const pdfDoc = await pdfjsLib.getDocument({ data: fileData }).promise;
-          const numPages = pdfDoc.numPages;
-          const allText = [];
+            const setTheme = (theme) => { htmlElement.dataset.theme = theme; localStorage.setItem('jkm-edit-theme', theme); };
+            const enableDarkMode = () => { htmlElement.classList.add('dark-mode'); localStorage.setItem('jkm-edit-mode', 'dark'); };
+            const disableDarkMode = () => { htmlElement.classList.remove('dark-mode'); localStorage.setItem('jkm-edit-mode', 'light'); };
+            
+            if(themePicker) { 
+                themePicker.addEventListener('change', () => setTheme(themePicker.value)); 
+                const savedTheme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
+                themePicker.value = savedTheme;
+                htmlElement.dataset.theme = savedTheme;
+            }
+            if(darkModeToggle) { 
+                darkModeToggle.addEventListener('click', () => { htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode(); });
+                if (localStorage.getItem('jkm-edit-mode') === 'dark') {
+                    htmlElement.classList.add('dark-mode');
+                }
+            }
+            
+            const aboutModal = document.getElementById('about-modal'), contactModal = document.getElementById('contact-modal'), aboutBtn = document.getElementById('about-btn'), contactBtn = document.getElementById('contact-btn'), closeBtns = document.querySelectorAll('.close-btn');
+            const openModal = (modal) => modal.classList.add('show-modal');
+            const closeModal = (modal) => modal.classList.remove('show-modal');
+            if(aboutBtn) aboutBtn.addEventListener('click', e => { e.preventDefault(); openModal(aboutModal); });
+            if(contactBtn) contactBtn.addEventListener('click', e => { e.preventDefault(); openModal(contactModal); });
+            closeBtns.forEach(btn => btn.addEventListener('click', () => { closeModal(aboutModal); closeModal(contactModal); }));
+            window.addEventListener('click', e => { if (e.target === aboutModal) closeModal(aboutModal); if (e.target === contactModal) closeModal(contactModal); });
 
-          for (let i = 1; i <= numPages; i++) {
-            const page = await pdfDoc.getPage(i);
-            const viewport = page.getViewport({ scale: 2.0 });
-            const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d");
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        document.body.classList.add('fade-out');
+                        setTimeout(() => { window.location.href = this.href; }, 400);
+                    });
+                }
+            });
+        });
+    </script>
+    <!-- [END] --- UNIVERSAL PAGE SCRIPT --- -->
 
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            await page.render({ canvasContext: context, viewport }).promise;
 
-            progressText.textContent = `Recognizing page ${i} of ${numPages}...`;
-            const { data } = await worker.recognize(canvas);
-            allText.push(data.text);
-          }
+    <!-- [START] --- PDF TO OCR WORD LOGIC --- -->
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const dropzone = document.getElementById('dropzone');
+        const uploadStage = document.getElementById('upload-stage');
+        const processingPanel = document.getElementById('processing-panel');
 
-          const doc = new window.docx.Document({
-            sections: [{
-              children: allText.map(text =>
-                new window.docx.Paragraph({ text })
-              )
-            }]
-          });
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
 
-          const blob = await window.docx.Packer.toBlob(doc);
-          const url = URL.createObjectURL(blob);
-          downloadLink.href = url;
-          downloadLink.download = file.name.replace(/\.pdf$/i, '') + '-ocr.docx';
-          downloadArea.style.display = "block";
-          progressArea.style.display = "none";
+        let currentFileBuffer = null;
+        let originalFileName = '';
+        let processedBlobUrl = null;
 
-        } catch (err) {
-          console.error("OCR error:", err);
-          progressText.textContent = "Error occurred. Try again.";
-        } finally {
-          await worker.terminate();
-          convertBtn.disabled = false;
+        dropzone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+        dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.borderColor = 'var(--primary-color)'; });
+        dropzone.addEventListener('dragleave', () => dropzone.style.borderColor = '#ccc');
+        dropzone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropzone.style.borderColor = '#ccc';
+            handleFile(e.dataTransfer.files[0]);
+        });
+        
+        function resetApp() {
+            currentFileBuffer = null;
+            originalFileName = '';
+            if (processedBlobUrl) {
+                URL.revokeObjectURL(processedBlobUrl);
+                processedBlobUrl = null;
+            }
+            fileInput.value = ''; 
+            processingPanel.innerHTML = '';
+            processingPanel.classList.add('hidden');
+            uploadStage.classList.remove('hidden');
         }
-      }
-    });
-  </script>
+        
+        async function handleFile(file) {
+            if (!file || file.type !== "application/pdf") {
+                alert("Please select a single PDF file.");
+                return;
+            }
+            resetApp(); 
+
+            originalFileName = file.name;
+            currentFileBuffer = await file.arrayBuffer();
+            
+            uploadStage.classList.add('hidden');
+            processingPanel.classList.remove('hidden');
+
+            processingPanel.innerHTML = `
+                <div class="file-info-card">
+                    <i class="fa-solid fa-file-pdf"></i> ${originalFileName}
+                </div>
+                <button id="convert-btn" class="action-button">
+                    <i class="fa-solid fa-file-word"></i> Convert to OCR Word
+                </button>
+            `;
+            document.getElementById('convert-btn').addEventListener('click', handleConversion);
+        }
+
+        async function handleConversion() {
+            processingPanel.innerHTML = `
+                <div class="progress-indicator">
+                    <p id="progress-text">Initializing OCR Engine...</p>
+                    <div class="progress-bar-container">
+                        <div id="progress-bar" class="progress-bar"></div>
+                    </div>
+                </div>
+            `;
+
+            const progressText = document.getElementById('progress-text');
+            const progressBar = document.getElementById('progress-bar');
+            
+            try {
+                const pdfDoc = await pdfjsLib.getDocument({ data: currentFileBuffer }).promise;
+                const numPages = pdfDoc.numPages;
+                const paragraphs = [];
+
+                const worker = await Tesseract.createWorker({
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const progress = (m.progress * 100).toFixed(0);
+                            progressBar.style.width = `${progress}%`;
+                        }
+                    }
+                });
+
+                for (let i = 1; i <= numPages; i++) {
+                    progressText.textContent = `Processing Page ${i} of ${numPages}...`;
+                    const page = await pdfDoc.getPage(i);
+                    const viewport = page.getViewport({ scale: 2.0 }); // Higher scale for better OCR accuracy
+                    
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+                    
+                    const { data: { text } } = await worker.recognize(canvas);
+                    paragraphs.push(new docx.Paragraph({ text: text }));
+                }
+
+                await worker.terminate();
+
+                progressText.textContent = 'Generating Word document...';
+                progressBar.style.width = '100%';
+
+                const doc = new docx.Document({
+                    sections: [{
+                        properties: {},
+                        children: paragraphs,
+                    }],
+                });
+
+                const blob = await docx.Packer.toBlob(doc);
+                if (processedBlobUrl) URL.revokeObjectURL(processedBlobUrl);
+                processedBlobUrl = URL.createObjectURL(blob);
+                
+                displayResult();
+
+            } catch (error) {
+                console.error("Error during OCR conversion:", error);
+                processingPanel.innerHTML = `<p style="color:red; text-align:center;">An error occurred during conversion. The PDF might be encrypted or corrupted. Please try again.</p>`;
+            }
+        }
+
+        function displayResult() {
+            const newFileName = originalFileName.replace(/\.[^/.]+$/, "") + ".docx";
+            processingPanel.innerHTML = `
+                <div class="file-info-card" style="border-left: 5px solid var(--primary-color);">
+                    <i class="fa-solid fa-check-circle" style="color: #28a745;"></i> Conversion Complete!
+                </div>
+                <a id="download-btn" class="action-button" download="${newFileName}">
+                    <i class="fa-solid fa-download"></i> Download OCR Word
+                </a>
+            `;
+            document.getElementById('download-btn').href = processedBlobUrl;
+        }
+    </script>
+    <!-- [END] --- PDF TO OCR WORD LOGIC --- -->
 </body>
 </html>
-"""
-
-# Save the HTML to a downloadable file
-file_path = "/mnt/data/pdf-to-ocr-word-fixed.html"
-with open(file_path, "w", encoding="utf-8") as f:
-    f.write(html_content)
-
-file_path
