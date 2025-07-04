@@ -161,7 +161,7 @@
 
     // --- Event Listeners ---
     dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
-    processBtn.addEventListener('click', () => handleProcessing(0, false));
+    processBtn.addEventListener('click', () => handleProcessing(0));
 
     async function handleFiles(files){
         for (const file of files){
@@ -264,7 +264,7 @@
                 finalPdfDoc.addPage(copiedPage);
             }
         } else {
-            // FIX: Simple linear mapping for quality. 100% compression = 0 quality.
+            // FIX: Linear quality reduction for predictable compression.
             const quality = 1 - (compressionLevel / 100);
             for (const pageObj of selectedPages) {
                 const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
@@ -385,12 +385,12 @@
         
         decrementBtn.addEventListener('click', () => {
             sliderResult.value = Math.max(0, parseInt(sliderResult.value) - 1);
-            updateSliderUI();
+            sliderResult.dispatchEvent(new Event('input'));
         });
 
         incrementBtn.addEventListener('click', () => {
             sliderResult.value = Math.min(100, parseInt(sliderResult.value) + 1);
-            updateSliderUI();
+            sliderResult.dispatchEvent(new Event('input'));
         });
         
         applyBtn.addEventListener('click', () => {
@@ -408,7 +408,6 @@
             }
         });
     }
-
     </script>
 </body>
 </html>
