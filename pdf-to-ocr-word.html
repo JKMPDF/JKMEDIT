@@ -14,7 +14,7 @@
         body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
         *, *::before, *::after { box-sizing: border-box; }
 
-        /* --- THEME DEFINITIONS (Copied from index.html) --- */
+        /* --- THEME DEFINITIONS --- */
         [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
         [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
         [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
@@ -58,12 +58,11 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        /* --- Tool Specific Styles (Updated to match image) --- */
+        /* --- Tool Specific Styles --- */
         .tool-container { max-width: 650px; margin: 3rem auto; padding: 3rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
         .tool-container h2 { font-size: 2.2rem; margin-top:0; margin-bottom: 0.5rem; color: var(--primary-color); }
         .tool-container .subtitle { font-size: 1.1rem; color: #6c757d; margin-bottom: 3rem; max-width: 450px; margin-left: auto; margin-right: auto; }
         .dark-mode .tool-container .subtitle { color: #a0a0a0; }
-
         #pdf-upload { display: none; }
         .upload-zone { display: inline-block; text-align: center; cursor: pointer; position: relative; margin-bottom: 1rem; }
         .upload-icon-container { position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; margin: 0 auto 1rem auto; }
@@ -71,19 +70,15 @@
         .dashed-line { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120px; height: 120px; z-index: 1; }
         .dashed-line path { stroke: var(--accent-color); stroke-width: 3; stroke-dasharray: 8 6; stroke-linecap: round; fill: none; }
         .upload-zone p { margin: 0; color: var(--text-color); font-weight: 600; }
-        
         #file-name-display { font-weight: 600; margin-bottom: 2rem; color: var(--primary-color); min-height: 1.2em; font-size: 1.1rem; }
-        
         .action-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 2.5rem; font-size: 1.1rem; font-weight: 600; color: #fff; background: var(--gradient); border: none; border-radius: 5px; cursor: pointer; transition: all 0.2s; text-decoration: none; min-width: 200px; }
         .action-button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .action-button:disabled { background: #ced4da; color: #6c757d; cursor: not-allowed; transform: none; box-shadow: none; }
-        
-        .progress-area { margin-top: 1.5rem; min-height: 50px; }
+        .progress-area { margin-top: 1.5rem; min-height: 50px; display: none; }
         .progress-text { font-weight: 600; margin-bottom: 0.75rem; }
         .progress-bar-container { width: 100%; max-width: 400px; margin: auto; background-color: #e9ecef; border-radius: 5px; overflow: hidden; height: 10px; }
         .progress-bar { width: 0%; height: 100%; background: var(--gradient); border-radius: 5px; transition: width 0.4s ease; }
-        #download-area { margin-top: 1.5rem; }
-        
+        #download-area { margin-top: 1.5rem; display: none; } /* BUG FIX: Hidden by default */
         .bottom-nav-buttons { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e9ecef; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
         .dark-mode .bottom-nav-buttons { border-top-color: color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%); }
         .action-button.secondary { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
@@ -94,7 +89,6 @@
 </head>
 <body>
     <header class='main-header'>
-        <!-- Header content copied from your previous version -->
         <div class='logo-container'>
             <a href='index.html' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
                 <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
@@ -131,40 +125,25 @@
             <input type="file" id="pdf-upload" accept=".pdf" />
             <label for="pdf-upload" class="upload-zone">
                 <div class="upload-icon-container">
-                    <svg class="dashed-line" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <path d="M 8 50 A 42 42 0 1 1 92 50 A 42 42 0 1 1 8 50"/>
-                    </svg>
+                    <svg class="dashed-line" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M 8 50 A 42 42 0 1 1 92 50 A 42 42 0 1 1 8 50"/></svg>
                     <i class="fa-solid fa-file-arrow-up"></i>
                 </div>
                 <p>Click or drag & drop your PDF here</p>
             </label>
             
             <div id="file-name-display"></div>
-            
-            <button id="convert-btn" class="action-button" disabled>
-                <i class="fa-solid fa-gears"></i> Convert to Word
-            </button>
-
+            <button id="convert-btn" class="action-button" disabled><i class="fa-solid fa-gears"></i> Convert to Word</button>
             <div class="progress-area" id="progress-area">
                 <p class="progress-text" id="progress-text">Initializing...</p>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
+                <div class="progress-bar-container"><div class="progress-bar" id="progress-bar"></div></div>
             </div>
-
             <div id="download-area">
-                <a href="#" id="download-link" class="action-button">
-                    <i class="fa-solid fa-download"></i> Download Word File
-                </a>
+                <a href="#" id="download-link" class="action-button"><i class="fa-solid fa-download"></i> Download Word File</a>
             </div>
 
             <div class="bottom-nav-buttons">
-                <a href="#" onclick="history.back(); return false;" class="action-button secondary">
-                    <i class="fa-solid fa-arrow-left"></i> Previous
-                </a>
-                <a href="index.html" class="action-button secondary">
-                    <i class="fa-solid fa-table-columns"></i> Dashboard
-                </a>
+                <a href="#" onclick="history.back(); return false;" class="action-button secondary"><i class="fa-solid fa-arrow-left"></i> Previous</a>
+                <a href="index.html" class="action-button secondary"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
             </div>
         </div>
     </main>
@@ -215,81 +194,93 @@
             if (selectedPdfFile) convertPdfToOcrWord(selectedPdfFile);
         });
 
+        // --- SPEED-OPTIMIZED OCR FUNCTION ---
         async function convertPdfToOcrWord(file) {
             convertBtn.disabled = true;
             downloadArea.style.display = 'none';
             progressArea.style.display = 'block';
             progressBar.style.width = '0%';
-            progressText.textContent = 'Initializing OCR engine...';
-
-            // BUG FIX: Provide detailed feedback from Tesseract logger
-            const tesseractWorker = await Tesseract.createWorker({
-                logger: m => {
-                    if (m.status === 'recognizing text') {
-                        // This updates the main progress bar for each page
-                        progressBar.style.width = `${currentOverallProgress + (m.progress / totalPages) * 100}%`;
-                    } else {
-                        // This shows what Tesseract is doing (downloading, etc.)
-                        progressText.textContent = `${m.status.replace(/_/g, ' ')}...`;
-                        console.log(m);
-                    }
+            
+            let scheduler;
+            try {
+                // 1. Setup Parallel Processing
+                progressText.textContent = 'Initializing OCR engine...';
+                scheduler = Tesseract.createScheduler();
+                const workerCount = navigator.hardwareConcurrency || 4; // Use all available cores, or 4 as a fallback
+                const workerPromises = [];
+                for (let i = 0; i < workerCount; i++) {
+                    const worker = Tesseract.createWorker();
+                    workerPromises.push(worker.then(w => scheduler.addWorker(w)));
                 }
-            });
+                await Promise.all(workerPromises);
 
-            progressText.textContent = 'Loading PDF file...';
-            const fileReader = new FileReader();
-            let currentOverallProgress = 0;
-            let totalPages = 0;
+                // 2. Load PDF and prepare pages
+                progressText.textContent = 'Loading PDF file...';
+                const fileReader = new FileReader();
+                const fileLoadPromise = new Promise((resolve, reject) => {
+                    fileReader.onload = () => resolve(new Uint8Array(fileReader.result));
+                    fileReader.onerror = reject;
+                    fileReader.readAsArrayBuffer(file);
+                });
 
-            fileReader.onload = async function() {
-                try {
-                    const typedarray = new Uint8Array(this.result);
-                    const pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
-                    totalPages = pdfDoc.numPages;
-                    const docContent = [];
+                const typedarray = await fileLoadPromise;
+                const pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+                const numPages = pdfDoc.numPages;
+                const recognitionPromises = [];
+                let pagesProcessed = 0;
+
+                progressText.textContent = `Preparing ${numPages} page(s)...`;
+                
+                // 3. Queue up all pages for parallel recognition
+                for (let i = 1; i <= numPages; i++) {
+                    const page = await pdfDoc.getPage(i);
+                    const viewport = page.getViewport({ scale: 2.0 }); // Good balance of speed/accuracy
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
                     
-                    for (let i = 1; i <= totalPages; i++) {
-                        currentOverallProgress = ((i - 1) / totalPages) * 100;
-                        progressText.textContent = `Processing Page ${i} of ${totalPages}...`;
-                        progressBar.style.width = `${currentOverallProgress}%`;
-
-                        const page = await pdfDoc.getPage(i);
-                        const viewport = page.getViewport({ scale: 2.5 }); // Increased scale for better accuracy
-                        const canvas = document.createElement('canvas');
-                        const context = canvas.getContext('2d');
-                        canvas.height = viewport.height;
-                        canvas.width = viewport.width;
-
-                        await page.render({ canvasContext: context, viewport: viewport }).promise;
-                        
-                        const { data: { text } } = await tesseractWorker.recognize(canvas);
-                        const paragraphs = text.split('\n').map(line => new docx.Paragraph({ text: line }));
-                        docContent.push(...paragraphs);
-                        if (i < totalPages) {
-                            docContent.push(new docx.Paragraph({ children: [new docx.PageBreak()] }));
-                        }
-                    }
-
-                    progressText.textContent = 'Generating Word document...';
-                    await tesseractWorker.terminate();
-
-                    const doc = new docx.Document({ sections: [{ children: docContent }] });
-                    const blob = await docx.Packer.toBlob(doc);
-                    const downloadUrl = URL.createObjectURL(blob);
-                    downloadLink.href = downloadUrl;
-                    const originalName = file.name.replace(/\.pdf$/i, '');
-                    downloadLink.download = `${originalName}-ocr.docx`;
-
-                    progressArea.style.display = 'none';
-                    downloadArea.style.display = 'block';
-                } catch (error) {
-                    console.error("Conversion failed:", error);
-                    progressText.textContent = `An error occurred. Please try again.`;
-                } finally {
-                    convertBtn.disabled = false;
+                    // Add job to the scheduler and update progress as each job completes
+                    const job = scheduler.addJob('recognize', canvas).then(result => {
+                        pagesProcessed++;
+                        progressText.textContent = `Recognizing text... (${pagesProcessed}/${numPages})`;
+                        progressBar.style.width = `${(pagesProcessed / numPages) * 100}%`;
+                        return result;
+                    });
+                    recognitionPromises.push(job);
                 }
-            };
-            fileReader.readAsArrayBuffer(file);
+
+                // 4. Wait for all parallel jobs to finish
+                const results = await Promise.all(recognitionPromises);
+
+                // 5. Assemble the Word document
+                progressText.textContent = 'Assembling Word document...';
+                const docContent = results.flatMap((result, index) => {
+                    const paragraphs = result.data.text.split('\n').map(line => new docx.Paragraph({ text: line }));
+                    if (index < results.length - 1) {
+                        return [...paragraphs, new docx.Paragraph({ children: [new docx.PageBreak()] })];
+                    }
+                    return paragraphs;
+                });
+
+                const doc = new docx.Document({ sections: [{ children: docContent }] });
+                const blob = await docx.Packer.toBlob(doc);
+                const downloadUrl = URL.createObjectURL(blob);
+                downloadLink.href = downloadUrl;
+                const originalName = file.name.replace(/\.pdf$/i, '');
+                downloadLink.download = `${originalName}-ocr.docx`;
+
+                progressArea.style.display = 'none';
+                downloadArea.style.display = 'block';
+
+            } catch (error) {
+                console.error("Conversion failed:", error);
+                progressText.textContent = `An error occurred. Please try again.`;
+            } finally {
+                if (scheduler) await scheduler.terminate(); // Ensure scheduler is always terminated
+                convertBtn.disabled = false;
+            }
         }
     });
     </script>
