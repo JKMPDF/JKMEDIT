@@ -3,7 +3,52 @@
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>JKM Edit - All-in-One Online Tools</title>
+    
+    <!-- =================================================================== -->
+    <!-- SEO & META TAGS - FOR BETTER SEARCH ENGINE AND SOCIAL MEDIA RANKING -->
+    <!-- =================================================================== -->
+    <title>JKM Edit - All-in-One Free Online PDF, Video, & File Tools</title>
+    <meta name="description" content="JKM Edit offers a free suite of all-in-one online tools. Edit PDFs, convert videos, manage files, and use various utilities securely from your browser. No installation needed, works everywhere."/>
+    <meta name="keywords" content="online tools, pdf editor, video editor, file converter, free tools, merge pdf, compress video, online utilities, jkm edit, secure file editing, free pdf tools, online video trimmer"/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="robots" content="index, follow"/>
+    <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/"/>
+
+    <!-- Open Graph Meta Tags (for Facebook, LinkedIn, etc.) -->
+    <meta property="og:title" content="JKM Edit - All-in-One Free Online Tools"/>
+    <meta property="og:description" content="The ultimate suite of free online tools for PDF, video, files, and more. Secure, fast, and easy to use."/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/"/>
+    <!-- IMPORTANT: Replace this with a link to your own preview image (e.g., a logo or screenshot). Recommended size: 1200x630px -->
+    <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="JKM Edit - All-in-One Free Online Tools"/>
+    <meta name="twitter:description" content="The ultimate suite of free online tools for PDF, video, files, and more. Secure, fast, and easy to use."/>
+    <!-- IMPORTANT: Use the same image URL as the og:image -->
+    <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <!-- =================================================================== -->
+
+    <!-- SCRIPT TO PREVENT THEME FLICKERING - MUST BE IN <HEAD> -->
+    <script>
+        (function() {
+            // This script runs before the DOM is painted.
+            try {
+                // 1. Get theme from localStorage or use the default
+                const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
+                document.documentElement.setAttribute('data-theme', theme);
+
+                // 2. Get mode from localStorage and apply 'dark-mode' class to <html> if needed
+                const mode = localStorage.getItem('jkm-edit-mode');
+                if (mode === 'dark') {
+                    document.documentElement.classList.add('dark-mode');
+                }
+            } catch (e) {
+                console.error("Error applying initial theme:", e);
+            }
+        })();
+    </script>
     
     <!-- Link to Google Fonts and Font Awesome -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
@@ -26,10 +71,10 @@
         [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
         [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
 
-        /* --- DARK MODE --- */
-        .dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
-        .dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
-        .dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
+        /* --- DARK MODE (Applied to <html> tag now) --- */
+        html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
+        html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
+        html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
 
         /* --- Header & Navigation --- */
         .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 100; position: relative; }
@@ -45,26 +90,26 @@
         #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
         #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
         #dark-mode-toggle .fa-sun { display: none; }
-        .dark-mode #dark-mode-toggle .fa-sun { display: inline; }
-        .dark-mode #dark-mode-toggle .fa-moon { display: none; }
+        html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
+        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
 
         /* --- Main Dashboard & Content Area --- */
         .dashboard-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
         .dashboard-header { text-align: center; margin-bottom: 3rem; }
         .dashboard-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .dashboard-header p { font-size: 1.1rem; color: #6c757d; }
-        .dark-mode .dashboard-header p { color: #a0a0a0; }
+        html.dark-mode .dashboard-header p { color: #a0a0a0; }
         .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
         .tool-card { display: flex; flex-direction: column; justify-content: center; background: var(--surface-color); border-radius: 10px; padding: 2rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-color); transition: transform var(--transition-speed), box-shadow var(--transition-speed); text-decoration: none; color: var(--text-color); }
         .tool-card:hover { transform: translateY(-10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .tool-icon { font-size: 3rem; margin-bottom: 1rem; background-image: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent; }
         .tool-card h3 { margin: 0.5rem 0; font-size: 1.5rem; }
         .tool-card p { font-size: 0.9rem; line-height: 1.5; color: #6c757d; }
-        .dark-mode .tool-card p { color: #a0a0a0; }
+        html.dark-mode .tool-card p { color: #a0a0a0; }
 
         /* --- Ad Box Style --- */
         .ad-card { border: 2px dashed var(--accent-color); background-color: color-mix(in srgb, var(--surface-color) 95%, var(--accent-color) 5%); justify-content: center; align-items: center; min-height: 230px; }
-        .dark-mode .ad-card { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--accent-color) 10%); }
+        html.dark-mode .ad-card { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--accent-color) 10%); }
         .ad-card h3, .ad-card p, .ad-card i { display: none; }
         .ad-card:empty h3, .ad-card:empty p, .ad-card:empty i { display: block; }
         
@@ -77,7 +122,7 @@
         .service-item i { font-size: 1.5rem; color: var(--primary-color); margin-top: 5px; min-width: 25px; }
         .service-item h4 { margin: 0 0 0.25rem 0; font-size: 1.1rem; }
         .service-item p { margin: 0; font-size: 0.9rem; color: #6c757d; }
-        .dark-mode .service-item p { color: #a0a0a0; }
+        html.dark-mode .service-item p { color: #a0a0a0; }
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
         .modal.show-modal { display: flex; align-items: center; justify-content: center; }
         .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
@@ -183,6 +228,7 @@
     <!-- JavaScript -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // --- Modal Logic (unchanged) ---
         const aboutModal = document.getElementById('about-modal');
         const contactModal = document.getElementById('contact-modal');
         const aboutBtn = document.getElementById('about-btn');
@@ -207,44 +253,47 @@
             if (e.target === contactModal) closeModal(contactModal);
         });
 
-        // Theme and Dark Mode Logic
+        // --- Theme and Dark Mode Event Listeners (Logic updated) ---
         const themePicker = document.getElementById('theme-picker');
-        const htmlElement = document.documentElement;
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const htmlElement = document.documentElement; // Target the <html> element
+
+        // Function to set theme and save it
         const setTheme = (theme) => {
             htmlElement.dataset.theme = theme;
             localStorage.setItem('jkm-edit-theme', theme);
         };
 
-        themePicker.addEventListener('change', () => { setTheme(themePicker.value); });
-
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const body = document.body;
+        // Function to enable dark mode
         const enableDarkMode = () => {
-            body.classList.add('dark-mode');
+            htmlElement.classList.add('dark-mode');
             localStorage.setItem('jkm-edit-mode', 'dark');
         };
+
+        // Function to disable dark mode
         const disableDarkMode = () => {
-            body.classList.remove('dark-mode');
+            htmlElement.classList.remove('dark-mode');
             localStorage.setItem('jkm-edit-mode', 'light');
         };
 
+        // Add event listeners for the controls
+        themePicker.addEventListener('change', () => setTheme(themePicker.value));
+
         darkModeToggle.addEventListener('click', () => {
-            body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+            // Toggle based on the class on the <html> element
+            htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
         });
 
-        // Load saved theme and mode on page load
+        // --- Initialize UI Controls to match loaded state ---
+        // The theme and mode are already applied by the script in <head>.
+        // This part just makes sure the <select> and toggle button reflect the current state.
         const savedTheme = localStorage.getItem('jkm-edit-theme');
         if (savedTheme) {
-            setTheme(savedTheme);
             themePicker.value = savedTheme;
         }
 
-        const savedMode = localStorage.getItem('jkm-edit-mode');
-        if (savedMode === 'dark') {
-            enableDarkMode();
-        } else {
-            disableDarkMode();
-        }
+        // The dark mode state is already set on the <html> tag, so the CSS for the
+        // sun/moon icon visibility will work automatically. No extra JS is needed here.
     });
     </script>
 </body>
