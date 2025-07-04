@@ -95,10 +95,10 @@
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .action-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        .progress-indicator { width: 100%; text-align: center; }
-        .progress-indicator p { font-weight: 600; color: var(--primary-color); margin-bottom: 0.5rem; }
-        .progress-bar-container { width: 100%; background-color: #e9ecef; border-radius: 8px; overflow: hidden; }
-        .progress-bar { height: 10px; width: 0%; background-color: var(--primary-color); transition: width 0.4s ease; }
+        .progress-indicator { width: 100%; text-align: center; max-width: 500px; }
+        .progress-indicator p { font-weight: 600; color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1rem; }
+        .progress-bar-container { width: 100%; background-color: #e9ecef; border-radius: 8px; overflow: hidden; height: 12px;}
+        .progress-bar { height: 100%; width: 0%; background-color: var(--primary-color); transition: width 0.4s ease; }
         html.dark-mode .progress-bar-container { background-color: #333; }
         
         .navigation-buttons { display: flex; justify-content: center; align-items: center; gap: 1rem; text-align: center; margin-top: 3rem; }
@@ -201,7 +201,7 @@
     <!-- [END] --- UNIVERSAL PAGE SCRIPT --- -->
 
 
-    <!-- [START] --- PDF TO OCR WORD LOGIC --- -->
+    <!-- [START] --- PDF TO OCR WORD LOGIC (ROBUST VERSION) --- -->
     <script>
         const fileInput = document.getElementById('file-input');
         const dropzone = document.getElementById('dropzone');
@@ -213,6 +213,7 @@
         let currentFileBuffer = null;
         let originalFileName = '';
         let processedBlobUrl = null;
+        let tesseractWorker = null; // Singleton worker instance
 
         dropzone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
@@ -261,10 +262,33 @@
             document.getElementById('convert-btn').addEventListener('click', handleConversion);
         }
 
+        // Singleton pattern to get or create the Tesseract worker
+        async function getOcrWorker(progressText, progressBar) {
+            if (tesseractWorker && (await tesseractWorker.getScheduler()).isInitialized) {
+                 return tesseractWorker;
+            }
+            
+            progressText.textContent = "Initializing OCR Engine (first-time download)...";
+            progressBar.style.width = '0%';
+
+            tesseractWorker = await Tesseract.createWorker({
+                logger: m => {
+                    // Provide detailed feedback to the user during initialization
+                    if (m.status === 'loading language traineddata' || m.status === 'initializing api') {
+                        const progress = (m.progress * 100).toFixed(0);
+                        progressText.textContent = `${m.status.charAt(0).toUpperCase() + m.status.slice(1)}...`;
+                        progressBar.style.width = `${progress}%`;
+                    }
+                }
+            });
+            return tesseractWorker;
+        }
+
+
         async function handleConversion() {
             processingPanel.innerHTML = `
                 <div class="progress-indicator">
-                    <p id="progress-text">Initializing OCR Engine...</p>
+                    <p id="progress-text">Starting Conversion...</p>
                     <div class="progress-bar-container">
                         <div id="progress-bar" class="progress-bar"></div>
                     </div>
@@ -275,23 +299,17 @@
             const progressBar = document.getElementById('progress-bar');
             
             try {
+                const worker = await getOcrWorker(progressText, progressBar);
                 const pdfDoc = await pdfjsLib.getDocument({ data: currentFileBuffer }).promise;
                 const numPages = pdfDoc.numPages;
                 const paragraphs = [];
 
-                const worker = await Tesseract.createWorker({
-                    logger: m => {
-                        if (m.status === 'recognizing text') {
-                            const progress = (m.progress * 100).toFixed(0);
-                            progressBar.style.width = `${progress}%`;
-                        }
-                    }
-                });
-
                 for (let i = 1; i <= numPages; i++) {
-                    progressText.textContent = `Processing Page ${i} of ${numPages}...`;
+                    progressText.textContent = `Recognizing text on page ${i} of ${numPages}...`;
+                    progressBar.style.width = '0%'; // Reset for each page
+
                     const page = await pdfDoc.getPage(i);
-                    const viewport = page.getViewport({ scale: 2.0 }); // Higher scale for better OCR accuracy
+                    const viewport = page.getViewport({ scale: 2.0 });
                     
                     const canvas = document.createElement('canvas');
                     const context = canvas.getContext('2d');
@@ -300,21 +318,32 @@
 
                     await page.render({ canvasContext: context, viewport: viewport }).promise;
                     
-                    const { data: { text } } = await worker.recognize(canvas);
-                    paragraphs.push(new docx.Paragraph({ text: text }));
-                }
+                    const { data: { text } } = await worker.recognize(canvas, {}, {
+                        // Pass a logger for this specific recognition job
+                        logger: m => {
+                            if (m.status === 'recognizing text') {
+                                progressBar.style.width = `${m.progress * 100}%`;
+                            }
+                        }
+                    });
 
-                await worker.terminate();
+                    // Split text by newlines to create separate paragraphs in Word
+                    const lines = text.split('\n');
+                    for (const line of lines) {
+                         if (line.trim().length > 0) { // Avoid empty paragraphs
+                            paragraphs.push(new docx.Paragraph({ text: line }));
+                         }
+                    }
+                    paragraphs.push(new docx.Paragraph({ text: "" })); // Add a space between pages
+                }
+                
+                // We no longer terminate the worker, so it can be reused.
+                // await worker.terminate();
 
                 progressText.textContent = 'Generating Word document...';
                 progressBar.style.width = '100%';
 
-                const doc = new docx.Document({
-                    sections: [{
-                        properties: {},
-                        children: paragraphs,
-                    }],
-                });
+                const doc = new docx.Document({ sections: [{ children: paragraphs }] });
 
                 const blob = await docx.Packer.toBlob(doc);
                 if (processedBlobUrl) URL.revokeObjectURL(processedBlobUrl);
@@ -324,7 +353,12 @@
 
             } catch (error) {
                 console.error("Error during OCR conversion:", error);
-                processingPanel.innerHTML = `<p style="color:red; text-align:center;">An error occurred during conversion. The PDF might be encrypted or corrupted. Please try again.</p>`;
+                processingPanel.innerHTML = `
+                    <p style="color:red; text-align:center; font-weight:bold;">Conversion Failed</p>
+                    <p style="text-align:center;">Could not initialize the OCR engine. Please check your internet connection, disable any ad-blockers, and try again.</p>
+                    <button id="retry-btn" class="action-button">Try Again</button>
+                `;
+                document.getElementById('retry-btn').addEventListener('click', handleConversion);
             }
         }
 
@@ -334,13 +368,12 @@
                 <div class="file-info-card" style="border-left: 5px solid var(--primary-color);">
                     <i class="fa-solid fa-check-circle" style="color: #28a745;"></i> Conversion Complete!
                 </div>
-                <a id="download-btn" class="action-button" download="${newFileName}">
+                <a id="download-btn" class="action-button" href="${processedBlobUrl}" download="${newFileName}">
                     <i class="fa-solid fa-download"></i> Download OCR Word
                 </a>
             `;
-            document.getElementById('download-btn').href = processedBlobUrl;
         }
     </script>
-    <!-- [END] --- PDF TO OCR WORD LOGIC --- -->
+    <!-- [END] --- PDF TO OCR WORD LOGIC (ROBUST VERSION) --- -->
 </body>
 </html>
