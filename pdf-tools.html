@@ -24,19 +24,42 @@
     <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
     <!-- =================================================================== -->
 
-    <!-- SCRIPT TO PREVENT THEME FLICKERING - MUST BE IN <HEAD> -->
+    <!-- [START] --- SCRIPT TO PREVENT THEME AND BACKGROUND FLICKERING --- -->
     <script>
         (function() {
             try {
+                // Map of theme names to their light and dark background colors.
+                // This MUST match the --bg-color values in your CSS.
+                const themeBgColors = {
+                    'corporate-blue': { light: '#f4f5f7', dark: '#121212' },
+                    'forest-green':   { light: '#f0f3f2', dark: '#121212' },
+                    'sunset-gradient':{ light: '#fff8f2', dark: '#121212' },
+                    'tech-noir':      { light: '#1a1a2e', dark: '#0f0f1e' },
+                    'minty-fresh':    { light: '#f1fefb', dark: '#121212' },
+                    'royal-purple':   { light: '#f8f7fa', dark: '#121212' },
+                    'graphite-gray':  { light: '#e9ecef', dark: '#121212' },
+                    'crimson-red':    { light: '#fdf5f6', dark: '#121212' }
+                };
+
                 const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
+                const mode = localStorage.getItem('jkm-edit-mode') || 'light';
+
+                // Apply theme and mode attributes immediately.
                 document.documentElement.setAttribute('data-theme', theme);
-                const mode = localStorage.getItem('jkm-edit-mode');
                 if (mode === 'dark') {
                     document.documentElement.classList.add('dark-mode');
                 }
+
+                // THE CRITICAL FIX: Inject a style tag to set the background color instantly.
+                const bgColor = (themeBgColors[theme] && themeBgColors[theme][mode]) || '#f4f5f7'; // Fallback color
+                const style = document.createElement('style');
+                style.innerHTML = `html { background-color: ${bgColor} !important; }`;
+                document.head.appendChild(style);
+
             } catch (e) { console.error("Error applying initial theme:", e); }
         })();
     </script>
+    <!-- [END] --- SCRIPT --- -->
     
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
@@ -45,9 +68,7 @@
         /* --- Basic Setup & Variables --- */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
 
-        /* [START] --- MODIFIED TO FIX WHITE FLASH ON PAGE LOAD --- */
         html {
-            /* Applying the background to the root element prevents a white flash during page transitions. */
             background-color: var(--bg-color);
             transition: background-color var(--transition-speed);
         }
@@ -56,7 +77,6 @@
             color: var(--text-color); 
             transition: color var(--transition-speed); 
         }
-        /* [END] --- MODIFICATION --- */
         
         *, *::before, *::after { box-sizing: border-box; }
 
@@ -128,13 +148,10 @@
         .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
         .contact-email:hover { transform: scale(1.05); }
 
-        /* [START] --- ADD THIS CSS BLOCK TO FIX FLICKERING --- */
         body {
-            /* This animation will fade the page in, hiding the layout shift */
             animation: fadeInPage 0.5s ease-in-out;
         }
         .fade-out {
-            /* This class will be added by JavaScript to fade out on navigation */
             animation: fadeOutPage 0.4s ease-in-out forwards;
         }
         @keyframes fadeInPage {
@@ -145,7 +162,6 @@
             from { opacity: 1; transform: translateY(0); }
             to { opacity: 0; transform: translateY(10px); }
         }
-        /* [END] --- CSS BLOCK --- */
 
         @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -153,7 +169,7 @@
     </style>
 </head>
 <body>
-    <!-- Header and other content remains the same -->
+    <!-- The Body and subsequent JS are unchanged. -->
     <header class='main-header'>
         <div class='logo-container'>
             <a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
@@ -289,25 +305,19 @@
             themePicker.value = savedTheme;
         }
 
-        // [START] --- ADD THIS JAVASCRIPT TO FIX FLICKERING ---
-        // This makes page transitions smooth
+        // --- Page Transition Logic (unchanged) ---
         document.querySelectorAll('a').forEach(link => {
             const linkUrl = link.getAttribute('href');
-            // We only want to animate transitions to other .html pages on our site
-            // This avoids issues with modal popups (#) or external links
             if (linkUrl && (linkUrl.endsWith('.html') || linkUrl.endsWith('/'))) {
                 link.addEventListener('click', function(e) {
-                    e.preventDefault(); // Stop the default navigation
-                    document.body.classList.add('fade-out'); // Apply fade-out animation
-                    
-                    // Wait for animation to finish, then go to the new page
+                    e.preventDefault(); 
+                    document.body.classList.add('fade-out');
                     setTimeout(() => {
                         window.location.href = this.href;
-                    }, 400); // Must match the CSS animation duration
+                    }, 400); 
                 });
             }
         });
-        // [END] --- JAVASCRIPT BLOCK ---
 
     });
     </script>
