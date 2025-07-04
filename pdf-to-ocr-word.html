@@ -47,111 +47,65 @@
         #dark-mode-toggle .fa-sun { display: none; }
         .dark-mode #dark-mode-toggle .fa-sun { display: inline; }
         .dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+        /* --- Modal Styles (Copied from index.html) --- */
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
+        .modal.show-modal { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
+        .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover,.close-btn:focus { color: var(--text-color); }
+        .modal-content h2 { color: var(--primary-color); margin-top: 0; }
+        .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
+        .contact-email:hover { transform: scale(1.05); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
         /* --- Tool Specific Styles --- */
-        .tool-container {
-            max-width: 800px;
-            margin: 3rem auto;
-            padding: 2.5rem;
-            background: var(--surface-color);
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border-top: 5px solid var(--primary-color);
-            text-align: center;
-        }
-        .tool-container h2 {
-            font-size: 2.2rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary-color);
-        }
-        .tool-container p {
-            font-size: 1.1rem;
-            color: #6c757d;
-            margin-bottom: 2rem;
-        }
-        .dark-mode .tool-container p { color: #a0a0a0; }
-        
-        .upload-area {
-            border: 3px dashed var(--accent-color);
-            border-radius: 10px;
-            padding: 3rem 1rem;
-            cursor: pointer;
-            transition: background-color var(--transition-speed);
-            margin-bottom: 1.5rem;
-        }
-        .upload-area:hover {
-            background-color: color-mix(in srgb, var(--bg-color) 80%, var(--accent-color) 20%);
-        }
-        .upload-area i {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
+        .tool-container { max-width: 800px; margin: 3rem auto; padding: 2.5rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 5px solid var(--primary-color); text-align: center; }
+        .tool-container h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--primary-color); }
+        .tool-container .subtitle { font-size: 1.1rem; color: #6c757d; margin-bottom: 2.5rem; }
+        .dark-mode .tool-container .subtitle { color: #a0a0a0; }
+        .upload-area { border: 3px dashed var(--accent-color); border-radius: 10px; padding: 3rem 1rem; cursor: pointer; transition: background-color var(--transition-speed); margin-bottom: 1.5rem; }
+        .upload-area:hover { background-color: color-mix(in srgb, var(--bg-color) 80%, var(--accent-color) 20%); }
+        .upload-area i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
         .upload-area p { margin: 0; font-size: 1rem; font-weight: 600; }
         #pdf-upload { display: none; }
+        #file-name-display { font-weight: 600; margin-bottom: 2rem; color: var(--secondary-color); min-height: 1.2em; }
+        .action-button { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; font-size: 1.1rem; font-weight: 600; color: #fff; background: var(--gradient); border: none; border-radius: 5px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; }
+        .action-button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .action-button:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        .progress-area { margin-top: 2rem; display: none; }
+        .progress-text { font-weight: 600; margin-bottom: 0.75rem; }
+        .progress-bar-container { width: 100%; background-color: #e0e0e0; border-radius: 5px; overflow: hidden; }
+        .progress-bar { width: 0%; height: 15px; background: var(--gradient); border-radius: 5px; transition: width 0.4s ease; }
+        #download-area { margin-top: 2rem; display: none; }
         
-        #file-name-display {
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: var(--secondary-color);
+        /* --- NEW: Bottom Navigation Buttons --- */
+        .bottom-nav-buttons {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%);
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
-        
-        .action-button {
-            display: inline-block;
-            padding: 0.8rem 2.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #fff;
-            background: var(--gradient);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            text-decoration: none;
+        .action-button.secondary {
+            background: var(--surface-color);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
         }
-        .action-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .action-button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .progress-area {
-            margin-top: 2rem;
-            display: none; /* Hidden by default */
-        }
-        .progress-text {
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-        }
-        .progress-bar-container {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            width: 0%;
-            height: 15px;
-            background: var(--gradient);
-            border-radius: 5px;
-            transition: width 0.4s ease;
-        }
-
-        #download-area {
-            margin-top: 2rem;
-            display: none; /* Hidden by default */
+        .action-button.secondary:hover {
+            background: var(--primary-color);
+            color: var(--surface-color);
+            border-color: var(--primary-color);
         }
 
         @media (max-width: 768px) { .main-header { flex-direction: column; gap: 1rem; } .tool-container { margin: 2rem 1rem; padding: 1.5rem;} }
     </style>
 </head>
 <body>
-    <!-- Header Section (Same as main page) -->
+    <!-- Header Section (Restored to be identical to the main page) -->
     <header class='main-header'>
         <div class='logo-container'>
             <a href='index.html' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
@@ -176,8 +130,8 @@
             <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'>
                 <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
             </button>
-            <!-- In a real app, modals would be here too, but we'll keep it simple -->
-            <a href='index.html' class='nav-link'>Home</a>
+            <a href='#' id='about-btn' class='nav-link'>About</a>
+            <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
         </nav>
     </header>
 
@@ -185,7 +139,7 @@
     <main>
         <div class='tool-container'>
             <h2>PDF to OCR Word Converter</h2>
-            <p>Extract text from any PDF, including scans, and convert it to an editable Word (.docx) file.</p>
+            <p class="subtitle">Extract text from any PDF, including scans, and convert it to an editable Word (.docx) file.</p>
             
             <input type="file" id="pdf-upload" accept=".pdf" />
             <label for="pdf-upload" class="upload-area">
@@ -195,7 +149,9 @@
             
             <div id="file-name-display"></div>
             
-            <button id="convert-btn" class="action-button" disabled>Convert to Word</button>
+            <button id="convert-btn" class="action-button" disabled>
+                <i class="fa-solid fa-gears"></i> Convert to Word
+            </button>
 
             <div class="progress-area" id="progress-area">
                 <p class="progress-text" id="progress-text">Processing...</p>
@@ -205,10 +161,26 @@
             </div>
 
             <div id="download-area">
-                <a href="#" id="download-link" class="action-button">Download Word File</a>
+                <a href="#" id="download-link" class="action-button">
+                    <i class="fa-solid fa-download"></i> Download Word File
+                </a>
+            </div>
+
+            <!-- NEW: Bottom Navigation Buttons -->
+            <div class="bottom-nav-buttons">
+                <a href="#" onclick="history.back(); return false;" class="action-button secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Previous
+                </a>
+                <a href="index.html" class="action-button secondary">
+                    <i class="fa-solid fa-table-columns"></i> Dashboard
+                </a>
             </div>
         </div>
     </main>
+    
+    <!-- Modals (Copied from index.html) -->
+    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
+    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -220,6 +192,27 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js`;
 
     document.addEventListener('DOMContentLoaded', () => {
+        // --- MODAL LOGIC (Copied from index.html) ---
+        const aboutModal = document.getElementById('about-modal');
+        const contactModal = document.getElementById('contact-modal');
+        const aboutBtn = document.getElementById('about-btn');
+        const contactBtn = document.getElementById('contact-btn');
+        const closeBtns = document.querySelectorAll('.close-btn');
+        const openModal = (modal) => modal.classList.add('show-modal');
+        const closeModal = (modal) => modal.classList.remove('show-modal');
+        aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+        contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                closeModal(aboutModal);
+                closeModal(contactModal);
+            });
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target === aboutModal) closeModal(aboutModal);
+            if (e.target === contactModal) closeModal(contactModal);
+        });
+
         // --- THEME & DARK MODE LOGIC (Copied from index.html) ---
         const themePicker = document.getElementById('theme-picker');
         const htmlElement = document.documentElement;
@@ -228,7 +221,6 @@
             localStorage.setItem('jkm-edit-theme', theme);
         };
         themePicker.addEventListener('change', () => setTheme(themePicker.value));
-
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         const body = document.body;
         const enableDarkMode = () => {
@@ -242,7 +234,6 @@
         darkModeToggle.addEventListener('click', () => {
             body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
         });
-
         const savedTheme = localStorage.getItem('jkm-edit-theme');
         if (savedTheme) {
             setTheme(savedTheme);
@@ -264,7 +255,6 @@
         const progressBar = document.getElementById('progress-bar');
         const downloadArea = document.getElementById('download-area');
         const downloadLink = document.getElementById('download-link');
-        
         let selectedPdfFile = null;
 
         pdfUpload.addEventListener('change', (e) => {
@@ -274,17 +264,16 @@
                 convertBtn.disabled = false;
                 downloadArea.style.display = 'none';
                 progressArea.style.display = 'none';
+                progressBar.style.width = '0%';
             }
         });
 
         convertBtn.addEventListener('click', async () => {
             if (!selectedPdfFile) return;
-
             convertBtn.disabled = true;
             downloadArea.style.display = 'none';
             progressArea.style.display = 'block';
             progressBar.style.width = '0%';
-            
             try {
                 await convertPdfToOcrWord(selectedPdfFile);
             } catch (error) {
@@ -296,19 +285,10 @@
 
         async function convertPdfToOcrWord(file) {
             progressText.textContent = 'Initializing OCR engine...';
-            const tesseractWorker = await Tesseract.createWorker({
-                logger: m => {
-                    if(m.status === 'recognizing text') {
-                        // This gives detailed progress for a single page
-                        const pageProgress = m.progress * 100;
-                        // We can use this for more granular progress bars in the future
-                    }
-                }
-            });
+            const tesseractWorker = await Tesseract.createWorker({ logger: m => {} });
 
             progressText.textContent = 'Loading PDF file...';
             const fileReader = new FileReader();
-            
             fileReader.onload = async function() {
                 const typedarray = new Uint8Array(this.result);
                 const pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
@@ -321,20 +301,17 @@
                     progressBar.style.width = `${pageProgress}%`;
 
                     const page = await pdfDoc.getPage(i);
-                    const viewport = page.getViewport({ scale: 2.0 }); // Higher scale for better OCR quality
+                    const viewport = page.getViewport({ scale: 2.0 }); // Higher scale for better OCR
                     const canvas = document.createElement('canvas');
                     const context = canvas.getContext('2d');
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
 
                     await page.render({ canvasContext: context, viewport: viewport }).promise;
-                    
                     const { data: { text } } = await tesseractWorker.recognize(canvas);
                     
-                    // Split text into paragraphs and add to document
                     const paragraphs = text.split('\n').map(line => new docx.Paragraph({ text: line }));
                     docContent.push(...paragraphs);
-                    // Add a page break after each PDF page except the last one
                     if (i < numPages) {
                         docContent.push(new docx.Paragraph({ children: [new docx.PageBreak()] }));
                     }
@@ -344,15 +321,11 @@
                 await tesseractWorker.terminate();
 
                 const doc = new docx.Document({
-                    sections: [{
-                        properties: {},
-                        children: docContent,
-                    }],
+                    sections: [{ children: docContent }],
                 });
 
                 const blob = await docx.Packer.toBlob(doc);
                 const downloadUrl = URL.createObjectURL(blob);
-                
                 downloadLink.href = downloadUrl;
                 const originalName = file.name.replace(/\.pdf$/i, '');
                 downloadLink.download = `${originalName}-ocr-converted.docx`;
