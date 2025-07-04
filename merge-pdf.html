@@ -243,11 +243,11 @@
             levelText.textContent = `${compressionLevel}% Compression`;
             processBtn.textContent = "Merge & Compress PDF";
             
-            // --- MODIFIED: New, more accurate estimation formula ---
-            // This formula uses a non-linear power curve to better model real JPEG compression.
-            // The exponent (1.5) and the divisor (110) are tuned to give a realistic reduction.
-            const qualityFactor = Math.pow(1 - (compressionLevel / 110), 1.5);
-            const estimatedFinalSize = originalSelectedSize * qualityFactor;
+            // --- MODIFICATION: New, more realistic estimation formula ---
+            // This formula assumes a maximum potential size reduction of 85% at the highest compression setting.
+            // This provides a much better estimate for the `scale: 1.0` rendering process.
+            const reductionFactor = 0.85; 
+            const estimatedFinalSize = originalSelectedSize * (1 - (compressionLevel / 100 * reductionFactor));
             finalSizeDisplay.textContent = formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0);
         }
     }
@@ -301,7 +301,8 @@
                 const quality = 1 - (compressionLevel / 100);
                 for (const pageObj of selectedPages) {
                     const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
-                    const viewport = page.getViewport({ scale: 1.5 }); 
+                    // --- CRITICAL FIX: Render at native 1.0 scale to prevent size inflation ---
+                    const viewport = page.getViewport({ scale: 1.0 }); 
                     const canvas = document.createElement('canvas');
                     canvas.height = viewport.height; 
                     canvas.width = viewport.width;
@@ -320,7 +321,6 @@
             }
             finalBytes = await finalPdfDoc.save();
 
-            // The 'finalSizeDisplay' text content is NOT updated here to preserve the estimate.
             sizePreviewNote.textContent = 'Processing complete!';
             actionButtonsContainer.classList.add('hidden');
             
