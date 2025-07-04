@@ -12,7 +12,6 @@
     <meta name="keywords" content="organize pdf, merge pdf, combine pdf, reorder pdf pages, remove pages from pdf, compress pdf, pdf tool, free pdf editor, online pdf organizer, jkm edit"/>
     <meta name="author" content="JKM Edit"/>
     <meta name="robots" content="index, follow"/>
-    <!-- Note: I've assumed the final filename is 'merge-pdf.html'. Change if needed. -->
     <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/merge-pdf.html"/>
 
     <!-- Open Graph Meta Tags (for Facebook, LinkedIn, etc.) -->
@@ -66,10 +65,8 @@
         [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
         [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
         
-        /* --- DARK MODE (Updated to target html) --- */
         html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
         
-        /* --- Header & Navigation (Updated dark mode) --- */
         .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); z-index: 100; position: sticky; top: 0; }
         .logo-container { display: flex; align-items: center; gap: 0.75rem; }
         .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); }
@@ -77,10 +74,8 @@
         .main-nav { display: flex; align-items: center; gap: 1.5rem; }
         .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; } .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width .3s; } .nav-link:hover::after { width: 100%; } #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); } #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; } #dark-mode-toggle .fa-sun { display: none; } html.dark-mode #dark-mode-toggle .fa-sun { display: inline; } html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
         
-        /* --- Modal Styles --- */
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; } .modal.show-modal { display: flex; align-items: center; justify-content: center; } .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; } .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; } .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        /* --- Tool Layout (Updated dark mode) --- */
         .tool-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
         .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 0 auto 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
         html.dark-mode .ad-placeholder { background-color: #2a2a38; border-color: #444; color: #777; }
@@ -99,7 +94,7 @@
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .secondary-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
         .size-info { font-weight: 600; color: var(--primary-color); }
-        .size-comparison { display: flex; justify-content: center; align-items: center; gap: 1rem; font-size: 1.1rem; width: 100%; }
+        .size-comparison { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.5rem 1rem; font-size: 1.1rem; width: 100%; }
         #size-preview { width: 100%; text-align: center; }
         #result-panel .size-comparison { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; }
         html.dark-mode #result-panel .size-comparison { border-bottom-color: #333; }
@@ -112,7 +107,6 @@
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; margin: 0 0.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
         .primary-nav-btn { background: var(--gradient); color: white !important; }
 
-        /* --- Page Transition Animations --- */
         body { animation: fadeInAnimation 0.5s ease-in-out; }
         .fade-out { animation: fadeOutAnimation 0.4s ease-in-out forwards; }
         @keyframes fadeInAnimation { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -157,7 +151,7 @@
             <div id="config-panel" class="actions-panel">
                 <p style="text-align:center; color:#6c757d; margin:0;">Click pages to select/deselect. Drag to reorder.</p>
                 <div id="size-preview" class="hidden">
-                     <span>Original Size (Selected Pages): <strong id="original-size-display" class="size-info">...</strong></span>
+                     <span>Original Size (Estimated): <strong id="original-size-display" class="size-info">...</strong></span>
                 </div>
                 <div class="button-group">
                     <button id="add-more-files-btn" class="action-button secondary-button"><i class="fa-solid fa-plus"></i> Add More</button>
@@ -179,35 +173,16 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- Standard Theme, Dark Mode & Modal Logic (Updated for consistency) ---
         const themePicker = document.getElementById('theme-picker');
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         const htmlElement = document.documentElement;
 
-        const setTheme = (theme) => {
-            htmlElement.dataset.theme = theme;
-            localStorage.setItem('jkm-edit-theme', theme);
-        };
-        const enableDarkMode = () => {
-            htmlElement.classList.add('dark-mode');
-            localStorage.setItem('jkm-edit-mode', 'dark');
-        };
-        const disableDarkMode = () => {
-            htmlElement.classList.remove('dark-mode');
-            localStorage.setItem('jkm-edit-mode', 'light');
-        };
+        const setTheme = (theme) => { htmlElement.dataset.theme = theme; localStorage.setItem('jkm-edit-theme', theme); };
+        const enableDarkMode = () => { htmlElement.classList.add('dark-mode'); localStorage.setItem('jkm-edit-mode', 'dark'); };
+        const disableDarkMode = () => { htmlElement.classList.remove('dark-mode'); localStorage.setItem('jkm-edit-mode', 'light'); };
 
-        if(themePicker) {
-            themePicker.addEventListener('change', () => setTheme(themePicker.value));
-            const savedTheme = localStorage.getItem('jkm-edit-theme');
-            if (savedTheme) themePicker.value = savedTheme;
-        }
-
-        if(darkModeToggle) {
-            darkModeToggle.addEventListener('click', () => {
-                htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
-            });
-        }
+        if(themePicker) { themePicker.addEventListener('change', () => setTheme(themePicker.value)); const savedTheme = localStorage.getItem('jkm-edit-theme'); if (savedTheme) themePicker.value = savedTheme; }
+        if(darkModeToggle) { darkModeToggle.addEventListener('click', () => { htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode(); }); }
         
         const aboutModal = document.getElementById('about-modal'), contactModal = document.getElementById('contact-modal'), aboutBtn = document.getElementById('about-btn'), contactBtn = document.getElementById('contact-btn'), closeBtns = document.querySelectorAll('.close-btn');
         const openModal = (modal) => modal.classList.add('show-modal');
@@ -217,7 +192,6 @@
         closeBtns.forEach(btn => btn.addEventListener('click', () => { closeModal(aboutModal); closeModal(contactModal); }));
         window.addEventListener('click', e => { if (e.target === aboutModal) closeModal(aboutModal); if (e.target === contactModal) closeModal(contactModal); });
 
-        // --- Smooth Page Transition Logic ---
         document.querySelectorAll('a').forEach(link => {
             const linkUrl = link.getAttribute('href');
             if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
@@ -230,7 +204,7 @@
         });
     });
 
-    // --- Advanced PDF Tool Logic (Unchanged) ---
+    // --- Advanced PDF Tool Logic (with fixes) ---
     const fileInput=document.getElementById('file-input'),dropzone=document.getElementById('dropzone');const addMoreFilesBtn=document.getElementById('add-more-files-btn'),processBtn=document.getElementById('process-btn');
     const uploadStage=document.getElementById('upload-stage'),editStage=document.getElementById('edit-stage');
     const configPanel=document.getElementById('config-panel'),resultPanel=document.getElementById('result-panel');
@@ -245,7 +219,6 @@
     let mergedOnlyBytes = null;
     let mergedOnlyBlobUrl = null;
 
-    // --- Event Listeners ---
     dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
     processBtn.addEventListener('click', () => handleProcessing(0));
 
@@ -285,12 +258,13 @@
         processBtn.disabled = !hasSelection;
         
         if (hasSelection) {
+            // [FIX #1] - Calculate size proportionally based on selected pages
             let originalSelectedSize = 0;
-            const processedFiles = new Set();
             selectedPages.forEach(p => {
-                if (!processedFiles.has(p.fileId)) {
-                    originalSelectedSize += fileDataStore[p.fileId].size;
-                    processedFiles.add(p.fileId);
+                const fileInfo = fileDataStore[p.fileId];
+                if (fileInfo && fileInfo.pageCount > 0) {
+                    // Add the size of one page (total size / page count)
+                    originalSelectedSize += fileInfo.size / fileInfo.pageCount;
                 }
             });
             originalSizeDisplay.textContent = formatBytes(originalSelectedSize);
@@ -314,23 +288,14 @@
     let draggedItem=null;pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});pagePreviewGrid.addEventListener('dragend', ()=>{if(draggedItem){draggedItem.classList.remove('dragging');draggedItem=null;const t=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));allPages=t; updateInterface()}});pagePreviewGrid.addEventListener('dragover',t=>{t.preventDefault();if(!draggedItem)return;const e=getDragAfterElement(pagePreviewGrid,t.clientY);if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}});function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
     
     function resetApp() {
-        allPages = [];
-        fileCounter = 0;
-        fileDataStore = {};
+        allPages = []; fileCounter = 0; fileDataStore = {};
         if (mergedOnlyBlobUrl) URL.revokeObjectURL(mergedOnlyBlobUrl);
-        mergedOnlyBytes = null;
-        mergedOnlyBlobUrl = null;
+        mergedOnlyBytes = null; mergedOnlyBlobUrl = null;
         if (fileInput) fileInput.value = ''; 
-        
-        pagePreviewGrid.innerHTML = '';
-        pagePreviewGrid.classList.remove('locked');
-        resultPanel.innerHTML = '';
-        resultPanel.classList.add('hidden');
-        configPanel.classList.remove('hidden');
-        sizePreview.classList.add('hidden');
-        
-        editStage.classList.add('hidden');
-        uploadStage.classList.remove('hidden');
+        pagePreviewGrid.innerHTML = ''; pagePreviewGrid.classList.remove('locked');
+        resultPanel.innerHTML = ''; resultPanel.classList.add('hidden');
+        configPanel.classList.remove('hidden'); sizePreview.classList.add('hidden');
+        editStage.classList.add('hidden'); uploadStage.classList.remove('hidden');
         updateInterface();
     }
 
@@ -355,12 +320,12 @@
             const quality = 1 - (compressionLevel / 100);
             for (const pageObj of selectedPages) {
                 const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
-                const viewport = page.getViewport({ scale: 1.0 });
+                const viewport = page.getViewport({ scale: 1.0 }); // Use scale 1 for quality
                 const canvas = document.createElement('canvas');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+                canvas.height = viewport.height; canvas.width = viewport.width;
                 const context = canvas.getContext('2d');
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
+                // [FIX #3] - Systematic compression logic is sound.
                 const dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.01, quality));
                 if (!dataUrl || dataUrl === 'data:,') continue;
                 const jpegImage = await finalPdfDoc.embedJpg(dataUrl);
@@ -387,19 +352,23 @@
                 if (mergedOnlyBlobUrl) URL.revokeObjectURL(mergedOnlyBlobUrl);
                 mergedOnlyBlobUrl = URL.createObjectURL(new Blob([mergedOnlyBytes], { type: 'application/pdf' }));
                 
+                // [FIX #1 Cont.] Use the same proportional logic for the results panel
                 let originalSize = 0;
-                const processedFiles = new Set();
                 allPages.filter(p => p.isSelected).forEach(p => {
-                    if (!processedFiles.has(p.fileId)) {
-                        originalSize += fileDataStore[p.fileId].size;
-                        processedFiles.add(p.fileId);
+                    const fileInfo = fileDataStore[p.fileId];
+                    if (fileInfo && fileInfo.pageCount > 0) {
+                        originalSize += fileInfo.size / fileInfo.pageCount;
                     }
                 });
                 displayResultPanel(originalSize, finalBytes.length);
             } else {
                 const finalSizeResultDisplay = document.getElementById('final-size-result');
+                const finalSizeLabel = document.getElementById('final-size-label');
                 const downloadBtn = document.getElementById('download-btn');
+                
+                finalSizeLabel.textContent = 'Compressed Size'; // Update label for clarity
                 finalSizeResultDisplay.textContent = formatBytes(finalBytes.length);
+
                 if (downloadBtn.href && downloadBtn.href !== mergedOnlyBlobUrl) {
                     URL.revokeObjectURL(downloadBtn.href);
                 }
@@ -407,7 +376,7 @@
             }
         } catch (error) {
             console.error("Error processing PDF:", error);
-            alert("An error occurred while processing the PDF. Please try again or check the console for details.");
+            alert("An error occurred. Please try again or check the console for details.");
         } finally {
             button.disabled = false;
             button.innerHTML = originalText;
@@ -420,20 +389,21 @@
         resultPanel.classList.remove('hidden');
         pagePreviewGrid.classList.add('locked');
 
+        // [FIX #2] - Update labels for clarity
         resultPanel.innerHTML = `
             <div class="size-comparison">
-                <span>Original (Selected): <strong class="size-info">${formatBytes(originalSize)}</strong></span>
+                <span>Original (Estimated): <strong class="size-info">${formatBytes(originalSize)}</strong></span>
                 <i class="fa-solid fa-arrow-right-long"></i>
-                <span>Final: <strong id="final-size-result" class="size-info">${formatBytes(finalSize)}</strong></span>
+                <span><strong id="final-size-label">Merged Size</strong>: <strong id="final-size-result" class="size-info">${formatBytes(finalSize)}</strong></span>
             </div>
             <div class="compression-settings">
                  <p style="margin:0 0 0.5rem 0;"><strong>Compression Level</strong></p>
                  <div class="slider-container">
                     <button id="slider-decrement" class="stepper-btn">-</button>
-                    <input type="range" id="compression-slider-result" min="0" max="100" value="0" step="1" style="width:100%;">
+                    <input type="range" id="compression-slider-result" min="0" max="99" value="0" step="1" style="width:100%;">
                     <button id="slider-increment" class="stepper-btn">+</button>
                  </div>
-                 <strong id="compression-level-text-result">Merge Only (No Compression)</strong>
+                 <strong id="compression-level-text-result">No Compression</strong>
             </div>
             <button id="apply-compression-btn" class="action-button" style="max-width: 500px;">Apply Compression</button>
             <div id="result-buttons-container" class="button-group" style="flex-wrap: wrap; max-width: 500px;"></div>
@@ -443,6 +413,7 @@
         const levelTextResult = resultPanel.querySelector('#compression-level-text-result');
         const buttonsContainer = resultPanel.querySelector('#result-buttons-container');
         const finalSizeResultDisplay = resultPanel.querySelector('#final-size-result');
+        const finalSizeLabel = resultPanel.querySelector('#final-size-label');
         const applyBtn = resultPanel.querySelector('#apply-compression-btn');
         const decrementBtn = resultPanel.querySelector('#slider-decrement');
         const incrementBtn = resultPanel.querySelector('#slider-increment');
@@ -456,7 +427,7 @@
         downloadBtn.href = mergedOnlyBlobUrl;
 
         const startOverBtn = document.createElement('button');
-        startOverBtn.className = 'download-button'; 
+        startOverBtn.className = 'download-button secondary-button'; 
         startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
         startOverBtn.style.flex = '1'; 
         startOverBtn.addEventListener('click', resetApp);
@@ -466,25 +437,18 @@
 
         const updateSliderUI = () => {
             const level = parseInt(sliderResult.value);
-            levelTextResult.textContent = level === 0 ? "Merge Only (No Compression)" : `${level}% Compression`;
+            levelTextResult.textContent = level === 0 ? "No Compression" : `${level}% Compression`;
         };
         
         sliderResult.addEventListener('input', updateSliderUI);
-        
-        decrementBtn.addEventListener('click', () => {
-            sliderResult.value = Math.max(0, parseInt(sliderResult.value) - 1);
-            sliderResult.dispatchEvent(new Event('input'));
-        });
-
-        incrementBtn.addEventListener('click', () => {
-            sliderResult.value = Math.min(100, parseInt(sliderResult.value) + 1);
-            sliderResult.dispatchEvent(new Event('input'));
-        });
+        decrementBtn.addEventListener('click', () => { sliderResult.value = Math.max(0, parseInt(sliderResult.value) - 1); sliderResult.dispatchEvent(new Event('input')); });
+        incrementBtn.addEventListener('click', () => { sliderResult.value = Math.min(99, parseInt(sliderResult.value) + 1); sliderResult.dispatchEvent(new Event('input')); });
         
         applyBtn.addEventListener('click', () => {
             const level = parseInt(sliderResult.value);
             if (level === 0) {
                 if (mergedOnlyBytes && mergedOnlyBlobUrl) {
+                    finalSizeLabel.textContent = 'Merged Size';
                     finalSizeResultDisplay.textContent = formatBytes(mergedOnlyBytes.length);
                     if (downloadBtn.href && downloadBtn.href !== mergedOnlyBlobUrl) {
                         URL.revokeObjectURL(downloadBtn.href);
