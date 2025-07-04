@@ -79,15 +79,13 @@
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .secondary-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
         
-        #size-preview { width: 100%; text-align: center; margin-bottom: 1rem; padding-bottom: 1.5rem; border-bottom: 2px solid #eee; }
-        .dark-mode #size-preview { border-bottom-color: #333; }
         .compression-settings { width: 100%; max-width: 500px; text-align: center; }
         .slider-container { display: flex; align-items: center; gap: 1rem; margin: 0.5rem auto; }
         
-        #result-container { display: flex; flex-direction: column; gap: 1rem; padding-top: 1.5rem; width:100%; align-items: center; border-top: 2px solid #eee; }
-        .dark-mode #result-container { border-top-color: #333; }
+        #result-container { display: flex; flex-direction: column; gap: 1rem; padding-top: 1.5rem; width:100%; align-items: center; }
         .size-info { font-weight: 600; color: var(--primary-color); }
-        .size-comparison { display: flex; justify-content: center; align-items: center; gap: 1rem; font-size: 1.1rem; }
+        .size-comparison { display: flex; justify-content: center; align-items: center; gap: 1rem; font-size: 1.1rem; padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; width: 100%; }
+        .dark-mode .size-comparison { border-bottom-color: #333; }
         .download-button { display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
         
         .navigation-buttons { text-align: center; margin-top: 3rem; }
@@ -133,18 +131,9 @@
             <div id="page-preview-container">
                  <div class="page-preview-grid"></div>
             </div>
-            <div class="actions-panel">
+            <div id="actions-panel" class="actions-panel">
                 <p style="text-align:center; color:#6c757d; margin:0;">Click pages to select/deselect. Drag to reorder.</p>
-                
-                <div id="size-preview" class="hidden">
-                    <div class="size-comparison">
-                        <span>Original: <strong id="original-size-display" class="size-info">...</strong></span>
-                        <i class="fa-solid fa-arrow-right-long"></i>
-                        <span>Final: <strong id="final-size-display" class="size-info">...</strong></span>
-                    </div>
-                    <small id="size-preview-note">(Final size is estimated until processing)</small>
-                </div>
-                
+                                
                 <div class="compression-settings">
                      <p style="margin:0 0 0.5rem 0;"><strong>Compression Level</strong></p>
                      <div class="slider-container">
@@ -158,9 +147,9 @@
                     <button id="add-more-files-btn" class="action-button secondary-button"><i class="fa-solid fa-plus"></i> Add More Files</button>
                     <button id="process-btn" class="action-button" disabled>Merge PDF</button>
                 </div>
-                <div id="result-container" class="hidden">
-                    <!-- Result content will be injected here by JavaScript -->
-                </div>
+            </div>
+            <div id="result-container" class="actions-panel hidden">
+                <!-- Result content will be injected here by JavaScript -->
             </div>
         </div>
         
@@ -183,7 +172,8 @@
     });
 
     // --- Advanced PDF Tool Logic ---
-    const fileInput=document.getElementById('file-input'),dropzone=document.getElementById('dropzone');const addMoreFilesBtn=document.getElementById('add-more-files-btn'),processBtn=document.getElementById('process-btn');const slider=document.getElementById('compression-slider'),levelText=document.getElementById('compression-level-text');const uploadStage=document.getElementById('upload-stage'),editStage=document.getElementById('edit-stage');const actionButtonsContainer=document.getElementById('action-buttons'),resultContainer=document.getElementById('result-container'),pagePreviewGrid=editStage.querySelector('.page-preview-grid');const sizePreview=document.getElementById('size-preview'),originalSizeDisplay=document.getElementById('original-size-display'),finalSizeDisplay=document.getElementById('final-size-display'),sizePreviewNote=document.getElementById('size-preview-note');
+    const fileInput=document.getElementById('file-input'),dropzone=document.getElementById('dropzone');const addMoreFilesBtn=document.getElementById('add-more-files-btn'),processBtn=document.getElementById('process-btn');const slider=document.getElementById('compression-slider'),levelText=document.getElementById('compression-level-text');const uploadStage=document.getElementById('upload-stage'),editStage=document.getElementById('edit-stage');const actionsPanel=document.getElementById('actions-panel'),resultContainer=document.getElementById('result-container'),pagePreviewGrid=editStage.querySelector('.page-preview-grid');
+    
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
     
     let allPages = [], fileCounter = 0;
@@ -191,12 +181,13 @@
 
     // --- Event Listeners ---
     dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
-    slider.addEventListener('input', () => updateInterface()); // Made async
+    slider.addEventListener('input', updateInterface);
     processBtn.addEventListener('click',processAndDisplay);
 
     async function handleFiles(files){
-        uploadStage.classList.add('hidden');
-        editStage.classList.remove('hidden');
+        // Reset before adding new files to ensure a clean state
+        resetApp(false); // Soft reset, doesn't hide the edit stage
+        
         for (const file of files){
             if (file.type !== "application/pdf") continue;
             fileCounter++;
@@ -208,126 +199,108 @@
             
             const numPagesInFile = pdfJsDoc.numPages;
             for (let i = 1; i <= numPagesInFile; i++){
-                allPages.push({id: `${fileId}-${i}`,fileId: fileId,fileSize: file.size, totalPagesInFile: numPagesInFile, originalPageIndex: i - 1, pageLabel: `F${fileId},P${i}`, isSelected: true,pdfDoc: pdfJsDoc});
+                allPages.push({id: `${fileId}-${i}`,fileId: fileId, originalPageIndex: i - 1, pageLabel: `F${fileId},P${i}`, isSelected: true,pdfDoc: pdfJsDoc});
             }
         }
+        
+        uploadStage.classList.add('hidden');
+        editStage.classList.remove('hidden');
+
         await renderPagePreviews();
-        await updateInterface();
+        updateInterface();
     }
 
     function formatBytes(b,d=2){if(!+b)return'0 Bytes';const k=1024,i=Math.floor(Math.log(b)/Math.log(k));return`${parseFloat((b/Math.pow(k,i)).toFixed(d<0?0:d))} ${['Bytes','KB','MB','GB'][i]}`}
     
     async function renderPagePreviews(){pagePreviewGrid.innerHTML='';for(const pageObj of allPages){const pageItem=document.createElement('div');pageItem.className='page-item';if(!pageObj.isSelected)pageItem.classList.add('deselected');pageItem.dataset.id=pageObj.id;pageItem.draggable=true;pageItem.innerHTML=`<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;pagePreviewGrid.appendChild(pageItem);const canvas=pageItem.querySelector('canvas'),page=await pageObj.pdfDoc.getPage(pageObj.originalPageIndex+1),viewport=page.getViewport({scale:0.4});canvas.height=viewport.height;canvas.width=viewport.width;await page.render({canvasContext:canvas.getContext('2d'),viewport:viewport}).promise;}}
     
-    // --- FUNDAMENTAL FIX: The whole estimation logic is rewritten ---
-    async function updateInterface(){
+    function updateInterface(){
         const selectedPages = allPages.filter(p => p.isSelected);
         const hasSelection = selectedPages.length > 0;
         
         processBtn.disabled = !hasSelection;
-        resultContainer.classList.add('hidden');
-        actionButtonsContainer.classList.remove('hidden');
-
-        if (!hasSelection) {
-            sizePreview.classList.add('hidden');
-            return;
-        }
-        sizePreview.classList.remove('hidden');
-        
-        let originalSelectedSize = 0;
-        selectedPages.forEach(p => { if (p.totalPagesInFile > 0) { originalSelectedSize += p.fileSize / p.totalPagesInFile; }});
-        originalSizeDisplay.textContent = formatBytes(originalSelectedSize);
-        
         const compressionLevel = parseInt(slider.value);
-        sizePreviewNote.textContent = '(Final size is estimated until processing)';
-        
+
         if (compressionLevel === 0) {
             levelText.textContent = "Merge Only (No Compression)";
             processBtn.textContent = "Merge PDF";
-            finalSizeDisplay.textContent = formatBytes(originalSelectedSize);
         } else {
             levelText.textContent = `${compressionLevel}% Compression`;
             processBtn.textContent = "Merge & Compress PDF";
-            
-            let totalEstimatedSize = 0;
-            const quality = 1 - (compressionLevel / 100);
-
-            // This new logic estimates size based on OUTPUT (pixels), not INPUT (file size).
-            for (const pageObj of selectedPages) {
-                const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
-                const viewport = page.getViewport({ scale: 1.0 }); // Use the same scale as the processing step
-                const pixels = viewport.width * viewport.height;
-                
-                // This formula models JPEG compression. It has a base size and a factor that grows non-linearly with quality.
-                // The constants (0.02, 0.25) are tuned to give a realistic estimate for typical documents.
-                const bytesPerPixelFactor = 0.02 + (Math.pow(quality, 2) * 0.25);
-                const estimatedPageSize = pixels * bytesPerPixelFactor;
-                totalEstimatedSize += estimatedPageSize;
-            }
-            finalSizeDisplay.textContent = formatBytes(totalEstimatedSize > 0 ? totalEstimatedSize : 0);
         }
     }
     
-    pagePreviewGrid.addEventListener('click', async (t) => {
+    pagePreviewGrid.addEventListener('click', (t) => {
         const e=t.target.closest('.page-item');
         if(!e)return;
         const o=allPages.find(t=>t.id===e.dataset.id);
         if(o){
             o.isSelected=!o.isSelected;
             e.classList.toggle('deselected');
-            await updateInterface(); // Made async
+            updateInterface();
         }
     });
     
-    let draggedItem=null;pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});pagePreviewGrid.addEventListener('dragend', async ()=>{if(draggedItem){draggedItem.classList.remove('dragging');draggedItem=null;const t=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));allPages=t; await updateInterface()}});pagePreviewGrid.addEventListener('dragover',t=>{t.preventDefault();if(!draggedItem)return;const e=getDragAfterElement(pagePreviewGrid,t.clientY);if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}});function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
+    let draggedItem=null;pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});pagePreviewGrid.addEventListener('dragend', ()=>{if(draggedItem){draggedItem.classList.remove('dragging');draggedItem=null;const t=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));allPages=t; updateInterface()}});pagePreviewGrid.addEventListener('dragover',t=>{t.preventDefault();if(!draggedItem)return;const e=getDragAfterElement(pagePreviewGrid,t.clientY);if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}});function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
     
-    function resetApp() {
+    function resetApp(fullReset = true) {
         allPages = [];
         fileCounter = 0;
         fileDataStore = {};
-        if (fileInput) {
-            fileInput.value = ''; 
-        }
-        editStage.classList.add('hidden');
-        uploadStage.classList.remove('hidden');
+        if (fileInput) fileInput.value = ''; 
+        
         pagePreviewGrid.innerHTML = '';
         resultContainer.innerHTML = '';
         resultContainer.classList.add('hidden');
-        addMoreFilesBtn.disabled = false;
-        slider.disabled = false;
+        actionsPanel.classList.remove('hidden');
         slider.value = 0;
-        updateInterface(); 
+
+        if (fullReset) {
+            editStage.classList.add('hidden');
+            uploadStage.classList.remove('hidden');
+        }
+        updateInterface();
     }
 
     async function processAndDisplay(){
-        addMoreFilesBtn.disabled=true;slider.disabled=true;processBtn.disabled=true;processBtn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
-        
+        processBtn.disabled=true;
+        processBtn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+        addMoreFilesBtn.disabled = true;
+        slider.disabled = true;
+
         const { PDFDocument } = PDFLib;
         const selectedPages = allPages.filter(p => p.isSelected);
         const compressionLevel = parseInt(slider.value);
         let finalBytes;
-        let isSuccess = false;
+        let originalTotalSize = 0;
 
         try {
             const finalPdfDoc = await PDFDocument.create();
 
-            if (compressionLevel === 0) { // MERGE-ONLY PATH
+            if (compressionLevel === 0) { // MERGE-ONLY (VECTOR) PATH
                 const loadedPdfDocs = new Map();
                 for (const pageObj of selectedPages) {
                     let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
                     if (!sourceDoc) {
                         const fileData = fileDataStore[pageObj.fileId];
+                        originalTotalSize += fileData.byteLength;
                         sourceDoc = await PDFDocument.load(fileData);
                         loadedPdfDocs.set(pageObj.fileId, sourceDoc);
                     }
                     const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
                     finalPdfDoc.addPage(copiedPage);
                 }
-            } else { // COMPRESSION PATH
+            } else { // COMPRESSION (RASTER) PATH
                 const quality = 1 - (compressionLevel / 100);
-                for (const pageObj of selectedPages) {
+                 for (const pageObj of selectedPages) {
+                    // Calculate original size on the fly for the selected pages
+                    const fileData = fileDataStore[pageObj.fileId];
+                    const perPageSize = fileData.byteLength / (await PDFDocument.load(fileData)).getPageCount();
+                    originalTotalSize += perPageSize;
+
+                    // Rasterize and compress
                     const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
-                    const viewport = page.getViewport({ scale: 1.0 }); // Using 1.0 scale
+                    const viewport = page.getViewport({ scale: 1.0 }); // Using 1.0 scale is crucial
                     const canvas = document.createElement('canvas');
                     canvas.height = viewport.height; 
                     canvas.width = viewport.width;
@@ -346,16 +319,18 @@
             }
             finalBytes = await finalPdfDoc.save();
 
-            sizePreviewNote.textContent = 'Processing complete!';
-            actionButtonsContainer.classList.add('hidden');
-            resultContainer.innerHTML = ''; 
-
-            const resultActionsContainer = document.createElement('div');
-            resultActionsContainer.style.display = 'flex';
-            resultActionsContainer.style.gap = '1rem';
-            resultActionsContainer.style.justifyContent = 'center';
-            resultActionsContainer.style.flexWrap = 'wrap';
+            // --- UI UPDATE AFTER PROCESSING ---
+            actionsPanel.classList.add('hidden');
+            resultContainer.innerHTML = `
+                <div class="size-comparison">
+                    <span>Original: <strong class="size-info">${formatBytes(originalTotalSize)}</strong></span>
+                    <i class="fa-solid fa-arrow-right-long"></i>
+                    <span>Final: <strong class="size-info">${formatBytes(finalBytes.length)}</strong></span>
+                </div>
+                <div id="result-buttons"></div>
+            `;
             
+            const resultButtons = resultContainer.querySelector('#result-buttons');
             const downloadLink = document.createElement('a');
             downloadLink.href = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
             downloadLink.className = 'download-button';
@@ -366,28 +341,25 @@
             startOverBtn.className = 'action-button secondary-button';
             startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
             startOverBtn.style.width = 'auto'; 
-            startOverBtn.style.paddingLeft = '2rem';
-            startOverBtn.style.paddingRight = '2rem';
-            startOverBtn.addEventListener('click', resetApp);
+            startOverBtn.style.padding = '1rem 2rem';
+            startOverBtn.addEventListener('click', () => resetApp(true));
 
-            resultActionsContainer.appendChild(downloadLink);
-            resultActionsContainer.appendChild(startOverBtn);
+            resultButtons.appendChild(downloadLink);
+            resultButtons.appendChild(startOverBtn);
             
-            resultContainer.appendChild(resultActionsContainer);
             resultContainer.classList.remove('hidden');
-            
-            isSuccess = true;
             
         } catch (error) {
             console.error("Error processing PDF:", error);
             alert("An error occurred while processing the PDF. This can happen with very complex or corrupted files. Please try again or check the console for details.");
-            resultContainer.classList.add('hidden');
-            actionButtonsContainer.classList.remove('hidden');
+            actionsPanel.classList.remove('hidden');
         } finally {
-            if (!isSuccess) {
-                addMoreFilesBtn.disabled = false; 
+            // Re-enable controls if something failed
+            if (resultContainer.classList.contains('hidden')) {
+                processBtn.disabled = false;
+                addMoreFilesBtn.disabled = false;
                 slider.disabled = false;
-                updateInterface(); 
+                updateInterface();
             }
         }
     }
