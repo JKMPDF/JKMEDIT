@@ -1,13 +1,76 @@
 <!DOCTYPE html>
-<html lang='en' data-theme='corporate-blue'>
+<html lang='en' data-theme='corporate-blue'> <!-- Default theme remains as a fallback -->
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>JKM Edit - All-in-One Online Tools</title>
+
+    <!-- 
+    =====================================================================
+    ==                      NEW: META TAGS FOR SEO                     ==
+    =====================================================================
+    -->
+    <title>JKM Edit - All-in-One Online Tools for PDF, Video & Files</title>
+    <meta name="description" content="JKM Edit is your free, secure, all-in-one suite of online tools. Convert PDF to OCR Word, edit videos, manage files, and more, directly in your browser. No installation needed."/>
+    <meta name="keywords" content="pdf tools, video editor, file converter, ocr word, online tools, free tools, jkm edit, pdf to word, merge pdf, compress video"/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="robots" content="index, follow"/>
+    <meta name="theme-color" content="#0052cc"> <!-- Matches corporate-blue theme for mobile browser UI -->
+
+    <!-- Open Graph Tags (for Facebook, LinkedIn, etc.) -->
+    <meta property="og:title" content="JKM Edit - All-in-One Online Tools"/>
+    <meta property="og:description" content="Free, secure tools to convert PDF to OCR Word, edit videos, manage files, and more. Fast, private, and works on any device."/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/"/>
+    <!-- IMPORTANT: Replace this with a real URL to a 1200x630px image for sharing -->
+    <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/og-image.png"/>
+    <meta property="og:site_name" content="JKM Edit"/>
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="JKM Edit - All-in-One Online Tools"/>
+    <meta name="twitter:description" content="Free, secure tools to convert PDF to OCR Word, edit videos, manage files, and more. Fast, private, and works on any device."/>
+    <!-- IMPORTANT: This should be the same image as the og:image -->
+    <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/og-image.png"/>
+    <meta name="twitter:url" content="https://jkmpdf.github.io/JKMEDIT/"/>
+    <!--
+    =====================================================================
+    ==                  END OF NEW META TAGS SECTION                   ==
+    =====================================================================
+    -->
     
     <!-- Link to Google Fonts and Font Awesome -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+    <!--
+    =====================================================================
+    ==          NEW: SCRIPT TO PREVENT THEME FLICKER (FOUC)          ==
+    =====================================================================
+    This script runs instantly before the page is rendered to apply the
+    correct theme and dark mode, preventing any visual flicker.
+    -->
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('jkm-edit-theme');
+          if (theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+          var mode = localStorage.getItem('jkm-edit-mode');
+          if (mode === 'dark') {
+            // Apply to <html> tag since <body> doesn't exist yet
+            document.documentElement.classList.add('dark-mode');
+          }
+        } catch (e) {
+          console.error('Failed to apply initial theme.', e);
+        }
+      })();
+    </script>
+    <!--
+    =====================================================================
+    ==                    END OF FLICKER-FIX SCRIPT                    ==
+    =====================================================================
+    -->
 
     <!-- All CSS styles are placed here for a single-file structure -->
     <style>
@@ -26,10 +89,10 @@
         [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
         [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
 
-        /* --- DARK MODE --- */
-        .dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
-        .dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
-        .dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
+        /* --- DARK MODE (Targeting the <html> tag for the flicker fix) --- */
+        html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
+        html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
+        html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
 
         /* --- Header & Navigation --- */
         .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 100; position: relative; }
@@ -45,26 +108,26 @@
         #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
         #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
         #dark-mode-toggle .fa-sun { display: none; }
-        .dark-mode #dark-mode-toggle .fa-sun { display: inline; }
-        .dark-mode #dark-mode-toggle .fa-moon { display: none; }
+        html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
+        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
 
         /* --- Main Dashboard & Content Area --- */
         .dashboard-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
         .dashboard-header { text-align: center; margin-bottom: 3rem; }
         .dashboard-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .dashboard-header p { font-size: 1.1rem; color: #6c757d; }
-        .dark-mode .dashboard-header p { color: #a0a0a0; }
+        html.dark-mode .dashboard-header p { color: #a0a0a0; }
         .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
         .tool-card { display: flex; flex-direction: column; justify-content: center; background: var(--surface-color); border-radius: 10px; padding: 2rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-color); transition: transform var(--transition-speed), box-shadow var(--transition-speed); text-decoration: none; color: var(--text-color); }
         .tool-card:hover { transform: translateY(-10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .tool-icon { font-size: 3rem; margin-bottom: 1rem; background-image: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent; }
         .tool-card h3 { margin: 0.5rem 0; font-size: 1.5rem; }
         .tool-card p { font-size: 0.9rem; line-height: 1.5; color: #6c757d; }
-        .dark-mode .tool-card p { color: #a0a0a0; }
+        html.dark-mode .tool-card p { color: #a0a0a0; }
 
         /* --- Ad Box Style --- */
         .ad-card { border: 2px dashed var(--accent-color); background-color: color-mix(in srgb, var(--surface-color) 95%, var(--accent-color) 5%); justify-content: center; align-items: center; min-height: 230px; }
-        .dark-mode .ad-card { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--accent-color) 10%); }
+        html.dark-mode .ad-card { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--accent-color) 10%); }
         .ad-card h3, .ad-card p, .ad-card i { display: none; }
         .ad-card:empty h3, .ad-card:empty p, .ad-card:empty i { display: block; }
         
@@ -77,7 +140,7 @@
         .service-item i { font-size: 1.5rem; color: var(--primary-color); margin-top: 5px; min-width: 25px; }
         .service-item h4 { margin: 0 0 0.25rem 0; font-size: 1.1rem; }
         .service-item p { margin: 0; font-size: 0.9rem; color: #6c757d; }
-        .dark-mode .service-item p { color: #a0a0a0; }
+        html.dark-mode .service-item p { color: #a0a0a0; }
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
         .modal.show-modal { display: flex; align-items: center; justify-content: center; }
         .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
@@ -129,37 +192,19 @@
             <p>Select a tool to get started.</p>
         </div>
         <div class='tools-grid'>
-            <!-- First Row -->
-            <a href='pdf-tools.html' class='tool-card' id='pdf-tools-link'>
-                <i class='fa-solid fa-file-pdf tool-icon'></i>
-                <h3>PDF Tools</h3>
-                <p>Edit, merge, and convert your PDF files.</p>
+             <!-- PDF to OCR Word Tool Card -->
+            <a href='pdf-to-ocr-word.html' class='tool-card'>
+                <i class='fa-solid fa-file-word tool-icon'></i>
+                <h3>PDF to OCR Word</h3>
+                <p>Convert scanned PDFs into editable Word documents.</p>
             </a>
+            <!-- Existing Tool Cards -->
+            <a href='pdf-tools.html' class='tool-card' id='pdf-tools-link'><i class='fa-solid fa-file-pdf tool-icon'></i><h3>PDF Tools</h3><p>Edit, merge, and convert your PDF files.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-video tool-icon'></i><h3>Video Tools</h3><p>Trim, crop, and add effects to your videos.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-folder-open tool-icon'></i><h3>File Tools</h3><p>Compress, convert, and manage various files.</p></a>
-            
-            <!-- Second Row (Reordered) -->
-            <div class='tool-card ad-card'> <script type="text/javascript">
-	atOptions = {
-		'key' : 'c20491e539f418036088eeb9392cd854',
-		'format' : 'iframe',
-		'height' : 250,
-		'width' : 300,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script> </div>
+            <div class='tool-card ad-card'><script type="text/javascript"> atOptions = {'key' : 'c20491e539f418036088eeb9392cd854','format' : 'iframe','height' : 250,'width' : 300,'params' : {}}; </script> <script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
             <a href='#' class='tool-card'><i class='fa-solid fa-screwdriver-wrench tool-icon'></i><h3>Utilities</h3><p>A collection of helpful utilities for daily tasks.</p></a>
-            <div class='tool-card ad-card'><script type="text/javascript">
-	atOptions = {
-		'key' : 'c20491e539f418036088eeb9392cd854',
-		'format' : 'iframe',
-		'height' : 250,
-		'width' : 300,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
+            <div class='tool-card ad-card'><script type="text/javascript"> atOptions = {'key' : 'c20491e539f418036088eeb9392cd854','format' : 'iframe','height' : 250,'width' : 300,'params' : {}}; </script> <script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
         </div>
     </main>
     
@@ -183,68 +228,46 @@
     <!-- JavaScript -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Modal Logic
         const aboutModal = document.getElementById('about-modal');
         const contactModal = document.getElementById('contact-modal');
         const aboutBtn = document.getElementById('about-btn');
         const contactBtn = document.getElementById('contact-btn');
         const closeBtns = document.querySelectorAll('.close-btn');
-
         const openModal = (modal) => { modal.classList.add('show-modal'); };
         const closeModal = (modal) => { modal.classList.remove('show-modal'); };
-
         aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
         contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
-        
-        closeBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                closeModal(aboutModal);
-                closeModal(contactModal);
-            });
-        });
+        closeBtns.forEach(btn => btn.addEventListener('click', () => { closeModal(aboutModal); closeModal(contactModal); }));
+        window.addEventListener('click', (e) => { if (e.target === aboutModal) closeModal(aboutModal); if (e.target === contactModal) closeModal(contactModal); });
 
-        window.addEventListener('click', (e) => {
-            if (e.target === aboutModal) closeModal(aboutModal);
-            if (e.target === contactModal) closeModal(contactModal);
-        });
-
-        // Theme and Dark Mode Logic
+        // --- THEME AND DARK MODE LOGIC ---
+        // The flicker-fix script in <head> handles the initial load.
+        // This script handles user interactions after the page has loaded.
         const themePicker = document.getElementById('theme-picker');
         const htmlElement = document.documentElement;
-        const setTheme = (theme) => {
-            htmlElement.dataset.theme = theme;
-            localStorage.setItem('jkm-edit-theme', theme);
-        };
-
-        themePicker.addEventListener('change', () => { setTheme(themePicker.value); });
-
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const body = document.body;
-        const enableDarkMode = () => {
-            body.classList.add('dark-mode');
-            localStorage.setItem('jkm-edit-mode', 'dark');
-        };
-        const disableDarkMode = () => {
-            body.classList.remove('dark-mode');
-            localStorage.setItem('jkm-edit-mode', 'light');
-        };
-
-        darkModeToggle.addEventListener('click', () => {
-            body.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+        
+        // This sets the dropdown to match the initially loaded theme
+        themePicker.value = htmlElement.getAttribute('data-theme') || 'corporate-blue';
+        
+        // Event listener for changing the theme
+        themePicker.addEventListener('change', () => {
+            const newTheme = themePicker.value;
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('jkm-edit-theme', newTheme);
         });
 
-        // Load saved theme and mode on page load
-        const savedTheme = localStorage.getItem('jkm-edit-theme');
-        if (savedTheme) {
-            setTheme(savedTheme);
-            themePicker.value = savedTheme;
-        }
-
-        const savedMode = localStorage.getItem('jkm-edit-mode');
-        if (savedMode === 'dark') {
-            enableDarkMode();
-        } else {
-            disableDarkMode();
-        }
+        // Event listener for toggling dark mode
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        darkModeToggle.addEventListener('click', () => {
+            if (htmlElement.classList.contains('dark-mode')) {
+                htmlElement.classList.remove('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'light');
+            } else {
+                htmlElement.classList.add('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'dark');
+            }
+        });
     });
     </script>
 </body>
