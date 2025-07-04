@@ -92,8 +92,10 @@
         #processing-panel { margin-top: 2rem; padding: 2rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1.5rem; align-items: center; }
         .file-info { font-weight: 600; font-size: 1.1rem; color: var(--text-color); background: var(--bg-color); padding: 0.75rem 1.5rem; border-radius: 8px; width: 100%; text-align: center; word-break: break-all; }
         .compression-settings { width: 100%; max-width: 500px; text-align: center; }
-        .slider-container { display: flex; align-items: center; gap: 1rem; margin: 0.5rem auto; }
-        #compression-slider { width: 100%; }
+        .slider-control-group { display: flex; align-items: center; gap: 1rem; margin: 0.5rem auto; }
+        #compression-slider { flex-grow: 1; }
+        #compression-input { width: 70px; padding: 0.5rem; text-align: center; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; }
+        html.dark-mode #compression-input { background-color: #333; border-color: #555; color: #eee; }
         #compression-level-text { font-weight: 600; color: var(--primary-color); }
         .action-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; max-width: 500px; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
@@ -107,9 +109,6 @@
         .result-buttons { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; width: 100%; max-width: 500px; }
         .download-button { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 0.8rem 1.5rem; font-size: 1.1rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
         .secondary-button { background: transparent; color: var(--primary-color) !important; border: 2px solid var(--primary-color); }
-        
-        .stepper-btn { background: #e9ecef; border: 1px solid #ccc; color: #333; font-weight: bold; cursor: pointer; border-radius: 50%; width: 30px; height: 30px; flex-shrink: 0; }
-        html.dark-mode .stepper-btn { background: #333; border-color: #555; color: #eee;}
         
         .navigation-buttons { display: flex; justify-content: center; align-items: center; gap: 1rem; text-align: center; margin-top: 3rem; }
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
@@ -214,7 +213,7 @@
     <!-- [END] --- UNIVERSAL PAGE SCRIPT --- -->
 
 
-    <!-- [START] --- PDF COMPRESSION LOGIC (REVISED) --- -->
+    <!-- [START] --- PDF COMPRESSION LOGIC (FINAL) --- -->
     <script>
         const fileInput = document.getElementById('file-input');
         const dropzone = document.getElementById('dropzone');
@@ -268,7 +267,7 @@
                 alert("Please select a single PDF file.");
                 return;
             }
-            resetApp(); // Clear previous state
+            resetApp(); 
 
             uploadStage.classList.add('hidden');
             processingPanel.classList.remove('hidden');
@@ -295,10 +294,10 @@
                 </div>
                 <div class="compression-settings">
                      <p style="margin:0 0 0.5rem 0;"><strong>Compression Level</strong></p>
-                     <div class="slider-container">
-                        <button id="slider-decrement" class="stepper-btn">-</button>
-                        <input type="range" id="compression-slider" min="0" max="99" value="25" step="1" style="width:100%;">
-                        <button id="slider-increment" class="stepper-btn">+</button>
+                     <div class="slider-control-group">
+                        <input type="range" id="compression-slider" min="0" max="99" value="25" step="1">
+                        <input type="number" id="compression-input" min="0" max="99" value="25">
+                        <span style="font-weight: bold;">%</span>
                      </div>
                      <strong id="compression-level-text">Recommended Quality</strong>
                 </div>
@@ -309,9 +308,10 @@
             `;
             
             const slider = document.getElementById('compression-slider');
+            const numberInput = document.getElementById('compression-input');
             const levelText = document.getElementById('compression-level-text');
             
-            const updateSliderUI = () => {
+            function updateSliderUI() {
                 const level = parseInt(slider.value);
                 if (level === 0) {
                     levelText.textContent = "No Compression (Lossless)";
@@ -322,12 +322,24 @@
                 } else {
                     levelText.textContent = "Maximum Compression";
                 }
-            };
-            updateSliderUI(); // Set initial text
+            }
 
-            slider.addEventListener('input', updateSliderUI);
-            document.getElementById('slider-decrement').addEventListener('click', () => { slider.value = Math.max(0, parseInt(slider.value) - 1); slider.dispatchEvent(new Event('input')); });
-            document.getElementById('slider-increment').addEventListener('click', () => { slider.value = Math.min(99, parseInt(slider.value) + 1); slider.dispatchEvent(new Event('input')); });
+            // Sync slider and input box
+            slider.addEventListener('input', () => {
+                numberInput.value = slider.value;
+                updateSliderUI();
+            });
+            numberInput.addEventListener('input', () => {
+                let value = parseInt(numberInput.value);
+                if (isNaN(value)) value = 0;
+                if (value > 99) value = 99;
+                if (value < 0) value = 0;
+                slider.value = value;
+                numberInput.value = value; // Correct the input if user typed out of bounds
+                updateSliderUI();
+            });
+
+            updateSliderUI(); // Set initial text
             document.getElementById('compress-btn').addEventListener('click', handleCompression);
         }
 
@@ -339,13 +351,11 @@
             
             const compressionLevel = parseInt(document.getElementById('compression-slider').value);
             
-            // [FIX] Explicitly handle 0% compression to avoid processing
             if (compressionLevel === 0) {
                 displayResult(originalFileSize, true);
                 if (processedBlobUrl) URL.revokeObjectURL(processedBlobUrl);
                 processedBlobUrl = URL.createObjectURL(new Blob([originalFileBuffer], { type: 'application/pdf' }));
                 document.getElementById('download-btn').href = processedBlobUrl;
-
                 compressBtn.disabled = false;
                 compressBtn.innerHTML = originalText;
                 return;
@@ -354,15 +364,13 @@
             try {
                 const finalBytes = await compressPdf(compressionLevel);
                 displayResult(finalBytes.length);
-                
                 if (processedBlobUrl) URL.revokeObjectURL(processedBlobUrl);
                 processedBlobUrl = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
                 document.getElementById('download-btn').href = processedBlobUrl;
-
             } catch (error) {
                 console.error("Error during compression:", error);
                 alert("An error occurred during compression. Please try again.");
-                document.getElementById('result-display').innerHTML = `<p style="color:var(--crimson-red);">Compression failed. Please try again.</p>`;
+                document.getElementById('result-display').innerHTML = `<p style="color:red;">Compression failed. Please try again.</p>`;
             } finally {
                 compressBtn.disabled = false;
                 compressBtn.innerHTML = originalText;
@@ -383,25 +391,21 @@
                 canvas.width = viewport.width;
 
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
-                const dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.1, quality));
+                const dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.01, quality));
                 if (!dataUrl || dataUrl === 'data:,') continue;
 
                 const jpegImage = await newPdfDoc.embedJpg(dataUrl);
                 const newPage = newPdfDoc.addPage([jpegImage.width, jpegImage.height]);
-                newPage.drawImage(jpegImage, {
-                    x: 0, y: 0,
-                    width: newPage.getWidth(),
-                    height: newPage.getHeight(),
-                });
+                newPage.drawImage(jpegImage, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
             }
             return await newPdfDoc.save();
         }
 
         function displayResult(finalSize, isLossless = false) {
             const resultDisplay = document.getElementById('result-display');
-            const reduction = originalFileSize > 0 ? Math.round((1 - finalSize / originalFileSize) * 100) : 0;
+            const reduction = originalFileSize > 0 && finalSize < originalFileSize ? Math.round((1 - finalSize / originalFileSize) * 100) : 0;
             const resultMessage = isLossless 
-                ? `<p>No compression was applied (lossless).</p>`
+                ? `<p>No compression was applied (lossless copy).</p>`
                 : `<p>File size reduced by approximately <strong>${reduction}%</strong>.</p>`;
 
             resultDisplay.innerHTML = `
@@ -417,7 +421,7 @@
                         <i class="fa-solid fa-download"></i> Download PDF
                     </a>
                     <button id="start-over-btn" class="download-button secondary-button">
-                        <i class="fa-solid fa-rotate-right"></i> Start Over
+                        <i class="fa-solid fa-rotate-right"></i> Compress Another
                     </button>
                 </div>
             `;
@@ -425,6 +429,6 @@
             document.getElementById('start-over-btn').addEventListener('click', resetApp);
         }
     </script>
-    <!-- [END] --- PDF COMPRESSION LOGIC (REVISED) --- -->
+    <!-- [END] --- PDF COMPRESSION LOGIC (FINAL) --- -->
 </body>
 </html>
