@@ -2,6 +2,8 @@ const express = require('express');
 const multer = require('multer');
 const Tesseract = require('tesseract.js');
 const pdf2pic = require('pdf2pic');
+const cors = require('cors');
+app.use(cors());
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
