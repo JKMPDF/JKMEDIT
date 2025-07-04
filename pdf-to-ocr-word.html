@@ -9,7 +9,7 @@
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
     <style>
-        /* All CSS from previous version - no changes needed */
+        /* ...[Your CSS remains unchanged]... */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
         body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
         *, *::before, *::after { box-sizing: border-box; }
@@ -181,18 +181,15 @@
             if (selectedPdfFile) convertPdfToOcrWord(selectedPdfFile);
         });
 
-        // --- STABLE SEQUENTIAL OCR FUNCTION ---
-        // This approach prioritizes stability and correctness over parallel speed.
-        // It processes one page at a time, eliminating all race conditions.
+        // --- OCR PDF TO WORD FUNCTION ---
         async function convertPdfToOcrWord(file) {
             convertBtn.disabled = true;
             downloadArea.style.display = 'none';
             progressArea.style.display = 'block';
             progressBar.style.width = '0%';
-            
+
             let worker;
             try {
-                // 1. Initialize a SINGLE worker
                 progressText.textContent = 'Initializing OCR engine...';
                 worker = await Tesseract.createWorker('eng', 1, {
                     logger: m => {
@@ -204,14 +201,12 @@
                     }
                 });
 
-                // 2. Load PDF
                 progressText.textContent = 'Loading PDF file...';
                 const fileData = await file.arrayBuffer();
-                const pdfDoc = await pdfjsLib.getDocument(fileData).promise;
+                const pdfDoc = await pdfjsLib.getDocument({ data: fileData }).promise;
                 const numPages = pdfDoc.numPages;
                 const allPageTexts = [];
 
-                // 3. Process each page sequentially (one by one)
                 for (let i = 1; i <= numPages; i++) {
                     const page = await pdfDoc.getPage(i);
                     const viewport = page.getViewport({ scale: 2.0 });
@@ -221,7 +216,7 @@
                     canvas.width = viewport.width;
 
                     await page.render({ canvasContext: context, viewport: viewport }).promise;
-                    
+
                     progressText.textContent = `Recognizing text on page ${i} of ${numPages}...`;
                     const { data } = await worker.recognize(canvas);
                     allPageTexts.push(data.text);
@@ -229,18 +224,19 @@
                     progressBar.style.width = `${(i / numPages) * 100}%`;
                 }
 
-                // 4. Assemble Word Document
                 progressText.textContent = 'Assembling Word document...';
+                // Use window.docx if docx is undefined
+                const docxLib = typeof docx !== "undefined" ? docx : window.docx;
                 const docContent = allPageTexts.flatMap((text, index) => {
-                    const paragraphs = text.split('\n').map(line => new docx.Paragraph({ text: line }));
+                    const paragraphs = text.split('\n').map(line => new docxLib.Paragraph({ text: line }));
                     if (index < allPageTexts.length - 1) {
-                        return [...paragraphs, new docx.Paragraph({ children: [new docx.PageBreak()] })];
+                        return [...paragraphs, new docxLib.Paragraph({ children: [new docxLib.PageBreak()] })];
                     }
                     return paragraphs;
                 });
 
-                const doc = new docx.Document({ sections: [{ children: docContent }] });
-                const blob = await docx.Packer.toBlob(doc);
+                const doc = new docxLib.Document({ sections: [{ children: docContent }] });
+                const blob = await docxLib.Packer.toBlob(doc);
                 const downloadUrl = URL.createObjectURL(blob);
                 downloadLink.href = downloadUrl;
                 const originalName = file.name.replace(/\.pdf$/i, '');
@@ -253,7 +249,6 @@
                 console.error("A critical error occurred during conversion:", error);
                 progressText.textContent = `Conversion failed. Please refresh and try again.`;
             } finally {
-                // 5. IMPORTANT: Always terminate the worker to free up memory
                 if (worker) {
                     await worker.terminate();
                 }
