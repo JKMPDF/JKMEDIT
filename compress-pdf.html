@@ -139,7 +139,7 @@
                  <div class="page-preview-grid"></div>
             </div>
             <div class="actions-panel">
-                <div id="size-preview" class="hidden">
+                <div id="size-preview">
                     <div class="size-comparison">
                         <span>Original: <strong id="original-size-display" class="size-info">...</strong></span>
                         <i class="fa-solid fa-arrow-right-long"></i>
@@ -172,7 +172,6 @@
                 </div>
 
                 <div id="result-container" class="hidden">
-                    <!-- Result content will be injected here -->
                 </div>
             </div>
         </div>
@@ -186,10 +185,10 @@
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
-    <!-- [START] DEFINITIVE SCRIPT FIX: ALL JS WRAPPED IN DOMCONTENTLOADED -->
     <script>
+    // --- DEFINITIVE SCRIPT: ALL LOGIC WRAPPED IN DOMCONTENTLOADED ---
     document.addEventListener('DOMContentLoaded', () => {
-        
+    
         // --- Standard Theme, Dark Mode & Modal Logic ---
         const themePicker=document.getElementById('theme-picker'),htmlElement=document.documentElement;const setTheme=(t)=>{htmlElement.dataset.theme=t;localStorage.setItem('jkm-edit-theme',t)};if(themePicker){themePicker.addEventListener('change',()=>setTheme(themePicker.value));const t=localStorage.getItem('jkm-edit-theme');if(t){setTheme(t);themePicker.value=t}else{themePicker.value='corporate-blue'}}
         const darkModeToggle=document.getElementById('dark-mode-toggle'),body=document.body;const enableDarkMode=()=>{body.classList.add('dark-mode');localStorage.setItem('jkm-edit-mode','dark')};const disableDarkMode=()=>{body.classList.remove('dark-mode');localStorage.setItem('jkm-edit-mode','light')};if(darkModeToggle)darkModeToggle.addEventListener('click',()=>body.classList.contains('dark-mode')?disableDarkMode():enableDarkMode());if(localStorage.getItem('jkm-edit-mode')==='dark')enableDarkMode();
@@ -206,40 +205,39 @@
         const editStage = document.getElementById('edit-stage');
         const resultContainer = document.getElementById('result-container');
         const pagePreviewGrid = editStage.querySelector('.page-preview-grid');
-        const sizePreview = document.getElementById('size-preview');
         const originalSizeDisplay = document.getElementById('original-size-display');
         const finalSizeDisplay = document.getElementById('final-size-display');
         const actionButtonContainer = document.getElementById('action-button-container');
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
         let uploadedFiles = [];
+        let preRenderedImages = [];
 
         // --- Event Listeners ---
         dropzone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
-        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
-        dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--primary-color)'; });
+        dropzone.addEventListener('dragleave', (e) => { e.currentTarget.style.borderColor = '#ccc'; });
+        dropzone.addEventListener('drop', (e) => { e.preventDefault(); e.currentTarget.style.borderColor = '#ccc'; handleFiles(e.dataTransfer.files); });
 
         processBtn.addEventListener('click', processAndDisplay);
-        slider.addEventListener('input', () => {
-            targetSizeInput.value = ''; 
-            updateInterface();
-        });
+        slider.addEventListener('input', () => { targetSizeInput.value = ''; updateInterface(); });
         targetSizeInput.addEventListener('input', updateInterface);
         targetSizeUnit.addEventListener('change', updateInterface);
 
         function resetTool() {
             uploadedFiles = [];
+            preRenderedImages = [];
             fileInput.value = null;
             pagePreviewGrid.innerHTML = '';
             editStage.classList.add('hidden');
             uploadStage.classList.remove('hidden');
             resultContainer.classList.add('hidden');
             actionButtonContainer.classList.remove('hidden');
-            sizePreview.classList.add('hidden');
+            finalSizeDisplay.textContent = '...';
             targetSizeInput.value = '';
             slider.value = 50;
+            updateInterface();
         }
 
         async function handleFiles(files) {
@@ -247,14 +245,7 @@
             try {
                 const filePromises = Array.from(files)
                     .filter(file => file.type === "application/pdf")
-                    .map(async file => {
-                        const arrayBuffer = await file.arrayBuffer();
-                        return {
-                            name: file.name,
-                            fileData: arrayBuffer,
-                            pdfjsBuffer: arrayBuffer.slice(0) // Clone for pdf.js previews
-                        };
-                    });
+                    .map(async file => ({ name: file.name, fileData: await file.arrayBuffer() }));
                 
                 uploadedFiles = await Promise.all(filePromises);
 
@@ -265,35 +256,49 @@
                     updateInterface();
                 }
             } catch(err) {
-                console.error("Error reading files:", err);
-                alert("One or more files could not be read. They may be corrupted or not valid PDFs. Please try again.");
+                alert("Error reading files. Please try again.");
                 resetTool();
             }
         }
 
         async function renderPagePreviews() {
             pagePreviewGrid.innerHTML = '';
+            preRenderedImages = [];
             for (const file of uploadedFiles) {
                 try {
-                    const pdfDoc = await pdfjsLib.getDocument({ data: file.pdfjsBuffer }).promise;
-                    const page = await pdfDoc.getPage(1);
-                    
-                    const pageItem = document.createElement('div');
-                    pageItem.className = 'page-item';
-                    pageItem.innerHTML = `<canvas></canvas><div class="page-info">${file.name}</div>`;
-                    pagePreviewGrid.appendChild(pageItem);
+                    const pdfDoc = await pdfjsLib.getDocument({ data: file.fileData.slice(0) }).promise;
+                    for (let i = 1; i <= pdfDoc.numPages; i++) {
+                        const page = await pdfDoc.getPage(i);
+                        const viewport = page.getViewport({ scale: 1.5 });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        const context = canvas.getContext('2d');
+                        await page.render({ canvasContext: context, viewport }).promise;
 
-                    const canvas = pageItem.querySelector('canvas');
-                    const viewport = page.getViewport({ scale: 0.4 });
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-                    await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+                        // Store the high-quality intermediate render
+                        preRenderedImages.push({
+                            dataUrl: canvas.toDataURL('image/png'), // Use PNG for lossless intermediate
+                            width: canvas.width,
+                            height: canvas.height
+                        });
+                        
+                        // Render a small preview for the UI
+                        if (i === 1) { // Only show first page preview for multi-page files
+                           const previewCanvas = document.createElement('canvas');
+                           const previewViewport = page.getViewport({ scale: 0.4 });
+                           previewCanvas.width = previewViewport.width;
+                           previewCanvas.height = previewViewport.height;
+                           await page.render({ canvasContext: previewCanvas.getContext('2d'), viewport: previewViewport }).promise;
+                           const pageItem = document.createElement('div');
+                           pageItem.className = 'page-item';
+                           pageItem.innerHTML = `<div class="page-info">${file.name} (${pdfDoc.numPages} pages)</div>`;
+                           pageItem.prepend(previewCanvas);
+                           pagePreviewGrid.appendChild(pageItem);
+                        }
+                    }
                 } catch(e) {
-                    console.error("Could not render preview for", file.name, e);
-                    const pageItem = document.createElement('div');
-                    pageItem.className = 'page-item';
-                    pageItem.innerHTML = `<div class="page-info" style="position:relative; background: #e74c3c; padding: 1rem;">Error previewing<br>${file.name}</div>`;
-                    pagePreviewGrid.appendChild(pageItem);
+                     // Handle preview error gracefully
                 }
             }
         }
@@ -301,90 +306,73 @@
         function formatBytes(b, d = 2) { if (!+b) return '0 Bytes'; const k = 1024; const i = Math.floor(Math.log(b) / Math.log(k)); return `${parseFloat((b / Math.pow(k, i)).toFixed(d < 0 ? 0 : d))} ${['Bytes', 'KB', 'MB', 'GB'][i]}`; }
 
         function updateInterface() {
-            if (uploadedFiles.length === 0) {
-                processBtn.disabled = true;
-                return;
-            }
-
-            processBtn.disabled = false;
-            sizePreview.classList.remove('hidden');
+            processBtn.disabled = uploadedFiles.length === 0;
             const originalSize = uploadedFiles.reduce((acc, file) => acc + file.fileData.byteLength, 0);
             originalSizeDisplay.textContent = formatBytes(originalSize);
-
-            const targetSizeValue = parseFloat(targetSizeInput.value);
-            if (targetSizeValue > 0) {
-                slider.disabled = true;
-                const multiplier = targetSizeUnit.value === 'MB' ? 1024 * 1024 : 1024;
-                finalSizeDisplay.textContent = `~ ${formatBytes(targetSizeValue * multiplier)}`;
-            } else {
-                slider.disabled = false;
-                const compressionLevel = parseInt(slider.value); // 0-100
-                const estimatedFinalSize = originalSize * (1 - (compressionLevel / 100 * 0.7)); 
-                finalSizeDisplay.textContent = `~ ${formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0)}`;
-            }
+            slider.disabled = targetSizeInput.value !== '';
         }
 
-        function getQualityForTargetSize(targetBytes, totalOriginalSize) {
-            if (targetBytes >= totalOriginalSize) return 1.0; 
-            const reductionRatio = targetBytes / totalOriginalSize;
-            let quality = Math.pow(reductionRatio, 0.5);
-            if (quality > 0.95) quality = 0.95; // Don't use perfect quality
-            if (quality < 0.1) quality = 0.1;
-            return quality;
+        async function compressWithQuality(quality) {
+            const { PDFDocument } = PDFLib;
+            const finalPdfDoc = await PDFDocument.create();
+            
+            for(const img of preRenderedImages) {
+                const pngImage = await finalPdfDoc.embedPng(img.dataUrl);
+                const jpegImageBytes = await finalPdfDoc.embedJpg(pngImage.ref, { quality }); // Use pre-embedded image data
+                const page = finalPdfDoc.addPage([img.width, img.height]);
+                page.drawImage(jpegImageBytes, { x: 0, y: 0, width: page.getWidth(), height: page.getHeight() });
+            }
+            return await finalPdfDoc.save();
         }
 
         async function processAndDisplay() {
             processBtn.disabled = true;
             processBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
 
-            const { PDFDocument } = PDFLib;
-            const finalPdfDoc = await PDFDocument.create();
-            let quality;
-            const totalOriginalSize = uploadedFiles.reduce((acc, file) => acc + file.fileData.byteLength, 0);
-
             const targetSizeValue = parseFloat(targetSizeInput.value);
-            if (targetSizeValue > 0) {
-                const multiplier = targetSizeUnit.value === 'MB' ? 1024 * 1024 : 1024;
-                const targetBytes = targetSizeValue * multiplier;
-                quality = getQualityForTargetSize(targetBytes, totalOriginalSize);
-            } else {
-                const compressionLevel = parseInt(slider.value);
-                quality = 1.0 - (compressionLevel / 100);
-            }
-            
-            if (quality < 0.1) quality = 0.1; 
-            if (quality > 1.0) quality = 1.0;
+            const totalOriginalSize = uploadedFiles.reduce((acc, file) => acc + file.fileData.byteLength, 0);
+            let finalBytes;
 
             try {
-                for (const file of uploadedFiles) {
-                    const pdfDoc = await pdfjsLib.getDocument({ data: file.fileData.slice(0) }).promise;
-                    for (let i = 1; i <= pdfDoc.numPages; i++) {
-                        try {
-                            const page = await pdfDoc.getPage(i);
-                            const viewport = page.getViewport({ scale: 1.5 });
-                            const canvas = document.createElement('canvas');
-                            canvas.width = viewport.width;
-                            canvas.height = viewport.height;
-                            const context = canvas.getContext('2d');
-                            await page.render({ canvasContext: context, viewport: viewport }).promise;
+                if (targetSizeValue > 0) {
+                    // --- ITERATIVE COMPRESSION FOR TARGET SIZE ---
+                    const multiplier = targetSizeUnit.value === 'MB' ? 1024 * 1024 : 1024;
+                    const targetBytes = targetSizeValue * multiplier;
+                    
+                    let minQuality = 0.01, maxQuality = 1.0;
+                    let bestResultBytes = null;
+                    const ITERATIONS = 7;
 
-                            const jpegImageBytes = await finalPdfDoc.embedJpg(canvas.toDataURL('image/jpeg', quality));
-                            const newPage = finalPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
-                            newPage.drawImage(jpegImageBytes, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
-                        } catch (pageError) {
-                            console.error(`Skipping page ${i} of file ${file.name} due to an error:`, pageError);
-                            continue; // Skip this page and continue with the next
+                    for (let i = 0; i < ITERATIONS; i++) {
+                        let currentQuality = (minQuality + maxQuality) / 2;
+                        processBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Optimizing... (Pass ${i + 1}/${ITERATIONS})`;
+                        
+                        const currentBytes = await compressWithQuality(currentQuality);
+                        
+                        if (currentBytes.length > targetBytes) {
+                            maxQuality = currentQuality;
+                        } else {
+                            minQuality = currentQuality;
+                            bestResultBytes = currentBytes; 
                         }
                     }
+                    finalBytes = bestResultBytes;
+                    if (!finalBytes) { // If even lowest quality is too big, use it
+                        finalBytes = await compressWithQuality(0.01);
+                    }
+
+                } else {
+                    // --- SLIDER-BASED COMPRESSION ---
+                    const compressionLevel = parseInt(slider.value); // 0-100
+                    const quality = 1.0 - (compressionLevel / 100);
+                    finalBytes = await compressWithQuality(quality < 0.01 ? 0.01 : quality);
                 }
 
-                if (finalPdfDoc.getPageCount() === 0) {
-                    alert("Could not compress any pages from the uploaded file(s). Please check if they are valid PDFs.");
-                    resetTool();
-                    return;
+                if (!finalBytes || finalBytes.length === 0) {
+                    throw new Error("Compression resulted in an empty file.");
                 }
 
-                const finalBytes = await finalPdfDoc.save();
+                // --- Display Final Result ---
                 const finalSize = finalBytes.length;
                 finalSizeDisplay.textContent = `${formatBytes(finalSize)} (${((1 - finalSize / totalOriginalSize) * 100).toFixed(0)}% smaller)`;
 
@@ -401,10 +389,11 @@
                 console.error("Error during compression:", error);
                 alert("An error occurred during compression. The PDF might be too complex or corrupted.");
                 resetTool();
+            } finally {
+                processBtn.innerHTML = `Compress PDF`; // Reset button text
             }
         }
     });
     </script>
-    <!-- [END] DEFINITIVE SCRIPT FIX -->
 </body>
 </html>
