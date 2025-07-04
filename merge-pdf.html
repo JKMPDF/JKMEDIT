@@ -79,16 +79,18 @@
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .secondary-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
         
-        /* NEW: Styles for the size display containers */
-        #original-size-container { text-align: center; font-size: 1.1rem; width: 100%; max-width: 500px; }
-        .dark-mode #original-size-container { border-bottom-color: #333; }
-        #result-container { display: flex; flex-direction: column; gap: 1rem; width:100%; align-items: center; }
-        .size-info { font-weight: 600; color: var(--primary-color); }
-        .size-comparison { display: flex; justify-content: center; align-items: center; gap: 1rem; font-size: 1.1rem; padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; width: 100%; }
-        .dark-mode .size-comparison { border-bottom-color: #333; }
+        #size-preview { width: 100%; text-align: center; margin-bottom: 1rem; padding-bottom: 1.5rem; border-bottom: 2px solid #eee; }
+        .dark-mode #size-preview { border-bottom-color: #333; }
         
         .compression-settings { width: 100%; max-width: 500px; text-align: center; }
         .slider-container { display: flex; align-items: center; gap: 1rem; margin: 0.5rem auto; }
+        
+        #result-container { display: flex; flex-direction: column; gap: 1rem; width:100%; align-items: center; }
+        .size-info { font-weight: 600; color: var(--primary-color); }
+        .size-comparison { display: flex; justify-content: center; align-items: center; gap: 1rem; font-size: 1.1rem; width: 100%; }
+        #result-container .size-comparison { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; }
+        .dark-mode #result-container .size-comparison { border-bottom-color: #333; }
+        
         .download-button { display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
         
         .navigation-buttons { text-align: center; margin-top: 3rem; }
@@ -134,9 +136,12 @@
             <div id="actions-panel" class="actions-panel">
                 <p style="text-align:center; color:#6c757d; margin:0;">Click pages to select/deselect. Drag to reorder.</p>
 
-                <!-- RESTORED: Size display shown BEFORE processing -->
-                <div id="original-size-container" class="hidden">
-                    <span>Original Size: <strong id="original-size-display" class="size-info">...</strong></span>
+                <div id="size-preview" class="hidden">
+                    <div class="size-comparison">
+                        <span>Original: <strong id="original-size-display" class="size-info">...</strong></span>
+                        <i class="fa-solid fa-arrow-right-long"></i>
+                        <span>Final (Est.): <strong id="final-size-display" class="size-info">...</strong></span>
+                    </div>
                 </div>
                                 
                 <div class="compression-settings">
@@ -178,8 +183,9 @@
 
     // --- Advanced PDF Tool Logic ---
     const fileInput=document.getElementById('file-input'),dropzone=document.getElementById('dropzone');const addMoreFilesBtn=document.getElementById('add-more-files-btn'),processBtn=document.getElementById('process-btn');const slider=document.getElementById('compression-slider'),levelText=document.getElementById('compression-level-text');const uploadStage=document.getElementById('upload-stage'),editStage=document.getElementById('edit-stage');const actionsPanel=document.getElementById('actions-panel'),resultContainer=document.getElementById('result-container'),pagePreviewGrid=editStage.querySelector('.page-preview-grid');
-    const originalSizeContainer = document.getElementById('original-size-container');
+    const sizePreview = document.getElementById('size-preview');
     const originalSizeDisplay = document.getElementById('original-size-display');
+    const finalSizeDisplay = document.getElementById('final-size-display');
     
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
     
@@ -227,25 +233,30 @@
         
         if (hasSelection) {
             let originalSelectedSize = 0;
+            const seenFileIds = new Set();
             selectedPages.forEach(p => {
-                const fileInfo = fileDataStore[p.fileId];
-                if (fileInfo && p.totalPagesInFile > 0) {
-                    originalSelectedSize += fileInfo.size / p.totalPagesInFile;
+                if (!seenFileIds.has(p.fileId)) {
+                    originalSelectedSize += fileDataStore[p.fileId].size;
+                    seenFileIds.add(p.fileId);
                 }
             });
             originalSizeDisplay.textContent = formatBytes(originalSelectedSize);
-            originalSizeContainer.classList.remove('hidden');
+            
+            const compressionLevel = parseInt(slider.value);
+            if (compressionLevel === 0) {
+                finalSizeDisplay.textContent = formatBytes(originalSelectedSize);
+                levelText.textContent = "Merge Only (No Compression)";
+                processBtn.textContent = "Merge PDF";
+            } else {
+                // Simple, fast estimation. The real size will be shown after processing.
+                const estimatedFinalSize = originalSelectedSize * (1 - (compressionLevel / 100 * 0.8));
+                finalSizeDisplay.textContent = formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0);
+                levelText.textContent = `${compressionLevel}% Compression`;
+                processBtn.textContent = "Merge & Compress PDF";
+            }
+            sizePreview.classList.remove('hidden');
         } else {
-            originalSizeContainer.classList.add('hidden');
-        }
-        
-        const compressionLevel = parseInt(slider.value);
-        if (compressionLevel === 0) {
-            levelText.textContent = "Merge Only (No Compression)";
-            processBtn.textContent = "Merge PDF";
-        } else {
-            levelText.textContent = `${compressionLevel}% Compression`;
-            processBtn.textContent = "Merge & Compress PDF";
+            sizePreview.classList.add('hidden');
         }
     }
     
@@ -272,7 +283,11 @@
         resultContainer.innerHTML = '';
         resultContainer.classList.add('hidden');
         actionsPanel.classList.remove('hidden');
-        originalSizeContainer.classList.add('hidden');
+        sizePreview.classList.add('hidden');
+        
+        // --- KEY FIX: Re-enable controls on reset ---
+        slider.disabled = false;
+        addMoreFilesBtn.disabled = false;
         slider.value = 0;
 
         editStage.classList.add('hidden');
@@ -285,7 +300,6 @@
         processBtn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
         addMoreFilesBtn.disabled = true;
         slider.disabled = true;
-        originalSizeContainer.classList.add('hidden');
 
         const { PDFDocument } = PDFLib;
         const selectedPages = allPages.filter(p => p.isSelected);
@@ -296,13 +310,14 @@
 
         try {
             const finalPdfDoc = await PDFDocument.create();
-
-            for (const pageObj of selectedPages) {
-                if (!seenFileIds.has(pageObj.fileId)) {
-                    originalTotalSize += fileDataStore[pageObj.fileId].size;
-                    seenFileIds.add(pageObj.fileId);
+            
+            // Calculate total original size of all selected files
+            selectedPages.forEach(p => {
+                if (!seenFileIds.has(p.fileId)) {
+                    originalTotalSize += fileDataStore[p.fileId].size;
+                    seenFileIds.add(p.fileId);
                 }
-            }
+            });
             
             if (compressionLevel === 0) { // MERGE-ONLY (VECTOR) PATH
                 const loadedPdfDocs = new Map();
@@ -346,7 +361,7 @@
                     <i class="fa-solid fa-arrow-right-long"></i>
                     <span>Final: <strong class="size-info">${formatBytes(finalBytes.length)}</strong></span>
                 </div>
-                <div id="result-buttons-container" style="display: flex; gap: 1rem;"></div>
+                <div id="result-buttons-container" style="display: flex; gap: 1rem; justify-content: center;"></div>
             `;
             
             const resultButtonsContainer = resultContainer.querySelector('#result-buttons-container');
@@ -374,6 +389,7 @@
             actionsPanel.classList.remove('hidden');
         } finally {
             if (resultContainer.classList.contains('hidden')) {
+                // Re-enable controls only if something failed
                 processBtn.disabled = false;
                 addMoreFilesBtn.disabled = false;
                 slider.disabled = false;
