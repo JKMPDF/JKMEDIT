@@ -69,6 +69,10 @@
         .slider-container { display: flex; align-items: center; gap: 1rem; margin: 0.5rem auto; }
         .download-button { display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
         
+        /* NEW: Stepper button styles */
+        .stepper-btn { background: #e9ecef; border: 1px solid #ccc; color: #333; font-weight: bold; cursor: pointer; border-radius: 50%; width: 30px; height: 30px; flex-shrink: 0; }
+        .dark-mode .stepper-btn { background: #333; border-color: #555; color: #eee;}
+
         .navigation-buttons { text-align: center; margin-top: 3rem; }
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; margin: 0 0.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
         .primary-nav-btn { background: var(--gradient); color: white !important; }
@@ -122,7 +126,6 @@
             </div>
             <!-- Results and compression panel -->
             <div id="result-panel" class="actions-panel hidden">
-                <!-- Content generated dynamically -->
             </div>
         </div>
         
@@ -161,7 +164,7 @@
 
     // --- Event Listeners ---
     dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
-    processBtn.addEventListener('click', () => handleProcessing(0));
+    processBtn.addEventListener('click', () => handleProcessing(0, false));
 
     async function handleFiles(files){
         for (const file of files){
@@ -328,7 +331,7 @@
         resultPanel.classList.remove('hidden');
 
         resultPanel.innerHTML = `
-            <div id="result-size-comparison" class="size-comparison">
+            <div class="size-comparison">
                 <span>Original: <strong class="size-info">${formatBytes(originalSize)}</strong></span>
                 <i class="fa-solid fa-arrow-right-long"></i>
                 <span>Final: <strong id="final-size-result" class="size-info">${formatBytes(finalSize)}</strong></span>
@@ -336,13 +339,13 @@
             <div class="compression-settings">
                  <p style="margin:0 0 0.5rem 0;"><strong>Compression Level</strong></p>
                  <div class="slider-container">
-                    <label for="compression-slider-result">0</label>
+                    <button id="slider-decrement" class="stepper-btn">-</button>
                     <input type="range" id="compression-slider-result" min="0" max="100" value="0" step="1" style="width:100%;">
-                    <label for="compression-slider-result">100</label>
+                    <button id="slider-increment" class="stepper-btn">+</button>
                  </div>
                  <strong id="compression-level-text-result">Merge Only (No Compression)</strong>
             </div>
-            <button id="apply-compression-btn" class="action-button" style="max-width: 500px;" disabled>Apply Compression</button>
+            <button id="apply-compression-btn" class="action-button" style="max-width: 500px;">Apply Compression</button>
             <div id="result-buttons-container" class="button-group" style="flex-wrap: wrap; max-width: 500px;"></div>
         `;
 
@@ -351,6 +354,8 @@
         const buttonsContainer = resultPanel.querySelector('#result-buttons-container');
         const finalSizeResultDisplay = resultPanel.querySelector('#final-size-result');
         const applyBtn = resultPanel.querySelector('#apply-compression-btn');
+        const decrementBtn = resultPanel.querySelector('#slider-decrement');
+        const incrementBtn = resultPanel.querySelector('#slider-increment');
 
         const downloadBtn = document.createElement('a');
         downloadBtn.id = 'download-btn';
@@ -361,7 +366,7 @@
         downloadBtn.href = mergedOnlyBlobUrl;
 
         const startOverBtn = document.createElement('button');
-        startOverBtn.className = 'download-button'; // Make it look like the download button
+        startOverBtn.className = 'download-button'; 
         startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
         startOverBtn.style.flex = '1'; 
         startOverBtn.addEventListener('click', resetApp);
@@ -369,21 +374,27 @@
         buttonsContainer.appendChild(downloadBtn);
         buttonsContainer.appendChild(startOverBtn);
 
-        sliderResult.addEventListener('input', () => {
+        const updateSliderUI = () => {
             const level = parseInt(sliderResult.value);
-            if (level === 0) {
-                levelTextResult.textContent = "Merge Only (No Compression)";
-                applyBtn.disabled = true; // No need to apply 0%
-            } else {
-                levelTextResult.textContent = `${level}% Compression`;
-                applyBtn.disabled = false;
-            }
+            levelTextResult.textContent = level === 0 ? "Merge Only (No Compression)" : `${level}% Compression`;
+        };
+        
+        sliderResult.addEventListener('input', updateSliderUI);
+        
+        decrementBtn.addEventListener('click', () => {
+            sliderResult.value = Math.max(0, parseInt(sliderResult.value) - 1);
+            updateSliderUI();
+        });
+
+        incrementBtn.addEventListener('click', () => {
+            sliderResult.value = Math.min(100, parseInt(sliderResult.value) + 1);
+            updateSliderUI();
         });
         
         applyBtn.addEventListener('click', () => {
             const level = parseInt(sliderResult.value);
-            // If slider is at 0, revert to the original merged file.
             if (level === 0) {
+                // Revert to original merged file
                 if (mergedOnlyBlobUrl) {
                     finalSizeResultDisplay.textContent = formatBytes(mergedOnlyBytes.length);
                     if (downloadBtn.href) URL.revokeObjectURL(downloadBtn.href);
