@@ -203,10 +203,7 @@
             const fileId = fileCounter;
             const arrayBuffer = await file.arrayBuffer();
             
-            // Store the original, pristine buffer for pdf-lib to use later.
             fileDataStore[fileId] = arrayBuffer;
-
-            // Give pdf.js (for previews) a *copy* of the buffer.
             const pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer.slice(0))}).promise;
             
             const numPagesInFile = pdfJsDoc.numPages;
@@ -230,11 +227,14 @@
         actionButtonsContainer.classList.remove('hidden');
         if (!hasSelection) { sizePreview.classList.add('hidden'); return; }
         sizePreview.classList.remove('hidden');
+        
         let originalSelectedSize = 0;
         selectedPages.forEach(p => { if (p.totalPagesInFile > 0) { originalSelectedSize += p.fileSize / p.totalPagesInFile; }});
         originalSizeDisplay.textContent = formatBytes(originalSelectedSize);
+        
         const compressionLevel = parseInt(slider.value);
         sizePreviewNote.textContent = '(Final size is estimated until processing)';
+        
         if (compressionLevel === 0) {
             levelText.textContent = "Merge Only (No Compression)";
             processBtn.textContent = "Merge PDF";
@@ -242,8 +242,12 @@
         } else {
             levelText.textContent = `${compressionLevel}% Compression`;
             processBtn.textContent = "Merge & Compress PDF";
-            // The estimation formula. It's a rough guess but provides a good user expectation.
-            const estimatedFinalSize = originalSelectedSize * (1 - (compressionLevel / 100 * 0.7)); 
+            
+            // --- MODIFIED: New, more accurate estimation formula ---
+            // This formula uses a non-linear power curve to better model real JPEG compression.
+            // The exponent (1.5) and the divisor (110) are tuned to give a realistic reduction.
+            const qualityFactor = Math.pow(1 - (compressionLevel / 110), 1.5);
+            const estimatedFinalSize = originalSelectedSize * qualityFactor;
             finalSizeDisplay.textContent = formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0);
         }
     }
@@ -316,15 +320,11 @@
             }
             finalBytes = await finalPdfDoc.save();
 
-            // --- MODIFICATION ---
-            // The 'finalSizeDisplay' text content is NO LONGER updated here.
-            // This preserves the estimated value that was shown to the user before they clicked "process".
-            // finalSizeDisplay.textContent = formatBytes(finalBytes.length); // This line is now removed.
-            
+            // The 'finalSizeDisplay' text content is NOT updated here to preserve the estimate.
             sizePreviewNote.textContent = 'Processing complete!';
             actionButtonsContainer.classList.add('hidden');
             
-            resultContainer.innerHTML = ''; // Clear previous content
+            resultContainer.innerHTML = ''; 
 
             const resultActionsContainer = document.createElement('div');
             resultActionsContainer.style.display = 'flex';
@@ -351,7 +351,6 @@
             
             resultContainer.appendChild(resultActionsContainer);
             resultContainer.classList.remove('hidden');
-            // --- END OF MODIFICATION ---
             
             isSuccess = true;
             
