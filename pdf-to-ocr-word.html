@@ -129,7 +129,6 @@
             </div>
 
             <div class="bottom-nav-buttons">
-                <!-- UI TEXT CHANGE: "Previous" is now "Go Back" -->
                 <a href="#" onclick="history.back(); return false;" class="action-button secondary"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
                 <a href="index.html" class="action-button secondary"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
             </div>
@@ -182,83 +181,64 @@
             if (selectedPdfFile) convertPdfToOcrWord(selectedPdfFile);
         });
 
-        // --- BUG-FIXED AND OPTIMIZED OCR FUNCTION ---
+        // --- FINAL, STABLE & FAST OCR FUNCTION ---
         async function convertPdfToOcrWord(file) {
             convertBtn.disabled = true;
             downloadArea.style.display = 'none';
             progressArea.style.display = 'block';
             progressBar.style.width = '0%';
             
-            let scheduler;
+            let workers = [];
             try {
-                // 1. Setup Parallel Processing - MORE ROBUST METHOD
-                progressText.textContent = 'Initializing OCR engine...';
-                scheduler = Tesseract.createScheduler();
-                const workerCount = navigator.hardwareConcurrency || 2; // Use all cores, default to 2
+                // 1. Initialize Worker Pool
+                const workerCount = navigator.hardwareConcurrency || 2;
+                progressText.textContent = `Initializing ${workerCount} OCR engine(s)...`;
                 
-                // BUG FIX: Wait for ALL workers to be fully created and loaded BEFORE adding them.
-                const workers = await Promise.all(Array(workerCount).fill(0).map(() => 
-                    Tesseract.createWorker('eng', 1, {
-                        logger: m => {
-                            // This provides feedback for the slow, first-time language download
-                            if (m.status === 'loading language data') {
-                                const progress = m.progress * 100;
-                                progressText.textContent = `Downloading language data... (${Math.round(progress)}%)`;
-                                progressBar.style.width = `${progress}%`;
-                            }
-                        }
-                    })
-                ));
+                // This creates workers and waits for them to be fully ready.
+                // This is the most stable way to do it.
+                workers = await Promise.all(
+                    Array(workerCount).fill(0).map(() => Tesseract.createWorker('eng'))
+                );
 
-                // Now add the fully initialized workers to the scheduler
-                for (const worker of workers) {
-                    scheduler.addWorker(worker);
-                }
-
-                // 2. Load PDF and prepare pages
+                // 2. Load PDF
                 progressText.textContent = 'Loading PDF file...';
-                progressBar.style.width = '0%';
-                const fileReader = new FileReader();
-                const fileLoadPromise = new Promise((resolve, reject) => {
-                    fileReader.onload = () => resolve(new Uint8Array(fileReader.result));
-                    fileReader.onerror = reject;
-                    fileReader.readAsArrayBuffer(file);
-                });
-
-                const typedarray = await fileLoadPromise;
-                const pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+                const fileData = await file.arrayBuffer();
+                const pdfDoc = await pdfjsLib.getDocument(fileData).promise;
                 const numPages = pdfDoc.numPages;
-                const recognitionPromises = [];
-                let pagesProcessed = 0;
 
-                progressText.textContent = `Preparing ${numPages} page(s) for recognition...`;
+                // 3. Process Pages in Parallel
+                let pagesProcessed = 0;
+                progressText.textContent = `Preparing ${numPages} page(s)...`;
                 
-                // 3. Queue up all pages for parallel recognition
-                for (let i = 1; i <= numPages; i++) {
-                    const page = await pdfDoc.getPage(i);
+                const pagePromises = Array.from({ length: numPages }, async (_, i) => {
+                    const pageNum = i + 1;
+                    const page = await pdfDoc.getPage(pageNum);
                     const viewport = page.getViewport({ scale: 2.0 });
                     const canvas = document.createElement('canvas');
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
-                    await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+                    const context = canvas.getContext('2d');
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                    // Distribute work to the next available worker
+                    const worker = workers[i % workerCount];
+                    const { data } = await worker.recognize(canvas);
                     
-                    const job = scheduler.addJob('recognize', canvas).then(result => {
-                        pagesProcessed++;
-                        progressText.textContent = `Recognizing text... (${pagesProcessed}/${numPages})`;
-                        progressBar.style.width = `${(pagesProcessed / numPages) * 100}%`;
-                        return result;
-                    });
-                    recognitionPromises.push(job);
-                }
+                    // Update progress safely
+                    pagesProcessed++;
+                    progressBar.style.width = `${(pagesProcessed / numPages) * 100}%`;
+                    progressText.textContent = `Recognizing text... (${pagesProcessed}/${numPages})`;
+                    
+                    return data.text;
+                });
+                
+                const pageTexts = await Promise.all(pagePromises);
 
-                // 4. Wait for all parallel jobs to finish
-                const results = await Promise.all(recognitionPromises);
-
-                // 5. Assemble the Word document
+                // 4. Assemble Word Document
                 progressText.textContent = 'Assembling Word document...';
-                const docContent = results.flatMap((result, index) => {
-                    const paragraphs = result.data.text.split('\n').map(line => new docx.Paragraph({ text: line }));
-                    if (index < results.length - 1) {
+                const docContent = pageTexts.flatMap((text, index) => {
+                    const paragraphs = text.split('\n').map(line => new docx.Paragraph({ text: line }));
+                    if (index < pageTexts.length - 1) {
                         return [...paragraphs, new docx.Paragraph({ children: [new docx.PageBreak()] })];
                     }
                     return paragraphs;
@@ -275,10 +255,13 @@
                 downloadArea.style.display = 'block';
 
             } catch (error) {
-                console.error("Conversion failed:", error);
+                console.error("A critical error occurred during conversion:", error);
                 progressText.textContent = `An error occurred. Please refresh and try again.`;
             } finally {
-                if (scheduler) await scheduler.terminate();
+                // 5. Terminate all workers to free up memory
+                if (workers.length > 0) {
+                    await Promise.all(workers.map(w => w.terminate()));
+                }
                 convertBtn.disabled = false;
             }
         }
