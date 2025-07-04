@@ -79,7 +79,7 @@
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .secondary-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
         
-        #size-preview { width: 100%; text-align: center; margin-bottom: 1rem; padding-bottom: 1.5rem; border-bottom: 2px solid #eee; }
+        #size-preview { width: 100%; text-align: center; }
         .dark-mode #size-preview { border-bottom-color: #333; }
         
         .compression-settings { width: 100%; max-width: 500px; text-align: center; }
@@ -136,6 +136,7 @@
             <div id="actions-panel" class="actions-panel">
                 <p style="text-align:center; color:#6c757d; margin:0;">Click pages to select/deselect. Drag to reorder.</p>
 
+                <!-- Initial size preview shows an estimate -->
                 <div id="size-preview" class="hidden">
                     <div class="size-comparison">
                         <span>Original: <strong id="original-size-display" class="size-info">...</strong></span>
@@ -158,8 +159,8 @@
                     <button id="process-btn" class="action-button" disabled>Merge PDF</button>
                 </div>
             </div>
+            <!-- The result container is separate and will show ACCURATE sizes -->
             <div id="result-container" class="actions-panel hidden">
-                <!-- Result content with ACCURATE sizes will be injected here -->
             </div>
         </div>
         
@@ -248,8 +249,8 @@
                 levelText.textContent = "Merge Only (No Compression)";
                 processBtn.textContent = "Merge PDF";
             } else {
-                // Simple, fast estimation. The real size will be shown after processing.
-                const estimatedFinalSize = originalSelectedSize * (1 - (compressionLevel / 100 * 0.8));
+                // This is just a rough guide for the user. The real size is shown after processing.
+                const estimatedFinalSize = originalSelectedSize * (1 - (compressionLevel / 100 * 0.75));
                 finalSizeDisplay.textContent = formatBytes(estimatedFinalSize > 0 ? estimatedFinalSize : 0);
                 levelText.textContent = `${compressionLevel}% Compression`;
                 processBtn.textContent = "Merge & Compress PDF";
@@ -274,18 +275,20 @@
     let draggedItem=null;pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});pagePreviewGrid.addEventListener('dragend', ()=>{if(draggedItem){draggedItem.classList.remove('dragging');draggedItem=null;const t=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));allPages=t; updateInterface()}});pagePreviewGrid.addEventListener('dragover',t=>{t.preventDefault();if(!draggedItem)return;const e=getDragAfterElement(pagePreviewGrid,t.clientY);if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}});function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
     
     function resetApp() {
+        // Clear all state
         allPages = [];
         fileCounter = 0;
         fileDataStore = {};
         if (fileInput) fileInput.value = ''; 
         
+        // Reset UI to initial state
         pagePreviewGrid.innerHTML = '';
         resultContainer.innerHTML = '';
         resultContainer.classList.add('hidden');
         actionsPanel.classList.remove('hidden');
         sizePreview.classList.add('hidden');
         
-        // --- KEY FIX: Re-enable controls on reset ---
+        // CRITICAL FIX: Re-enable controls on reset
         slider.disabled = false;
         addMoreFilesBtn.disabled = false;
         slider.value = 0;
@@ -296,6 +299,7 @@
     }
 
     async function processAndDisplay(){
+        // Disable all controls during processing
         processBtn.disabled=true;
         processBtn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
         addMoreFilesBtn.disabled = true;
@@ -354,20 +358,23 @@
             finalBytes = await finalPdfDoc.save();
 
             // --- UI UPDATE AFTER PROCESSING ---
-            actionsPanel.classList.add('hidden');
+            actionsPanel.classList.add('hidden'); // Hide the configuration panel
+            
+            // Build the result panel with ACCURATE sizes
             resultContainer.innerHTML = `
                 <div class="size-comparison">
                     <span>Original: <strong class="size-info">${formatBytes(originalTotalSize)}</strong></span>
                     <i class="fa-solid fa-arrow-right-long"></i>
                     <span>Final: <strong class="size-info">${formatBytes(finalBytes.length)}</strong></span>
                 </div>
-                <div id="result-buttons-container" style="display: flex; gap: 1rem; justify-content: center;"></div>
+                <div id="result-buttons-container" style="display: flex; gap: 1rem; justify-content: center; width:100%; max-width: 500px;"></div>
             `;
             
             const resultButtonsContainer = resultContainer.querySelector('#result-buttons-container');
             const downloadLink = document.createElement('a');
             downloadLink.href = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
             downloadLink.className = 'download-button';
+            downloadLink.style.flexGrow = '1';
             downloadLink.download = 'jkm-edit-final.pdf';
             downloadLink.innerHTML = `<i class="fa-solid fa-download"></i> Download PDF`;
 
@@ -375,13 +382,12 @@
             startOverBtn.className = 'action-button secondary-button';
             startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
             startOverBtn.style.width = 'auto'; 
-            startOverBtn.style.padding = '1rem 2rem';
             startOverBtn.addEventListener('click', resetApp);
 
             resultButtonsContainer.appendChild(downloadLink);
             resultButtonsContainer.appendChild(startOverBtn);
             
-            resultContainer.classList.remove('hidden');
+            resultContainer.classList.remove('hidden'); // Show the results
             
         } catch (error) {
             console.error("Error processing PDF:", error);
@@ -389,7 +395,7 @@
             actionsPanel.classList.remove('hidden');
         } finally {
             if (resultContainer.classList.contains('hidden')) {
-                // Re-enable controls only if something failed
+                // Re-enable controls only if something failed and results are not shown
                 processBtn.disabled = false;
                 addMoreFilesBtn.disabled = false;
                 slider.disabled = false;
