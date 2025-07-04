@@ -88,7 +88,7 @@
         .dark-mode #result-container { border-top-color: #333; }
         .size-info { font-weight: 600; color: var(--primary-color); }
         .size-comparison { display: flex; justify-content: center; align-items: center; gap: 1rem; font-size: 1.1rem; }
-        .download-button { display: inline-block; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
+        .download-button { display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
         
         .navigation-buttons { text-align: center; margin-top: 3rem; }
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; margin: 0 0.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
@@ -250,6 +250,34 @@
     pagePreviewGrid.addEventListener('click',t=>{const e=t.target.closest('.page-item');if(!e)return;const o=allPages.find(t=>t.id===e.dataset.id);if(o){o.isSelected=!o.isSelected;e.classList.toggle('deselected');updateInterface()}});
     let draggedItem=null;pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});pagePreviewGrid.addEventListener('dragend',()=>{if(draggedItem){draggedItem.classList.remove('dragging');draggedItem=null;const t=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));allPages=t;updateInterface()}});pagePreviewGrid.addEventListener('dragover',t=>{t.preventDefault();if(!draggedItem)return;const e=getDragAfterElement(pagePreviewGrid,t.clientY);if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}});function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
     
+    // --- NEW: Function to reset the entire application state ---
+    function resetApp() {
+        // 1. Reset state variables
+        allPages = [];
+        fileCounter = 0;
+        fileDataStore = {};
+        if (fileInput) {
+            fileInput.value = ''; // Allows re-uploading the same file
+        }
+        
+        // 2. Reset UI visibility
+        editStage.classList.add('hidden');
+        uploadStage.classList.remove('hidden');
+        
+        // 3. Clear dynamic content areas
+        pagePreviewGrid.innerHTML = '';
+        resultContainer.innerHTML = '';
+        resultContainer.classList.add('hidden');
+        
+        // 4. Reset controls to their initial state
+        addMoreFilesBtn.disabled = false;
+        slider.disabled = false;
+        slider.value = 0;
+        
+        // 5. Update UI text and button states via the main interface function
+        updateInterface(); 
+    }
+
     async function processAndDisplay(){
         addMoreFilesBtn.disabled=true;slider.disabled=true;processBtn.disabled=true;processBtn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
         
@@ -297,12 +325,39 @@
             }
             finalBytes = await finalPdfDoc.save();
 
-            // Update UI with final, accurate size and show download button
+            // --- MODIFIED: Update UI with final size and show download/start-over buttons ---
             finalSizeDisplay.textContent = formatBytes(finalBytes.length);
             sizePreviewNote.textContent = 'Processing complete!';
             actionButtonsContainer.classList.add('hidden');
-            resultContainer.innerHTML = `<a href="${URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }))}" class="download-button" download="jkm-edit-final.pdf">Download PDF</a>`;
+            
+            resultContainer.innerHTML = ''; // Clear previous content
+
+            const resultActionsContainer = document.createElement('div');
+            resultActionsContainer.style.display = 'flex';
+            resultActionsContainer.style.gap = '1rem';
+            resultActionsContainer.style.justifyContent = 'center';
+            resultActionsContainer.style.flexWrap = 'wrap';
+            
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
+            downloadLink.className = 'download-button';
+            downloadLink.download = 'jkm-edit-final.pdf';
+            downloadLink.innerHTML = `<i class="fa-solid fa-download"></i> Download PDF`;
+
+            const startOverBtn = document.createElement('button');
+            startOverBtn.className = 'action-button secondary-button';
+            startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
+            startOverBtn.style.width = 'auto'; // Override default full-width
+            startOverBtn.style.paddingLeft = '2rem';
+            startOverBtn.style.paddingRight = '2rem';
+            startOverBtn.addEventListener('click', resetApp);
+
+            resultActionsContainer.appendChild(downloadLink);
+            resultActionsContainer.appendChild(startOverBtn);
+            
+            resultContainer.appendChild(resultActionsContainer);
             resultContainer.classList.remove('hidden');
+            // --- END OF MODIFICATION ---
             
             isSuccess = true;
             
