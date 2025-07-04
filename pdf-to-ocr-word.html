@@ -53,14 +53,12 @@
 
 
     <style>
-        /* --- Basic Setup & Core Styles (Identical to other pages) --- */
+        /* All CSS remains identical to the previous version */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
         html { background-color: var(--bg-color); }
         body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
         *, *::before, *::after { box-sizing: border-box; }
         .hidden { display: none !important; }
-
-        /* --- THEME DEFINITIONS (Identical to other pages) --- */
         [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
         [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
         [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
@@ -70,8 +68,6 @@
         [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
         [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
         html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
-        
-        /* --- HEADER & MODAL STYLES (Identical to other pages) --- */
         .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); z-index: 100; position: sticky; top: 0; }
         .logo-container { display: flex; align-items: center; gap: 0.75rem; }
         .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); }
@@ -79,34 +75,28 @@
         .main-nav { display: flex; align-items: center; gap: 1.5rem; }
         .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; } .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width .3s; } .nav-link:hover::after { width: 100%; } #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); } #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; } #dark-mode-toggle .fa-sun { display: none; } html.dark-mode #dark-mode-toggle .fa-sun { display: inline; } html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; } .modal.show-modal { display: flex; align-items: center; justify-content: center; } .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; } .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; } .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        /* --- TOOL-SPECIFIC STYLES --- */
         .tool-container { padding: 2rem 4rem; max-width: 900px; margin: auto; }
         .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; }
         .tool-header p { font-size: 1.1rem; color: #6c757d; text-align: center; margin-bottom: 2rem; }
         html.dark-mode .tool-header p { color: #a0a0a0; }
         #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); transition: background-color var(--transition-speed), border-color var(--transition-speed); }
         #dropzone:hover { border-color: var(--primary-color); }
+        #dropzone.disabled { cursor: not-allowed; opacity: 0.6; }
         #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
-        
         #processing-panel { margin-top: 2rem; padding: 2rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1.5rem; align-items: center; }
         .file-info-card { font-weight: 600; font-size: 1.1rem; color: var(--text-color); background: var(--bg-color); padding: 0.75rem 1.5rem; border-radius: 8px; width: 100%; text-align: center; word-break: break-all; }
         .action-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; max-width: 500px; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .action-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
         .progress-indicator { width: 100%; text-align: center; max-width: 500px; }
         .progress-indicator p { font-weight: 600; color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1rem; }
         .progress-bar-container { width: 100%; background-color: #e9ecef; border-radius: 8px; overflow: hidden; height: 12px;}
         .progress-bar { height: 100%; width: 0%; background-color: var(--primary-color); transition: width 0.4s ease; }
         html.dark-mode .progress-bar-container { background-color: #333; }
-        
         .navigation-buttons { display: flex; justify-content: center; align-items: center; gap: 1rem; text-align: center; margin-top: 3rem; }
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
         .primary-nav-btn { background: var(--gradient); color: white !important; }
         .back-secondary-btn { background: transparent; color: var(--primary-color) !important; border: 2px solid var(--primary-color); }
-
-        /* --- PAGE TRANSITION ANIMATIONS (Identical to other pages) --- */
         body { animation: fadeInPage 0.5s ease-in-out; }
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -129,7 +119,7 @@
             <input type="file" id="file-input" class="hidden" accept=".pdf"/>
             <div id="dropzone">
                 <i class="fa-solid fa-file-arrow-up"></i>
-                <p>Drag & drop a PDF file here or click to select</p>
+                <p id="dropzone-text">Preparing engine... Please wait.</p>
             </div>
         </div>
 
@@ -150,61 +140,21 @@
     <script>
         // FIX FOR BFCACHE: Ensures page is visible on back navigation
         window.addEventListener('pageshow', function (event) {
-            if (event.persisted) {
-                document.body.classList.remove('fade-out');
-            }
+            if (event.persisted) { document.body.classList.remove('fade-out'); }
         });
 
         // Theme, Modal, and Page Transition Logic
         document.addEventListener('DOMContentLoaded', () => {
-            const themePicker = document.getElementById('theme-picker');
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const htmlElement = document.documentElement;
-
-            const setTheme = (theme) => { htmlElement.dataset.theme = theme; localStorage.setItem('jkm-edit-theme', theme); };
-            const enableDarkMode = () => { htmlElement.classList.add('dark-mode'); localStorage.setItem('jkm-edit-mode', 'dark'); };
-            const disableDarkMode = () => { htmlElement.classList.remove('dark-mode'); localStorage.setItem('jkm-edit-mode', 'light'); };
-            
-            if(themePicker) { 
-                themePicker.addEventListener('change', () => setTheme(themePicker.value)); 
-                const savedTheme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
-                themePicker.value = savedTheme;
-                htmlElement.dataset.theme = savedTheme;
-            }
-            if(darkModeToggle) { 
-                darkModeToggle.addEventListener('click', () => { htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode(); });
-                if (localStorage.getItem('jkm-edit-mode') === 'dark') {
-                    htmlElement.classList.add('dark-mode');
-                }
-            }
-            
-            const aboutModal = document.getElementById('about-modal'), contactModal = document.getElementById('contact-modal'), aboutBtn = document.getElementById('about-btn'), contactBtn = document.getElementById('contact-btn'), closeBtns = document.querySelectorAll('.close-btn');
-            const openModal = (modal) => modal.classList.add('show-modal');
-            const closeModal = (modal) => modal.classList.remove('show-modal');
-            if(aboutBtn) aboutBtn.addEventListener('click', e => { e.preventDefault(); openModal(aboutModal); });
-            if(contactBtn) contactBtn.addEventListener('click', e => { e.preventDefault(); openModal(contactModal); });
-            closeBtns.forEach(btn => btn.addEventListener('click', () => { closeModal(aboutModal); closeModal(contactModal); }));
-            window.addEventListener('click', e => { if (e.target === aboutModal) closeModal(aboutModal); if (e.target === contactModal) closeModal(contactModal); });
-
-            document.querySelectorAll('a').forEach(link => {
-                const linkUrl = link.getAttribute('href');
-                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        document.body.classList.add('fade-out');
-                        setTimeout(() => { window.location.href = this.href; }, 400);
-                    });
-                }
-            });
-        });
+            const themePicker=document.getElementById('theme-picker'),darkModeToggle=document.getElementById('dark-mode-toggle'),htmlElement=document.documentElement,setTheme=(e)=>{htmlElement.dataset.theme=e,localStorage.setItem('jkm-edit-theme',e)},enableDarkMode=()=>{htmlElement.classList.add('dark-mode'),localStorage.setItem('jkm-edit-mode','dark')},disableDarkMode=()=>{htmlElement.classList.remove('dark-mode'),localStorage.setItem('jkm-edit-mode','light')};themePicker&&(themePicker.addEventListener('change',()=>setTheme(themePicker.value)),themePicker.value=localStorage.getItem('jkm-edit-theme')||'corporate-blue',htmlElement.dataset.theme=themePicker.value),darkModeToggle&&(darkModeToggle.addEventListener('click',()=>{htmlElement.classList.contains('dark-mode')?disableDarkMode():enableDarkMode()}),'dark'===localStorage.getItem('jkm-edit-mode')&&htmlElement.classList.add('dark-mode'));const aboutModal=document.getElementById('about-modal'),contactModal=document.getElementById('contact-modal'),aboutBtn=document.getElementById('about-btn'),contactBtn=document.getElementById('contact-btn'),closeBtns=document.querySelectorAll('.close-btn'),openModal=e=>{e.classList.add('show-modal')},closeModal=e=>{e.classList.remove('show-modal')};aboutBtn&&aboutBtn.addEventListener('click',e=>{e.preventDefault(),openModal(aboutModal)}),contactBtn&&contactBtn.addEventListener('click',e=>{e.preventDefault(),openModal(contactModal)}),closeBtns.forEach(e=>{e.addEventListener('click',()=>{closeModal(aboutModal),closeModal(contactModal)})}),window.addEventListener('click',e=>{e.target===aboutModal&&closeModal(aboutModal),e.target===contactModal&&closeModal(contactModal)}),document.querySelectorAll('a').forEach(e=>{const t=e.getAttribute('href');t&&!t.startsWith('#')&&!t.startsWith('mailto:')&&!t.startsWith('javascript:')&&e.addEventListener('click',function(e){e.preventDefault(),document.body.classList.add('fade-out'),setTimeout(()=>{window.location.href=this.href},400)})});
     </script>
     <!-- [END] --- UNIVERSAL PAGE SCRIPT --- -->
 
 
-    <!-- [START] --- PDF TO OCR WORD LOGIC (ROBUST VERSION) --- -->
+    <!-- [START] --- PDF TO OCR WORD LOGIC (IMMEDIATE FEEL VERSION) --- -->
     <script>
         const fileInput = document.getElementById('file-input');
         const dropzone = document.getElementById('dropzone');
+        const dropzoneText = document.getElementById('dropzone-text');
         const uploadStage = document.getElementById('upload-stage');
         const processingPanel = document.getElementById('processing-panel');
 
@@ -215,14 +165,48 @@
         let processedBlobUrl = null;
         let tesseractWorker = null; // Singleton worker instance
 
-        dropzone.addEventListener('click', () => fileInput.click());
+        // --- OPTIMIZATION 1: PRE-LOAD THE OCR ENGINE ---
+        // We start this process as soon as the page script loads.
+        async function initializeOcrEngine() {
+            dropzone.classList.add('disabled');
+            dropzoneText.textContent = "Preparing engine... Please wait.";
+            try {
+                // --- OPTIMIZATION 2: USE FASTER LANGUAGE MODEL ---
+                const langPath = 'https://tessdata.projectnaptha.com/4.0.0_fast';
+                tesseractWorker = await Tesseract.createWorker('eng', 1, {
+                    langPath: langPath,
+                    cachePath: langPath, // Ensure caching uses the same path
+                });
+                dropzoneText.textContent = "Drag & drop a PDF file here or click to select";
+                dropzone.classList.remove('disabled');
+            } catch (error) {
+                console.error("Failed to initialize Tesseract worker:", error);
+                dropzoneText.innerHTML = "Error preparing engine. <br> Please check your connection and refresh.";
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', initializeOcrEngine);
+        // --- END OF OPTIMIZATIONS ---
+
+        dropzone.addEventListener('click', () => {
+            if (!dropzone.classList.contains('disabled')) {
+                fileInput.click();
+            }
+        });
         fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
-        dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.borderColor = 'var(--primary-color)'; });
+        dropzone.addEventListener('dragover', e => { 
+            e.preventDefault(); 
+            if (!dropzone.classList.contains('disabled')) {
+                dropzone.style.borderColor = 'var(--primary-color)';
+            }
+        });
         dropzone.addEventListener('dragleave', () => dropzone.style.borderColor = '#ccc');
         dropzone.addEventListener('drop', e => {
             e.preventDefault();
             dropzone.style.borderColor = '#ccc';
-            handleFile(e.dataTransfer.files[0]);
+            if (!dropzone.classList.contains('disabled')) {
+                handleFile(e.dataTransfer.files[0]);
+            }
         });
         
         function resetApp() {
@@ -262,29 +246,6 @@
             document.getElementById('convert-btn').addEventListener('click', handleConversion);
         }
 
-        // Singleton pattern to get or create the Tesseract worker
-        async function getOcrWorker(progressText, progressBar) {
-            if (tesseractWorker && (await tesseractWorker.getScheduler()).isInitialized) {
-                 return tesseractWorker;
-            }
-            
-            progressText.textContent = "Initializing OCR Engine (first-time download)...";
-            progressBar.style.width = '0%';
-
-            tesseractWorker = await Tesseract.createWorker({
-                logger: m => {
-                    // Provide detailed feedback to the user during initialization
-                    if (m.status === 'loading language traineddata' || m.status === 'initializing api') {
-                        const progress = (m.progress * 100).toFixed(0);
-                        progressText.textContent = `${m.status.charAt(0).toUpperCase() + m.status.slice(1)}...`;
-                        progressBar.style.width = `${progress}%`;
-                    }
-                }
-            });
-            return tesseractWorker;
-        }
-
-
         async function handleConversion() {
             processingPanel.innerHTML = `
                 <div class="progress-indicator">
@@ -299,27 +260,26 @@
             const progressBar = document.getElementById('progress-bar');
             
             try {
-                const worker = await getOcrWorker(progressText, progressBar);
+                // The worker is already initialized, so we proceed directly
                 const pdfDoc = await pdfjsLib.getDocument({ data: currentFileBuffer }).promise;
                 const numPages = pdfDoc.numPages;
                 const paragraphs = [];
 
                 for (let i = 1; i <= numPages; i++) {
                     progressText.textContent = `Recognizing text on page ${i} of ${numPages}...`;
-                    progressBar.style.width = '0%'; // Reset for each page
+                    progressBar.style.width = '0%';
 
                     const page = await pdfDoc.getPage(i);
                     const viewport = page.getViewport({ scale: 2.0 });
                     
                     const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
+                    const context = canvas.getContext('2d');
 
                     await page.render({ canvasContext: context, viewport: viewport }).promise;
                     
-                    const { data: { text } } = await worker.recognize(canvas, {}, {
-                        // Pass a logger for this specific recognition job
+                    const { data: { text } } = await tesseractWorker.recognize(canvas, {}, {
                         logger: m => {
                             if (m.status === 'recognizing text') {
                                 progressBar.style.width = `${m.progress * 100}%`;
@@ -327,19 +287,17 @@
                         }
                     });
 
-                    // Split text by newlines to create separate paragraphs in Word
                     const lines = text.split('\n');
                     for (const line of lines) {
-                         if (line.trim().length > 0) { // Avoid empty paragraphs
+                         if (line.trim().length > 0) {
                             paragraphs.push(new docx.Paragraph({ text: line }));
                          }
                     }
-                    paragraphs.push(new docx.Paragraph({ text: "" })); // Add a space between pages
+                    if (i < numPages) {
+                        paragraphs.push(new docx.Paragraph({ text: "" })); // Page break placeholder
+                    }
                 }
                 
-                // We no longer terminate the worker, so it can be reused.
-                // await worker.terminate();
-
                 progressText.textContent = 'Generating Word document...';
                 progressBar.style.width = '100%';
 
@@ -353,12 +311,7 @@
 
             } catch (error) {
                 console.error("Error during OCR conversion:", error);
-                processingPanel.innerHTML = `
-                    <p style="color:red; text-align:center; font-weight:bold;">Conversion Failed</p>
-                    <p style="text-align:center;">Could not initialize the OCR engine. Please check your internet connection, disable any ad-blockers, and try again.</p>
-                    <button id="retry-btn" class="action-button">Try Again</button>
-                `;
-                document.getElementById('retry-btn').addEventListener('click', handleConversion);
+                processingPanel.innerHTML = `<p style="color:red; text-align:center;">An error occurred during conversion. Please try again.</p>`;
             }
         }
 
@@ -374,6 +327,6 @@
             `;
         }
     </script>
-    <!-- [END] --- PDF TO OCR WORD LOGIC (ROBUST VERSION) --- -->
+    <!-- [END] --- PDF TO OCR WORD LOGIC (IMMEDIATE FEEL VERSION) --- -->
 </body>
 </html>
