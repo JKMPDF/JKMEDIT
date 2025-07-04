@@ -122,7 +122,6 @@
             </div>
             <!-- Results and compression panel -->
             <div id="result-panel" class="actions-panel hidden">
-                <!-- Content generated dynamically -->
             </div>
         </div>
         
@@ -156,11 +155,11 @@
     
     let allPages = [], fileCounter = 0;
     let fileDataStore = {};
-    let currentProcessedBytes = null; // To hold the bytes of the most recently processed PDF
+    let mergedOnlyBytes = null; // To hold the bytes of the initial merge
 
     // --- Event Listeners ---
     dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
-    processBtn.addEventListener('click', () => handleProcessing(0)); // Initial click is always merge-only
+    processBtn.addEventListener('click', () => handleProcessing(0));
 
     async function handleFiles(files){
         for (const file of files){
@@ -229,7 +228,7 @@
         allPages = [];
         fileCounter = 0;
         fileDataStore = {};
-        currentProcessedBytes = null;
+        mergedOnlyBytes = null;
         if (fileInput) fileInput.value = ''; 
         
         pagePreviewGrid.innerHTML = '';
@@ -248,14 +247,6 @@
         const selectedPages = allPages.filter(p => p.isSelected);
         const finalPdfDoc = await PDFDocument.create();
         
-        let originalSize = 0;
-        selectedPages.forEach(p => {
-            const fileInfo = fileDataStore[p.fileId];
-            if (fileInfo && fileInfo.pageCount > 0) {
-                originalSize += fileInfo.size / fileInfo.pageCount;
-            }
-        });
-
         if (compressionLevel === 0) {
             const loadedPdfDocs = new Map();
             for (const pageObj of selectedPages) {
@@ -268,7 +259,12 @@
                 finalPdfDoc.addPage(copiedPage);
             }
         } else {
-            const quality = 1 - (compressionLevel / 100);
+            // FIX: Non-linear mapping for better compression feel.
+            // Level 1 gives ~0.9999 quality, 50 gives 0.75, 100 gives 0.
+            const normalizedLevel = compressionLevel / 100;
+            let quality = 1 - Math.pow(normalizedLevel, 2);
+            if (quality <= 0) quality = 0.01; // Ensure quality is never absolute zero
+
             for (const pageObj of selectedPages) {
                 const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
                 const viewport = page.getViewport({ scale: 1.0 });
@@ -277,33 +273,39 @@
                 canvas.width = viewport.width;
                 const context = canvas.getContext('2d');
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
-                const dataUrl = canvas.toDataURL('image/jpeg', quality < 0.1 ? 0.1 : quality);
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
                 if (!dataUrl || dataUrl === 'data:,') continue;
                 const jpegImageBytes = await finalPdfDoc.embedJpg(dataUrl);
                 const newPage = finalPdfDoc.addPage([jpegImageBytes.width, jpegImageBytes.height]);
                 newPage.drawImage(jpegImageBytes, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
             }
         }
-        const finalBytes = await finalPdfDoc.save();
-        return { finalBytes, originalSize };
+        return await finalPdfDoc.save();
     }
     
     async function handleProcessing(compressionLevel) {
-        const button = compressionLevel === 0 ? processBtn : resultPanel.querySelector('#apply-compression-btn');
+        const isInitialProcess = (compressionLevel === 0 && mergedOnlyBytes === null);
+        const button = isInitialProcess ? processBtn : resultPanel.querySelector('#apply-compression-btn');
         const originalText = button.innerHTML;
+        
         button.disabled = true;
         button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
-        if (compressionLevel === 0) addMoreFilesBtn.disabled = true;
+        if (isInitialProcess) addMoreFilesBtn.disabled = true;
 
         try {
-            const { finalBytes, originalSize } = await processPdf(compressionLevel);
-            currentProcessedBytes = finalBytes; // Store the latest processed file
+            const finalBytes = await processPdf(compressionLevel);
             
-            if (compressionLevel === 0) {
-                // This is the first time, so we build the result panel
+            if (isInitialProcess) {
+                mergedOnlyBytes = finalBytes; // Store the initial merge result
+                let originalSize = 0;
+                allPages.filter(p => p.isSelected).forEach(p => {
+                    const fileInfo = fileDataStore[p.fileId];
+                    if (fileInfo && fileInfo.pageCount > 0) {
+                        originalSize += fileInfo.size / fileInfo.pageCount;
+                    }
+                });
                 displayResultPanel(originalSize, finalBytes.length);
             } else {
-                // This is a re-compression, just update the existing result panel
                 const finalSizeResultDisplay = document.getElementById('final-size-result');
                 const downloadBtn = document.getElementById('download-btn');
                 finalSizeResultDisplay.textContent = formatBytes(finalBytes.length);
@@ -312,11 +314,11 @@
 
         } catch (error) {
             console.error("Error processing PDF:", error);
-            alert("An error occurred while processing the PDF. Please try again or check the console for details.");
+            alert("An error occurred while processing the PDF. Please try again.");
         } finally {
             button.disabled = false;
             button.innerHTML = originalText;
-            if (compressionLevel === 0) addMoreFilesBtn.disabled = false;
+            if (isInitialProcess) addMoreFilesBtn.disabled = false;
         }
     }
 
@@ -345,19 +347,20 @@
         const sliderResult = resultPanel.querySelector('#compression-slider-result');
         const levelTextResult = resultPanel.querySelector('#compression-level-text-result');
         const buttonsContainer = resultPanel.querySelector('#result-buttons-container');
+        const finalSizeResultDisplay = resultPanel.querySelector('#final-size-result');
 
         const applyBtn = document.createElement('button');
         applyBtn.id = 'apply-compression-btn';
         applyBtn.className = 'action-button';
         applyBtn.textContent = 'Apply Compression';
-        applyBtn.disabled = true; // Disabled initially
+        applyBtn.disabled = true;
 
         const downloadBtn = document.createElement('a');
         downloadBtn.id = 'download-btn';
         downloadBtn.className = 'download-button';
         downloadBtn.download = 'jkm-edit-final.pdf';
         downloadBtn.innerHTML = `<i class="fa-solid fa-download"></i> Download PDF`;
-        downloadBtn.href = URL.createObjectURL(new Blob([currentProcessedBytes], { type: 'application/pdf' }));
+        downloadBtn.href = URL.createObjectURL(new Blob([mergedOnlyBytes], { type: 'application/pdf' }));
 
         const startOverBtn = document.createElement('button');
         startOverBtn.className = 'action-button secondary-button';
@@ -373,6 +376,9 @@
             if (level === 0) {
                 levelTextResult.textContent = "Merge Only (No Compression)";
                 applyBtn.disabled = true;
+                // --- FIX: Revert to the original merged file when slider is at 0 ---
+                finalSizeResultDisplay.textContent = formatBytes(mergedOnlyBytes.length);
+                downloadBtn.href = URL.createObjectURL(new Blob([mergedOnlyBytes], { type: 'application/pdf' }));
             } else {
                 levelTextResult.textContent = `${level}% Compression`;
                 applyBtn.disabled = false;
@@ -386,7 +392,6 @@
             }
         });
     }
-
     </script>
 </body>
 </html>
