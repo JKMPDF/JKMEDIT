@@ -80,6 +80,8 @@
 
         /* --- TOOL-SPECIFIC STYLES --- */
         .tool-container { padding: 2rem 4rem; max-width: 900px; margin: auto; }
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 0 auto 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
+        html.dark-mode .ad-placeholder { background-color: #2a2a38; border-color: #444; color: #777; }
         .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; }
         .tool-header p { font-size: 1.1rem; color: #6c757d; text-align: center; margin-bottom: 2rem; }
         html.dark-mode .tool-header p { color: #a0a0a0; }
@@ -109,8 +111,8 @@
         .stepper-btn { background: #e9ecef; border: 1px solid #ccc; color: #333; font-weight: bold; cursor: pointer; border-radius: 50%; width: 30px; height: 30px; flex-shrink: 0; }
         html.dark-mode .stepper-btn { background: #333; border-color: #555; color: #eee;}
         
-        .navigation-buttons { text-align: center; margin-top: 3rem; }
-        .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; margin: 0 0.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
+        .navigation-buttons { display: flex; justify-content: center; align-items: center; gap: 1rem; text-align: center; margin-top: 3rem; }
+        .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
         .primary-nav-btn { background: var(--gradient); color: white !important; }
         .back-secondary-btn { background: transparent; color: var(--primary-color) !important; border: 2px solid var(--primary-color); }
 
@@ -129,6 +131,9 @@
     </header>
 
     <main class='tool-container'>
+        <div class="ad-placeholder">
+            <span><!-- Your 728x90 Ad Code Goes Here -->Advertisement</span>
+        </div>
         <div id="upload-stage">
             <div class='tool-header'>
                 <h2>Compress PDF</h2>
@@ -146,7 +151,8 @@
         </div>
         
         <div class="navigation-buttons">
-            <a href="pdf-tools.html" class="nav-btn back-secondary-btn"><i class="fa-solid fa-arrow-left"></i> Back to All Tools</a>
+            <a href="pdf-tools.html" class="nav-btn back-secondary-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="https://jkmpdf.github.io/JKMEDIT/" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
         </div>
     </main>
     
@@ -208,7 +214,7 @@
     <!-- [END] --- UNIVERSAL PAGE SCRIPT --- -->
 
 
-    <!-- [START] --- PDF COMPRESSION LOGIC --- -->
+    <!-- [START] --- PDF COMPRESSION LOGIC (REVISED) --- -->
     <script>
         const fileInput = document.getElementById('file-input');
         const dropzone = document.getElementById('dropzone');
@@ -291,10 +297,10 @@
                      <p style="margin:0 0 0.5rem 0;"><strong>Compression Level</strong></p>
                      <div class="slider-container">
                         <button id="slider-decrement" class="stepper-btn">-</button>
-                        <input type="range" id="compression-slider" min="0" max="99" value="50" step="1" style="width:100%;">
+                        <input type="range" id="compression-slider" min="0" max="99" value="25" step="1" style="width:100%;">
                         <button id="slider-increment" class="stepper-btn">+</button>
                      </div>
-                     <strong id="compression-level-text">50% Compression</strong>
+                     <strong id="compression-level-text">Recommended Quality</strong>
                 </div>
                 <button id="compress-btn" class="action-button">
                     <i class="fa-solid fa-file-zipper"></i> Compress PDF
@@ -307,8 +313,17 @@
             
             const updateSliderUI = () => {
                 const level = parseInt(slider.value);
-                levelText.textContent = level === 0 ? "No Compression (Lossless)" : `${level}% Compression`;
+                if (level === 0) {
+                    levelText.textContent = "No Compression (Lossless)";
+                } else if (level <= 30) {
+                    levelText.textContent = "Recommended Quality";
+                } else if (level <= 70) {
+                    levelText.textContent = "Good Compression";
+                } else {
+                    levelText.textContent = "Maximum Compression";
+                }
             };
+            updateSliderUI(); // Set initial text
 
             slider.addEventListener('input', updateSliderUI);
             document.getElementById('slider-decrement').addEventListener('click', () => { slider.value = Math.max(0, parseInt(slider.value) - 1); slider.dispatchEvent(new Event('input')); });
@@ -324,6 +339,18 @@
             
             const compressionLevel = parseInt(document.getElementById('compression-slider').value);
             
+            // [FIX] Explicitly handle 0% compression to avoid processing
+            if (compressionLevel === 0) {
+                displayResult(originalFileSize, true);
+                if (processedBlobUrl) URL.revokeObjectURL(processedBlobUrl);
+                processedBlobUrl = URL.createObjectURL(new Blob([originalFileBuffer], { type: 'application/pdf' }));
+                document.getElementById('download-btn').href = processedBlobUrl;
+
+                compressBtn.disabled = false;
+                compressBtn.innerHTML = originalText;
+                return;
+            }
+
             try {
                 const finalBytes = await compressPdf(compressionLevel);
                 displayResult(finalBytes.length);
@@ -343,10 +370,6 @@
         }
         
         async function compressPdf(compressionLevel) {
-            if (compressionLevel === 0) {
-                return originalFileBuffer;
-            }
-
             const { PDFDocument } = PDFLib;
             const newPdfDoc = await PDFDocument.create();
             const quality = 1 - (compressionLevel / 100);
@@ -360,7 +383,6 @@
                 canvas.width = viewport.width;
 
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
-
                 const dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.1, quality));
                 if (!dataUrl || dataUrl === 'data:,') continue;
 
@@ -375,9 +397,12 @@
             return await newPdfDoc.save();
         }
 
-        function displayResult(finalSize) {
+        function displayResult(finalSize, isLossless = false) {
             const resultDisplay = document.getElementById('result-display');
             const reduction = originalFileSize > 0 ? Math.round((1 - finalSize / originalFileSize) * 100) : 0;
+            const resultMessage = isLossless 
+                ? `<p>No compression was applied (lossless).</p>`
+                : `<p>File size reduced by approximately <strong>${reduction}%</strong>.</p>`;
 
             resultDisplay.innerHTML = `
                 <h3 style="margin:0;">Compression Result</h3>
@@ -386,7 +411,7 @@
                     <i class="fa-solid fa-arrow-right-long"></i>
                     <span>New Size: <strong class="size-info">${formatBytes(finalSize)}</strong></span>
                 </div>
-                <p>File size reduced by approximately <strong>${reduction}%</strong>.</p>
+                ${resultMessage}
                 <div class="result-buttons">
                     <a id="download-btn" class="download-button" download="jkm-edit-compressed.pdf">
                         <i class="fa-solid fa-download"></i> Download PDF
@@ -400,6 +425,6 @@
             document.getElementById('start-over-btn').addEventListener('click', resetApp);
         }
     </script>
-    <!-- [END] --- PDF COMPRESSION LOGIC --- -->
+    <!-- [END] --- PDF COMPRESSION LOGIC (REVISED) --- -->
 </body>
 </html>
