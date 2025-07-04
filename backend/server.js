@@ -8,7 +8,7 @@ app.use(cors());
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
-app.post('/ocr', upload.single('pdf'), async (req, res) => {
+app.post('/convert/pdf-to-ocr-word', upload.single('file'), async (req, res) => {
   try {
     const convert = pdf2pic.fromPath(req.file.path, {
       density: 300,
