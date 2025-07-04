@@ -13,15 +13,11 @@
     <meta name="author" content="JKM Edit"/>
     <meta name="robots" content="index, follow"/>
     <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/pdf-tools.html"/>
-
-    <!-- Open Graph Meta Tags (for Facebook, LinkedIn, etc.) -->
     <meta property="og:title" content="Free PDF Tools - Merge, Split, Compress & Convert | JKM Edit"/>
     <meta property="og:description" content="A complete suite of free online PDF tools. Merge, split, compress, convert PDF to Word, and much more."/>
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/pdf-tools.html"/>
     <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
-
-    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Free PDF Tools - Merge, Split, Compress & Convert | JKM Edit"/>
     <meta name="twitter:description" content="A complete suite of free online PDF tools. Merge, split, compress, convert PDF to Word, and much more."/>
@@ -42,11 +38,9 @@
         })();
     </script>
     
-    <!-- Link to Google Fonts and Font Awesome -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
-    <!-- All CSS styles are placed here for a single-file structure -->
     <style>
         /* --- Basic Setup & Variables --- */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
@@ -104,24 +98,15 @@
         @media (max-width: 992px) { .function-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 576px) { .function-grid { grid-template-columns: 1fr; } }
         
-        /* --- Back to Dashboard Button --- */
         .back-to-dashboard-btn { display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
 
-        /* --- Ad Box Style --- */
         .ad-card { border: 2px dashed var(--accent-color); background-color: color-mix(in srgb, var(--surface-color) 95%, var(--accent-color) 5%); justify-content: center; align-items: center; min-height: 230px; }
         html.dark-mode .ad-card { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--accent-color) 10%); }
         .ad-card h3, .ad-card p, .ad-card i { display: none; }
-        .ad-card:empty::before {
-            content: "Advertisement";
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--accent-color);
-            opacity: 0.7;
-        }
+        .ad-card:empty::before { content: "Advertisement"; font-size: 1.2rem; font-weight: 600; color: var(--accent-color); opacity: 0.7; }
 
-        /* --- Modal Styles --- */
-        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeInModal 0.3s; }
         .modal.show-modal { display: flex; align-items: center; justify-content: center; }
         .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
         .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
@@ -129,13 +114,33 @@
         .modal-content h2 { color: var(--primary-color); margin-top: 0; }
         .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
         .contact-email:hover { transform: scale(1.05); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* [START] --- ADD THIS CSS BLOCK TO FIX FLICKERING --- */
+        body {
+            /* This animation will fade the page in, hiding the layout shift */
+            animation: fadeInPage 0.5s ease-in-out;
+        }
+        .fade-out {
+            /* This class will be added by JavaScript to fade out on navigation */
+            animation: fadeOutPage 0.4s ease-in-out forwards;
+        }
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOutPage {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(10px); }
+        }
+        /* [END] --- CSS BLOCK --- */
+
+        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @media (max-width: 768px) { .main-header { flex-direction: column; gap: 1rem; } .dashboard-container { padding: 2rem 1.5rem; } }
     </style>
 </head>
 <body>
-    <!-- Header Section -->
+    <!-- Header and other content remains the same -->
     <header class='main-header'>
         <div class='logo-container'>
             <a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
@@ -165,111 +170,54 @@
         </nav>
     </header>
 
-    <!-- Main Content Area for PDF Tools -->
     <main class='dashboard-container'>
         <div class='dashboard-header'>
             <h2>PDF Tools</h2>
             <p>A complete suite of tools to manage your PDF files. Fast, easy, and free.</p>
         </div>
-
-        <!-- The 'function-grid' class applies the 3-column layout -->
         <div class='tools-grid function-grid'>
-            <!-- First 2 Rows of Functions -->
             <a href='merge-pdf.html' class='tool-card'><i class='fa-solid fa-object-group tool-icon'></i><h3>Merge PDF</h3><p>Combine multiple PDF files into a single document.</p></a>
             <a href='split-pdf.html' class='tool-card'><i class='fa-solid fa-scissors tool-icon'></i><h3>Split PDF</h3><p>Extract a range of pages or every page into separate PDFs.</p></a>
             <a href='compress-pdf.html' class='tool-card'><i class='fa-solid fa-file-zipper tool-icon'></i><h3>Compress PDF</h3><p>Reduce the file size of your PDF while optimizing for quality.</p></a>
             <a href='pdf-to-ocr-word.html' class='tool-card'><i class='fa-solid fa-file-word tool-icon'></i><h3>PDF to Word</h3><p>Convert your PDF files to editable DOCX documents.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-file-powerpoint tool-icon'></i><h3>PDF to PowerPoint</h3><p>Turn your PDFs into easy-to-edit PPTX slideshows.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-file-excel tool-icon'></i><h3>PDF to Excel</h3><p>Convert PDF data to easily editable XLSX spreadsheets.</p></a>
-            
-            <!-- First Row of Ad Boxes -->
             <div class='tool-card ad-card'><script type="text/javascript">
-	atOptions = {
-		'key' : 'c20491e539f418036088eeb9392cd854',
-		'format' : 'iframe',
-		'height' : 250,
-		'width' : 300,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
+	atOptions = { 'key' : 'c20491e539f418036088eeb9392cd854', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+</script><script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
             <div class='tool-card ad-card'><script type="text/javascript">
-	atOptions = {
-		'key' : 'c20491e539f418036088eeb9392cd854',
-		'format' : 'iframe',
-		'height' : 250,
-		'width' : 300,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
+	atOptions = { 'key' : 'c20491e539f418036088eeb9392cd854', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+</script><script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
             <div class='tool-card ad-card'><script type="text/javascript">
-	atOptions = {
-		'key' : 'c20491e539f418036088eeb9392cd854',
-		'format' : 'iframe',
-		'height' : 250,
-		'width' : 300,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
-
-            <!-- Next 2 Rows of Functions -->
+	atOptions = { 'key' : 'c20491e539f418036088eeb9392cd854', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+</script><script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
             <a href='#' class='tool-card'><i class='fa-solid fa-file-image tool-icon'></i><h3>PDF to JPG</h3><p>Convert each PDF page into a high-quality JPG image.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-file-lines tool-icon'></i><h3>Word to PDF</h3><p>Convert DOCX documents to professional PDF files.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-presentation-screen tool-icon'></i><h3>PowerPoint to PDF</h3><p>Convert PPTX presentations to easily shareable PDFs.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-table-cells tool-icon'></i><h3>Excel to PDF</h3><p>Convert XLSX spreadsheets into easily shareable PDFs.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-image tool-icon'></i><h3>JPG to PDF</h3><p>Combine multiple JPG images into a single PDF file.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-signature tool-icon'></i><h3>Sign PDF</h3><p>Sign your PDF documents yourself or request signatures.</p></a>
-            
-            <!-- Second Row of Ad Boxes -->
             <div class='tool-card ad-card'><script type="text/javascript">
-	atOptions = {
-		'key' : 'c20491e539f418036088eeb9392cd854',
-		'format' : 'iframe',
-		'height' : 250,
-		'width' : 300,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
+	atOptions = { 'key' : 'c20491e539f418036088eeb9392cd854', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+</script><script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
             <div class='tool-card ad-card'><script type="text/javascript">
-	atOptions = {
-		'key' : 'c20491e539f418036088eeb9392cd854',
-		'format' : 'iframe',
-		'height' : 250,
-		'width' : 300,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
+	atOptions = { 'key' : 'c20491e539f418036088eeb9392cd854', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+</script><script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
             <div class='tool-card ad-card'><script type="text/javascript">
-	atOptions = {
-		'key' : 'c20491e539f418036088eeb9392cd854',
-		'format' : 'iframe',
-		'height' : 250,
-		'width' : 300,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
-            
-            <!-- Final Row of Functions -->
+	atOptions = { 'key' : 'c20491e539f418036088eeb9392cd854', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+</script><script type="text/javascript" src="//www.highperformanceformat.com/c20491e539f418036088eeb9392cd854/invoke.js"></script></div>
             <a href='#' class='tool-card'><i class='fa-solid fa-list-ol tool-icon'></i><h3>Add Page Numbers</h3><p>Insert page numbers into your PDF files with ease.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-rotate tool-icon'></i><h3>Rotate PDF</h3><p>Rotate all or specific pages in your PDF document.</p></a>
             <a href='#' class='tool-card'><i class='fa-solid fa-lock tool-icon'></i><h3>Protect PDF</h3><p>Add a password and encrypt your PDF file to secure it.</p></a>
         </div>
-
         <div style='text-align: center; margin-top: 3rem;'>
             <a href='https://jkmpdf.github.io/JKMEDIT/' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
         </div>
     </main>
     
-    <!-- Modals -->
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
-    <!-- JavaScript -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- Modal Logic (unchanged) ---
@@ -297,10 +245,10 @@
             if (e.target === contactModal) closeModal(contactModal);
         });
 
-        // --- Theme and Dark Mode Event Listeners (Logic updated) ---
+        // --- Theme and Dark Mode Event Listeners (unchanged) ---
         const themePicker = document.getElementById('theme-picker');
         const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const htmlElement = document.documentElement; // Target the <html> element
+        const htmlElement = document.documentElement;
 
         const setTheme = (theme) => {
             htmlElement.dataset.theme = theme;
@@ -323,13 +271,31 @@
             htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
         });
 
-        // --- Initialize UI Controls to match loaded state ---
-        // The theme and mode are already applied by the script in <head>.
-        // This just syncs the dropdown selector.
         const savedTheme = localStorage.getItem('jkm-edit-theme');
         if (savedTheme) {
             themePicker.value = savedTheme;
         }
+
+        // [START] --- ADD THIS JAVASCRIPT TO FIX FLICKERING ---
+        // This makes page transitions smooth
+        document.querySelectorAll('a').forEach(link => {
+            const linkUrl = link.getAttribute('href');
+            // We only want to animate transitions to other .html pages on our site
+            // This avoids issues with modal popups (#) or external links
+            if (linkUrl && (linkUrl.endsWith('.html') || linkUrl.endsWith('/'))) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault(); // Stop the default navigation
+                    document.body.classList.add('fade-out'); // Apply fade-out animation
+                    
+                    // Wait for animation to finish, then go to the new page
+                    setTimeout(() => {
+                        window.location.href = this.href;
+                    }, 400); // Must match the CSS animation duration
+                });
+            }
+        });
+        // [END] --- JAVASCRIPT BLOCK ---
+
     });
     </script>
 </body>
