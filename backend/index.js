@@ -1,22 +1,20 @@
 const express = require('express');
+const app = express();
+const cors = require('cors');
 const multer = require('multer');
 const Tesseract = require('tesseract.js');
-const { fromPath } = require('pdf2pic');
-const cors = require('cors');
+const pdf2pic = require('pdf2pic');
 const fs = require('fs');
 const path = require('path');
 
-const app = express();
+app.use(cors());
+app.use(express.json());
 const upload = multer({ dest: 'uploads/' });
 
-// ✅ Allow cross-origin requests
-app.use(cors());
-
-// ✅ Actual OCR endpoint
+// --- OCR Endpoint ---
 app.post('/convert/pdf-to-ocr-word', upload.single('file'), async (req, res) => {
   try {
-    // 1. Convert first page of PDF to image
-    const convert = fromPath(req.file.path, {
+    const convert = pdf2pic.fromPath(req.file.path, {
       density: 300,
       saveFilename: "temp",
       savePath: "./images",
@@ -24,35 +22,26 @@ app.post('/convert/pdf-to-ocr-word', upload.single('file'), async (req, res) => 
     });
 
     const pageImage = await convert(1);
-
-    // 2. Perform OCR on image
     const result = await Tesseract.recognize(pageImage.path, 'eng');
 
-    // 3. Save the extracted text to a .docx-like file
-    const fileName = `ocr-result-${Date.now()}.doc`;
-    const outputPath = path.join(__dirname, 'downloads', fileName);
-    fs.mkdirSync(path.join(__dirname, 'downloads'), { recursive: true });
-    fs.writeFileSync(outputPath, result.data.text, 'utf8');
+    // Optional: delete temp files
+    fs.unlinkSync(req.file.path);
+    fs.unlinkSync(pageImage.path);
 
-    // 4. Send download link
-    const publicUrl = `https://${process.env.RENDER_EXTERNAL_HOSTNAME}/downloads/${fileName}`;
-    res.json({ success: true, downloadUrl: publicUrl, fileName });
-
+    res.send({
+      success: true,
+      text: result.data.text,
+      fileName: 'converted.docx', // You can replace with actual Word output logic
+      downloadUrl: null           // Currently no file download, only text
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).send({ success: false, error: 'OCR failed', detail: err.message });
+    res.status(500).send({ error: 'OCR failed', detail: err.message });
   }
 });
 
-// ✅ Serve output files
-app.use('/downloads', express.static(path.join(__dirname, 'downloads')));
-
-// ✅ Health check
-app.get('/', (req, res) => {
-  res.send('OCR Server is Live!');
-});
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`✅ OCR server running on port ${port}`);
+// ✅ PORT = 10000 (Matches Render config)
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`OCR server running on port ${PORT}`);
 });
