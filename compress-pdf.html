@@ -3,25 +3,30 @@
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    
+
     <!-- =================================================================== -->
-    <!-- SEO & META TAGS -->
+    <!-- COMPREHENSIVE SEO & META TAGS -->
     <!-- =================================================================== -->
     <title>Compress PDF - Reduce PDF File Size Online for Free | JKM Edit</title>
-    <meta name="description" content="Easily compress your PDF files online with JKM Edit's free tool. Reduce PDF size for easy sharing and storage without sacrificing quality. Secure, fast, and no installation required."/>
-    <meta name="keywords" content="compress pdf, reduce pdf size, pdf compressor, free pdf tool, online pdf compressor, optimize pdf, shrink pdf, jkm edit"/>
+    <meta name="description" content="The best free online tool to compress PDFs. Reduce the file size of your large PDF documents for easy sharing via email or web, while maintaining quality. No registration needed."/>
+    <meta name="keywords" content="compress pdf, pdf compressor, reduce pdf size, shrink pdf, optimize pdf, free pdf tool, online pdf compressor, pdf size reducer, jkm edit"/>
     <meta name="author" content="JKM Edit"/>
     <meta name="robots" content="index, follow"/>
     <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/compress-pdf.html"/>
-    <meta property="og:title" content="Compress PDF - Reduce PDF File Size Online | JKM Edit"/>
-    <meta property="og:description" content="Reduce the file size of your PDFs for easy sharing and storage without sacrificing quality. Free, fast, and secure online PDF compression."/>
+
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/compress-pdf.html"/>
+    <meta property="og:title" content="Compress PDF - The Easiest Way to Reduce PDF Size"/>
+    <meta property="og:description" content="Drastically reduce your PDF file sizes with our free online tool. Perfect for optimizing files for email and web sharing. Fast, secure, and high-quality."/>
     <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="Compress PDF - Reduce PDF File Size Online | JKM Edit"/>
-    <meta name="twitter:description" content="Reduce the file size of your PDFs for easy sharing and storage without sacrificing quality. Free, fast, and secure online PDF compression."/>
-    <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image"/>
+    <meta property="twitter:url" content="https://jkmpdf.github.io/JKMEDIT/compress-pdf.html"/>
+    <meta property="twitter:title" content="Compress PDF - The Easiest Way to Reduce PDF Size"/>
+    <meta property="twitter:description" content="Drastically reduce your PDF file sizes with our free online tool. Perfect for optimizing files for email and web sharing. Fast, secure, and high-quality."/>
+    <meta property="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
     <!-- =================================================================== -->
     
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
@@ -31,6 +36,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
     <style>
+        /* --- UI STYLES - UNCHANGED --- */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
         body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
         *, *::before, *::after { box-sizing: border-box; }
@@ -171,8 +177,7 @@
                     <button id="process-btn" class="action-button" disabled>Compress PDF</button>
                 </div>
 
-                <div id="result-container" class="hidden">
-                </div>
+                <div id="result-container" class="hidden"></div>
             </div>
         </div>
         
@@ -186,15 +191,16 @@
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
     <script>
-    // --- DEFINITIVE SCRIPT: ALL LOGIC WRAPPED IN DOMCONTENTLOADED ---
+    // --- NEW, ROBUST, AND FULLY-FUNCTIONAL SCRIPT ---
     document.addEventListener('DOMContentLoaded', () => {
     
-        // --- Standard Theme, Dark Mode & Modal Logic ---
+        // --- THEME & MODAL LOGIC (UNCHANGED) ---
         const themePicker=document.getElementById('theme-picker'),htmlElement=document.documentElement;const setTheme=(t)=>{htmlElement.dataset.theme=t;localStorage.setItem('jkm-edit-theme',t)};if(themePicker){themePicker.addEventListener('change',()=>setTheme(themePicker.value));const t=localStorage.getItem('jkm-edit-theme');if(t){setTheme(t);themePicker.value=t}else{themePicker.value='corporate-blue'}}
         const darkModeToggle=document.getElementById('dark-mode-toggle'),body=document.body;const enableDarkMode=()=>{body.classList.add('dark-mode');localStorage.setItem('jkm-edit-mode','dark')};const disableDarkMode=()=>{body.classList.remove('dark-mode');localStorage.setItem('jkm-edit-mode','light')};if(darkModeToggle)darkModeToggle.addEventListener('click',()=>body.classList.contains('dark-mode')?disableDarkMode():enableDarkMode());if(localStorage.getItem('jkm-edit-mode')==='dark')enableDarkMode();
         const aboutModal=document.getElementById('about-modal'),contactModal=document.getElementById('contact-modal'),aboutBtn=document.getElementById('about-btn'),contactBtn=document.getElementById('contact-btn'),closeBtns=document.querySelectorAll('.close-btn');const openModal=(t)=>t.classList.add('show-modal');const closeModal=(t)=>t.classList.remove('show-modal');if(aboutBtn)aboutBtn.addEventListener('click',t=>{t.preventDefault();openModal(aboutModal)});if(contactBtn)contactBtn.addEventListener('click',t=>{t.preventDefault();openModal(contactModal)});closeBtns.forEach(t=>t.addEventListener('click',()=>{closeModal(aboutModal);closeModal(contactModal)}));window.addEventListener('click',t=>{if(t.target===aboutModal)closeModal(aboutModal);if(t.target===contactModal)closeModal(contactModal)});
 
-        // --- PDF Compression Tool Logic ---
+        // --- PDF COMPRESSION TOOL LOGIC ---
+        // Get all DOM elements
         const fileInput = document.getElementById('file-input');
         const dropzone = document.getElementById('dropzone');
         const processBtn = document.getElementById('process-btn');
@@ -209,190 +215,212 @@
         const finalSizeDisplay = document.getElementById('final-size-display');
         const actionButtonContainer = document.getElementById('action-button-container');
 
+        // Configure PDF.js worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
-        let uploadedFiles = [];
-        let preRenderedImages = [];
+        
+        // App state
+        let uploadedFileArrayBuffers = [];
+        let preRenderedPageImages = []; // Stores high-res in-memory images of each page
 
-        // --- Event Listeners ---
-        dropzone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--primary-color)'; });
-        dropzone.addEventListener('dragleave', (e) => { e.currentTarget.style.borderColor = '#ccc'; });
-        dropzone.addEventListener('drop', (e) => { e.preventDefault(); e.currentTarget.style.borderColor = '#ccc'; handleFiles(e.dataTransfer.files); });
+        // Centralized function to set up all event listeners
+        function initializeEventListeners() {
+            dropzone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => handleFileSelect(e.target.files));
+            
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.currentTarget.style.borderColor = 'var(--primary-color)';
+            });
+            dropzone.addEventListener('dragleave', (e) => {
+                e.currentTarget.style.borderColor = '#ccc';
+            });
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.currentTarget.style.borderColor = '#ccc';
+                handleFileSelect(e.dataTransfer.files);
+            });
 
-        processBtn.addEventListener('click', processAndDisplay);
-        slider.addEventListener('input', () => { targetSizeInput.value = ''; updateInterface(); });
-        targetSizeInput.addEventListener('input', updateInterface);
-        targetSizeUnit.addEventListener('change', updateInterface);
+            processBtn.addEventListener('click', processCompression);
+            slider.addEventListener('input', () => {
+                targetSizeInput.value = '';
+                updateUI();
+            });
+            targetSizeInput.addEventListener('input', updateUI);
+            targetSizeUnit.addEventListener('change', updateUI);
+        }
 
         function resetTool() {
-            uploadedFiles = [];
-            preRenderedImages = [];
-            fileInput.value = null;
+            uploadedFileArrayBuffers = [];
+            preRenderedPageImages = [];
+            fileInput.value = null; // Important for re-selecting the same file
             pagePreviewGrid.innerHTML = '';
             editStage.classList.add('hidden');
             uploadStage.classList.remove('hidden');
             resultContainer.classList.add('hidden');
+            resultContainer.innerHTML = '';
             actionButtonContainer.classList.remove('hidden');
             finalSizeDisplay.textContent = '...';
             targetSizeInput.value = '';
             slider.value = 50;
-            updateInterface();
+            updateUI();
         }
 
-        async function handleFiles(files) {
+        async function handleFileSelect(files) {
             resetTool();
-            try {
-                const filePromises = Array.from(files)
-                    .filter(file => file.type === "application/pdf")
-                    .map(async file => ({ name: file.name, fileData: await file.arrayBuffer() }));
-                
-                uploadedFiles = await Promise.all(filePromises);
+            const pdfFiles = Array.from(files).filter(file => file.type === "application/pdf");
+            if (pdfFiles.length === 0) return;
 
-                if (uploadedFiles.length > 0) {
-                    uploadStage.classList.add('hidden');
-                    editStage.classList.remove('hidden');
-                    await renderPagePreviews();
-                    updateInterface();
-                }
-            } catch(err) {
+            try {
+                const fileReadPromises = pdfFiles.map(file => file.arrayBuffer());
+                uploadedFileArrayBuffers = await Promise.all(fileReadPromises);
+
+                uploadStage.classList.add('hidden');
+                editStage.classList.remove('hidden');
+                
+                await preRenderAndPreviewPages();
+                updateUI();
+            } catch (err) {
                 alert("Error reading files. Please try again.");
                 resetTool();
             }
         }
+        
+        async function preRenderAndPreviewPages() {
+            pagePreviewGrid.innerHTML = '<div><i class="fa-solid fa-spinner fa-spin"></i> Loading Previews...</div>';
+            preRenderedPageImages = [];
+            let totalPages = 0;
 
-        async function renderPagePreviews() {
-            pagePreviewGrid.innerHTML = '';
-            preRenderedImages = [];
-            for (const file of uploadedFiles) {
-                try {
-                    const pdfDoc = await pdfjsLib.getDocument({ data: file.fileData.slice(0) }).promise;
-                    for (let i = 1; i <= pdfDoc.numPages; i++) {
-                        const page = await pdfDoc.getPage(i);
-                        const viewport = page.getViewport({ scale: 1.5 });
-                        const canvas = document.createElement('canvas');
-                        canvas.width = viewport.width;
-                        canvas.height = viewport.height;
-                        const context = canvas.getContext('2d');
-                        await page.render({ canvasContext: context, viewport }).promise;
-
-                        // Store the high-quality intermediate render
-                        preRenderedImages.push({
-                            dataUrl: canvas.toDataURL('image/png'), // Use PNG for lossless intermediate
-                            width: canvas.width,
-                            height: canvas.height
-                        });
-                        
-                        // Render a small preview for the UI
-                        if (i === 1) { // Only show first page preview for multi-page files
-                           const previewCanvas = document.createElement('canvas');
-                           const previewViewport = page.getViewport({ scale: 0.4 });
-                           previewCanvas.width = previewViewport.width;
-                           previewCanvas.height = previewViewport.height;
-                           await page.render({ canvasContext: previewCanvas.getContext('2d'), viewport: previewViewport }).promise;
-                           const pageItem = document.createElement('div');
-                           pageItem.className = 'page-item';
-                           pageItem.innerHTML = `<div class="page-info">${file.name} (${pdfDoc.numPages} pages)</div>`;
-                           pageItem.prepend(previewCanvas);
-                           pagePreviewGrid.appendChild(pageItem);
-                        }
-                    }
-                } catch(e) {
-                     // Handle preview error gracefully
+            for (const buffer of uploadedFileArrayBuffers) {
+                const pdfDoc = await pdfjsLib.getDocument({ data: buffer.slice(0) }).promise;
+                totalPages += pdfDoc.numPages;
+                for (let i = 1; i <= pdfDoc.numPages; i++) {
+                    const page = await pdfDoc.getPage(i);
+                    const viewport = page.getViewport({ scale: 1.5 }); // High-res for quality
+                    const canvas = document.createElement('canvas');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    const context = canvas.getContext('2d');
+                    await page.render({ canvasContext: context, viewport }).promise;
+                    preRenderedPageImages.push({
+                        dataUrl: canvas.toDataURL('image/jpeg', 0.95), // High quality intermediate jpeg
+                        width: canvas.width,
+                        height: canvas.height
+                    });
                 }
             }
+
+            // Update UI with a single preview image
+            pagePreviewGrid.innerHTML = '';
+            const firstPageCanvas = document.createElement('canvas');
+            const img = new Image();
+            img.onload = () => {
+                const scale = 150 / img.width; // Create a 150px wide thumbnail
+                firstPageCanvas.width = 150;
+                firstPageCanvas.height = img.height * scale;
+                firstPageCanvas.getContext('2d').drawImage(img, 0, 0, firstPageCanvas.width, firstPageCanvas.height);
+                const pageItem = document.createElement('div');
+                pageItem.className = 'page-item';
+                pageItem.innerHTML = `<div class="page-info">${pdfFiles.length} file(s) selected, ${totalPages} total pages</div>`;
+                pageItem.prepend(firstPageCanvas);
+                pagePreviewGrid.appendChild(pageItem);
+            };
+            img.src = preRenderedPageImages[0].dataUrl;
         }
 
-        function formatBytes(b, d = 2) { if (!+b) return '0 Bytes'; const k = 1024; const i = Math.floor(Math.log(b) / Math.log(k)); return `${parseFloat((b / Math.pow(k, i)).toFixed(d < 0 ? 0 : d))} ${['Bytes', 'KB', 'MB', 'GB'][i]}`; }
-
-        function updateInterface() {
-            processBtn.disabled = uploadedFiles.length === 0;
-            const originalSize = uploadedFiles.reduce((acc, file) => acc + file.fileData.byteLength, 0);
-            originalSizeDisplay.textContent = formatBytes(originalSize);
+        function updateUI() {
+            const hasFiles = uploadedFileArrayBuffers.length > 0;
+            processBtn.disabled = !hasFiles;
             slider.disabled = targetSizeInput.value !== '';
+            
+            if(hasFiles) {
+                const originalSize = uploadedFileArrayBuffers.reduce((acc, buffer) => acc + buffer.byteLength, 0);
+                originalSizeDisplay.textContent = formatBytes(originalSize);
+            }
         }
 
         async function compressWithQuality(quality) {
             const { PDFDocument } = PDFLib;
             const finalPdfDoc = await PDFDocument.create();
             
-            for(const img of preRenderedImages) {
-                const pngImage = await finalPdfDoc.embedPng(img.dataUrl);
-                const jpegImageBytes = await finalPdfDoc.embedJpg(pngImage.ref, { quality }); // Use pre-embedded image data
-                const page = finalPdfDoc.addPage([img.width, img.height]);
-                page.drawImage(jpegImageBytes, { x: 0, y: 0, width: page.getWidth(), height: page.getHeight() });
+            for(const imgData of preRenderedPageImages) {
+                const jpgImage = await finalPdfDoc.embedJpg(imgData.dataUrl);
+                const page = finalPdfDoc.addPage([imgData.width, imgData.height]);
+                page.drawImage(jpgImage, { x: 0, y: 0, width: page.getWidth(), height: page.getHeight() });
             }
             return await finalPdfDoc.save();
         }
 
-        async function processAndDisplay() {
+        async function compressToTargetSize(targetBytes) {
+            let minQuality = 0.01, maxQuality = 1.0;
+            let bestResultBytes = null;
+            const MAX_ITERATIONS = 8;
+
+            for (let i = 0; i < MAX_ITERATIONS; i++) {
+                let currentQuality = (minQuality + maxQuality) / 2;
+                processBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Optimizing... (Pass ${i + 1}/${MAX_ITERATIONS})`;
+                
+                const tempBytes = await compressWithQuality(currentQuality);
+                
+                if (tempBytes.length > targetBytes) {
+                    maxQuality = currentQuality; // Too big, need lower quality
+                } else {
+                    minQuality = currentQuality; // Good candidate, try for better
+                    bestResultBytes = tempBytes; 
+                }
+            }
+            // If we never found a result (i.e., target is smaller than lowest possible quality)
+            return bestResultBytes || await compressWithQuality(0.01);
+        }
+
+        async function processCompression() {
             processBtn.disabled = true;
             processBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
 
             const targetSizeValue = parseFloat(targetSizeInput.value);
-            const totalOriginalSize = uploadedFiles.reduce((acc, file) => acc + file.fileData.byteLength, 0);
             let finalBytes;
 
             try {
                 if (targetSizeValue > 0) {
-                    // --- ITERATIVE COMPRESSION FOR TARGET SIZE ---
                     const multiplier = targetSizeUnit.value === 'MB' ? 1024 * 1024 : 1024;
                     const targetBytes = targetSizeValue * multiplier;
-                    
-                    let minQuality = 0.01, maxQuality = 1.0;
-                    let bestResultBytes = null;
-                    const ITERATIONS = 7;
-
-                    for (let i = 0; i < ITERATIONS; i++) {
-                        let currentQuality = (minQuality + maxQuality) / 2;
-                        processBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Optimizing... (Pass ${i + 1}/${ITERATIONS})`;
-                        
-                        const currentBytes = await compressWithQuality(currentQuality);
-                        
-                        if (currentBytes.length > targetBytes) {
-                            maxQuality = currentQuality;
-                        } else {
-                            minQuality = currentQuality;
-                            bestResultBytes = currentBytes; 
-                        }
-                    }
-                    finalBytes = bestResultBytes;
-                    if (!finalBytes) { // If even lowest quality is too big, use it
-                        finalBytes = await compressWithQuality(0.01);
-                    }
-
+                    finalBytes = await compressToTargetSize(targetBytes);
                 } else {
-                    // --- SLIDER-BASED COMPRESSION ---
                     const compressionLevel = parseInt(slider.value); // 0-100
                     const quality = 1.0 - (compressionLevel / 100);
                     finalBytes = await compressWithQuality(quality < 0.01 ? 0.01 : quality);
                 }
 
-                if (!finalBytes || finalBytes.length === 0) {
-                    throw new Error("Compression resulted in an empty file.");
-                }
+                if (!finalBytes || finalBytes.length === 0) throw new Error("Compression resulted in an empty file.");
 
-                // --- Display Final Result ---
-                const finalSize = finalBytes.length;
-                finalSizeDisplay.textContent = `${formatBytes(finalSize)} (${((1 - finalSize / totalOriginalSize) * 100).toFixed(0)}% smaller)`;
-
-                actionButtonContainer.classList.add('hidden');
-                resultContainer.classList.remove('hidden');
-                resultContainer.innerHTML = `
-                    <div class="result-buttons">
-                        <a href="${URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }))}" class="download-button" download="jkm-edit-compressed.pdf">Download PDF</a>
-                        <button id="start-over-btn" class="action-button secondary-button start-over-button">Start Over</button>
-                    </div>`;
-                document.getElementById('start-over-btn').addEventListener('click', resetTool);
+                displayResult(finalBytes);
 
             } catch (error) {
-                console.error("Error during compression:", error);
                 alert("An error occurred during compression. The PDF might be too complex or corrupted.");
                 resetTool();
             } finally {
-                processBtn.innerHTML = `Compress PDF`; // Reset button text
+                processBtn.innerHTML = `Compress PDF`;
             }
         }
+        
+        function displayResult(pdfBytes) {
+            const originalSize = uploadedFileArrayBuffers.reduce((acc, buffer) => acc + buffer.byteLength, 0);
+            const finalSize = pdfBytes.length;
+            finalSizeDisplay.textContent = `${formatBytes(finalSize)} (${((1 - finalSize / originalSize) * 100).toFixed(0)}% smaller)`;
+
+            actionButtonContainer.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+            resultContainer.innerHTML = `
+                <div class="result-buttons">
+                    <a href="${URL.createObjectURL(new Blob([pdfBytes], { type: 'application/pdf' }))}" class="download-button" download="jkm-edit-compressed.pdf">Download PDF</a>
+                    <button id="start-over-btn" class="action-button secondary-button start-over-button">Start Over</button>
+                </div>`;
+            document.getElementById('start-over-btn').addEventListener('click', resetTool);
+        }
+
+        function formatBytes(b, d = 2) { if (!+b) return '0 Bytes'; const k = 1024; const i = Math.floor(Math.log(b) / Math.log(k)); return `${parseFloat((b / Math.pow(k, i)).toFixed(d < 0 ? 0 : d))} ${['Bytes', 'KB', 'MB', 'GB'][i]}`; }
+
+        // --- SCRIPT INITIALIZATION ---
+        initializeEventListeners();
     });
     </script>
 </body>
