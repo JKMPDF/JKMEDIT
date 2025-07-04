@@ -3,7 +3,28 @@
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>Compress PDF - JKM Edit</title>
+
+    <!-- =================================================================== -->
+    <!-- [START] SEO & META TAGS ADDED -->
+    <!-- =================================================================== -->
+    <title>Compress PDF - Reduce PDF File Size Online for Free | JKM Edit</title>
+    <meta name="description" content="Easily compress your PDF files online with JKM Edit's free tool. Reduce PDF size for easy sharing and storage without sacrificing quality. Secure, fast, and no installation required."/>
+    <meta name="keywords" content="compress pdf, reduce pdf size, pdf compressor, free pdf tool, online pdf compressor, optimize pdf, shrink pdf, jkm edit"/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="robots" content="index, follow"/>
+    <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/compress-pdf.html"/>
+    <meta property="og:title" content="Compress PDF - Reduce PDF File Size Online | JKM Edit"/>
+    <meta property="og:description" content="Reduce the file size of your PDFs for easy sharing and storage without sacrificing quality. Free, fast, and secure online PDF compression."/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/compress-pdf.html"/>
+    <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="Compress PDF - Reduce PDF File Size Online | JKM Edit"/>
+    <meta name="twitter:description" content="Reduce the file size of your PDFs for easy sharing and storage without sacrificing quality. Free, fast, and secure online PDF compression."/>
+    <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <!-- =================================================================== -->
+    <!-- [END] SEO & META TAGS -->
+    <!-- =================================================================== -->
     
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
@@ -17,6 +38,18 @@
         body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
         *, *::before, *::after { box-sizing: border-box; }
         .hidden { display: none !important; }
+
+        /* [START] FIX FOR FILE INPUT CLICK */
+        /* This hides the file input visually but keeps it programmatically clickable */
+        #file-input {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+        /* [END] FIX */
 
         /* --- THEME DEFINITIONS --- */
         [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
@@ -123,7 +156,8 @@
                 <h2>Compress PDF</h2>
                 <p>Reduce the file size of your PDFs while maintaining optimal quality.</p>
             </div>
-            <input type="file" id="file-input" class="hidden" multiple accept=".pdf"/>
+            <!-- REMOVED class="hidden" to make the input clickable by the script -->
+            <input type="file" id="file-input" multiple accept=".pdf"/>
             <div id="dropzone">
                 <i class="fa-solid fa-file-arrow-up"></i>
                 <p>Drag & drop PDF files here or click to select</p>
