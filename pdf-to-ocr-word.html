@@ -9,7 +9,7 @@
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
     <style>
-        /* All CSS from previous version - no changes needed here */
+        /* All CSS from previous version - no changes needed */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
         body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
         *, *::before, *::after { box-sizing: border-box; }
@@ -181,64 +181,59 @@
             if (selectedPdfFile) convertPdfToOcrWord(selectedPdfFile);
         });
 
-        // --- FINAL, STABLE & FAST OCR FUNCTION ---
+        // --- STABLE SEQUENTIAL OCR FUNCTION ---
+        // This approach prioritizes stability and correctness over parallel speed.
+        // It processes one page at a time, eliminating all race conditions.
         async function convertPdfToOcrWord(file) {
             convertBtn.disabled = true;
             downloadArea.style.display = 'none';
             progressArea.style.display = 'block';
             progressBar.style.width = '0%';
             
-            let workers = [];
+            let worker;
             try {
-                // 1. Initialize Worker Pool
-                const workerCount = navigator.hardwareConcurrency || 2;
-                progressText.textContent = `Initializing ${workerCount} OCR engine(s)...`;
-                
-                // This creates workers and waits for them to be fully ready.
-                // This is the most stable way to do it.
-                workers = await Promise.all(
-                    Array(workerCount).fill(0).map(() => Tesseract.createWorker('eng'))
-                );
+                // 1. Initialize a SINGLE worker
+                progressText.textContent = 'Initializing OCR engine...';
+                worker = await Tesseract.createWorker('eng', 1, {
+                    logger: m => {
+                        if (m.status === 'loading language data' || m.status === 'initializing api') {
+                            const progress = (m.progress * 100).toFixed(0);
+                            progressText.textContent = `Warming up engine... (${progress}%)`;
+                            progressBar.style.width = `${progress}%`;
+                        }
+                    }
+                });
 
                 // 2. Load PDF
                 progressText.textContent = 'Loading PDF file...';
                 const fileData = await file.arrayBuffer();
                 const pdfDoc = await pdfjsLib.getDocument(fileData).promise;
                 const numPages = pdfDoc.numPages;
+                const allPageTexts = [];
 
-                // 3. Process Pages in Parallel
-                let pagesProcessed = 0;
-                progressText.textContent = `Preparing ${numPages} page(s)...`;
-                
-                const pagePromises = Array.from({ length: numPages }, async (_, i) => {
-                    const pageNum = i + 1;
-                    const page = await pdfDoc.getPage(pageNum);
+                // 3. Process each page sequentially (one by one)
+                for (let i = 1; i <= numPages; i++) {
+                    const page = await pdfDoc.getPage(i);
                     const viewport = page.getViewport({ scale: 2.0 });
                     const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
-                    const context = canvas.getContext('2d');
-                    await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-                    // Distribute work to the next available worker
-                    const worker = workers[i % workerCount];
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+                    
+                    progressText.textContent = `Recognizing text on page ${i} of ${numPages}...`;
                     const { data } = await worker.recognize(canvas);
-                    
-                    // Update progress safely
-                    pagesProcessed++;
-                    progressBar.style.width = `${(pagesProcessed / numPages) * 100}%`;
-                    progressText.textContent = `Recognizing text... (${pagesProcessed}/${numPages})`;
-                    
-                    return data.text;
-                });
-                
-                const pageTexts = await Promise.all(pagePromises);
+                    allPageTexts.push(data.text);
+
+                    progressBar.style.width = `${(i / numPages) * 100}%`;
+                }
 
                 // 4. Assemble Word Document
                 progressText.textContent = 'Assembling Word document...';
-                const docContent = pageTexts.flatMap((text, index) => {
+                const docContent = allPageTexts.flatMap((text, index) => {
                     const paragraphs = text.split('\n').map(line => new docx.Paragraph({ text: line }));
-                    if (index < pageTexts.length - 1) {
+                    if (index < allPageTexts.length - 1) {
                         return [...paragraphs, new docx.Paragraph({ children: [new docx.PageBreak()] })];
                     }
                     return paragraphs;
@@ -256,11 +251,11 @@
 
             } catch (error) {
                 console.error("A critical error occurred during conversion:", error);
-                progressText.textContent = `An error occurred. Please refresh and try again.`;
+                progressText.textContent = `Conversion failed. Please refresh and try again.`;
             } finally {
-                // 5. Terminate all workers to free up memory
-                if (workers.length > 0) {
-                    await Promise.all(workers.map(w => w.terminate()));
+                // 5. IMPORTANT: Always terminate the worker to free up memory
+                if (worker) {
+                    await worker.terminate();
                 }
                 convertBtn.disabled = false;
             }
