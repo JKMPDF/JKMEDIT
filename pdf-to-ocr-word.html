@@ -8,7 +8,7 @@
     <!-- SEO & META TAGS - FOR PDF to OCR WORD TOOL -->
     <!-- =================================================================== -->
     <title>Free PDF to Word with OCR - Convert Scanned PDF | JKM Edit</title>
-    <meta name="description" content="Convert your PDF files, including scanned documents, to editable Word (DOCX) files using our high-quality online converter. Free, fast, and secure."/>
+    <meta name="description" content="Convert your PDF files (up to 5 pages), including scanned documents, to editable Word (DOCX) files using our high-quality online converter. Free, fast, and secure."/>
     <meta name="keywords" content="pdf to word, ocr, pdf to docx, convert pdf, high quality pdf to word, free ocr, online converter, jkm edit"/>
     <meta name="author" content="JKM Edit"/>
     <meta name="robots" content="index, follow"/>
@@ -45,9 +45,13 @@
     
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    <!-- PDF.js Library for page counting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js`;</script>
+
 
     <style>
-        /* All CSS remains identical to the previous versions */
+        /* All CSS remains identical to the previous versions, with additions below */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
         html { background-color: var(--bg-color); }
         body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
@@ -68,7 +72,7 @@
         .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
         .main-nav { display: flex; align-items: center; gap: 1.5rem; }
         .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; } .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width .3s; } .nav-link:hover::after { width: 100%; } #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); } #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; } #dark-mode-toggle .fa-sun { display: none; } html.dark-mode #dark-mode-toggle .fa-sun { display: inline; } html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
-        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; } .modal.show-modal { display: flex; align-items: center; justify-content: center; } .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; } .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; } .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; } .modal.show-modal { display: flex; align-items: center; justify-content: center; } .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; } .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; } .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { translateY(0); opacity: 1; } }
         .tool-container { padding: 2rem 4rem; max-width: 900px; margin: auto; }
         .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; }
         .tool-header p { font-size: 1.1rem; color: #6c757d; text-align: center; margin-bottom: 2rem; }
@@ -81,8 +85,18 @@
         .action-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; max-width: 500px; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .action-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .progress-indicator { width: 100%; text-align: center; max-width: 500px; }
-        .progress-indicator p { font-weight: 600; color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1rem; }
+        
+        /* === NEW PROGRESS BAR AND QUOTES STYLES === */
+        .progress-container { width: 100%; max-width: 500px; text-align: center; }
+        .progress-bar { width: 100%; height: 20px; background-color: var(--bg-color); border-radius: 10px; overflow: hidden; border: 1px solid #ccc; margin-top: 1rem; }
+        .progress-bar-fill { width: 0%; height: 100%; background: var(--gradient); transition: width 0.4s ease-out; }
+        #progress-text { font-weight: 600; color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1rem; }
+        .quote-container { margin-top: 1.5rem; padding: 1rem; background: var(--bg-color); border-left: 4px solid var(--accent-color); width: 100%; max-width: 500px; }
+        .quote-container p { margin: 0; font-style: italic; color: #6c757d; transition: opacity 0.5s ease-in-out; }
+        html.dark-mode .quote-container p { color: #a0a0a0; }
+        .quote-fade { opacity: 0; }
+        /* =========================================== */
+
         .navigation-buttons { display: flex; justify-content: center; align-items: center; gap: 1rem; text-align: center; margin-top: 3rem; }
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
         .primary-nav-btn { background: var(--gradient); color: white !important; }
@@ -104,13 +118,12 @@
         <div id="upload-stage">
             <div class='tool-header'>
                 <h2>PDF to Word Converter</h2>
-                <p>Convert your PDFs, including scanned pages, into perfectly formatted Word documents.</p>
+                <p>Convert your PDFs (max 5 pages) & images into perfectly formatted Word documents.</p>
             </div>
-            <!-- UPDATED to accept PDFs and common image types -->
             <input type="file" id="file-input" class="hidden" accept=".pdf,.png,.jpg,.jpeg,.tiff"/>
             <div id="dropzone">
                 <i class="fa-solid fa-file-arrow-up"></i>
-                <p id="dropzone-text">Drag & drop a PDF or Image file here or click to select</p>
+                <p id="dropzone-text">Drag & drop PDF (max 5 pages) or Image here</p>
             </div>
         </div>
 
@@ -129,27 +142,22 @@
 
     <!-- [START] --- UNIVERSAL PAGE SCRIPT --- -->
     <script>
-        // FIX FOR BFCACHE: Ensures page is visible on back navigation
-        window.addEventListener('pageshow', function (event) {
-            if (event.persisted) { document.body.classList.remove('fade-out'); }
-        });
-
-        // Theme, Modal, and Page Transition Logic
-        document.addEventListener('DOMContentLoaded', () => {
-            const themePicker=document.getElementById('theme-picker'),darkModeToggle=document.getElementById('dark-mode-toggle'),htmlElement=document.documentElement,setTheme=(e)=>{htmlElement.dataset.theme=e,localStorage.setItem('jkm-edit-theme',e)},enableDarkMode=()=>{htmlElement.classList.add('dark-mode'),localStorage.setItem('jkm-edit-mode','dark')},disableDarkMode=()=>{htmlElement.classList.remove('dark-mode'),localStorage.setItem('jkm-edit-mode','light')};themePicker&&(themePicker.addEventListener('change',()=>setTheme(themePicker.value)),themePicker.value=localStorage.getItem('jkm-edit-theme')||'corporate-blue',htmlElement.dataset.theme=themePicker.value),darkModeToggle&&(darkModeToggle.addEventListener('click',()=>{htmlElement.classList.contains('dark-mode')?disableDarkMode():enableDarkMode()}),'dark'===localStorage.getItem('jkm-edit-mode')&&htmlElement.classList.add('dark-mode'));const aboutModal=document.getElementById('about-modal'),contactModal=document.getElementById('contact-modal'),aboutBtn=document.getElementById('about-btn'),contactBtn=document.getElementById('contact-btn'),closeBtns=document.querySelectorAll('.close-btn'),openModal=e=>{e.classList.add('show-modal')},closeModal=e=>{e.classList.remove('show-modal')};aboutBtn&&aboutBtn.addEventListener('click',e=>{e.preventDefault(),openModal(aboutModal)}),contactBtn&&contactBtn.addEventListener('click',e=>{e.preventDefault(),openModal(contactModal)}),closeBtns.forEach(e=>{e.addEventListener('click',()=>{closeModal(aboutModal),closeModal(contactModal)})}),window.addEventListener('click',e=>{e.target===aboutModal&&closeModal(aboutModal),e.target===contactModal&&closeModal(contactModal)}),document.querySelectorAll('a').forEach(e=>{const t=e.getAttribute('href');t&&!t.startsWith('#')&&!t.startsWith('mailto:')&&!t.startsWith('javascript:')&&e.addEventListener('click',function(e){e.preventDefault(),document.body.classList.add('fade-out'),setTimeout(()=>{window.location.href=this.href},400)})});
+        window.addEventListener('pageshow',function(t){t.persisted&&document.body.classList.remove('fade-out')}),document.addEventListener('DOMContentLoaded',()=>{const t=document.getElementById('theme-picker'),e=document.getElementById('dark-mode-toggle'),a=document.documentElement,o=t=>{a.dataset.theme=t,localStorage.setItem('jkm-edit-theme',t)},n=()=>{a.classList.add('dark-mode'),localStorage.setItem('jkm-edit-mode','dark')},s=()=>{a.classList.remove('dark-mode'),localStorage.setItem('jkm-edit-mode','light')};t&&(t.addEventListener('change',()=>o(t.value)),t.value=localStorage.getItem('jkm-edit-theme')||'corporate-blue',a.dataset.theme=t.value),e&&(e.addEventListener('click',()=>{a.classList.contains('dark-mode')?s():n()}),'dark'===localStorage.getItem('jkm-edit-mode')&&a.classList.add('dark-mode'));const d=document.getElementById('about-modal'),i=document.getElementById('contact-modal'),c=document.getElementById('about-btn'),l=document.getElementById('contact-btn'),r=document.querySelectorAll('.close-btn'),m=t=>{t.classList.add('show-modal')},u=t=>{t.classList.remove('show-modal')};c&&c.addEventListener('click',t=>{t.preventDefault(),m(d)}),l&&l.addEventListener('click',t=>{t.preventDefault(),m(i)}),r.forEach(t=>{t.addEventListener('click',()=>{u(d),u(i)})}),window.addEventListener('click',t=>{t.target===d&&u(d),t.target===i&&u(i)}),document.querySelectorAll('a').forEach(t=>{const e=t.getAttribute('href');e&&!e.startsWith('#')&&!e.startsWith('mailto:')&&!e.startsWith('javascript:')&&t.addEventListener('click',function(t){t.preventDefault(),document.body.classList.add('fade-out'),setTimeout(()=>{window.location.href=this.href},400)})});
     </script>
     <!-- [END] --- UNIVERSAL PAGE SCRIPT --- -->
 
 
-    <!-- [START] --- PDF TO WORD (BACKEND-POWERED) LOGIC --- FINAL VERSION --- -->
+    <!-- [START] --- PDF TO WORD (BACKEND-POWERED) LOGIC --- FINAL VERSION WITH PROGRESS & QUOTES --- -->
     <script>
         const fileInput = document.getElementById('file-input');
         const dropzone = document.getElementById('dropzone');
         const uploadStage = document.getElementById('upload-stage');
         const processingPanel = document.getElementById('processing-panel');
+        const MAX_PAGES = 5;
 
         let uploadedFile = null;
-        
+        let quoteInterval = null;
+
         // --- Event Listeners for File Input ---
         dropzone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
@@ -161,15 +169,23 @@
             handleFile(e.dataTransfer.files[0]);
         });
         
-        function handleFile(file) {
-            // UPDATED to check for PDF and common image types
+        async function handleFile(file) {
             const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/tiff'];
             if (!file || !allowedTypes.includes(file.type)) {
-                alert("Please select a single PDF or Image file (PNG, JPG, TIFF).");
+                alert("Please select a PDF or Image file (PNG, JPG, TIFF).");
                 return;
             }
+
+            // Page count validation for PDFs
+            if (file.type === 'application/pdf') {
+                const pageCount = await getPdfPageCount(file);
+                if (pageCount > MAX_PAGES) {
+                    alert(`PDFs are limited to ${MAX_PAGES} pages. Your file has ${pageCount} pages.`);
+                    return;
+                }
+            }
+
             uploadedFile = file;
-            
             uploadStage.classList.add('hidden');
             processingPanel.classList.remove('hidden');
             processingPanel.innerHTML = `
@@ -180,56 +196,102 @@
                     <i class="fa-solid fa-file-word"></i> Convert to Word
                 </button>
             `;
-            document.getElementById('convert-btn').addEventListener('click', handleConversion);
+            document.getElementById('convert-btn').addEventListener('click', handleConversionWithProgress);
         }
 
-        async function handleConversion() {
+        async function getPdfPageCount(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            return pdf.numPages;
+        }
+
+        function handleConversionWithProgress() {
             if (!uploadedFile) return;
 
-            // --- UI Update: Show processing state ---
+            // --- UI Update: Show progress bar structure ---
             processingPanel.innerHTML = `
-                <div class="progress-indicator">
-                    <p id="progress-text">Uploading and processing your file...</p>
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 3rem; color: var(--primary-color); margin: 1rem 0;"></i>
-                    <p style="font-size: 0.9rem; color: #6c757d;">This may take a moment for large or complex files.</p>
+                <div class="progress-container">
+                    <p id="progress-text">Starting upload...</p>
+                    <div class="progress-bar">
+                        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+                <div id="quote-container" class="quote-container hidden">
+                    <p style="font-size:0.9rem; font-weight:bold; margin-bottom: 0.5rem;">Waiting can be boring... here's a thought:</p>
+                    <p id="quote-text"></p>
                 </div>
             `;
 
+            const progressBarFill = document.getElementById('progress-bar-fill');
+            const progressText = document.getElementById('progress-text');
+            const quoteContainer = document.getElementById('quote-container');
+            const quoteText = document.getElementById('quote-text');
+
             const formData = new FormData();
             formData.append('file', uploadedFile);
-
-            // ✅ THIS IS THE CORRECT, FULL URL FOR YOUR BACKEND
+            
             const apiUrl = 'https://jkmedit.onrender.com/api/ocr';
+            const xhr = new XMLHttpRequest();
 
-            try {
-                // --- Call your backend API ---
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    body: formData
-                });
+            xhr.open('POST', apiUrl, true);
+            xhr.responseType = 'blob'; // We expect a file back
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: `Server error: ${response.statusText}` }));
-                    throw new Error(errorData.error);
+            // --- Upload Progress Event ---
+            xhr.upload.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    progressBarFill.style.width = percentComplete + '%';
+                    progressText.textContent = `Uploading... ${Math.round(percentComplete)}%`;
                 }
-                
-                // --- Handle the successful file download from the backend ---
-                const fileBlob = await response.blob();
-                const downloadUrl = URL.createObjectURL(fileBlob);
-                
-                const contentDisposition = response.headers.get('content-disposition');
-                let fileName = 'converted_document.docx';
-                if (contentDisposition) {
-                    const match = contentDisposition.match(/filename="?(.+)"?/);
-                    if (match && match[1]) fileName = match[1];
+            };
+            
+            // --- Upload Complete, now processing ---
+            xhr.upload.onload = function() {
+                progressText.textContent = 'File uploaded. Processing on server...';
+                // Show quote container and start the carousel
+                quoteContainer.classList.remove('hidden');
+                startQuoteCarousel(quoteText);
+            };
+
+            // --- Request finished (success or fail) ---
+            xhr.onload = function() {
+                stopQuoteCarousel(); // Stop quotes regardless of outcome
+                if (xhr.status === 200) {
+                    progressText.textContent = 'Conversion complete! Preparing download...';
+                    progressBarFill.style.width = '100%';
+
+                    const fileBlob = xhr.response;
+                    const downloadUrl = URL.createObjectURL(fileBlob);
+                    
+                    const contentDisposition = xhr.getResponseHeader('content-disposition');
+                    let fileName = 'converted_document.docx';
+                    if (contentDisposition) {
+                        const match = contentDisposition.match(/filename="?(.+)"?/);
+                        if (match && match[1]) fileName = match[1];
+                    }
+                    setTimeout(() => displayDownloadButton(downloadUrl, fileName), 500);
+                } else {
+                    // Try to parse error from response
+                    xhr.response.text().then(text => {
+                         try {
+                            const errorData = JSON.parse(text);
+                            displayError(errorData.error || `Server error: ${xhr.statusText}`);
+                         } catch (e) {
+                            displayError(`An unknown server error occurred (Status: ${xhr.status}).`);
+                         }
+                    }).catch(() => {
+                        displayError(`An unknown server error occurred (Status: ${xhr.status}).`);
+                    });
                 }
+            };
 
-                displayDownloadButton(downloadUrl, fileName);
+            // --- Network Error ---
+            xhr.onerror = function() {
+                stopQuoteCarousel();
+                displayError('A network error occurred. Please check your connection and try again.');
+            };
 
-            } catch (error) {
-                console.error("Error during conversion:", error);
-                displayError(error.message);
-            }
+            xhr.send(formData);
         }
 
         function displayDownloadButton(fileUrl, fileName) {
@@ -246,6 +308,7 @@
         }
 
         function displayError(errorMessage) {
+            stopQuoteCarousel();
             processingPanel.innerHTML = `
                 <p style="color:red; text-align:center; font-weight:bold;">Conversion Failed</p>
                 <p style="text-align:center;">${errorMessage}. Please try again.</p>
@@ -255,12 +318,53 @@
         }
 
         function resetTool() {
+            stopQuoteCarousel();
             uploadStage.classList.remove('hidden');
             processingPanel.classList.add('hidden');
             processingPanel.innerHTML = '';
             uploadedFile = null;
+            fileInput.value = ''; // Reset file input
         }
 
+        // --- QUOTE CAROUSEL LOGIC ---
+        const QUOTES = [
+            "The secret of getting ahead is getting started.",
+            "The best time to plant a tree was 20 years ago. The second best time is now.",
+            "It’s not whether you get knocked down, it’s whether you get up.",
+            "The only way to do great work is to love what you do.",
+            "Believe you can and you’re halfway there.",
+            "Act as if what you do makes a difference. It does.",
+            "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+            "Never bend your head. Always hold it high. Look the world straight in the eye.",
+            "What you get by achieving your goals is not as important as what you become by achieving your goals.",
+            "The journey of a thousand miles begins with a single step."
+        ];
+        let shuffledQuotes = [];
+        let quoteIndex = 0;
+
+        function startQuoteCarousel(element) {
+            shuffledQuotes = [...QUOTES].sort(() => 0.5 - Math.random()); // Shuffle quotes
+            quoteIndex = 0;
+            
+            const displayNextQuote = () => {
+                element.classList.add('quote-fade');
+                setTimeout(() => {
+                    element.textContent = `“${shuffledQuotes[quoteIndex]}”`;
+                    element.classList.remove('quote-fade');
+                    quoteIndex = (quoteIndex + 1) % shuffledQuotes.length;
+                }, 500); // Wait for fade out
+            };
+
+            displayNextQuote();
+            quoteInterval = setInterval(displayNextQuote, 10000); // Change every 10 seconds
+        }
+
+        function stopQuoteCarousel() {
+            if (quoteInterval) {
+                clearInterval(quoteInterval);
+                quoteInterval = null;
+            }
+        }
     </script>
     <!-- [END] --- PDF TO WORD (BACKEND-POWERED) LOGIC --- -->
 </body>
