@@ -1,27 +1,23 @@
-# Stage 1: Base Image & System Dependencies
-FROM node:18-alpine
+# Use an official Node.js runtime as a parent image
+FROM node:18-slim
 
-# Set the working directory inside the container
-WORKDIR /app
+# Install poppler-utils, which is required by pdf-poppler
+RUN apt-get update && apt-get install -y poppler-utils
 
-# Install system dependencies required for OCR:
-# - tesseract-ocr: The main OCR engine
-# - tesseract-ocr-data-eng: The English language data pack
-# - poppler-utils: The CRUCIAL tool for converting PDF to images
-RUN apk add --no-cache tesseract-ocr tesseract-ocr-data-eng poppler-utils
+# Set the working directory in the container
+WORKDIR /usr/src/app
 
-# Stage 2: Application Setup
-# Copy ONLY the backend's package definition files
-COPY ocr-backend/package*.json ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Install the Node.js dependencies (express, multer, etc.)
-RUN npm install --production
+# Install app dependencies
+RUN npm install
 
-# Copy the rest of the backend's source code
-COPY ocr-backend/ .
+# Copy the rest of your app's source code
+COPY . .
 
-# Expose the port the app runs on
-EXPOSE 3000
+# Make your app's port available to the outside world
+EXPOSE 3001
 
-# The command to run when the container starts
-CMD ["node", "index.js"]
+# Define the command to run your app
+CMD [ "npm", "start" ]
