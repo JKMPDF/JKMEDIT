@@ -51,7 +51,7 @@
 
 
     <style>
-        /* All CSS remains identical to the previous versions, with additions below */
+        /* All CSS remains identical */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
         html { background-color: var(--bg-color); }
         body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
@@ -85,8 +85,6 @@
         .action-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; max-width: 500px; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .action-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
-        /* === NEW PROGRESS BAR AND QUOTES STYLES === */
         .progress-container { width: 100%; max-width: 500px; text-align: center; }
         .progress-bar { width: 100%; height: 20px; background-color: var(--bg-color); border-radius: 10px; overflow: hidden; border: 1px solid #ccc; margin-top: 1rem; }
         .progress-bar-fill { width: 0%; height: 100%; background: var(--gradient); transition: width 0.4s ease-out; }
@@ -95,8 +93,6 @@
         .quote-container p { margin: 0; font-style: italic; color: #6c757d; transition: opacity 0.5s ease-in-out; }
         html.dark-mode .quote-container p { color: #a0a0a0; }
         .quote-fade { opacity: 0; }
-        /* =========================================== */
-
         .navigation-buttons { display: flex; justify-content: center; align-items: center; gap: 1rem; text-align: center; margin-top: 3rem; }
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
         .primary-nav-btn { background: var(--gradient); color: white !important; }
@@ -146,8 +142,7 @@
     </script>
     <!-- [END] --- UNIVERSAL PAGE SCRIPT --- -->
 
-
-    <!-- [START] --- PDF TO WORD (BACKEND-POWERED) LOGIC --- FINAL VERSION WITH PROGRESS & QUOTES --- -->
+    <!-- [START] --- PDF TO WORD LOGIC (NEW ASYNC VERSION) --- -->
     <script>
         const fileInput = document.getElementById('file-input');
         const dropzone = document.getElementById('dropzone');
@@ -155,10 +150,14 @@
         const processingPanel = document.getElementById('processing-panel');
         const MAX_PAGES = 5;
 
+        // --- IMPORTANT: Set your backend URL here ---
+        const API_BASE_URL = 'https://jkmedit.onrender.com';
+
         let uploadedFile = null;
+        let pollingInterval = null; // This will hold our status-checking timer.
         let quoteInterval = null;
 
-        // --- Event Listeners for File Input ---
+        // --- EVENT LISTENERS (No changes needed) ---
         dropzone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
         dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.borderColor = 'var(--primary-color)'; });
@@ -168,23 +167,25 @@
             dropzone.style.borderColor = '#ccc';
             handleFile(e.dataTransfer.files[0]);
         });
-        
+
+        // --- STEP 1: Handle the file selection and page check ---
         async function handleFile(file) {
             const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/tiff'];
             if (!file || !allowedTypes.includes(file.type)) {
                 alert("Please select a PDF or Image file (PNG, JPG, TIFF).");
                 return;
             }
-
-            // Page count validation for PDFs
             if (file.type === 'application/pdf') {
-                const pageCount = await getPdfPageCount(file);
+                const pageCount = await getPdfPageCount(file).catch(() => -1);
+                if (pageCount === -1) {
+                    alert("Could not read this PDF. It may be protected or corrupt.");
+                    return;
+                }
                 if (pageCount > MAX_PAGES) {
                     alert(`PDFs are limited to ${MAX_PAGES} pages. Your file has ${pageCount} pages.`);
                     return;
                 }
             }
-
             uploadedFile = file;
             uploadStage.classList.add('hidden');
             processingPanel.classList.remove('hidden');
@@ -196,25 +197,25 @@
                     <i class="fa-solid fa-file-word"></i> Convert to Word
                 </button>
             `;
-            document.getElementById('convert-btn').addEventListener('click', handleConversionWithProgress);
+            // Connect the button to the new process
+            document.getElementById('convert-btn').addEventListener('click', startConversionProcess);
         }
-
+        
         async function getPdfPageCount(file) {
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
             return pdf.numPages;
         }
 
-        function handleConversionWithProgress() {
+        // --- STEP 2: Start the process by uploading the file ---
+        function startConversionProcess() {
             if (!uploadedFile) return;
 
-            // --- UI Update: Show progress bar structure ---
+            // Show the initial "uploading" UI
             processingPanel.innerHTML = `
                 <div class="progress-container">
-                    <p id="progress-text">Starting upload...</p>
-                    <div class="progress-bar">
-                        <div id="progress-bar-fill" class="progress-bar-fill"></div>
-                    </div>
+                    <p id="progress-text">Uploading file...</p>
+                    <div class="progress-bar"><div id="progress-bar-fill" class="progress-bar-fill" style="width: 50%;"></div></div>
                 </div>
                 <div id="quote-container" class="quote-container hidden">
                     <p style="font-size:0.9rem; font-weight:bold; margin-bottom: 0.5rem;">Waiting can be boring... here's a thought:</p>
@@ -222,84 +223,87 @@
                 </div>
             `;
 
-            const progressBarFill = document.getElementById('progress-bar-fill');
-            const progressText = document.getElementById('progress-text');
-            const quoteContainer = document.getElementById('quote-container');
-            const quoteText = document.getElementById('quote-text');
-
             const formData = new FormData();
             formData.append('file', uploadedFile);
-            
-            const apiUrl = 'https://jkmedit.onrender.com/api/ocr';
-            const xhr = new XMLHttpRequest();
 
-            xhr.open('POST', apiUrl, true);
-            xhr.responseType = 'blob'; // We expect a file back
-
-            // --- Upload Progress Event ---
-            xhr.upload.onprogress = function(event) {
-                if (event.lengthComputable) {
-                    const percentComplete = (event.loaded / event.total) * 100;
-                    progressBarFill.style.width = percentComplete + '%';
-                    progressText.textContent = `Uploading... ${Math.round(percentComplete)}%`;
+            // Call the FIRST backend endpoint: /upload
+            fetch(`${API_BASE_URL}/api/ocr/upload`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Upload failed.') });
                 }
-            };
-            
-            // --- Upload Complete, now processing ---
-            xhr.upload.onload = function() {
-                progressText.textContent = 'File uploaded. Processing on server...';
-                // Show quote container and start the carousel
-                quoteContainer.classList.remove('hidden');
-                startQuoteCarousel(quoteText);
-            };
-
-            // --- Request finished (success or fail) ---
-            xhr.onload = function() {
-                stopQuoteCarousel(); // Stop quotes regardless of outcome
-                if (xhr.status === 200) {
-                    progressText.textContent = 'Conversion complete! Preparing download...';
-                    progressBarFill.style.width = '100%';
-
-                    const fileBlob = xhr.response;
-                    const downloadUrl = URL.createObjectURL(fileBlob);
+                return response.json();
+            })
+            .then(data => {
+                if (data.jobId) {
+                    // SUCCESS! The server gave us a ticket number (jobId).
+                    document.getElementById('progress-text').textContent = 'File received! Starting conversion...';
+                    document.getElementById('progress-bar-fill').style.width = '100%';
                     
-                    const contentDisposition = xhr.getResponseHeader('content-disposition');
-                    let fileName = 'converted_document.docx';
-                    if (contentDisposition) {
-                        const match = contentDisposition.match(/filename="?(.+)"?/);
-                        if (match && match[1]) fileName = match[1];
-                    }
-                    setTimeout(() => displayDownloadButton(downloadUrl, fileName), 500);
+                    document.getElementById('quote-container').classList.remove('hidden');
+                    startQuoteCarousel(document.getElementById('quote-text'));
+                    
+                    // Now we move to step 3: Polling for status.
+                    pollForStatus(data.jobId);
                 } else {
-                    // Try to parse error from response
-                    xhr.response.text().then(text => {
-                         try {
-                            const errorData = JSON.parse(text);
-                            displayError(errorData.error || `Server error: ${xhr.statusText}`);
-                         } catch (e) {
-                            displayError(`An unknown server error occurred (Status: ${xhr.status}).`);
-                         }
-                    }).catch(() => {
-                        displayError(`An unknown server error occurred (Status: ${xhr.status}).`);
-                    });
+                    throw new Error(data.error || 'Server did not provide a job ID.');
                 }
-            };
-
-            // --- Network Error ---
-            xhr.onerror = function() {
-                stopQuoteCarousel();
-                displayError('A network error occurred. Please check your connection and try again.');
-            };
-
-            xhr.send(formData);
+            })
+            .catch(error => {
+                console.error('Upload failed:', error);
+                displayError(error.message);
+            });
         }
 
-        function displayDownloadButton(fileUrl, fileName) {
+        // --- STEP 3: Poll the server for the job status ---
+        function pollForStatus(jobId) {
+            pollingInterval = setInterval(async () => {
+                try {
+                    // Call the SECOND backend endpoint: /status
+                    const response = await fetch(`${API_BASE_URL}/api/ocr/status/${jobId}`);
+                    if (!response.ok) throw new Error('Status check failed');
+
+                    const result = await response.json();
+
+                    if (result.status === 'COMPLETED') {
+                        // IT'S DONE!
+                        clearInterval(pollingInterval); // Stop asking for the status
+                        stopQuoteCarousel();
+                        document.getElementById('progress-text').textContent = 'Conversion Complete!';
+                        displayDownloadButton(jobId); // Show the download button
+
+                    } else if (result.status === 'FAILED') {
+                        // IT FAILED!
+                        clearInterval(pollingInterval); // Stop asking
+                        stopQuoteCarousel();
+                        displayError(result.error || 'The conversion failed on the server.');
+
+                    } else {
+                        // It's still 'PENDING' or 'PROCESSING'. We just wait.
+                        console.log(`Job status: ${result.status}`);
+                        document.getElementById('progress-text').textContent = `Server is working... (Status: ${result.status})`;
+                    }
+                } catch (error) {
+                    // Something went wrong with our status check.
+                    clearInterval(pollingInterval);
+                    stopQuoteCarousel();
+                    displayError('Lost connection to the server.');
+                }
+            }, 5000); // Check the status every 5 seconds.
+        }
+        
+        // --- STEP 4: Display the final download button ---
+        function displayDownloadButton(jobId) {
+            // The download link points to the THIRD backend endpoint: /download
+            const downloadUrl = `${API_BASE_URL}/api/ocr/download/${jobId}`;
             processingPanel.innerHTML = `
                 <div class="file-info-card" style="border-left: 5px solid var(--primary-color);">
                     <i class="fa-solid fa-check-circle" style="color: #28a745;"></i> Conversion Complete!
                 </div>
-                <a class="action-button" href="${fileUrl}" download="${fileName}">
+                <a class="action-button" href="${downloadUrl}">
                     <i class="fa-solid fa-download"></i> Download Word File
                 </a>
                 <button id="restart-btn" class="action-button" style="background: var(--secondary-color); margin-top: 1rem;">Convert Another File</button>
@@ -307,56 +311,47 @@
             document.getElementById('restart-btn').addEventListener('click', resetTool);
         }
 
+        // --- HELPER FUNCTIONS (Error, Reset, Quotes) ---
         function displayError(errorMessage) {
+            if (pollingInterval) clearInterval(pollingInterval);
             stopQuoteCarousel();
             processingPanel.innerHTML = `
                 <p style="color:red; text-align:center; font-weight:bold;">Conversion Failed</p>
-                <p style="text-align:center;">${errorMessage}. Please try again.</p>
+                <p style="text-align:center;">${errorMessage}</p>
                 <button id="retry-btn" class="action-button">Try Again with a Different File</button>
             `;
             document.getElementById('retry-btn').addEventListener('click', resetTool);
         }
 
         function resetTool() {
+            if (pollingInterval) clearInterval(pollingInterval);
             stopQuoteCarousel();
             uploadStage.classList.remove('hidden');
             processingPanel.classList.add('hidden');
             processingPanel.innerHTML = '';
             uploadedFile = null;
-            fileInput.value = ''; // Reset file input
+            fileInput.value = '';
         }
 
-        // --- QUOTE CAROUSEL LOGIC ---
         const QUOTES = [
-            "The secret of getting ahead is getting started.",
-            "The best time to plant a tree was 20 years ago. The second best time is now.",
-            "It’s not whether you get knocked down, it’s whether you get up.",
-            "The only way to do great work is to love what you do.",
-            "Believe you can and you’re halfway there.",
-            "Act as if what you do makes a difference. It does.",
-            "Success is not final, failure is not fatal: it is the courage to continue that counts.",
-            "Never bend your head. Always hold it high. Look the world straight in the eye.",
-            "What you get by achieving your goals is not as important as what you become by achieving your goals.",
-            "The journey of a thousand miles begins with a single step."
+            "The secret of getting ahead is getting started.", "The best time to plant a tree was 20 years ago. The second best time is now.", "It’s not whether you get knocked down, it’s whether you get up.", "The only way to do great work is to love what you do.", "Believe you can and you’re halfway there.", "Act as if what you do makes a difference. It does.", "Success is not final, failure is not fatal: it is the courage to continue that counts.", "Never bend your head. Always hold it high. Look the world straight in the eye.", "What you get by achieving your goals is not as important as what you become by achieving your goals.", "The journey of a thousand miles begins with a single step."
         ];
         let shuffledQuotes = [];
         let quoteIndex = 0;
 
         function startQuoteCarousel(element) {
-            shuffledQuotes = [...QUOTES].sort(() => 0.5 - Math.random()); // Shuffle quotes
+            shuffledQuotes = [...QUOTES].sort(() => 0.5 - Math.random());
             quoteIndex = 0;
-            
             const displayNextQuote = () => {
                 element.classList.add('quote-fade');
                 setTimeout(() => {
                     element.textContent = `“${shuffledQuotes[quoteIndex]}”`;
                     element.classList.remove('quote-fade');
                     quoteIndex = (quoteIndex + 1) % shuffledQuotes.length;
-                }, 500); // Wait for fade out
+                }, 500);
             };
-
             displayNextQuote();
-            quoteInterval = setInterval(displayNextQuote, 10000); // Change every 10 seconds
+            quoteInterval = setInterval(displayNextQuote, 10000);
         }
 
         function stopQuoteCarousel() {
@@ -366,6 +361,6 @@
             }
         }
     </script>
-    <!-- [END] --- PDF TO WORD (BACKEND-POWERED) LOGIC --- -->
+    <!-- [END] --- PDF TO WORD LOGIC --- -->
 </body>
 </html>
