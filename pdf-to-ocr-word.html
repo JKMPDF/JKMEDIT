@@ -140,7 +140,7 @@
     <!-- [END] --- UNIVERSAL PAGE SCRIPT --- -->
 
 
-    <!-- [START] --- PDF TO WORD (BACKEND-POWERED) LOGIC --- -->
+    <!-- [START] --- PDF TO WORD (BACKEND-POWERED) LOGIC --- UPDATED --- -->
     <script>
         const fileInput = document.getElementById('file-input');
         const dropzone = document.getElementById('dropzone');
@@ -184,10 +184,6 @@
             if (!uploadedFile) return;
 
             // --- UI Update: Show processing state ---
-            const convertBtn = document.getElementById('convert-btn');
-            convertBtn.disabled = true;
-            convertBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Converting...`;
-
             processingPanel.innerHTML = `
                 <div class="progress-indicator">
                     <p id="progress-text">Uploading and processing your file...</p>
@@ -196,13 +192,11 @@
                 </div>
             `;
 
-            // --- Prepare file for upload to your backend ---
             const formData = new FormData();
-            // IMPORTANT: The key 'file' must match what your backend expects (e.g., using multer: upload.single('file'))
             formData.append('file', uploadedFile);
 
-            // The API URL now points to your custom backend server.
-            const apiUrl = 'https://jkmedit-1.onrender.com/convert/pdf-to-ocr-word';
+            // ✅ Use a relative URL to call the backend. This is the correct way.
+            const apiUrl = '/api/ocr';
 
             try {
                 // --- Call your backend API ---
@@ -211,39 +205,40 @@
                     body: formData
                 });
 
-                const result = await response.json();
-
                 if (!response.ok) {
-                    // Throw an error with the message from the backend
-                    throw new Error(result.error || `Server responded with status: ${response.status}`);
+                    // Try to get a specific error message from the backend if it sent one
+                    const errorData = await response.json().catch(() => null); // Catch errors if response is not JSON
+                    throw new Error(errorData?.error || `Server responded with status: ${response.status}`);
                 }
                 
-                // --- Handle successful response from your backend ---
-                // We expect a response like: { success: true, downloadUrl: '...', fileName: '...' }
-                if (result.success && result.downloadUrl) {
-                    displayResult(result.downloadUrl, result.fileName);
-                } else {
-                    // Handle cases where the backend reports a failure
-                    throw new Error(result.error || 'Conversion failed on the server.');
+                // --- Handle the successful file download from the backend ---
+                // The backend is sending the DOCX file directly, so we read it as a 'blob'
+                const fileBlob = await response.blob();
+                
+                // Create a temporary URL for the blob
+                const downloadUrl = URL.createObjectURL(fileBlob);
+                
+                // Get the suggested filename from the response headers
+                const contentDisposition = response.headers.get('content-disposition');
+                let fileName = 'converted_document.docx'; // A default filename
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename="?(.+)"?/);
+                    if (match && match[1]) {
+                        fileName = match[1];
+                    }
                 }
+
+                // Display the download button to the user
+                displayDownloadButton(downloadUrl, fileName);
 
             } catch (error) {
                 // --- Handle any errors (network, server, etc.) ---
-                console.error("Error during backend conversion:", error);
-                processingPanel.innerHTML = `
-                    <p style="color:red; text-align:center; font-weight:bold;">Conversion Failed</p>
-                    <p style="text-align:center;">${error.message}. Please try again.</p>
-                    <button id="retry-btn" class="action-button">Try Again with a Different File</button>
-                `;
-                document.getElementById('retry-btn').addEventListener('click', () => {
-                    uploadStage.classList.remove('hidden');
-                    processingPanel.classList.add('hidden');
-                    processingPanel.innerHTML = ''; // Clear old content
-                });
+                console.error("Error during conversion:", error);
+                displayError(error.message);
             }
         }
 
-        function displayResult(fileUrl, fileName) {
+        function displayDownloadButton(fileUrl, fileName) {
             processingPanel.innerHTML = `
                 <div class="file-info-card" style="border-left: 5px solid var(--primary-color);">
                     <i class="fa-solid fa-check-circle" style="color: #28a745;"></i> Conversion Complete!
@@ -251,8 +246,27 @@
                 <a class="action-button" href="${fileUrl}" download="${fileName}">
                     <i class="fa-solid fa-download"></i> Download Word File
                 </a>
+                <button id="restart-btn" class="action-button" style="background: var(--secondary-color); margin-top: 1rem;">Convert Another File</button>
             `;
+            document.getElementById('restart-btn').addEventListener('click', resetTool);
         }
+
+        function displayError(errorMessage) {
+            processingPanel.innerHTML = `
+                <p style="color:red; text-align:center; font-weight:bold;">Conversion Failed</p>
+                <p style="text-align:center;">${errorMessage}. Please try again.</p>
+                <button id="retry-btn" class="action-button">Try Again with a Different File</button>
+            `;
+            document.getElementById('retry-btn').addEventListener('click', resetTool);
+        }
+
+        function resetTool() {
+            uploadStage.classList.remove('hidden');
+            processingPanel.classList.add('hidden');
+            processingPanel.innerHTML = ''; // Clear old content
+            uploadedFile = null;
+        }
+
     </script>
     <!-- [END] --- PDF TO WORD (BACKEND-POWERED) LOGIC --- -->
 </body>
