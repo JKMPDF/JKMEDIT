@@ -1,12 +1,19 @@
-# Dockerfile - FINAL VERSION
+# Dockerfile - FINAL VERSION v2
 
 # Use an official Node.js runtime as a parent image
 FROM node:18-slim
 
-# Install system dependencies:
-# - poppler-utils: For converting PDF to images
-# - graphicsmagick: A dependency of pdf2pic for image processing
-RUN apt-get update && apt-get install -y poppler-utils graphicsmagick && rm -rf /var/lib/apt/lists/*
+# Install ALL system dependencies required by our application:
+# - poppler-utils: For converting PDF to images (used by pdf2pic)
+# - graphicsmagick: For image processing (used by pdf2pic)
+# - tesseract-ocr: The core OCR engine
+# - tesseract-ocr-eng: The English language data for Tesseract
+RUN apt-get update && apt-get install -y \
+    poppler-utils \
+    graphicsmagick \
+    tesseract-ocr \
+    tesseract-ocr-eng \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
