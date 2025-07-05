@@ -1,10 +1,12 @@
-# Dockerfile
+# Dockerfile - FINAL VERSION
 
 # Use an official Node.js runtime as a parent image
 FROM node:18-slim
 
-# Install poppler-utils, which is required by pdf-poppler
-RUN apt-get update && apt-get install -y poppler-utils && rm -rf /var/lib/apt/lists/*
+# Install system dependencies:
+# - poppler-utils: For converting PDF to images
+# - graphicsmagick: A dependency of pdf2pic for image processing
+RUN apt-get update && apt-get install -y poppler-utils graphicsmagick && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
