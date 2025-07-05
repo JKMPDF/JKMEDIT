@@ -4,9 +4,11 @@ FROM node:18-alpine
 # Set the working directory inside the container
 WORKDIR /app
 
-# Install Tesseract OCR engine and English language pack
-# This is the magic step that fixes "OCR Failed" errors
-RUN apk add --no-cache tesseract-ocr tesseract-ocr-data-eng
+# Install system dependencies required for OCR:
+# - tesseract-ocr: The main OCR engine
+# - tesseract-ocr-data-eng: The English language data pack
+# - poppler-utils: The CRUCIAL tool for converting PDF to images
+RUN apk add --no-cache tesseract-ocr tesseract-ocr-data-eng poppler-utils
 
 # Stage 2: Application Setup
 # Copy ONLY the backend's package definition files
