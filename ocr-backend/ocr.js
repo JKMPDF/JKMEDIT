@@ -1,70 +1,77 @@
-// ocr.js - Version 3 with PDF-to-Image Conversion
+// ocr.js - Version 4 with pdf2pic for reliable PDF conversion
 
 const tesseract = require("node-tesseract-ocr");
 const docx = require("docx");
 const fs = require("fs").promises; // Use promise-based fs for async/await
 const path = require("path");
-const poppler = require("pdf-poppler");
+const { fromPath } = require("pdf2pic"); // <-- Import the new package
 
 const { Document, Packer, Paragraph, TextRun } = docx;
 
 async function performOcrAndConversion(inputPath, originalFilename, processedDir) {
   const fileExtension = path.extname(originalFilename).toLowerCase();
-  let imagePaths = [];
-  let ocrText = "";
+  let imagePathsToProcess = [];
+  // We need to keep track of temporary files we create for cleanup.
+  let tempFilesToDelete = [];
 
   try {
     if (fileExtension === ".pdf") {
-      // --- PDF Processing ---
-      console.log("[PDF] PDF file detected. Converting to images...");
-      const outputPrefix = path.join(path.dirname(inputPath), path.basename(inputPath, fileExtension));
+      // --- NEW PDF Processing with pdf2pic ---
+      console.log("[PDF] PDF file detected. Converting to images with pdf2pic...");
       
-      let opts = {
-        format: 'png', // Output format
-        out_dir: path.dirname(inputPath), // Output directory
-        out_prefix: path.basename(outputPrefix), // Output file prefix
-        page: null // Convert all pages
-      }
+      const options = {
+        density: 300, // DPI, higher is better quality
+        saveFilename: `${Date.now()}_page`, // A unique name for each page
+        savePath: path.dirname(inputPath), // Save images in the same 'uploads' folder
+        format: "png",
+        width: 1200, // Set a good resolution for OCR
+        height: 1600
+      };
 
-      await poppler.convert(inputPath, opts);
-      console.log("[PDF] PDF converted to images successfully.");
+      // `fromPath` creates a converter instance.
+      const convert = fromPath(inputPath, options);
+      // This will convert all pages and return an array of image data.
+      const resolvedImages = await convert.bulk(-1, { responseType: "image" });
+
+      if (!resolvedImages || resolvedImages.length === 0) {
+        throw new Error("PDF conversion produced no images.");
+      }
       
-      // Find all the generated images
-      const files = await fs.readdir(path.dirname(inputPath));
-      imagePaths = files
-        .filter(file => file.startsWith(path.basename(outputPrefix)) && file.endsWith('.png'))
-        .map(file => path.join(path.dirname(inputPath), file))
-        .sort(); // Sort to keep page order
+      console.log(`[PDF] Converted to ${resolvedImages.length} image(s) successfully.`);
+      
+      // The `path` property on each result is what we need for Tesseract.
+      imagePathsToProcess = resolvedImages.map(img => img.path);
+      // All these new images are temporary and should be deleted later.
+      tempFilesToDelete = [...imagePathsToProcess];
 
     } else {
-      // --- Image Processing ---
+      // --- Image Processing (No change here) ---
       console.log("[Image] Image file detected.");
-      imagePaths.push(inputPath);
+      // The uploaded image is the one we process. It's not temporary.
+      imagePathsToProcess.push(inputPath);
     }
 
-    // --- OCR on all images (whether from PDF or a single image upload) ---
-    console.log(`[OCR] Processing ${imagePaths.length} image(s)...`);
-    for (const imagePath of imagePaths) {
+    // --- OCR on all images ---
+    let ocrText = "";
+    console.log(`[OCR] Processing ${imagePathsToProcess.length} image(s)...`);
+    for (const imagePath of imagePathsToProcess) {
       const text = await tesseract.recognize(imagePath, {
         lang: "eng", oem: 1, psm: 3,
       });
-      ocrText += text + "\n\n"; // Add text from each page, with a separator
+      ocrText += text + "\n\n";
     }
     console.log("[OCR] All images processed.");
 
-    // --- Create DOCX ---
+    // --- Create DOCX (No change here) ---
     const textParagraphs = ocrText.split(/\n\s*\n/).filter(p => p.trim() !== '');
     const docxParagraphs = textParagraphs.map(p => new Paragraph({ children: [new TextRun(p.trim())] }));
-
     const doc = new Document({ sections: [{ children: docxParagraphs }] });
-
     const outputFilename = `${path.parse(originalFilename).name}.docx`;
     const outputPath = path.join(processedDir, outputFilename);
-
     const buffer = await Packer.toBuffer(doc);
     await fs.writeFile(outputPath, buffer);
-
     console.log(`[DOCX] File created at: ${outputPath}`);
+    
     return outputPath;
 
   } catch (error) {
@@ -72,15 +79,12 @@ async function performOcrAndConversion(inputPath, originalFilename, processedDir
     throw new Error("Failed to process the document.");
   } finally {
     // --- Cleanup: Delete temporary images ---
-    for (const imagePath of imagePaths) {
-      // Don't delete the original if it was an image upload
-      if (imagePath !== inputPath) { 
-        try {
-          await fs.unlink(imagePath);
-          console.log(`[Cleanup] Deleted temp image: ${imagePath}`);
-        } catch (cleanupError) {
-          console.error(`[Cleanup] Failed to delete temp file ${imagePath}:`, cleanupError);
-        }
+    console.log(`[Cleanup] Deleting ${tempFilesToDelete.length} temporary files.`);
+    for (const tempPath of tempFilesToDelete) {
+      try {
+        await fs.unlink(tempPath);
+      } catch (cleanupError) {
+        console.error(`[Cleanup] Failed to delete temp file ${tempPath}:`, cleanupError);
       }
     }
   }
