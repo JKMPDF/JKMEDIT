@@ -1,102 +1,162 @@
+// =================================================================
+// START: COMPLETE SERVER CODE (e.g., index.js)
+// =================================================================
+
+// --- 1. SETUP: Import tools and create folders ---
 const express = require('express');
-const multer = require('multer');
-const tesseract = require('node-tesseract-ocr');
 const cors = require('cors');
-const docx = require('docx');
-const { Packer } = docx;
-
-// Node.js built-in modules for handling files and running commands
-const fs = require('fs/promises');
+const multer = require('multer'); // For handling file uploads
+const { v4: uuidv4 } = require('uuid'); // For unique ticket numbers (jobId)
+const fs = require('fs');
 const path = require('path');
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
 
+// --- IMPORTANT ---
+// You need to tell the server where your actual OCR logic is.
+// Replace './your-ocr-logic-file' with the correct path.
+// The `performOcrAndConversion` should be the function that takes an input file path and returns the output file path.
+const { performOcrAndConversion } = require('./ocr'); // EXAMPLE: Assuming your function is in 'ocr.js'
 
 const app = express();
-const port = process.env.PORT || 3000;
+app.use(cors()); // Allows your frontend to talk to this backend
+app.use(express.json());
 
-app.use(cors());
-const upload = multer({ storage: multer.memoryStorage() });
+// We need folders to temporarily store the uploaded and finished files.
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+const PROCESSED_DIR = path.join(__dirname, 'processed');
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR);
+if (!fs.existsSync(PROCESSED_DIR)) fs.mkdirSync(PROCESSED_DIR);
 
-app.get('/', (req, res) => {
-  res.status(200).send('JKM Edit OCR to DOCX Backend is running!');
+// This is our temporary "database" to keep track of all the conversion jobs.
+// It's just a simple object that holds the status of each job.
+const jobs = {};
+
+// --- 2. CONFIGURE FILE UPLOADS ---
+// This tells `multer` where to save the uploaded files.
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, UPLOADS_DIR);
+  },
+  filename: (req, file, cb) => {
+    // Give the file a unique name to prevent mix-ups.
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
 });
+const upload = multer({ storage: storage });
 
-app.post('/api/ocr', upload.single('file'), async (req, res) => {
+
+// --- 3. CREATE THE API ENDPOINTS ---
+
+/**
+ * ENDPOINT 1: UPLOAD
+ * - Receives the file from the user.
+ * - Creates a new job with a unique 'jobId'.
+ * - Immediately sends the 'jobId' back to the user.
+ * - Starts the OCR process in the background.
+ */
+app.post('/api/ocr/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ error: 'No file was uploaded.' });
+    return res.status(400).json({ error: 'No file uploaded.' });
   }
 
-  // Create a unique name for temporary files to avoid conflicts
-  const tempId = Date.now() + '-' + Math.random().toString(36).substring(7);
-  const tempDir = path.join(__dirname, 'tmp');
-  const pdfPath = path.join(tempDir, `${tempId}.pdf`);
-  const imagePrefix = path.join(tempDir, `${tempId}-page`);
+  const jobId = uuidv4(); // Create a unique ticket number
+  const job = {
+    id: jobId,
+    status: 'PENDING', // The job is waiting to be processed
+    originalFilename: req.file.originalname,
+    inputPath: req.file.path, // Where the uploaded file is saved
+    outputPath: null,
+    error: null,
+  };
+  jobs[jobId] = job; // Store the job information
+
+  console.log(`[${jobId}] Job created for ${job.originalFilename}`);
   
+  // Send the ticket number back to the user right away.
+  res.status(202).json({ jobId: jobId });
+
+  // Now, do the slow work in the background without making the user wait for it to finish.
+  processFileInBackground(jobId);
+});
+
+
+/**
+ * ENDPOINT 2: STATUS
+ * - The user's browser will call this endpoint every few seconds.
+ * - It checks the status of the job ('PENDING', 'PROCESSING', 'COMPLETED', 'FAILED').
+ */
+app.get('/api/ocr/status/:jobId', (req, res) => {
+  const jobId = req.params.jobId;
+  const job = jobs[jobId];
+
+  if (!job) {
+    return res.status(404).json({ error: 'Job not found.' });
+  }
+
+  res.json({
+    status: job.status,
+    error: job.error, // Will be null unless something went wrong
+  });
+});
+
+/**
+ * ENDPOINT 3: DOWNLOAD
+ * - Once the status is 'COMPLETED', the user's browser will be sent to this URL.
+ * - This endpoint sends the finished .docx file for download.
+ */
+app.get('/api/ocr/download/:jobId', (req, res) => {
+  const jobId = req.params.jobId;
+  const job = jobs[jobId];
+
+  if (!job || !job.outputPath) {
+    return res.status(404).json({ error: 'File not found or job is invalid.' });
+  }
+
+  if (job.status !== 'COMPLETED') {
+    return res.status(400).json({ error: 'Job is not yet complete.' });
+  }
+
+  // This command tells the browser to treat the response as a file download.
+  res.download(job.outputPath, (err) => {
+    if (err) {
+      console.error(`[${jobId}] Error sending file for download:`, err);
+    }
+    // You could clean up the files here after download if you want.
+  });
+});
+
+
+// --- 4. BACKGROUND PROCESSING LOGIC ---
+
+// This is the function that does the actual, slow OCR work.
+async function processFileInBackground(jobId) {
+  const job = jobs[jobId];
+  job.status = 'PROCESSING';
+  console.log(`[${jobId}] Starting OCR...`);
+
   try {
-    console.log(`Processing file: ${req.file.originalname}`);
+    // This is where you call your existing OCR function.
+    // It must take the input path and return the path to the finished file.
+    const convertedFilePath = await performOcrAndConversion(job.inputPath, job.originalFilename, PROCESSED_DIR);
     
-    // --- Step 1: Save the uploaded PDF to a temporary file ---
-    await fs.mkdir(tempDir, { recursive: true }); // Ensure temp directory exists
-    await fs.writeFile(pdfPath, req.file.buffer);
-    console.log(`Temporary PDF saved to ${pdfPath}`);
-
-    // --- Step 2: Convert PDF to PNG images using poppler-utils ---
-    // The command is `pdftoppm -png <pdf_file> <image_prefix>`
-    const convertCommand = `pdftoppm -png "${pdfPath}" "${imagePrefix}"`;
-    await exec(convertCommand);
-    console.log("PDF successfully converted to images.");
-
-    // --- Step 3: Find all the generated images and run OCR on them ---
-    const files = await fs.readdir(tempDir);
-    const imageFiles = files
-      .filter(f => f.startsWith(`${tempId}-page`) && f.endsWith('.png'))
-      .sort(); // Sort to ensure pages are in the correct order
-
-    if (imageFiles.length === 0) {
-      throw new Error('PDF could not be converted into images.');
-    }
-
-    let fullText = '';
-    const ocrConfig = { lang: 'eng', oem: 1, psm: 3 };
-
-    for (const imageFile of imageFiles) {
-      const imagePath = path.join(tempDir, imageFile);
-      const text = await tesseract.recognize(imagePath, ocrConfig);
-      fullText += text + '\n\n'; // Add a page break between pages
-      console.log(`OCR complete for ${imageFile}`);
-    }
-
-    // --- Step 4: Create the Word document ---
-    const doc = new docx.Document({
-        sections: [{ children: [new docx.Paragraph({ children: [new docx.TextRun(fullText)] })] }],
-    });
-    const buffer = await Packer.toBuffer(doc);
-    const originalName = req.file.originalname;
-    const docxFileName = originalName.substring(0, originalName.lastIndexOf('.')) + '.docx';
-    
-    // --- Step 5: Send the final Word document to the user ---
-    res.setHeader('Content-Disposition', `attachment; filename="${docxFileName}"`);
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-    res.status(200).send(buffer);
-    console.log(`Successfully sent ${docxFileName} to the user.`);
+    // Update the job when it's done.
+    job.outputPath = convertedFilePath;
+    job.status = 'COMPLETED';
+    console.log(`[${jobId}] OCR completed successfully.`);
 
   } catch (error) {
-    console.error('An error occurred during the conversion process:', error);
-    res.status(500).json({ error: 'The server could not process the file. It might be corrupted or an empty PDF.' });
-  } finally {
-    // --- Step 6: Clean up all temporary files (PDF and images) ---
-    console.log("Cleaning up temporary files...");
-    fs.unlink(pdfPath).catch(err => console.error(`Failed to delete temp PDF: ${err.message}`));
-    const files = await fs.readdir(tempDir);
-    for(const file of files) {
-        if(file.startsWith(tempId)) {
-            fs.unlink(path.join(tempDir, file)).catch(err => console.error(`Failed to delete temp image: ${err.message}`));
-        }
-    }
+    // If something goes wrong, update the job with an error.
+    console.error(`[${jobId}] OCR failed:`, error);
+    job.status = 'FAILED';
+    job.error = error.message || 'An unknown server error occurred.';
   }
+}
+
+// --- 5. START THE SERVER ---
+const PORT = process.env.PORT || 3001; // Using 3001 to avoid conflicts
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
-});
+// =================================================================
+// END: COMPLETE SERVER CODE
+// =================================================================
