@@ -184,12 +184,97 @@
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
-    <!-- [START] --- UNIVERSAL PAGE SCRIPT --- -->
+    <!-- [START] --- UNIVERSAL PAGE SCRIPT (DE-MINIFIED & ROBUST) --- -->
     <script>
-        // NOTE: A small change is made here to correctly handle root-relative paths on GitHub Pages.
-        window.addEventListener('pageshow',function(t){t.persisted&&document.body.classList.remove('fade-out')}),document.addEventListener('DOMContentLoaded',()=>{const t=document.getElementById('theme-picker'),e=document.getElementById('dark-mode-toggle'),a=document.documentElement,o=t=>{a.dataset.theme=t,localStorage.setItem('jkm-edit-theme',t)},n=()=>{a.classList.add('dark-mode'),localStorage.setItem('jkm-edit-mode','dark')},s=()=>{a.classList.remove('dark-mode'),localStorage.setItem('jkm-edit-mode','light')};t&&(t.addEventListener('change',()=>o(t.value)),t.value=localStorage.getItem('jkm-edit-theme')||'corporate-blue',a.dataset.theme=t.value),e&&(e.addEventListener('click',()=>{a.classList.contains('dark-mode')?s():n()}),'dark'===localStorage.getItem('jkm-edit-mode')&&a.classList.add('dark-mode'));const d=document.getElementById('about-modal'),i=document.getElementById('contact-modal'),c=document.getElementById('about-btn'),l=document.getElementById('contact-btn'),r=document.querySelectorAll('.close-btn'),m=t=>{t.classList.add('show-modal')},u=t=>{t.classList.remove('show-modal')};c&&c.addEventListener('click',t=>{t.preventDefault(),m(d)}),l&&l.addEventListener('click',t=>{t.preventDefault(),m(i)}),r.forEach(t=>{t.addEventListener('click',()=>{u(d),u(i)})}),window.addEventListener('click',t=>{t.target===d&&u(d),t.target===i&&u(i)}),document.querySelectorAll('a').forEach(t=>{const e=t.getAttribute('href');e&&!e.startsWith('#')&&!e.startsWith('mailto:')&&!e.startsWith('javascript:')&&t.addEventListener('click',function(a){a.preventDefault(),document.body.classList.add('fade-out');let o=this.href;window.location.hostname.includes('github.io')&&!o.startsWith('http')&&(o=new URL(this.getAttribute('href'),window.location.origin+window.location.pathname).href),setTimeout(()=>{window.location.href=o},400)})});
+        // Handle the back/forward cache to prevent showing a faded-out page
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                document.body.classList.remove('fade-out');
+            }
+        });
+
+        // Run all setup logic after the document is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const docElement = document.documentElement;
+
+            // --- Theme & Dark Mode Logic ---
+            const themePicker = document.getElementById('theme-picker');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+            const applyTheme = (themeName) => {
+                docElement.dataset.theme = themeName;
+                localStorage.setItem('jkm-edit-theme', themeName);
+            };
+
+            const enableDarkMode = () => {
+                docElement.classList.add('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'dark');
+            };
+
+            const disableDarkMode = () => {
+                docElement.classList.remove('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'light');
+            };
+
+            // Setup Theme Picker
+            if (themePicker) {
+                const savedTheme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
+                themePicker.value = savedTheme;
+                docElement.dataset.theme = savedTheme;
+                themePicker.addEventListener('change', () => applyTheme(themePicker.value));
+            }
+
+            // Setup Dark Mode Toggle
+            if (darkModeToggle) {
+                if (localStorage.getItem('jkm-edit-mode') === 'dark') {
+                    enableDarkMode();
+                }
+                darkModeToggle.addEventListener('click', () => {
+                    docElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+                });
+            }
+
+            // --- Modal Logic ---
+            const aboutModal = document.getElementById('about-modal');
+            const contactModal = document.getElementById('contact-modal');
+            const aboutBtn = document.getElementById('about-btn');
+            const contactBtn = document.getElementById('contact-btn');
+            const closeBtns = document.querySelectorAll('.close-btn');
+
+            const showModal = (modal) => modal.classList.add('show-modal');
+            const hideModal = (modal) => modal.classList.remove('show-modal');
+
+            if (aboutBtn) aboutBtn.addEventListener('click', (e) => { e.preventDefault(); showModal(aboutModal); });
+            if (contactBtn) contactBtn.addEventListener('click', (e) => { e.preventDefault(); showModal(contactModal); });
+
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (aboutModal) hideModal(aboutModal);
+                    if (contactModal) hideModal(contactModal);
+                });
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === aboutModal) hideModal(aboutModal);
+                if (e.target === contactModal) hideModal(contactModal);
+            });
+
+            // --- Page Navigation Fade Effect ---
+            document.querySelectorAll('a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && !href.startsWith('#') && !href.startsWith('mailto:') && !href.startsWith('javascript:')) {
+                    link.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        document.body.classList.add('fade-out');
+                        // Use the browser's fully resolved 'href' property for maximum reliability
+                        setTimeout(() => { window.location.href = this.href; }, 400);
+                    });
+                }
+            });
+        });
     </script>
     <!-- [END] --- UNIVERSAL PAGE SCRIPT --- -->
+
 
     <!-- [START] --- PDF TO WORD LOGIC (ASYNC VERSION) --- -->
     <script>
