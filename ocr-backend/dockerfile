@@ -1,35 +1,21 @@
-# Dockerfile - FINAL VERSION v2
+# Start with a standard Python 3.9 image
+FROM python:3.9-slim
 
-# Use an official Node.js runtime as a parent image
-FROM node:18-slim
+# Set the working directory inside the container
+WORKDIR /app
 
-# Install ALL system dependencies required by our application:
-# - poppler-utils: For converting PDF to images (used by pdf2pic)
-# - graphicsmagick: For image processing (used by pdf2pic)
-# - tesseract-ocr: The core OCR engine
-# - tesseract-ocr-eng: The English language data for Tesseract
-RUN apt-get update && apt-get install -y \
-    poppler-utils \
-    graphicsmagick \
-    tesseract-ocr \
-    tesseract-ocr-eng \
-    && rm -rf /var/lib/apt/lists/*
+# Update package lists and install LibreOffice
+RUN apt-get update && apt-get install -y libreoffice-writer --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+# Copy the requirements file and install Python packages
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy package.json and package-lock.json FIRST
-# This leverages Docker's layer caching.
-COPY package*.json ./
-
-# Install app dependencies
-RUN npm install
-
-# Copy the rest of your app's source code
+# Copy the rest of your application code
 COPY . .
 
-# Make your app's port available to the outside world
-EXPOSE 3001
+# Expose the port that Gunicorn will run on
+EXPOSE 10000
 
-# Define the command to run your app
-CMD [ "npm", "start" ]
+# The command to start the web server when the container launches
+CMD ["gunicorn", "--bind", "0.0.0.0:10000", "--workers", "1", "--timeout", "120", "app:app"]
