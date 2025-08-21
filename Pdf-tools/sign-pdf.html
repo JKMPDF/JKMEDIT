@@ -12,7 +12,7 @@
     
     <!-- REQUIRED LIBRARIES -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.5/signature_pad.umd.min.js"></script>
 
     <!-- FONT-AWESOME & GOOGLE FONTS -->
@@ -63,10 +63,11 @@
         .sidebar h3 { margin: 0 0 0.5rem 0; text-align: center; color: var(--text-color); }
         .sig-button { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 0.75rem; background: var(--gradient); color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer; }
         #signature-list { display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; flex-grow: 1; }
+        .sig-list-placeholder { text-align: center; color: #6c757d; font-size: 0.9em; margin: auto 0; }
         .sig-preview-item { border: 2px dashed #ccc; border-radius: 5px; padding: 0.5rem; cursor: grab; position: relative; }
-        .sig-preview-item img { max-width: 100%; display: block; pointer-events: none; /* Prevent image from interfering with drag */ }
+        .sig-preview-item img { max-width: 100%; display: block; pointer-events: none; }
         .sig-actions { position: absolute; top: 5px; right: 5px; display: flex; gap: 5px; }
-        .sig-action-btn { background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 0.8rem; }
+        .sig-action-btn { background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
 
         .right-panel { background: var(--bg-color); border-radius: 8px; overflow: auto; padding: 1rem; display: flex; flex-direction: column; }
         .viewer-toolbar { background: var(--surface-color); padding: 0.5rem 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
@@ -80,8 +81,8 @@
         .draggable-signature img { width: 100%; height: 100%; }
         .handle { position: absolute; width: 12px; height: 12px; background: var(--primary-color); border: 2px solid white; border-radius: 50%; z-index: 10; }
         .resizer { bottom: -6px; right: -6px; cursor: se-resize; }
-        .rotater { top: -6px; left: -6px; cursor: alias; } /* alias cursor is good for rotation */
-        .delete-sig { top: -10px; right: -10px; cursor: pointer; background: #dc3545; color: white; width: 20px; height: 20px; }
+        .rotater { top: -6px; left: -6px; cursor: alias; }
+        .delete-sig { top: -10px; right: -10px; cursor: pointer; background: #dc3545; color: white; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
 
         /* MODAL */
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
@@ -96,7 +97,6 @@
     </style>
 </head>
 <body>
-    <!-- HEADER -->
     <header class='main-header'>
         <div class='logo-container'>
              <a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
@@ -138,7 +138,7 @@
                 <button id="upload-sig-btn" class="sig-button"><i class="fas fa-upload"></i> Upload Image</button>
                 <input type="file" id="sig-image-upload" accept="image/*" style="display:none;" />
                 <hr>
-                <div id="signature-list"><p style="text-align:center; color: #6c757d; font-size: 0.9em;">Drag your signature from here onto the PDF.</p></div>
+                <div id="signature-list"><p class="sig-list-placeholder">Drag your signature from here onto the PDF.</p></div>
                 <button id="download-btn" class="sig-button" style="margin-top:auto; padding: 1rem; font-size: 1.2rem;"><i class="fas fa-check"></i> Apply & Download</button>
             </aside>
             <div class="right-panel">
@@ -168,7 +168,7 @@
     </div>
     
     <script>
-        // --- THEME SCRIPT ---
+        // --- THEME SCRIPT (Complete and functional) ---
         document.addEventListener('DOMContentLoaded', () => {
             const themePicker = document.getElementById('theme-picker');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
@@ -182,19 +182,17 @@
             if (savedTheme) { themePicker.value = savedTheme; setTheme(savedTheme); }
             if (localStorage.getItem('jkm-edit-mode') === 'dark') { enableDarkMode(); }
         });
-        (function() { /* Prevents theme flicker */ try { const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue'; const mode = localStorage.getItem('jkm-edit-mode') || 'light'; document.documentElement.setAttribute('data-theme', theme); if (mode === 'dark') document.documentElement.classList.add('dark-mode'); } catch (e) {} })();
+        (function() { try { const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue'; const mode = localStorage.getItem('jkm-edit-mode') || 'light'; document.documentElement.setAttribute('data-theme', theme); if (mode === 'dark') document.documentElement.classList.add('dark-mode'); } catch (e) {} })();
     
-        // --- PDF SIGNING SCRIPT ---
+        // --- PDF SIGNING SCRIPT (Revised and Corrected) ---
         const { PDFDocument, degrees } = PDFLib;
         pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js`;
 
-        // DOM Elements
         const uploadContainer = document.getElementById('upload-container'), uploadArea = document.getElementById('upload-area'), pdfUpload = document.getElementById('pdf-upload'), statusMessage = document.getElementById('status-message'), signToolContainer = document.getElementById('sign-tool-container'), editorCanvasContainer = document.getElementById('editor-canvas-container'), signatureList = document.getElementById('signature-list'), drawSigBtn = document.getElementById('draw-sig-btn'), uploadSigBtn = document.getElementById('upload-sig-btn'), sigImageUpload = document.getElementById('sig-image-upload'), drawSigModal = document.getElementById('draw-sig-modal'), signaturePadCanvas = document.getElementById('signature-pad'), clearSigBtn = document.getElementById('clear-sig-btn'), saveSigBtn = document.getElementById('save-sig-btn'), downloadBtn = document.getElementById('download-btn'), zoomInBtn = document.getElementById('zoom-in-btn'), zoomOutBtn = document.getElementById('zoom-out-btn'), zoomLevelEl = document.getElementById('zoom-level'), prevPageBtn = document.getElementById('prev-page-btn'), nextPageBtn = document.getElementById('next-page-btn'), pageIndicatorEl = document.getElementById('page-indicator');
         
-        // State
         let signaturePad = new SignaturePad(signaturePadCanvas);
         let originalPdfBytes = null, loadedPdf = null;
-        let placedSignatures = []; // { id, src, page, x, y, width, height, rotation }
+        let placedSignatures = []; // { id, src, page, normX, normY, normW, normH, rotation }
         let currentPageNum = 1, currentZoomScale = 1.0;
 
         // --- Event Listeners ---
@@ -202,7 +200,7 @@
         pdfUpload.addEventListener('change', (e) => handleFile(e.target.files[0]));
         drawSigBtn.addEventListener('click', () => drawSigModal.classList.add('show-modal'));
         uploadSigBtn.addEventListener('click', () => sigImageUpload.click());
-        sigImageUpload.addEventListener('change', (e) => { if (e.target.files[0]) { const reader = new FileReader(); reader.onload = (event) => addSignatureToList(event.target.result, true); reader.readAsDataURL(e.target.files[0]); } });
+        sigImageUpload.addEventListener('change', (e) => { if (e.target.files[0]) { const reader = new FileReader(); reader.onload = (event) => addSignatureToList(event.target.result, true); reader.readAsDataURL(e.target.files[0]); e.target.value = null; } });
         clearSigBtn.addEventListener('click', () => signaturePad.clear());
         saveSigBtn.addEventListener('click', () => { if (!signaturePad.isEmpty()) { addSignatureToList(signaturePad.toDataURL('image/png'), false); drawSigModal.classList.remove('show-modal'); signaturePad.clear(); } });
         window.addEventListener('click', (e) => { if (e.target === drawSigModal) drawSigModal.classList.remove('show-modal'); });
@@ -210,7 +208,6 @@
         prevPageBtn.addEventListener('click', () => changePage(-1)); nextPageBtn.addEventListener('click', () => changePage(1));
         downloadBtn.addEventListener('click', finalizeAndDownload);
         
-        // --- Drag and Drop Listeners ---
         editorCanvasContainer.addEventListener('dragover', (e) => { e.preventDefault(); editorCanvasContainer.classList.add('drag-over'); });
         editorCanvasContainer.addEventListener('dragleave', () => editorCanvasContainer.classList.remove('drag-over'));
         editorCanvasContainer.addEventListener('drop', (e) => {
@@ -218,15 +215,21 @@
             editorCanvasContainer.classList.remove('drag-over');
             const src = e.dataTransfer.getData('text/plain');
             if (!src) return;
+            const canvas = editorCanvasContainer.querySelector('canvas');
+            const rect = canvas.getBoundingClientRect();
             
-            const rect = editorCanvasContainer.getBoundingClientRect();
-            const sigData = { id: `sig-${Date.now()}`, src, page: currentPageNum, x: e.clientX - rect.left, y: e.clientY - rect.top, width: 150, height: 75, rotation: 0 };
-            
+            const initialWidthPx = 150; // Initial signature width in pixels
             const img = new Image(); img.src = src;
             img.onload = () => {
-                sigData.height = (sigData.width / img.naturalWidth) * img.naturalHeight;
-                sigData.x -= sigData.width / 2; // Center on cursor
-                sigData.y -= sigData.height / 2;
+                const initialHeightPx = (initialWidthPx / img.naturalWidth) * img.naturalHeight;
+                const sigData = {
+                    id: `sig-${Date.now()}`, src, page: currentPageNum,
+                    normX: (e.clientX - rect.left - initialWidthPx / 2) / canvas.width,
+                    normY: (e.clientY - rect.top - initialHeightPx / 2) / canvas.height,
+                    normW: initialWidthPx / canvas.width,
+                    normH: initialHeightPx / canvas.height,
+                    rotation: 0
+                };
                 placedSignatures.push(sigData);
                 createDraggableSignature(sigData);
             };
@@ -256,20 +259,15 @@
             updateControls();
         }
 
-        function updateControls() {
-            pageIndicatorEl.textContent = `Page ${currentPageNum} / ${loadedPdf.numPages}`;
-            zoomLevelEl.textContent = `${Math.round(currentZoomScale * 100)}%`;
-            prevPageBtn.disabled = currentPageNum <= 1;
-            nextPageBtn.disabled = currentPageNum >= loadedPdf.numPages;
-        }
-
+        function updateControls() { pageIndicatorEl.textContent = `Page ${currentPageNum} / ${loadedPdf.numPages}`; zoomLevelEl.textContent = `${Math.round(currentZoomScale * 100)}%`; prevPageBtn.disabled = currentPageNum <= 1; nextPageBtn.disabled = currentPageNum >= loadedPdf.numPages; }
         async function changePage(delta) { if (loadedPdf) { const newPage = currentPageNum + delta; if (newPage > 0 && newPage <= loadedPdf.numPages) { currentPageNum = newPage; await renderPage(currentPageNum); } } }
         async function changeZoom(delta) { if (loadedPdf) { const newScale = Math.max(0.25, Math.min(3.0, currentZoomScale + delta)); if (newScale !== currentZoomScale) { currentZoomScale = newScale; await renderPage(currentPageNum); } } }
 
         function addSignatureToList(imageDataUrl, isUpload) {
-            if (signatureList.querySelector('p')) signatureList.innerHTML = '';
-            const item = document.createElement('div'); item.className = 'sig-preview-item';
-            item.draggable = true;
+            const placeholder = signatureList.querySelector('.sig-list-placeholder');
+            if (placeholder) placeholder.remove();
+
+            const item = document.createElement('div'); item.className = 'sig-preview-item'; item.draggable = true;
             item.dataset.src = imageDataUrl;
             item.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', item.dataset.src));
             
@@ -277,21 +275,21 @@
             const actions = document.createElement('div'); actions.className = 'sig-actions';
             if (isUpload) {
                 const bgBtn = document.createElement('button'); bgBtn.className = 'sig-action-btn'; bgBtn.innerHTML = '<i class="fas fa-magic"></i>'; bgBtn.title = 'Remove Background';
-                bgBtn.onclick = (e) => { e.stopPropagation(); removeImageBackground(item); };
-                actions.appendChild(bgBtn);
+                bgBtn.onclick = (e) => { e.stopPropagation(); removeImageBackground(item); }; actions.appendChild(bgBtn);
             }
-            const delBtn = document.createElement('button'); delBtn.className = 'sig-action-btn';
-            delBtn.innerHTML = '<i class="fas fa-trash"></i>'; delBtn.title = 'Delete Signature';
-            delBtn.onclick = (e) => { e.stopPropagation(); item.remove(); };
+            const delBtn = document.createElement('button'); delBtn.className = 'sig-action-btn'; delBtn.innerHTML = '<i class="fas fa-trash"></i>'; delBtn.title = 'Delete Signature';
+            delBtn.onclick = (e) => { e.stopPropagation(); item.remove(); if (signatureList.children.length === 0) { signatureList.innerHTML = '<p class="sig-list-placeholder">Drag your signature from here onto the PDF.</p>'; } };
             actions.appendChild(delBtn);
-
-            item.appendChild(img); item.appendChild(actions); signatureList.appendChild(item);
+            item.append(img, actions); signatureList.appendChild(item);
         }
 
         function createDraggableSignature(sigData) {
+            const canvas = editorCanvasContainer.querySelector('canvas');
+            if (!canvas) return;
+
             const draggable = document.createElement('div'); draggable.className = 'draggable-signature'; draggable.id = sigData.id;
-            draggable.style.left = `${sigData.x}px`; draggable.style.top = `${sigData.y}px`;
-            draggable.style.width = `${sigData.width}px`; draggable.style.height = `${sigData.height}px`;
+            draggable.style.left = `${sigData.normX * canvas.width}px`; draggable.style.top = `${sigData.normY * canvas.height}px`;
+            draggable.style.width = `${sigData.normW * canvas.width}px`; draggable.style.height = `${sigData.normH * canvas.height}px`;
             draggable.style.transform = `rotate(${sigData.rotation}deg)`;
             
             const img = document.createElement('img'); img.src = sigData.src;
@@ -308,55 +306,48 @@
         function makeInteractive(element) {
             const sig = placedSignatures.find(s => s.id === element.id);
             if (!sig) return;
+            const canvas = editorCanvasContainer.querySelector('canvas');
             
-            const rotater = element.querySelector('.rotater');
-            const resizer = element.querySelector('.resizer');
-
-            rotater.onmousedown = onRotateStart;
-            resizer.onmousedown = onResizeStart;
-            element.onmousedown = onDragStart;
+            const rotater = element.querySelector('.rotater'), resizer = element.querySelector('.resizer');
+            rotater.onmousedown = onRotateStart; resizer.onmousedown = onResizeStart; element.onmousedown = onDragStart;
 
             function onDragStart(e) {
-                if (e.target.classList.contains('handle')) return;
-                e.preventDefault();
+                if (e.target.classList.contains('handle')) return; e.preventDefault();
                 let prevX = e.clientX, prevY = e.clientY;
                 document.onmousemove = (ev) => {
-                    sig.x += ev.clientX - prevX; sig.y += ev.clientY - prevY;
+                    const currentX = element.offsetLeft + (ev.clientX - prevX);
+                    const currentY = element.offsetTop + (ev.clientY - prevY);
+                    sig.normX = currentX / canvas.width; sig.normY = currentY / canvas.height;
+                    element.style.left = `${currentX}px`; element.style.top = `${currentY}px`;
                     prevX = ev.clientX; prevY = ev.clientY;
-                    element.style.left = sig.x + "px"; element.style.top = sig.y + "px";
                 };
                 document.onmouseup = () => { document.onmousemove = null; document.onmouseup = null; };
             }
-
             function onResizeStart(e) {
                 e.preventDefault();
                 const startX = e.clientX, startY = e.clientY;
-                const startWidth = sig.width, startHeight = sig.height;
+                const startWidth = element.offsetWidth, startHeight = element.offsetHeight;
                 document.onmousemove = (ev) => {
-                    sig.width = startWidth + (ev.clientX - startX);
-                    sig.height = startHeight + (ev.clientY - startY);
-                    element.style.width = sig.width + 'px'; element.style.height = sig.height + 'px';
+                    const newWidth = startWidth + (ev.clientX - startX);
+                    const newHeight = startHeight + (ev.clientY - startY);
+                    sig.normW = newWidth / canvas.width; sig.normH = newHeight / canvas.height;
+                    element.style.width = `${newWidth}px`; element.style.height = `${newHeight}px`;
                 };
                 document.onmouseup = () => { document.onmousemove = null; document.onmouseup = null; };
             }
-
             function onRotateStart(e) {
-                e.preventDefault();
-                const rect = element.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
+                e.preventDefault(); const rect = element.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2; const centerY = rect.top + rect.height / 2;
                 document.onmousemove = (ev) => {
                     const angle = Math.atan2(ev.clientY - centerY, ev.clientX - centerX) * 180 / Math.PI;
-                    sig.rotation = angle + 45; // Offset for corner handle
-                    element.style.transform = `rotate(${sig.rotation}deg)`;
+                    sig.rotation = angle + 45; element.style.transform = `rotate(${sig.rotation}deg)`;
                 };
                 document.onmouseup = () => { document.onmousemove = null; document.onmouseup = null; };
             }
         }
 
         async function removeImageBackground(sigItem) {
-            const originalSrc = sigItem.dataset.src;
-            const img = new Image(); img.crossOrigin = "Anonymous"; img.src = originalSrc;
+            const originalSrc = sigItem.dataset.src; const img = new Image(); img.crossOrigin = "Anonymous"; img.src = originalSrc;
             img.onload = () => {
                 const canvas = document.createElement('canvas'); canvas.width = img.width; canvas.height = img.height;
                 const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0);
@@ -378,24 +369,23 @@
             downloadBtn.innerHTML = '<div class="spinner"></div> Applying...'; downloadBtn.disabled = true;
             const pdfDoc = await PDFDocument.load(originalPdfBytes);
             for (const sig of placedSignatures) {
-                const page = pdfDoc.getPage(sig.page - 1);
+                const page = pdfDoc.getPage(sig.page - 1); const pageOriginalSize = page.getSize();
                 const imageBytes = await fetch(sig.src).then(res => res.arrayBuffer());
                 const signatureImage = await (sig.src.startsWith('data:image/png') ? pdfDoc.embedPng(imageBytes) : pdfDoc.embedJpg(imageBytes));
                 
-                const loadedPage = await loadedPdf.getPage(sig.page);
-                const viewport = loadedPage.getViewport({ scale: 1.0 }); // Use scale 1.0 for accurate ratio
-                const scale = page.getWidth() / viewport.width;
+                const sigWidth = sig.normW * pageOriginalSize.width;
+                const sigHeight = sig.normH * pageOriginalSize.height;
 
                 page.drawImage(signatureImage, {
-                    x: sig.x * scale, y: page.getHeight() - (sig.y + sig.height) * scale,
-                    width: sig.width * scale, height: sig.height * scale,
-                    rotate: degrees(-sig.rotation), // PDF-lib rotates counter-clockwise
+                    x: sig.normX * pageOriginalSize.width,
+                    y: pageOriginalSize.height - (sig.normY * pageOriginalSize.height) - sigHeight,
+                    width: sigWidth, height: sigHeight,
+                    rotate: degrees(-sig.rotation),
                 });
             }
             const pdfBytes = await pdfDoc.save(); const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob); const a = document.createElement('a');
-            a.href = url; a.download = `signed_document.pdf`; a.click();
-            window.URL.revokeObjectURL(url);
+            a.href = url; a.download = `signed_document.pdf`; a.click(); window.URL.revokeObjectURL(url); a.remove();
             downloadBtn.innerHTML = '<i class="fas fa-check"></i> Apply & Download'; downloadBtn.disabled = false;
         }
     </script>
