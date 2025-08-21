@@ -18,74 +18,75 @@
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/Pdf-tools/protect-pdf.html"/>
     <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="Protect PDF with Password - Free & Secure | JKM Edit"/>
-    <meta name="twitter:description" content="A free and easy way to add a password and encrypt your PDF files online."/>
-    <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
-    <!-- =================================================================== -->
-
-    <!-- PDF-LIB SCRIPT (REQUIRED FOR PDF MANIPULATION) -->
+    
+    <!-- REQUIRED LIBRARIES -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-
-    <!-- FONT-AWESOME & GOOGLE FONTS -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
     <!-- STYLES -->
     <style>
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
-        html { background-color: var(--bg-color); transition: background-color var(--transition-speed); }
-        body { margin: 0; color: var(--text-color); transition: color var(--transition-speed); animation: fadeInPage 0.5s ease-in-out; }
+        html { background-color: var(--bg-color); }
+        body { margin: 0; color: var(--text-color); font-family: 'Poppins', sans-serif; animation: fadeInPage 0.5s ease-in-out; }
         *, *::before, *::after { box-sizing: border-box; }
         
-        /* THEME COLORS */
+        /* THEME COLORS (Full set for consistency) */
         [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
         [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
+        [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
+        [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-gradient(45deg, #4a00e0, #8e2de2); }
+        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
+        [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
+        [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
+        [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
         html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
-
-        /* HEADER & NAVIGATION */
-        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 100; position: relative; }
-        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
-        .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); transition: color var(--transition-speed), text-shadow var(--transition-speed); }
-        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
         
-        /* TOOL-SPECIFIC CONTAINER & STYLES */
+        /* HEADER & NAVIGATION (Full styles) */
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed), color var(--transition-speed); z-index: 100; position: relative; }
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); transition: color 0.3s; }
+        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+        .main-nav { display: flex; align-items: center; gap: 1.5rem; }
+        .theme-selector { display: flex; align-items: center; gap: 0.5rem; }
+        #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
+        #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
+        #dark-mode-toggle .fa-sun { display: none; }
+        html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
+        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+        /* TOOL STYLES */
         .tool-container { padding: 2rem 4rem; max-width: 900px; margin: auto; }
         .tool-header { text-align: center; margin-bottom: 3rem; }
-        .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         html.dark-mode .tool-header p { color: #a0a0a0; }
 
-        .upload-area { border: 3px dashed var(--primary-color); border-radius: 10px; padding: 3rem; text-align: center; background: color-mix(in srgb, var(--surface-color) 95%, var(--primary-color) 5%); cursor: pointer; transition: background-color var(--transition-speed); }
+        .upload-area { border: 3px dashed var(--primary-color); border-radius: 10px; padding: 3rem; text-align: center; background: color-mix(in srgb, var(--surface-color) 95%, var(--primary-color) 5%); cursor: pointer; }
         .upload-icon { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
-        .upload-area p { margin: 0; font-size: 1.1rem; font-weight: 600; }
+        .upload-area p { margin: 0; font-size: 1.1rem; font-weight: 600; color: var(--text-color); }
         #pdf-upload { display: none; }
 
         .options-panel { background: var(--surface-color); padding: 2rem; border-radius: 8px; margin-top: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
-        .options-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; max-width: 450px; margin: auto; }
-        .option-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .option-group label { font-weight: 600; }
+        .options-grid { max-width: 450px; margin: auto; }
+        .option-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .option-group label { font-weight: 600; color: var(--text-color); }
         .option-group input[type="password"] { padding: 0.75rem; border-radius: 5px; border: 1px solid #ccc; background: var(--bg-color); color: var(--text-color); width: 100%; }
         html.dark-mode .option-group input[type="password"] { border-color: #444; }
 
         .strength-bar-container { width: 100%; height: 8px; background-color: #e0e0e0; border-radius: 4px; overflow: hidden; margin-top: 0.5rem; }
         .strength-bar { height: 100%; width: 0; border-radius: 4px; transition: width 0.3s, background-color 0.3s; }
-        .strength-bar.weak { background-color: #dc3545; }
-        .strength-bar.medium { background-color: #ffc107; }
-        .strength-bar.strong { background-color: #28a745; }
+        .strength-bar.weak { background-color: #dc3545; } .strength-bar.medium { background-color: #ffc107; } .strength-bar.strong { background-color: #28a745; }
         .strength-text { font-size: 0.9rem; font-weight: 600; text-align: right; height: 1.2em; }
-        .password-error { color: #dc3545; font-size: 0.9rem; font-weight: 600; text-align: center; display: none; margin-top: 1rem; }
+        .password-error { color: #dc3545; font-size: 0.9rem; text-align: center; display: none; margin-top: 1rem; }
         
-        .process-button { display: block; width: 100%; padding: 1rem; margin-top: 1.5rem; background: var(--gradient); color: white; border: none; border-radius: 8px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        
-        .status-message { margin-top: 1rem; text-align: center; font-weight: 600; display: none; }
+        .process-button { display: block; width: 100%; padding: 1rem; background: var(--gradient); color: white; border: none; border-radius: 8px; font-size: 1.2rem; font-weight: 700; cursor: pointer; }
+        .status-message, .download-section { text-align: center; margin-top: 2rem; display: none; }
         .spinner { border: 4px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: var(--primary-color); animation: spin 1s ease infinite; margin: 1rem auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .download-section { text-align: center; margin-top: 2rem; display: none; }
-        .download-btn { display: inline-block; padding: 1rem 2.5rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.2rem; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-
-        .back-to-dashboard-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .download-btn { display: inline-block; padding: 1rem 2.5rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.2rem; }
+        .back-to-dashboard-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -97,7 +98,24 @@
                 <h1>JKM Edit</h1>
             </a>
         </div>
-        <!-- (Your nav and theme selector would go here) -->
+        <nav class='main-nav'>
+            <div class='theme-selector'>
+                <label for='theme-picker'>Theme:</label>
+                <select id='theme-picker'>
+                    <option value='corporate-blue' selected>Corporate Blue</option>
+                    <option value='forest-green'>Forest Green</option>
+                    <option value='sunset-gradient'>Sunset Gradient</option>
+                    <option value='tech-noir'>Tech Noir</option>
+                    <option value='minty-fresh'>Minty Fresh</option>
+                    <option value='royal-purple'>Royal Purple</option>
+                    <option value='graphite-gray'>Graphite Gray</option>
+                    <option value='crimson-red'>Crimson Red</option>
+                </select>
+            </div>
+            <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'>
+                <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
+            </button>
+        </nav>
     </header>
 
     <main class='tool-container'>
@@ -106,17 +124,14 @@
             <p>Add a password to encrypt and secure your PDF file.</p>
         </div>
 
-        <!-- UPLOAD AREA -->
         <div id="upload-area" class="upload-area">
             <input type="file" id="pdf-upload" accept=".pdf" />
             <i class="fa-solid fa-file-arrow-up upload-icon"></i>
             <p>Drag & Drop your PDF here</p>
         </div>
 
-        <!-- FILE INFO & OPTIONS -->
         <p id="file-info" style="text-align:center; font-weight:600; display:none; margin-top:1.5rem;"></p>
         <div id="options-panel" class="options-panel">
-            <h3>Set a Password</h3>
             <div class="options-grid">
                 <div class="option-group">
                     <label for="password">Choose a password</label>
@@ -133,28 +148,57 @@
             </div>
         </div>
 
-        <!-- STATUS & DOWNLOAD -->
         <div id="status-message" class="status-message">
             <div class="spinner"></div>
             <p>Encrypting your PDF... Please wait.</p>
         </div>
         <div id="download-section" class="download-section">
             <h3>Your Protected PDF is Ready!</h3>
-            <a href="#" id="download-btn" class="download-btn" download="protected-document.pdf">
-                <i class="fa-solid fa-download"></i> Download PDF
-            </a>
+            <a href="#" id="download-btn" class="download-btn" download="protected-document.pdf"><i class="fa-solid fa-download"></i> Download PDF</a>
         </div>
 
-        <!-- NAVIGATION BUTTONS -->
-        <div style='text-align: center; margin-top: 3rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;'>
+        <div style='text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem;'>
             <a href='javascript:history.back()' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Go Back</a>
             <a href='../pdf-tools.html' class='back-to-dashboard-btn'><i class="fa-solid fa-table-cells"></i> Dashboard</a>
         </div>
     </main>
     
-    <!-- PDF PROCESSING SCRIPT -->
     <script>
-        // Immediately-invoked function to set theme from localStorage
+        // --- COMPLETE THEME SCRIPT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const themePicker = document.getElementById('theme-picker');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const htmlElement = document.documentElement;
+
+            const setTheme = (theme) => {
+                htmlElement.dataset.theme = theme;
+                localStorage.setItem('jkm-edit-theme', theme);
+            };
+            const enableDarkMode = () => {
+                htmlElement.classList.add('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'dark');
+            };
+            const disableDarkMode = () => {
+                htmlElement.classList.remove('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'light');
+            };
+
+            themePicker.addEventListener('change', () => setTheme(themePicker.value));
+            darkModeToggle.addEventListener('click', () => {
+                htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+            });
+
+            const savedTheme = localStorage.getItem('jkm-edit-theme');
+            if (savedTheme) {
+                themePicker.value = savedTheme;
+                setTheme(savedTheme);
+            }
+            if (localStorage.getItem('jkm-edit-mode') === 'dark') {
+                enableDarkMode();
+            }
+        });
+
+        // Immediately-invoked function to prevent theme flicker
         (function() {
             try {
                 const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
@@ -164,8 +208,8 @@
             } catch (e) {}
         })();
 
-        // === CORRECTED SCRIPT ===
-        const { PDFDocument, Permissions } = PDFLib; // IMPORTANT: Import Permissions
+        // --- CORRECTED PDF PROCESSING SCRIPT ---
+        const { PDFDocument } = PDFLib;
 
         const uploadArea = document.getElementById('upload-area');
         const pdfUpload = document.getElementById('pdf-upload');
@@ -183,10 +227,8 @@
 
         let uploadedFile = null;
 
-        // --- File Handling ---
         uploadArea.addEventListener('click', () => pdfUpload.click());
         pdfUpload.addEventListener('change', (e) => handleFile(e.target.files[0]));
-        // (Add drag/drop listeners here if you have them)
 
         function handleFile(file) {
             if (file && file.type === 'application/pdf') {
@@ -201,12 +243,10 @@
             }
         }
 
-        // --- Password Strength Checker ---
         passwordInput.addEventListener('input', () => {
             const password = passwordInput.value;
             const result = checkPasswordStrength(password);
-            
-            strengthBar.className = 'strength-bar'; // Reset classes
+            strengthBar.className = 'strength-bar';
             if (password.length > 0) {
                  strengthBar.classList.add(result.level.toLowerCase());
                  strengthBar.style.width = result.width;
@@ -232,24 +272,16 @@
             return { level: "Strong", width: "100%", color: "#28a745" };
         }
 
-        // --- Process the PDF ---
         processButton.addEventListener('click', async () => {
             if (!uploadedFile) return;
 
             const password = passwordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
-
-            // Validation
-            if (!password) {
-                alert("Please enter a password.");
+            if (!password || password !== confirmPasswordInput.value) {
+                passwordError.style.display = password ? 'block' : 'none';
+                if (!password) alert("Please enter a password.");
                 return;
             }
-            if (password !== confirmPassword) {
-                passwordError.style.display = 'block';
-                return;
-            } else {
-                passwordError.style.display = 'none';
-            }
+            passwordError.style.display = 'none';
 
             statusMessage.style.display = 'block';
             optionsPanel.style.display = 'none';
@@ -260,14 +292,25 @@
                 const pdfDoc = await PDFDocument.load(existingPdfBytes);
 
                 // ======================================================
-                // === THE DEFINITIVE FIX IS HERE =======================
+                // === THE DEFINITIVE FIX ===============================
                 // ======================================================
-                // Set passwords AND explicitly revoke all permissions.
-                // This forces all PDF viewers to require the password.
+                // We set passwords AND explicitly list all permissions as false.
+                // This robustly tells all viewers that the document is locked.
+                pdfDoc.setProducer('JKM Edit');
+                pdfDoc.setCreator('JKM Edit');
+
                 const pdfBytes = await pdfDoc.save({
                     userPassword: password,
-                    ownerPassword: password, // Good practice to set both
-                    permissions: Permissions.None // THIS IS THE CRITICAL FIX
+                    ownerPassword: password, // Use the same password for simplicity
+                    permissions: {
+                        printing: false,
+                        modifying: false,
+                        copying: false,
+                        annotating: false,
+                        fillingForms: false,
+                        contentAccessibility: false,
+                        documentAssembly: false,
+                    },
                 });
                 // ======================================================
 
@@ -275,13 +318,12 @@
                 const url = URL.createObjectURL(blob);
                 
                 downloadBtn.href = url;
-                downloadBtn.download = `protected_${uploadedFile.name}`;
                 statusMessage.style.display = 'none';
                 downloadSection.style.display = 'block';
                 
             } catch (error) {
-                console.error(error);
-                alert('An error occurred while protecting the PDF.');
+                console.error("PDF Protection Error:", error);
+                alert('An error occurred while protecting the PDF. The file may be corrupted or in an unsupported format.');
                 statusMessage.style.display = 'none';
                 optionsPanel.style.display = 'block';
             } finally {
