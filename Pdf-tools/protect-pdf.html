@@ -43,7 +43,7 @@
         [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
         [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
         [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-gradient(45deg, #4a00e0, #8e2de2); }
-        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1efb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
+        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
         [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
         [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
         [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
@@ -91,7 +91,7 @@
         .option-group input[type="password"] { padding: 0.75rem; border-radius: 5px; border: 1px solid #ccc; background: var(--bg-color); color: var(--text-color); width: 100%; }
         html.dark-mode .option-group input[type="password"] { border-color: #444; }
 
-        /* --- NEW --- PASSWORD STRENGTH INDICATOR */
+        /* PASSWORD STRENGTH INDICATOR */
         .strength-bar-container { width: 100%; height: 8px; background-color: #e0e0e0; border-radius: 4px; overflow: hidden; margin-top: 0.5rem; }
         .strength-bar { height: 100%; width: 0; border-radius: 4px; transition: width 0.3s, background-color 0.3s; }
         .strength-bar.weak { background-color: #dc3545; }
@@ -241,7 +241,7 @@
     <!-- PAGE INITIALIZATION & THEME SCRIPT -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // ... [SAME THEME & MODAL LOGIC AS PREVIOUS SNIPPETS] ...
+            // ... (All theme and modal logic is identical to the previous version) ...
             const aboutModal = document.getElementById('about-modal');
             const contactModal = document.getElementById('contact-modal');
             const aboutBtn = document.getElementById('about-btn');
@@ -427,10 +427,15 @@
                 const existingPdfBytes = await uploadedFile.arrayBuffer();
                 const pdfDoc = await PDFDocument.load(existingPdfBytes);
 
-                // pdf-lib handles encryption when the userPassword option is provided
+                // ======================================================
+                // === THE FIX IS HERE ==================================
+                // ======================================================
+                // Set BOTH userPassword and ownerPassword to ensure encryption.
                 const pdfBytes = await pdfDoc.save({
                     userPassword: password,
+                    ownerPassword: password
                 });
+                // ======================================================
 
                 const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                 const url = URL.createObjectURL(blob);
