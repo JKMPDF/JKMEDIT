@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    
+    <!-- =================================================================== -->
+    <!-- SEO & META TAGS - FOR ROTATE PDF PAGE -->
+    <!-- =================================================================== -->
+    <title>Rotate PDF - Free Online Tool | JKM Edit</title>
+    <meta name="description" content="Rotate PDF pages online for free. Rotate all pages, specific pages, odd or even pages. Permanent rotation with JKM Edit's secure and easy tool."/>
+    <meta name="keywords" content="rotate pdf, pdf rotator, rotate pdf pages, online pdf tool, jkm edit"/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="robots" content="index, follow"/>
+    <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/Pdf-tools/rotate-pdf.html"/>
+    <meta property="og:title" content="Rotate PDF - Free Online Tool | JKM Edit"/>
+    <meta property="og:description" content="A free and easy way to rotate pages in your PDF files permanently."/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/Pdf-tools/rotate-pdf.html"/>
+    <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="Rotate PDF - Free Online Tool | JKM Edit"/>
+    <meta name="twitter:description" content="A free and easy way to rotate pages in your PDF files permanently."/>
+    <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <!-- =================================================================== -->
+
+    <!-- PDF-LIB SCRIPT (REQUIRED FOR PDF MANIPULATION) -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+    <!-- FONT-AWESOME & GOOGLE FONTS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+    <!-- STYLES -->
+    <style>
+        :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
+        html { background-color: var(--bg-color); transition: background-color var(--transition-speed); }
+        body { margin: 0; color: var(--text-color); transition: color var(--transition-speed); animation: fadeInPage 0.5s ease-in-out; }
+        *, *::before, *::after { box-sizing: border-box; }
+        
+        /* THEME COLORS */
+        [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
+        [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
+        [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
+        [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-gradient(45deg, #4a00e0, #8e2de2); }
+        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
+        [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
+        [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
+        [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
+        html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
+        html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
+        html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
+
+        /* HEADER & NAVIGATION */
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 100; position: relative; }
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); transition: color var(--transition-speed), text-shadow var(--transition-speed); }
+        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+        .main-nav { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; transition: color var(--transition-speed); }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width var(--transition-speed); }
+        .nav-link:hover { color: var(--primary-color); }
+        .nav-link:hover::after { width: 100%; }
+        .theme-selector { display: flex; align-items: center; gap: 0.5rem; }
+        #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
+        #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
+        #dark-mode-toggle .fa-sun { display: none; }
+        html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
+        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+        /* TOOL-SPECIFIC CONTAINER & STYLES */
+        .tool-container { padding: 2rem 4rem; max-width: 900px; margin: auto; }
+        .tool-header { text-align: center; margin-bottom: 3rem; }
+        .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        html.dark-mode .tool-header p { color: #a0a0a0; }
+
+        .ad-slot-horizontal { width: 728px; height: 90px; margin: 0 auto 2rem auto; background-color: color-mix(in srgb, var(--surface-color) 95%, var(--accent-color) 5%); border: 2px dashed var(--accent-color); display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-weight: 600; }
+        .ad-slot-horizontal::before { content: "Advertisement (728x90)"; opacity: 0.7; }
+        
+        .upload-area { border: 3px dashed var(--primary-color); border-radius: 10px; padding: 3rem; text-align: center; background: color-mix(in srgb, var(--surface-color) 95%, var(--primary-color) 5%); cursor: pointer; transition: background-color var(--transition-speed); }
+        .upload-area.drag-over { background: color-mix(in srgb, var(--surface-color) 90%, var(--primary-color) 10%); }
+        .upload-icon { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .upload-area p { margin: 0; font-size: 1.1rem; font-weight: 600; }
+        #pdf-upload { display: none; }
+
+        .options-panel { background: var(--surface-color); padding: 2rem; border-radius: 8px; margin-top: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
+        .options-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start; }
+        .option-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .option-group label { font-weight: 600; }
+        .option-group select, .option-group input { padding: 0.75rem; border-radius: 5px; border: 1px solid #ccc; background: var(--bg-color); color: var(--text-color); width: 100%; }
+        html.dark-mode .option-group select, html.dark-mode .option-group input { border-color: #444; }
+        .radio-group label { display: block; margin-bottom: 0.75rem; }
+        #page-range-input { display: none; margin-top: 0.5rem; }
+        
+        .process-button { display: block; width: 100%; padding: 1rem; margin-top: 2rem; background: var(--gradient); color: white; border: none; border-radius: 8px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .process-button:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        .process-button:disabled { background: #ccc; cursor: not-allowed; }
+
+        .file-info { margin-top: 1.5rem; text-align: center; font-weight: 600; display: none; }
+        .status-message { margin-top: 1rem; text-align: center; font-weight: 600; display: none; }
+        .spinner { border: 4px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: var(--primary-color); animation: spin 1s ease infinite; margin: 1rem auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .download-section { text-align: center; margin-top: 2rem; display: none; }
+        .download-btn { display: inline-block; padding: 1rem 2.5rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.2rem; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+
+        .back-to-dashboard-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        
+        /* MODAL STYLES */
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeInModal 0.3s; }
+        .modal.show-modal { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
+        .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover,.close-btn:focus { color: var(--text-color); }
+        .modal-content h2 { color: var(--primary-color); margin-top: 0; }
+        .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
+        .contact-email:hover { transform: scale(1.05); }
+
+        /* PAGE TRANSITION ANIMATIONS */
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .main-header { flex-direction: column; gap: 1rem; }
+            .tool-container { padding: 2rem 1.5rem; }
+            .ad-slot-horizontal { width: 100%; max-width: 320px; height: 50px; }
+            .ad-slot-horizontal::before { content: "Advertisement"; }
+            .options-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class='main-header'>
+        <div class='logo-container'>
+            <a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
+                <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
+                <h1>JKM Edit</h1>
+            </a>
+        </div>
+        <nav class='main-nav'>
+            <div class='theme-selector'>
+                <label for='theme-picker'>Theme:</label>
+                <select id='theme-picker'>
+                    <option value='corporate-blue' selected='selected'>Corporate Blue</option>
+                    <option value='forest-green'>Forest Green</option>
+                    <option value='sunset-gradient'>Sunset Gradient</option>
+                    <option value='tech-noir'>Tech Noir</option>
+                    <option value='minty-fresh'>Minty Fresh</option>
+                    <option value='royal-purple'>Royal Purple</option>
+                    <option value='graphite-gray'>Graphite Gray</option>
+                    <option value='crimson-red'>Crimson Red</option>
+                </select>
+            </div>
+            <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'>
+                <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
+            </button>
+            <a href='#' id='about-btn' class='nav-link'>About</a>
+            <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
+        </nav>
+    </header>
+
+    <main class='tool-container'>
+
+        <!-- ADVERTISEMENT SLOT -->
+        <div class="ad-slot-horizontal">
+             <!-- Paste your 728x90 Ad Code inside this div -->
+        </div>
+
+        <div class='tool-header'>
+            <h2>Rotate PDF</h2>
+            <p>Select a PDF file to rotate its pages permanently.</p>
+        </div>
+
+        <!-- UPLOAD AREA -->
+        <div id="upload-area" class="upload-area">
+            <input type="file" id="pdf-upload" accept=".pdf" />
+            <i class="fa-solid fa-file-arrow-up upload-icon"></i>
+            <p>Drag & Drop your PDF here</p>
+            <p style="font-size: 0.9rem; font-weight: 400; margin-top: 0.5rem;">or click to select a file</p>
+        </div>
+
+        <!-- FILE INFO & OPTIONS -->
+        <p id="file-info" class="file-info"></p>
+        <div id="options-panel" class="options-panel">
+            <h3>Rotation Options</h3>
+            <div class="options-grid">
+                <div class="option-group">
+                    <label for="rotation-angle">Angle</label>
+                    <select id="rotation-angle">
+                        <option value="90">90° Clockwise</option>
+                        <option value="180">180°</option>
+                        <option value="270">90° Counter-clockwise</option>
+                    </select>
+                </div>
+                <div class="option-group">
+                    <label>Apply to Pages</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="rotation-mode" value="all" checked> All pages</label>
+                        <label><input type="radio" name="rotation-mode" value="odd"> Odd pages only</label>
+                        <label><input type="radio" name="rotation-mode" value="even"> Even pages only</label>
+                        <label><input type="radio" name="rotation-mode" value="range"> Specific page range</label>
+                        <div id="page-range-input">
+                             <input type="text" id="page-range" placeholder="e.g., 2-5, 8, 10-12">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="process-button" class="process-button">Rotate PDF</button>
+        </div>
+
+        <!-- STATUS & DOWNLOAD -->
+        <div id="status-message" class="status-message">
+            <div class="spinner"></div>
+            <p>Rotating your PDF... Please wait.</p>
+        </div>
+        <div id="download-section" class="download-section">
+            <h3>Your PDF is Ready!</h3>
+            <a href="#" id="download-btn" class="download-btn" download="rotated-document.pdf">
+                <i class="fa-solid fa-download"></i> Download PDF
+            </a>
+        </div>
+
+        <!-- NAVIGATION BUTTONS -->
+        <div style='text-align: center; margin-top: 3rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;'>
+            <a href='javascript:history.back()' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href='../pdf-tools.html' class='back-to-dashboard-btn'><i class="fa-solid fa-table-cells"></i> Dashboard</a>
+        </div>
+    </main>
+
+    <!-- MODALS -->
+    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
+    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
+
+    <!-- PAGE INITIALIZATION & THEME SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... [SAME THEME & MODAL LOGIC AS PREVIOUS SNIPPETS] ...
+            const aboutModal = document.getElementById('about-modal');
+            const contactModal = document.getElementById('contact-modal');
+            const aboutBtn = document.getElementById('about-btn');
+            const contactBtn = document.getElementById('contact-btn');
+            const closeBtns = document.querySelectorAll('.close-btn');
+
+            const openModal = (modal) => { modal.classList.add('show-modal'); };
+            const closeModal = (modal) => { modal.classList.remove('show-modal'); };
+
+            if(aboutBtn) aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+            if(contactBtn) contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+            
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    closeModal(aboutModal);
+                    closeModal(contactModal);
+                });
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === aboutModal) closeModal(aboutModal);
+                if (e.target === contactModal) closeModal(contactModal);
+            });
+
+            const themePicker = document.getElementById('theme-picker');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const htmlElement = document.documentElement;
+
+            const setTheme = (theme) => {
+                htmlElement.dataset.theme = theme;
+                localStorage.setItem('jkm-edit-theme', theme);
+            };
+
+            const enableDarkMode = () => {
+                htmlElement.classList.add('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'dark');
+            };
+
+            const disableDarkMode = () => {
+                htmlElement.classList.remove('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'light');
+            };
+
+            themePicker.addEventListener('change', () => setTheme(themePicker.value));
+            
+            darkModeToggle.addEventListener('click', () => {
+                htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+            });
+
+            const savedTheme = localStorage.getItem('jkm-edit-theme');
+            if (savedTheme) {
+                themePicker.value = savedTheme;
+                setTheme(savedTheme); 
+            }
+            if(localStorage.getItem('jkm-edit-mode') === 'dark') {
+                enableDarkMode();
+            }
+
+            // PAGE TRANSITION LOGIC
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && linkUrl !== 'javascript:history.back()') {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault(); 
+                        document.body.classList.add('fade-out');
+                        setTimeout(() => {
+                            window.location.href = this.href;
+                        }, 400); 
+                    });
+                }
+            });
+        });
+        
+        (function() {
+            try {
+                const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
+                const mode = localStorage.getItem('jkm-edit-mode') || 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                if (mode === 'dark') { document.documentElement.classList.add('dark-mode'); }
+            } catch (e) {}
+        })();
+    </script>
+    
+    <!-- PDF PROCESSING SCRIPT -->
+    <script>
+        const { PDFDocument, rgb, degrees } = PDFLib;
+
+        const uploadArea = document.getElementById('upload-area');
+        const pdfUpload = document.getElementById('pdf-upload');
+        const fileInfo = document.getElementById('file-info');
+        const optionsPanel = document.getElementById('options-panel');
+        const processButton = document.getElementById('process-button');
+        const statusMessage = document.getElementById('status-message');
+        const downloadSection = document.getElementById('download-section');
+        const downloadBtn = document.getElementById('download-btn');
+        const pageRangeInput = document.getElementById('page-range-input');
+
+        let uploadedFile = null;
+
+        // Handle file selection
+        uploadArea.addEventListener('click', () => pdfUpload.click());
+        pdfUpload.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+        // Handle drag and drop
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFile(file) {
+            if (file && file.type === 'application/pdf') {
+                uploadedFile = file;
+                fileInfo.textContent = `File selected: ${file.name}`;
+                fileInfo.style.display = 'block';
+                optionsPanel.style.display = 'block';
+                uploadArea.style.display = 'none';
+                downloadSection.style.display = 'none';
+            } else {
+                alert('Please select a valid PDF file.');
+            }
+        }
+        
+        // Show/hide page range input based on radio selection
+        document.querySelectorAll('input[name="rotation-mode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                pageRangeInput.style.display = e.target.value === 'range' ? 'block' : 'none';
+            });
+        });
+
+        // Parse page range string (e.g., "1-3, 5, 7-9") into a set of numbers
+        function parsePageRange(rangeStr) {
+            const pages = new Set();
+            if (!rangeStr) return pages;
+            
+            const parts = rangeStr.split(',');
+            for (const part of parts) {
+                if (part.includes('-')) {
+                    const [start, end] = part.split('-').map(num => parseInt(num.trim()));
+                    if (!isNaN(start) && !isNaN(end)) {
+                        for (let i = start; i <= end; i++) {
+                            pages.add(i);
+                        }
+                    }
+                } else {
+                    const page = parseInt(part.trim());
+                    if (!isNaN(page)) {
+                        pages.add(page);
+                    }
+                }
+            }
+            return pages;
+        }
+
+        // Process the PDF
+        processButton.addEventListener('click', async () => {
+            if (!uploadedFile) return;
+
+            statusMessage.style.display = 'block';
+            optionsPanel.style.display = 'none';
+            processButton.disabled = true;
+
+            try {
+                const existingPdfBytes = await uploadedFile.arrayBuffer();
+                const pdfDoc = await PDFDocument.load(existingPdfBytes);
+                const pages = pdfDoc.getPages();
+                
+                const angle = parseInt(document.getElementById('rotation-angle').value, 10);
+                const mode = document.querySelector('input[name="rotation-mode"]:checked').value;
+
+                let pagesToRotate = new Set();
+
+                switch (mode) {
+                    case 'all':
+                        pages.forEach((_, i) => pagesToRotate.add(i + 1));
+                        break;
+                    case 'odd':
+                        pages.forEach((_, i) => { if ((i + 1) % 2 !== 0) pagesToRotate.add(i + 1); });
+                        break;
+                    case 'even':
+                        pages.forEach((_, i) => { if ((i + 1) % 2 === 0) pagesToRotate.add(i + 1); });
+                        break;
+                    case 'range':
+                        const rangeStr = document.getElementById('page-range').value;
+                        pagesToRotate = parsePageRange(rangeStr);
+                        break;
+                }
+                
+                pagesToRotate.forEach(pageNum => {
+                    if (pageNum > 0 && pageNum <= pages.length) {
+                        const pageIndex = pageNum - 1; // Convert to 0-based index
+                        const page = pages[pageIndex];
+                        const currentRotation = page.getRotation().angle;
+                        page.setRotation(degrees(currentRotation + angle));
+                    }
+                });
+
+                const pdfBytes = await pdfDoc.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                
+                downloadBtn.href = url;
+                downloadBtn.download = `rotated_${uploadedFile.name}`;
+                statusMessage.style.display = 'none';
+                downloadSection.style.display = 'block';
+                
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while processing the PDF. Please check your page range input.');
+                statusMessage.style.display = 'none';
+                optionsPanel.style.display = 'block';
+            } finally {
+                processButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
