@@ -93,15 +93,15 @@ def convert():
         os.remove(output_path)
 
     try:
-        command = [
-            LIBREOFFICE_PATH, 
-            "--headless", 
-            '--infilter=writer_pdf_import',
-            "--convert-to", "docx",
-            "--outdir", output_dir, 
-            input_pdf
-        ]
-        
+     # The original command
+command = [
+    LIBREOFFICE_PATH, 
+    "--headless", 
+    '--infilter=writer_pdf_import', # This is the standard filter
+    "--convert-to", "docx",
+    "--outdir", output_dir, 
+    input_pdf
+]
         result = subprocess.run(command, capture_output=True, text=True, timeout=30)
 
         print("STDOUT:", result.stdout)
