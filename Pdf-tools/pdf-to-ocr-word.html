@@ -163,7 +163,7 @@
 		'params' : {}
 	};
 </script>
-<script type="text/javascript" src="//www.highperformanceformat.com/ee4e31cf24b130732767b94f62d603a1/invoke.js"></script></span></span>
+<script type="text/javascript" src="//www.highperformanceformat.com/ee4e31cf24b130732767b94f62d603a1/invoke.js"></script></span>
         </div>
         <!-- ===== END: AD BOX PLACEHOLDER ===== -->
 
@@ -284,18 +284,21 @@
     <!-- [END] --- UNIVERSAL PAGE SCRIPT --- -->
 
 
-    <!-- [START] --- PDF TO WORD LOGIC (ASYNC VERSION) --- -->
+    <!-- [START] --- PDF TO WORD LOGIC (DIRECT CONVERSION VERSION) --- -->
     <script>
-        // ALL JAVASCRIPT LOGIC REMAINS UNCHANGED.
+        // --- ELEMENT SELECTORS ---
         const fileInput = document.getElementById('file-input');
         const dropzone = document.getElementById('dropzone');
         const uploadStage = document.getElementById('upload-stage');
         const processingPanel = document.getElementById('processing-panel');
-        const MAX_PAGES = 5;
-      const API_BASE_URL = 'https://jkm-edit-backend.onrender.com'; // YOUR NEW URL
+        const MAX_PAGES = 5; // Page limit for PDFs
+
+        // THIS IS THE URL OF YOUR RENDER SERVICE.
+        const RENDER_API_URL = 'https://jkmedit.onrender.com/convert'; 
+
         let uploadedFile = null;
-        let pollingInterval = null; 
-        let quoteInterval = null;
+
+        // --- EVENT LISTENERS ---
         dropzone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
         dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.borderColor = 'var(--primary-color)'; });
@@ -305,23 +308,29 @@
             dropzone.style.borderColor = '#ccc';
             handleFile(e.dataTransfer.files[0]);
         });
+
+        /**
+         * Validates the selected file (type and page count for PDFs).
+         */
         async function handleFile(file) {
-            const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/tiff'];
-            if (!file || !allowedTypes.includes(file.type)) {
-                alert("Please select a PDF or Image file (PNG, JPG, TIFF).");
+            // We only need to check PDFs since LibreOffice handles images directly.
+            if (file && file.type === 'application/pdf') {
+                try {
+                    const pageCount = await getPdfPageCount(file);
+                    if (pageCount > MAX_PAGES) {
+                        alert(`PDFs are limited to ${MAX_PAGES} pages. Your file has ${pageCount} pages.`);
+                        return; // Stop processing
+                    }
+                } catch (error) {
+                    alert("Could not read this PDF. It may be protected or corrupt.");
+                    return; // Stop processing
+                }
+            } else if (!file) {
+                alert("Please select a file.");
                 return;
             }
-            if (file.type === 'application/pdf') {
-                const pageCount = await getPdfPageCount(file).catch(() => -1);
-                if (pageCount === -1) {
-                    alert("Could not read this PDF. It may be protected or corrupt.");
-                    return;
-                }
-                if (pageCount > MAX_PAGES) {
-                    alert(`PDFs are limited to ${MAX_PAGES} pages. Your file has ${pageCount} pages.`);
-                    return;
-                }
-            }
+
+            // If the file is valid, show the processing panel
             uploadedFile = file;
             uploadStage.classList.add('hidden');
             processingPanel.classList.remove('hidden');
@@ -335,133 +344,119 @@
             `;
             document.getElementById('convert-btn').addEventListener('click', startConversionProcess);
         }
+
+        /**
+         * Uses pdf.js to count the number of pages in a PDF file.
+         */
         async function getPdfPageCount(file) {
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
             return pdf.numPages;
         }
-        function startConversionProcess() {
+
+        /**
+         * Handles the file upload and conversion process.
+         */
+        async function startConversionProcess() {
             if (!uploadedFile) return;
+
+            // Update the UI to show progress
             processingPanel.innerHTML = `
                 <div class="progress-container">
-                    <p id="progress-text">Uploading file...</p>
-                    <div class="progress-bar"><div id="progress-bar-fill" class="progress-bar-fill" style="width: 50%;"></div></div>
-                </div>
-                <div id="quote-container" class="quote-container hidden">
-                    <p style="font-size:0.9rem; font-weight:bold; margin-bottom: 0.5rem;">Waiting can be boring... here's a thought:</p>
-                    <p id="quote-text"></p>
+                    <p id="progress-text">Uploading and converting, please wait...</p>
+                    <div class="progress-bar">
+                        <div id="progress-bar-fill" class="progress-bar-fill" style="width: 50%;"></div>
+                    </div>
                 </div>
             `;
+            
+            const progressBarFill = document.getElementById('progress-bar-fill');
+            const progressText = document.getElementById('progress-text');
+
             const formData = new FormData();
             formData.append('file', uploadedFile);
-            fetch(`${API_BASE_URL}/api/ocr/upload`, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => { throw new Error(err.error || 'Upload failed.') });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.jobId) {
-                    document.getElementById('progress-text').textContent = 'File received! Starting conversion...';
-                    document.getElementById('progress-bar-fill').style.width = '100%';
-                    document.getElementById('quote-container').classList.remove('hidden');
-                    startQuoteCarousel(document.getElementById('quote-text'));
-                    pollForStatus(data.jobId);
+
+            try {
+                // Send the file directly to your Render service's /convert endpoint
+                const response = await fetch(RENDER_API_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Animate the progress bar
+                progressBarFill.style.width = '100%';
+
+                if (response.ok) {
+                    progressText.textContent = 'Conversion Complete! Preparing download...';
+                    
+                    // Get the converted DOCX file as a binary blob
+                    const blob = await response.blob();
+                    
+                    // Create a temporary link element to trigger the download
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    
+                    // Set the correct filename for the download
+                    const originalFilename = uploadedFile.name;
+                    const newFilename = originalFilename.split('.').slice(0, -1).join('.') + '.docx';
+                    link.download = newFilename;
+                    
+                    // Click the link to start the download, then remove it
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(link.href);
+
+                    // Show the final "success" UI
+                    displaySuccessUI();
+
                 } else {
-                    throw new Error(data.error || 'Server did not provide a job ID.');
+                    // If the server responded with an error (e.g., 500)
+                    const errorData = await response.json();
+                    displayError(errorData.details || errorData.error || 'The conversion failed on the server.');
                 }
-            })
-            .catch(error => {
-                console.error('Upload failed:', error);
-                displayError(error.message);
-            });
+            } catch (error) {
+                // If there was a network error (e.g., server is down)
+                console.error('Network or conversion error:', error);
+                displayError('Could not connect to the conversion server. Please try again later.');
+            }
         }
-        function pollForStatus(jobId) {
-            pollingInterval = setInterval(async () => {
-                try {
-                    const response = await fetch(`${API_BASE_URL}/api/ocr/status/${jobId}`);
-                    if (!response.ok) throw new Error('Status check failed');
-                    const result = await response.json();
-                    if (result.status === 'COMPLETED') {
-                        clearInterval(pollingInterval);
-                        stopQuoteCarousel();
-                        document.getElementById('progress-text').textContent = 'Conversion Complete!';
-                        displayDownloadButton(jobId);
-                    } else if (result.status === 'FAILED') {
-                        clearInterval(pollingInterval);
-                        stopQuoteCarousel();
-                        displayError(result.error || 'The conversion failed on the server.');
-                    } else {
-                        console.log(`Job status: ${result.status}`);
-                        document.getElementById('progress-text').textContent = `Server is working... (Status: ${result.status})`;
-                    }
-                } catch (error) {
-                    clearInterval(pollingInterval);
-                    stopQuoteCarousel();
-                    displayError('Lost connection to the server.');
-                }
-            }, 5000);
-        }
-        function displayDownloadButton(jobId) {
-            const downloadUrl = `${API_BASE_URL}/api/ocr/download/${jobId}`;
+        
+        /**
+         * Displays the success message and download/restart buttons.
+         */
+        function displaySuccessUI() {
             processingPanel.innerHTML = `
                 <div class="file-info-card" style="border-left: 5px solid var(--primary-color);">
-                    <i class="fa-solid fa-check-circle" style="color: #28a745;"></i> Conversion Complete!
+                    <i class="fa-solid fa-check-circle" style="color: #28a745;"></i> Download Started!
                 </div>
-                <a class="action-button" href="${downloadUrl}">
-                    <i class="fa-solid fa-download"></i> Download Word File
-                </a>
+                <p>Your DOCX file has been downloaded.</p>
                 <button id="restart-btn" class="action-button" style="background: var(--secondary-color); margin-top: 1rem;">Convert Another File</button>
             `;
             document.getElementById('restart-btn').addEventListener('click', resetTool);
         }
+        
+        /**
+         * Displays a user-friendly error message.
+         */
         function displayError(errorMessage) {
-            if (pollingInterval) clearInterval(pollingInterval);
-            stopQuoteCarousel();
             processingPanel.innerHTML = `
                 <p style="color:red; text-align:center; font-weight:bold;">Conversion Failed</p>
-                <p style="text-align:center;">${errorMessage}</p>
-                <button id="retry-btn" class="action-button">Try Again with a Different File</button>
+                <p style="text-align:center; max-width: 400px;">${errorMessage}</p>
+                <button id="retry-btn" class="action-button">Try Another File</button>
             `;
             document.getElementById('retry-btn').addEventListener('click', resetTool);
         }
+
+        /**
+         * Resets the UI back to the initial upload state.
+         */
         function resetTool() {
-            if (pollingInterval) clearInterval(pollingInterval);
-            stopQuoteCarousel();
             uploadStage.classList.remove('hidden');
             processingPanel.classList.add('hidden');
             processingPanel.innerHTML = '';
             uploadedFile = null;
-            fileInput.value = '';
-        }
-        const QUOTES = [
-            "The secret of getting ahead is getting started.", "The best time to plant a tree was 20 years ago. The second best time is now.", "It’s not whether you get knocked down, it’s whether you get up.", "The only way to do great work is to love what you do.", "Believe you can and you’re halfway there.", "Act as if what you do makes a difference. It does.", "Success is not final, failure is not fatal: it is the courage to continue that counts.", "Never bend your head. Always hold it high. Look the world straight in the eye.", "What you get by achieving your goals is not as important as what you become by achieving your goals.", "The journey of a thousand miles begins with a single step."
-        ];
-        let shuffledQuotes = [];
-        let quoteIndex = 0;
-        function startQuoteCarousel(element) {
-            shuffledQuotes = [...QUOTES].sort(() => 0.5 - Math.random());
-            quoteIndex = 0;
-            const displayNextQuote = () => {
-                element.classList.add('quote-fade');
-                setTimeout(() => {
-                    element.textContent = `“${shuffledQuotes[quoteIndex]}”`;
-                    element.classList.remove('quote-fade');
-                    quoteIndex = (quoteIndex + 1) % shuffledQuotes.length;
-                }, 500);
-            };
-            displayNextQuote();
-            quoteInterval = setInterval(displayNextQuote, 10000);
-        }
-        function stopQuoteCarousel() {
-            if (quoteInterval) {
-                clearInterval(quoteInterval);
-                quoteInterval = null;
-            }
+            fileInput.value = ''; // Clear the file input
         }
     </script>
     <!-- [END] --- PDF TO WORD LOGIC --- -->
