@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+
+    <!-- =================================================================== -->
+    <!-- SEO & META TAGS - FOR IMAGE TO PDF PAGE -->
+    <!-- =================================================================== -->
+    <title>Free JPG/PNG to PDF Converter | JKM Edit</title>
+    <meta name="description" content="Combine multiple JPG and PNG images into a single PDF file for free. Easy-to-use online tool to convert your images to PDF documents by JKM Edit."/>
+    <meta name="keywords" content="jpg to pdf, png to pdf, image to pdf, convert image to pdf, free pdf converter, online pdf tools, jkm edit pdf"/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="robots" content="index, follow"/>
+    <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/pdf-tools/image-to-pdf.html"/>
+    <meta property="og:title" content="Free JPG/PNG to PDF Converter | JKM Edit"/>
+    <meta property="og:description" content="Easily combine multiple JPG and PNG images into a single, high-quality PDF file. Free and easy to use."/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/pdf-tools/image-to-pdf.html"/>
+    <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="Free JPG/PNG to PDF Converter | JKM Edit"/>
+    <meta name="twitter:description" content="Easily combine multiple JPG and PNG images into a single, high-quality PDF file. Free and easy to use."/>
+    <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <!-- =================================================================== -->
+
+    <!-- SCRIPT TO PREVENT THEME AND BACKGROUND FLICKERING (KEEP THIS) -->
+    <script>
+        (function() {
+            try {
+                const themeBgColors = {
+                    'corporate-blue': { light: '#f4f5f7', dark: '#121212' },'forest-green':   { light: '#f0f3f2', dark: '#121212' },'sunset-gradient':{ light: '#fff8f2', dark: '#121212' },'tech-noir':      { light: '#1a1a2e', dark: '#0f0f1e' },'minty-fresh':    { light: '#f1fefb', dark: '#121212' },'royal-purple':   { light: '#f8f7fa', dark: '#121212' },'graphite-gray':  { light: '#e9ecef', dark: '#121212' },'crimson-red':    { light: '#fdf5f6', dark: '#121212' }
+                };
+                const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
+                const mode = localStorage.getItem('jkm-edit-mode') || 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                if (mode === 'dark') { document.documentElement.classList.add('dark-mode'); }
+                const bgColor = (themeBgColors[theme] && themeBgColors[theme][mode]) || '#f4f5f7';
+                const style = document.createElement('style');
+                style.innerHTML = `html { background-color: ${bgColor} !important; }`;
+                document.head.appendChild(style);
+            } catch (e) { console.error("Error applying initial theme:", e); }
+        })();
+    </script>
+    
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <!-- JS Library for PDF Creation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
+        html { background-color: var(--bg-color); transition: background-color var(--transition-speed); }
+        body { margin: 0; color: var(--text-color); transition: color var(--transition-speed); }
+        *, *::before, *::after { box-sizing: border-box; }
+        [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
+        [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
+        [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
+        [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-gradient(45deg, #4a00e0, #8e2de2); }
+        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
+        [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
+        [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
+        [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
+        html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
+        html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
+        html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 100; position: relative; }
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); transition: color var(--transition-speed), text-shadow var(--transition-speed); }
+        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+        .main-nav { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; transition: color var(--transition-speed); }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width var(--transition-speed); }
+        .nav-link:hover { color: var(--primary-color); }
+        .nav-link:hover::after { width: 100%; }
+        .theme-selector { display: flex; align-items: center; gap: 0.5rem; }
+        #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
+        #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
+        #dark-mode-toggle .fa-sun { display: none; }
+        html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
+        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+        .dashboard-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
+        .dashboard-header { text-align: center; margin-bottom: 3rem; }
+        .dashboard-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .dashboard-header p { font-size: 1.1rem; color: #6c757d; }
+        html.dark-mode .dashboard-header p { color: #a0a0a0; }
+        
+        /* Styles for Image to PDF Tool */
+        .tool-container { background: var(--surface-color); padding: 2.5rem; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
+        .upload-area { border: 3px dashed var(--primary-color); border-radius: 10px; padding: 3rem 1.5rem; margin-bottom: 2rem; cursor: pointer; transition: background-color var(--transition-speed); }
+        .upload-area.drag-over { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--primary-color) 10%); }
+        .upload-icon { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .upload-text { font-size: 1.1rem; font-weight: 600; }
+        .upload-text p { margin: 0.5rem 0; }
+        #image-upload { display: none; }
+        .convert-btn { display: inline-block; padding: 0.85rem 3rem; background: var(--gradient); color: white !important; text-decoration: none; border: none; border-radius: 8px; font-weight: 700; font-size: 1.2rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer; }
+        .convert-btn:disabled { background: #aaa; cursor: not-allowed; }
+        .convert-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        #status-message { margin-top: 1.5rem; font-weight: 600; color: var(--secondary-color); }
+        .download-section { margin-top: 2rem; }
+        .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-top: 2rem; text-align: left; }
+        .preview-card { position: relative; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: var(--bg-color); }
+        html.dark-mode .preview-card { border-color: #444; }
+        .preview-img { width: 100%; height: 120px; object-fit: cover; display: block; }
+        .preview-name { font-size: 0.8rem; padding: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .remove-btn { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 1rem; line-height: 24px; text-align: center; }
+        
+        .back-to-dashboard-btn { display: inline-block; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeInModal 0.3s; }
+        .modal.show-modal { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
+        .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover,.close-btn:focus { color: var(--text-color); }
+        .modal-content h2 { color: var(--primary-color); margin-top: 0; }
+        .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
+        .contact-email:hover { transform: scale(1.05); }
+        body { animation: fadeInPage 0.5s ease-in-out; }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @media (max-width: 768px) { .main-header { flex-direction: column; gap: 1rem; } .dashboard-container { padding: 2rem 1.5rem; } }
+    </style>
+</head>
+<body>
+    <header class='main-header'>
+        <div class='logo-container'>
+            <a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
+                <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
+                <h1>JKM Edit</h1>
+            </a>
+        </div>
+        <nav class='main-nav'>
+            <div class='theme-selector'>
+                <label for='theme-picker'>Theme:</label>
+                <select id='theme-picker'>
+                    <option value='corporate-blue' selected='selected'>Corporate Blue</option>
+                    <option value='forest-green'>Forest Green</option>
+                    <option value='sunset-gradient'>Sunset Gradient</option>
+                    <option value='tech-noir'>Tech Noir</option>
+                    <option value='minty-fresh'>Minty Fresh</option>
+                    <option value='royal-purple'>Royal Purple</option>
+                    <option value='graphite-gray'>Graphite Gray</option>
+                    <option value='crimson-red'>Crimson Red</option>
+                </select>
+            </div>
+            <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'>
+                <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
+            </button>
+            <a href='#' id='about-btn' class='nav-link'>About</a>
+            <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
+        </nav>
+    </header>
+
+    <main class='dashboard-container'>
+        <div class='dashboard-header'>
+            <h2>JPG/PNG to PDF</h2>
+            <p>Combine multiple JPG and PNG images into a single PDF file.</p>
+        </div>
+
+        <div class="tool-container">
+            <div class="upload-area" id="upload-area">
+                <input type="file" id="image-upload" accept="image/jpeg, image/png" multiple>
+                <div class="upload-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
+                <div class="upload-text">
+                    <p><strong>Drag & Drop your Images here</strong></p>
+                    <p>or click to select files</p>
+                </div>
+            </div>
+            
+            <div class="preview-grid" id="preview-grid"></div>
+
+            <button class="convert-btn" id="convert-btn" disabled>Convert to PDF</button>
+            
+            <p id="status-message"></p>
+            
+            <div class="download-section" id="download-section"></div>
+        </div>
+
+        <div style='display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 3rem;'>
+            <a href='#' id='go-back-btn' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href='../pdf-tools.html' class='back-to-dashboard-btn'><i class="fa-solid fa-house"></i> Dashboard</a>
+        </div>
+    </main>
+    
+    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
+    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- THEME & MODAL SCRIPT ---
+            const aboutModal = document.getElementById('about-modal');
+            const contactModal = document.getElementById('contact-modal');
+            const aboutBtn = document.getElementById('about-btn');
+            const contactBtn = document.getElementById('contact-btn');
+            const closeBtns = document.querySelectorAll('.close-btn');
+
+            const openModal = (modal) => { modal.classList.add('show-modal'); };
+            const closeModal = (modal) => { modal.classList.remove('show-modal'); };
+
+            if(aboutBtn) aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+            if(contactBtn) contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+            
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    closeModal(aboutModal);
+                    closeModal(contactModal);
+                });
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === aboutModal) closeModal(aboutModal);
+                if (e.target === contactModal) closeModal(contactModal);
+            });
+
+            const themePicker = document.getElementById('theme-picker');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const htmlElement = document.documentElement;
+
+            const setTheme = (theme) => {
+                htmlElement.dataset.theme = theme;
+                localStorage.setItem('jkm-edit-theme', theme);
+            };
+
+            const enableDarkMode = () => {
+                htmlElement.classList.add('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'dark');
+            };
+
+            const disableDarkMode = () => {
+                htmlElement.classList.remove('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'light');
+            };
+
+            themePicker.addEventListener('change', () => setTheme(themePicker.value));
+            darkModeToggle.addEventListener('click', () => {
+                htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+            });
+
+            const savedTheme = localStorage.getItem('jkm-edit-theme');
+            if (savedTheme) {
+                themePicker.value = savedTheme;
+            }
+
+            // --- PAGE TRANSITION SCRIPT ---
+            window.addEventListener('pageshow', function (event) {
+                if (event.persisted) {
+                    document.body.classList.remove('fade-out');
+                }
+            });
+
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:')) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault(); 
+                        document.body.classList.add('fade-out');
+                        setTimeout(() => { window.location.href = this.href; }, 400); 
+                    });
+                }
+            });
+            
+            const goBackBtn = document.getElementById('go-back-btn');
+            if (goBackBtn) {
+                goBackBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.body.classList.add('fade-out');
+                    setTimeout(() => {
+                        window.history.back();
+                    }, 400);
+                });
+            }
+        });
+
+        // --- SCRIPT FOR IMAGE TO PDF FUNCTIONALITY ---
+        const uploadArea = document.getElementById('upload-area');
+        const imageUpload = document.getElementById('image-upload');
+        const convertBtn = document.getElementById('convert-btn');
+        const statusMessage = document.getElementById('status-message');
+        const downloadSection = document.getElementById('download-section');
+        const previewGrid = document.getElementById('preview-grid');
+        let selectedFiles = []; // Array to hold File objects
+
+        // --- Drag and Drop Events ---
+        uploadArea.addEventListener('click', () => imageUpload.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            handleFiles(e.dataTransfer.files);
+        });
+        imageUpload.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            const allowedTypes = ['image/jpeg', 'image/png'];
+            for (const file of files) {
+                if (allowedTypes.includes(file.type)) {
+                    selectedFiles.push(file);
+                }
+            }
+            updatePreview();
+        }
+
+        function updatePreview() {
+            previewGrid.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const card = document.createElement('div');
+                    card.className = 'preview-card';
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'preview-img';
+
+                    const name = document.createElement('div');
+                    name.className = 'preview-name';
+                    name.textContent = file.name;
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.onclick = () => {
+                        selectedFiles.splice(index, 1);
+                        updatePreview();
+                    };
+
+                    card.appendChild(img);
+                    card.appendChild(name);
+                    card.appendChild(removeBtn);
+                    previewGrid.appendChild(card);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            convertBtn.disabled = selectedFiles.length === 0;
+            statusMessage.textContent = selectedFiles.length > 0 ? `${selectedFiles.length} image(s) selected.` : '';
+            downloadSection.innerHTML = '';
+        }
+
+        // --- Conversion Logic ---
+        convertBtn.addEventListener('click', async () => {
+            if (selectedFiles.length === 0) {
+                statusMessage.textContent = 'Please select at least one image.';
+                return;
+            }
+
+            convertBtn.disabled = true;
+            statusMessage.textContent = 'Converting... Please wait.';
+            
+            const { jsPDF } = window.jspdf;
+            // Default to portrait, A4 size
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = doc.internal.pageSize.getWidth();
+            const pdfHeight = doc.internal.pageSize.getHeight();
+
+            try {
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    const file = selectedFiles[i];
+                    const imgData = await readFileAsDataURL(file);
+                    
+                    const img = new Image();
+                    img.src = imgData;
+                    
+                    await new Promise(resolve => {
+                        img.onload = () => {
+                            if (i > 0) {
+                                doc.addPage();
+                            }
+
+                            const imgWidth = img.width;
+                            const imgHeight = img.height;
+                            const ratio = imgWidth / imgHeight;
+
+                            let newWidth = pdfWidth;
+                            let newHeight = newWidth / ratio;
+
+                            if (newHeight > pdfHeight) {
+                                newHeight = pdfHeight;
+                                newWidth = newHeight * ratio;
+                            }
+                            
+                            const x = (pdfWidth - newWidth) / 2;
+                            const y = (pdfHeight - newHeight) / 2;
+
+                            doc.addImage(imgData, 'JPEG', x, y, newWidth, newHeight);
+                            resolve();
+                        };
+                    });
+                }
+
+                const pdfBlob = doc.output('blob');
+                const downloadUrl = URL.createObjectURL(pdfBlob);
+
+                const downloadLink = document.createElement('a');
+                downloadLink.href = downloadUrl;
+                downloadLink.download = 'converted-document.pdf';
+                downloadLink.textContent = `Download PDF`;
+                downloadLink.className = 'back-to-dashboard-btn';
+
+                downloadSection.innerHTML = '';
+                downloadSection.appendChild(downloadLink);
+                statusMessage.textContent = 'Conversion successful!';
+
+            } catch (error) {
+                console.error('Error converting images to PDF:', error);
+                statusMessage.textContent = 'An error occurred during conversion.';
+            } finally {
+                convertBtn.disabled = false;
+            }
+        });
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+</body>
+</html>
