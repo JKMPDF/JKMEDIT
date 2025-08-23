@@ -110,9 +110,9 @@
         .action-btn { padding: 0.8rem 2.5rem; font-size: 1.1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; color: white; background: var(--gradient); transition: transform 0.2s ease, box-shadow 0.2s ease; margin: 0 0.5rem; }
         .action-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
         .action-btn#download-btn { background: var(--accent-color); display: none; /* Hidden until QR is generated */ }
-        #qr-canvas-container { margin: 2rem auto; width: 320px; height: 320px; background-color: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all var(--transition-speed); }
-        #qr-canvas-container canvas { border-radius: 8px; }
-        #qr-canvas-container p { color: #888; }
+        #qr-canvas-container { margin: 2rem auto; width: 320px; height: 320px; display: flex; align-items: center; justify-content: center; transition: all var(--transition-speed); }
+        #qr-canvas-container canvas, #qr-canvas-container svg { border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        #qr-canvas-placeholder { color: #888; padding: 1rem; border: 2px dashed #ccc; border-radius: 8px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
         .footer-nav-buttons { text-align: center; margin-top: 3rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
 
         @media (max-width: 768px) {
@@ -162,12 +162,12 @@
             <input type="text" id="qr-input" class="qr-input" placeholder="Enter URL or text here">
             
             <div id="qr-canvas-container">
-                <p>Your QR code will appear here</p>
+                <div id="qr-canvas-placeholder"><p>Your QR code will appear here</p></div>
             </div>
 
             <div>
-                <button id="generate-btn" class="action-btn">Generate</button>
-                <button id="download-btn" class="action-btn"><i class="fa-solid fa-download"></i> Download</button>
+                <button type="button" id="generate-btn" class="action-btn">Generate</button>
+                <button type="button" id="download-btn" class="action-btn"><i class="fa-solid fa-download"></i> Download</button>
             </div>
         </div>
 
@@ -196,10 +196,7 @@
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const htmlElement = document.documentElement;
 
-            const setTheme = (theme) => {
-                htmlElement.dataset.theme = theme;
-                localStorage.setItem('jkm-edit-theme', theme);
-            };
+            const setTheme = (theme) => { htmlElement.dataset.theme = theme; localStorage.setItem('jkm-edit-theme', theme); };
             const enableDarkMode = () => { htmlElement.classList.add('dark-mode'); localStorage.setItem('jkm-edit-mode', 'dark'); };
             const disableDarkMode = () => { htmlElement.classList.remove('dark-mode'); localStorage.setItem('jkm-edit-mode', 'light'); };
             
@@ -214,10 +211,8 @@
             const aboutModal = document.getElementById('about-modal'), contactModal = document.getElementById('contact-modal');
             const aboutBtn = document.getElementById('about-btn'), contactBtn = document.getElementById('contact-btn');
             const closeBtns = document.querySelectorAll('.close-btn');
-
             const openModal = (modal) => modal.classList.add('show-modal');
             const closeModal = (modal) => modal.classList.remove('show-modal');
-
             aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
             contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
             closeBtns.forEach(btn => btn.addEventListener('click', () => { closeModal(aboutModal); closeModal(contactModal); }));
@@ -228,11 +223,7 @@
                 const linkUrl = link.getAttribute('href');
                 if (linkUrl && !linkUrl.startsWith('http') && !linkUrl.startsWith('mailto:') && !link.hasAttribute('onclick')) {
                     if (link.id !== 'about-btn' && link.id !== 'contact-btn') {
-                        link.addEventListener('click', function(e) {
-                            e.preventDefault(); 
-                            document.body.classList.add('fade-out');
-                            setTimeout(() => window.location.href = this.href, 400); 
-                        });
+                        link.addEventListener('click', function(e) { e.preventDefault(); document.body.classList.add('fade-out'); setTimeout(() => window.location.href = this.href, 400); });
                     }
                 }
             });
@@ -242,67 +233,64 @@
             const downloadBtn = document.getElementById('download-btn');
             const qrInput = document.getElementById('qr-input');
             const canvasContainer = document.getElementById('qr-canvas-container');
+            let currentQrCode = null; // To hold the active QR code instance
 
-            // Embedded SVG for the "JE" Logo as a Base64 Data URI
-            const logoSvg = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjE1IiBmaWxsPSJ3aGl0ZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI2NSIgZm9udC1mYW1pbHk9IlBvcHBpbnMsIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMwMDUyY2MiPkpEPC90ZXh0Pjwvc3ZnPg==`;
+            // CORRECTED "JE" Logo SVG as a Base64 Data URI
+            const logoSvg = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjE1IiBmaWxsPSJ3aGl0ZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI2NSIgZm9udC1mYW1pbHk9IlBvcHBpbnMsIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMwMDUyY2MiPkpNPC90ZXh0Pjwvc3ZnPg==`;
 
-            const qrCode = new QRCodeStyling({
+            const qrOptions = {
                 width: 300,
                 height: 300,
                 type: "svg",
-                data: "https://jkmpdf.github.io/JKMEDIT/", // Default data
                 image: logoSvg,
-                dotsOptions: {
-                    color: "#0747a6", // secondary-color
-                    type: "rounded"
-                },
-                backgroundOptions: {
-                    color: "#ffffff",
-                },
-                imageOptions: {
-                    crossOrigin: "anonymous",
-                    margin: 8,
-                    imageSize: 0.3
-                },
-                cornersSquareOptions: {
-                    type: "extra-rounded",
-                    color: "#0052cc" // primary-color
-                },
-                cornersDotOptions: {
-                    type: "dot",
-                    color: "#0052cc"
-                }
-            });
+                dotsOptions: { color: "#0747a6", type: "rounded" },
+                backgroundOptions: { color: "#ffffff" },
+                imageOptions: { crossOrigin: "anonymous", margin: 8, imageSize: 0.3 },
+                cornersSquareOptions: { type: "extra-rounded", color: "#0052cc" },
+                cornersDotOptions: { type: "dot", color: "#0052cc" }
+            };
             
-            // Append initial QR code to the container
-            qrCode.append(canvasContainer);
-            canvasContainer.firstChild.style.width = "100%";
-            canvasContainer.firstChild.style.height = "100%";
-
             const generateQr = () => {
                 const data = qrInput.value.trim();
                 if (data === "") {
                     alert("Please enter a URL or text to generate a QR code.");
+                    qrInput.focus();
                     return;
                 }
                 
-                qrCode.update({
-                    data: data
-                });
+                // Clear any previous QR code
+                canvasContainer.innerHTML = '';
                 
+                // Create a new QR code instance with the user's data
+                currentQrCode = new QRCodeStyling({
+                    ...qrOptions, // Spread the base options
+                    data: data      // Add the user-specific data
+                });
+
+                // Append the new QR code to the container
+                currentQrCode.append(canvasContainer);
+                canvasContainer.firstChild.style.width = "100%";
+                canvasContainer.firstChild.style.height = "100%";
+
+                // Show the download button
                 downloadBtn.style.display = 'inline-block';
             };
 
             generateBtn.addEventListener('click', generateQr);
-            // Allow pressing Enter to generate
+            // Allow pressing Enter in the input field to generate
             qrInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevent potential form submission
                     generateQr();
                 }
             });
 
             downloadBtn.addEventListener('click', () => {
-                qrCode.download({ name: "jkm-edit-qr", extension: "png" });
+                if (currentQrCode) {
+                    currentQrCode.download({ name: "jkm-edit-qr", extension: "png" });
+                } else {
+                    alert("Please generate a QR code first before downloading.");
+                }
             });
         });
     </script>
