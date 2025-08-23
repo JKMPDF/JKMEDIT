@@ -26,7 +26,7 @@
         html { background-color: var(--bg-color); }
         body { margin: 0; color: var(--text-color); font-family: 'Poppins', sans-serif; animation: fadeInPage 0.5s ease-in-out; overflow: hidden; }
         *, *::before, *::after { box-sizing: border-box; }
-
+        
         /* THEME COLORS */
         [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
         [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
@@ -37,13 +37,25 @@
         [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
         [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
         html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
-
+        
         /* HEADER */
         .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); z-index: 1000; position: relative; }
         .logo-container { display: flex; align-items: center; gap: 0.75rem; }
         .logo-icon-3d { font-size: 2rem; color: var(--primary-color); }
         .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
         .main-nav { display: flex; align-items: center; gap: 1.5rem; }
+        /* NEW Nav Button Styling */
+        .nav-button {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+        }
+        .nav-button:hover { background-color: var(--bg-color); }
+
         .theme-selector { display: flex; align-items: center; gap: 0.5rem; }
         #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); }
         #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
@@ -62,25 +74,26 @@
 
         /* SIGNING INTERFACE */
         #sign-tool-container { display: none; grid-template-columns: 300px 1fr; gap: 1rem; padding: 1rem; height: calc(100vh - 85px); }
-        .sidebar { background: var(--surface-color); padding: 1rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1rem; }
+        /* MODIFIED sidebar to ensure scrolling works */
+        .sidebar { background: var(--surface-color); padding: 1rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1rem; max-height: calc(100vh - 100px); }
         .sidebar h3 { margin: 0 0 0.5rem 0; text-align: center; color: var(--text-color); }
         .sig-button { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 0.75rem; background: var(--gradient); color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .sig-button:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-
-
-        #signature-list { display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; flex-grow: 1; }
+        
+        #signature-list { display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; flex-grow: 1; padding: 5px; }
         .sig-list-placeholder { text-align: center; color: #6c757d; font-size: 0.9em; margin: auto 0; }
         .sig-preview-item { border: 2px dashed #ccc; border-radius: 5px; padding: 0.5rem; cursor: grab; position: relative; }
         .sig-preview-item img { max-width: 100%; display: block; pointer-events: none; }
         .sig-actions { position: absolute; top: 5px; right: 5px; display: flex; gap: 5px; }
         .sig-action-btn { background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
 
-        .right-panel { background: var(--bg-color); border-radius: 8px; overflow: auto; padding: 1rem; display: flex; flex-direction: column; }
-        .viewer-toolbar { background: var(--surface-color); padding: 0.5rem 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .right-panel { background: var(--bg-color); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; overflow: hidden; }
+        .viewer-toolbar { background: var(--surface-color); padding: 0.5rem 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-shrink: 0; }
         .zoom-btn { background: none; border: 1px solid #ccc; color: var(--text-color); cursor: pointer; width: 30px; height: 30px; border-radius: 5px; }
-
-        .pdf-viewer { flex-grow: 1; display: flex; justify-content: center; align-items: flex-start; }
-        #editor-canvas-container { position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: white; margin: 1rem auto; transition: border-color 0.2s; }
+        
+        /* MODIFIED PDF Viewer to handle zooming and scrolling properly */
+        .pdf-viewer { flex-grow: 1; overflow: auto; align-items: flex-start; justify-content: flex-start; display: flex; width: 100%; padding: 1rem; }
+        #editor-canvas-container { position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: white; transition: border-color 0.2s; margin: 0; }
         #editor-canvas-container.drag-over { border: 3px dashed var(--primary-color); }
 
         .draggable-signature { position: absolute; border: 2px solid var(--primary-color); user-select: none; }
@@ -111,6 +124,11 @@
             </a>
         </div>
         <nav class='main-nav'>
+            <!-- NEW Header Navigation Buttons -->
+            <a href='https://jkmpdf.github.io/JKMEDIT/' class='nav-button'>Dashboard</a>
+            <a href='#' class='nav-button'>About</a>
+            <a href='#' class='nav-button'>Contact</a>
+
             <div class='theme-selector'>
                 <label for='theme-picker'>Theme:</label>
                 <select id='theme-picker'>
@@ -133,14 +151,9 @@
     <main>
         <div id="upload-container">
             <div class='tool-header' style="padding: 2rem 0;"><h2>Sign PDF</h2><p>Upload your PDF to begin placing signatures.</p></div>
-            <div id="upload-area" class="upload-area">
-                <input type="file" id="pdf-upload" accept=".pdf" style="display:none;" />
-                <i class="fa-solid fa-file-arrow-up upload-icon"></i>
-                <p>Drag & Drop your PDF here</p>
-            </div>
+            <div id="upload-area" class="upload-area"><input type="file" id="pdf-upload" accept=".pdf" style="display:none;" /><i class="fa-solid fa-file-arrow-up upload-icon"></i><p>Drag & Drop your PDF here</p></div>
             <div id="status-message" style="text-align:center; display:none; margin-top:1rem;"><div class="spinner"></div><p>Loading PDF...</p></div>
         </div>
-
 
         <div id="sign-tool-container">
             <aside class="sidebar">
@@ -154,6 +167,9 @@
             </aside>
             <div class="right-panel">
                 <div class="viewer-toolbar">
+                    <!-- NEW Go Back Button -->
+                    <button id="go-back-btn" class="zoom-btn" title="Back to Upload"><i class="fas fa-arrow-left"></i></button>
+
                     <button id="prev-page-btn" class="zoom-btn"><i class="fas fa-chevron-left"></i></button>
                     <span id="page-indicator">Page 1 / 1</span>
                     <button id="next-page-btn" class="zoom-btn"><i class="fas fa-chevron-right"></i></button>
@@ -177,7 +193,7 @@
             </div>
         </div>
     </div>
-
+    
     <script>
         // --- THEME SCRIPT (Complete and functional) ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -194,16 +210,15 @@
             if (localStorage.getItem('jkm-edit-mode') === 'dark') { enableDarkMode(); }
         });
         (function() { try { const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue'; const mode = localStorage.getItem('jkm-edit-mode') || 'light'; document.documentElement.setAttribute('data-theme', theme); if (mode === 'dark') document.documentElement.classList.add('dark-mode'); } catch (e) {} })();
-
+    
         // --- PDF SIGNING SCRIPT (Revised and Corrected) ---
         const { PDFDocument, degrees } = PDFLib;
         if (typeof pdfjsLib !== 'undefined') {
             pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js`;
         }
 
-
-        const uploadContainer = document.getElementById('upload-container'), uploadArea = document.getElementById('upload-area'), pdfUpload = document.getElementById('pdf-upload'), statusMessage = document.getElementById('status-message'), signToolContainer = document.getElementById('sign-tool-container'), editorCanvasContainer = document.getElementById('editor-canvas-container'), signatureList = document.getElementById('signature-list'), drawSigBtn = document.getElementById('draw-sig-btn'), uploadSigBtn = document.getElementById('upload-sig-btn'), sigImageUpload = document.getElementById('sig-image-upload'), drawSigModal = document.getElementById('draw-sig-modal'), signaturePadCanvas = document.getElementById('signature-pad'), clearSigBtn = document.getElementById('clear-sig-btn'), saveSigBtn = document.getElementById('save-sig-btn'), downloadBtn = document.getElementById('download-btn'), zoomInBtn = document.getElementById('zoom-in-btn'), zoomOutBtn = document.getElementById('zoom-out-btn'), zoomLevelEl = document.getElementById('zoom-level'), prevPageBtn = document.getElementById('prev-page-btn'), nextPageBtn = document.getElementById('next-page-btn'), pageIndicatorEl = document.getElementById('page-indicator');
-
+        const uploadContainer = document.getElementById('upload-container'), uploadArea = document.getElementById('upload-area'), pdfUpload = document.getElementById('pdf-upload'), statusMessage = document.getElementById('status-message'), signToolContainer = document.getElementById('sign-tool-container'), editorCanvasContainer = document.getElementById('editor-canvas-container'), signatureList = document.getElementById('signature-list'), drawSigBtn = document.getElementById('draw-sig-btn'), uploadSigBtn = document.getElementById('upload-sig-btn'), sigImageUpload = document.getElementById('sig-image-upload'), drawSigModal = document.getElementById('draw-sig-modal'), signaturePadCanvas = document.getElementById('signature-pad'), clearSigBtn = document.getElementById('clear-sig-btn'), saveSigBtn = document.getElementById('save-sig-btn'), downloadBtn = document.getElementById('download-btn'), zoomInBtn = document.getElementById('zoom-in-btn'), zoomOutBtn = document.getElementById('zoom-out-btn'), zoomLevelEl = document.getElementById('zoom-level'), prevPageBtn = document.getElementById('prev-page-btn'), nextPageBtn = document.getElementById('next-page-btn'), pageIndicatorEl = document.getElementById('page-indicator'), goBackBtn = document.getElementById('go-back-btn'); // NEW Go Back button element
+        
         let signaturePad = new SignaturePad(signaturePadCanvas);
         let originalPdfBytes = null, loadedPdf = null;
         let placedSignatures = []; // { id, src, page, normX, normY, normW, normH, rotation }
@@ -213,30 +228,10 @@
         uploadArea.addEventListener('click', () => pdfUpload.click());
         pdfUpload.addEventListener('change', (e) => handleFile(e.target.files[0]));
 
-
         // Drag and Drop PDF Upload
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            uploadArea.classList.add('drag-over');
-        });
-
-        uploadArea.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            uploadArea.classList.remove('drag-over');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            uploadArea.classList.remove('drag-over');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
-            }
-        });
-
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); uploadArea.classList.add('drag-over'); });
+        uploadArea.addEventListener('dragleave', (e) => { e.preventDefault(); e.stopPropagation(); uploadArea.classList.remove('drag-over'); });
+        uploadArea.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); uploadArea.classList.remove('drag-over'); const files = e.dataTransfer.files; if (files.length > 0) { handleFile(files[0]); } });
 
         drawSigBtn.addEventListener('click', () => drawSigModal.classList.add('show-modal'));
         uploadSigBtn.addEventListener('click', () => sigImageUpload.click());
@@ -247,7 +242,8 @@
         zoomInBtn.addEventListener('click', () => changeZoom(0.25)); zoomOutBtn.addEventListener('click', () => changeZoom(-0.25));
         prevPageBtn.addEventListener('click', () => changePage(-1)); nextPageBtn.addEventListener('click', () => changePage(1));
         downloadBtn.addEventListener('click', finalizeAndDownload);
-
+        goBackBtn.addEventListener('click', resetToUpload); // NEW event listener for Go Back
+        
         editorCanvasContainer.addEventListener('dragover', (e) => { e.preventDefault(); editorCanvasContainer.classList.add('drag-over'); });
         editorCanvasContainer.addEventListener('dragleave', () => editorCanvasContainer.classList.remove('drag-over'));
         editorCanvasContainer.addEventListener('drop', (e) => {
@@ -257,7 +253,7 @@
             if (!src) return;
             const canvas = editorCanvasContainer.querySelector('canvas');
             const rect = canvas.getBoundingClientRect();
-
+            
             const initialWidthPx = 150; // Initial signature width in pixels
             const img = new Image(); img.src = src;
             img.onload = () => {
@@ -274,31 +270,43 @@
                 createDraggableSignature(sigData);
             };
         });
-
+        
         // --- Core Functions ---
         async function handleFile(file) {
             if (!file || file.type !== 'application/pdf') {
                 alert('Invalid file type. Please select a valid PDF file.');
                 return;
             }
-            uploadContainer.style.display = 'none';
-            statusMessage.style.display = 'block';
+            uploadContainer.style.display = 'none'; statusMessage.style.display = 'block';
 
             try {
                 originalPdfBytes = await file.arrayBuffer();
                 loadedPdf = await pdfjsLib.getDocument({ data: new Uint8Array(originalPdfBytes) }).promise;
-                currentPageNum = 1;
-                await renderPage(currentPageNum);
-                statusMessage.style.display = 'none';
-                signToolContainer.style.display = 'grid';
+                currentPageNum = 1; await renderPage(currentPageNum);
+                statusMessage.style.display = 'none'; signToolContainer.style.display = 'grid';
             } catch (error) {
                 console.error("Error loading PDF:", error);
                 alert("Could not load the PDF. It might be corrupted or in an unsupported format.");
-                statusMessage.style.display = 'none';
-                uploadContainer.style.display = 'block';
+                resetToUpload();
             }
         }
+        
+        // NEW function to reset the entire interface
+        function resetToUpload() {
+            signToolContainer.style.display = 'none';
+            uploadContainer.style.display = 'block';
+            statusMessage.style.display = 'none';
 
+            originalPdfBytes = null;
+            loadedPdf = null;
+            placedSignatures = [];
+            currentPageNum = 1;
+            currentZoomScale = 1.0;
+            
+            pdfUpload.value = null;
+            editorCanvasContainer.innerHTML = '';
+            signatureList.innerHTML = '<p class="sig-list-placeholder">Drag your signature from here onto the PDF.</p>';
+        }
 
         async function renderPage(pageNum) {
             const page = await loadedPdf.getPage(pageNum);
@@ -325,7 +333,7 @@
             const item = document.createElement('div'); item.className = 'sig-preview-item'; item.draggable = true;
             item.dataset.src = imageDataUrl;
             item.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', item.dataset.src));
-
+            
             const img = document.createElement('img'); img.src = imageDataUrl;
             const actions = document.createElement('div'); actions.className = 'sig-actions';
             if (isUpload) {
@@ -346,7 +354,7 @@
             draggable.style.left = `${sigData.normX * canvas.width}px`; draggable.style.top = `${sigData.normY * canvas.height}px`;
             draggable.style.width = `${sigData.normW * canvas.width}px`; draggable.style.height = `${sigData.normH * canvas.height}px`;
             draggable.style.transform = `rotate(${sigData.rotation}deg)`;
-
+            
             const img = document.createElement('img'); img.src = sigData.src;
             const resizer = document.createElement('div'); resizer.className = 'handle resizer';
             const rotater = document.createElement('div'); rotater.className = 'handle rotater';
@@ -357,12 +365,12 @@
             editorCanvasContainer.appendChild(draggable);
             makeInteractive(draggable);
         }
-
+        
         function makeInteractive(element) {
             const sig = placedSignatures.find(s => s.id === element.id);
             if (!sig) return;
             const canvas = editorCanvasContainer.querySelector('canvas');
-
+            
             const rotater = element.querySelector('.rotater'), resizer = element.querySelector('.resizer');
             rotater.onmousedown = onRotateStart; resizer.onmousedown = onResizeStart; element.onmousedown = onDragStart;
 
@@ -427,7 +435,7 @@
                 const page = pdfDoc.getPage(sig.page - 1); const pageOriginalSize = page.getSize();
                 const imageBytes = await fetch(sig.src).then(res => res.arrayBuffer());
                 const signatureImage = await (sig.src.startsWith('data:image/png') ? pdfDoc.embedPng(imageBytes) : pdfDoc.embedJpg(imageBytes));
-
+                
                 const sigWidth = sig.normW * pageOriginalSize.width;
                 const sigHeight = sig.normH * pageOriginalSize.height;
 
