@@ -37,6 +37,8 @@
                 if (mode === 'dark') { document.documentElement.classList.add('dark-mode'); }
                 const bgColor = (themeBgColors[theme] && themeBgColors[theme][mode]) || '#f4f5f7';
                 const style = document.createElement('style');
+                // MODIFICATION: Added ID for dark mode fix
+                style.id = 'theme-flicker-fix';
                 style.innerHTML = `html { background-color: ${bgColor} !important; }`;
                 document.head.appendChild(style);
             } catch (e) { console.error("Error applying initial theme:", e); }
@@ -85,7 +87,7 @@
         .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
         .tool-card { display: flex; flex-direction: column; justify-content: center; background: var(--surface-color); border-radius: 10px; padding: 2rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-color); transition: transform var(--transition-speed), box-shadow var(--transition-speed); text-decoration: none; color: var(--text-color); min-height: 230px; }
         .tool-card:hover { transform: translateY(-10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .tool-icon { font-size: 3rem; margin-bottom: 1rem; background-image: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent; }
+        .tool-icon { font-size: 3rem; line-height: 1; font-weight: bold; margin-bottom: 1rem; background-image: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent; }
         .tool-card h3 { margin: 0.5rem 0; font-size: 1.5rem; }
         .tool-card p { font-size: 0.9rem; line-height: 1.5; color: #6c757d; }
         html.dark-mode .tool-card p { color: #a0a0a0; }
@@ -152,9 +154,11 @@
         </div>
         <div class='tools-grid function-grid'>
             <!-- Row 1 -->
-            <a href='#' class='tool-card'><i class='fa-solid fa-font-case tool-icon'></i><h3>Text Case Converter</h3><p>Convert text to UPPERCASE, lowercase, or Capitalized Case.</p></a>
+            <!-- MODIFICATION: Text Case Converter icon changed to 'A/a' -->
+            <a href='#' class='tool-card'><div class='tool-icon'>A/a</div><h3>Text Case Converter</h3><p>Convert text to UPPERCASE, lowercase, or Capitalized Case.</p></a>
             <a href="#" class='tool-card'><i class='fa-solid fa-calculator tool-icon'></i><h3>Word & Character Counter</h3><p>Count the number of words and characters in your text.</p></a>
-            <a href="#" class='tool-card'><i class='fa-solid fa-key tool-icon'></i><h3>Password Generator</h3><p>Create strong, secure, and random passwords.</p></a>
+            <!-- MODIFICATION: Changed Password Generator to Calculator -->
+            <a href="#" class='tool-card'><i class='fa-solid fa-calculator tool-icon'></i><h3>Calculator</h3><p>Perform basic and advanced mathematical calculations.</p></a>
             
             <!-- Ad Row 1 -->
             <div class='tool-card ad-card'><script type="text/javascript">
@@ -170,7 +174,8 @@
             <!-- Row 2 -->
             <a href='#' class='tool-card'><i class='fa-solid fa-qrcode tool-icon'></i><h3>QR Code Generator & Scanner</h3><p>Generate and scan QR codes for URLs, text, and more.</p></a>
             <a href="#" class='tool-card'><i class='fa-solid fa-barcode tool-icon'></i><h3>Barcode Generator</h3><p>Create various types of barcodes for your products.</p></a>
-            <a href="#" class='tool-card'><i class='fa-solid fa-wand-magic-sparkles tool-icon'></i><h3>Image Background Remover</h3><p>Automatically remove the background from your images.</p></a>
+            <!-- MODIFICATION: Changed Image Background Remover to Currency Converter -->
+            <a href="#" class='tool-card'><i class='fa-solid fa-money-bill-transfer tool-icon'></i><h3>Currency Converter</h3><p>Convert between different currencies with live exchange rates.</p></a>
 
             <!-- Ad Row 2 -->
             <div class='tool-card ad-card'><script type="text/javascript">
@@ -221,6 +226,12 @@
 
         // Your existing script for initializing the page functionality.
         document.addEventListener('DOMContentLoaded', () => {
+            // MODIFICATION: Dark mode fix - remove the flicker-prevention style
+            const flickerFix = document.getElementById('theme-flicker-fix');
+            if (flickerFix) {
+                flickerFix.remove();
+            }
+
             const aboutModal = document.getElementById('about-modal');
             const contactModal = document.getElementById('contact-modal');
             const aboutBtn = document.getElementById('about-btn');
