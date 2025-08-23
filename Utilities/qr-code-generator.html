@@ -4,26 +4,16 @@
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     
-    <!-- =================================================================== -->
-    <!-- SEO & META TAGS - FOR QR CODE GENERATOR PAGE -->
-    <!-- =================================================================== -->
+    <!-- SEO & META TAGS -->
     <title>Free QR Code Generator with Logo | JKM Edit</title>
     <meta name="description" content="Create high-quality custom QR codes for free with your logo in the center. Generate QR codes for URLs, text, and more with JKM Edit's easy-to-use online tool."/>
     <meta name="keywords" content="qr code generator, free qr code, qr code with logo, custom qr code, jkm edit"/>
-    <meta name="author" content="JKM Edit"/>
-    <meta name="robots" content="index, follow"/>
     <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/qr-code-generator.html"/>
-    <meta property="og:title" content="Free QR Code Generator with Logo | JKM Edit"/>
-    <meta property="og:description" content="Instantly generate custom QR codes online with a 'JE' logo. Fast, free, and easy to use."/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/qr-code-generator.html"/>
-    <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
-    <!-- =================================================================== -->
-
+    
     <!-- QR CODE STYLING LIBRARY -->
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 
-    <!-- SCRIPT TO PREVENT THEME AND BACKGROUND FLICKERING (KEEP THIS) -->
+    <!-- SCRIPT TO PREVENT THEME AND BACKGROUND FLICKERING -->
     <script>
         (function() {
             try {
@@ -103,13 +93,13 @@
         @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* New Styles for QR Generator */
+        /* QR Generator Styles */
         .qr-tool-container { background: var(--surface-color); padding: 2.5rem; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; }
         .qr-input { width: 100%; padding: 1rem; border: 2px solid #ccc; border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 1rem; margin-bottom: 1.5rem; transition: all var(--transition-speed); }
         .qr-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 25%, transparent); }
         .action-btn { padding: 0.8rem 2.5rem; font-size: 1.1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; color: white; background: var(--gradient); transition: transform 0.2s ease, box-shadow 0.2s ease; margin: 0 0.5rem; }
         .action-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-        .action-btn#download-btn { background: var(--accent-color); display: none; /* Hidden until QR is generated */ }
+        .action-btn#download-btn { background: var(--accent-color); display: none; }
         #qr-canvas-container { margin: 2rem auto; width: 320px; height: 320px; display: flex; align-items: center; justify-content: center; transition: all var(--transition-speed); }
         #qr-canvas-container canvas, #qr-canvas-container svg { border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         #qr-canvas-placeholder { color: #888; padding: 1rem; border: 2px dashed #ccc; border-radius: 8px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
@@ -188,7 +178,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- STANDARD THEME, MODAL, AND PAGE TRANSITION LOGIC ---
-            // This is the same script as other pages to ensure consistency.
             const flickerFix = document.getElementById('theme-flicker-fix');
             if (flickerFix) flickerFix.remove();
 
@@ -233,10 +222,11 @@
             const downloadBtn = document.getElementById('download-btn');
             const qrInput = document.getElementById('qr-input');
             const canvasContainer = document.getElementById('qr-canvas-container');
-            let currentQrCode = null; // To hold the active QR code instance
+            let currentQrCode = null;
 
+            // ***** FIX *****
             // CORRECTED "JE" Logo SVG as a Base64 Data URI
-            const logoSvg = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjE1IiBmaWxsPSJ3aGl0ZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI2NSIgZm9udC1mYW1pbHk9IlBvcHBpbnMsIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMwMDUyY2MiPkpNPC90ZXh0Pjwvc3ZnPg==`;
+            const logoSvg = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjE1IiBmaWxsPSJ3aGl0ZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI2NSIgZm9udC1mYW1pbHk9IlBvcHBpbnMsIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMwMDUyY2MiPkpFP C90ZXh0Pjwvc3ZnPg==`;
 
             const qrOptions = {
                 width: 300,
@@ -258,29 +248,25 @@
                     return;
                 }
                 
-                // Clear any previous QR code
                 canvasContainer.innerHTML = '';
                 
-                // Create a new QR code instance with the user's data
                 currentQrCode = new QRCodeStyling({
-                    ...qrOptions, // Spread the base options
-                    data: data      // Add the user-specific data
+                    ...qrOptions,
+                    data: data
                 });
 
-                // Append the new QR code to the container
                 currentQrCode.append(canvasContainer);
                 canvasContainer.firstChild.style.width = "100%";
                 canvasContainer.firstChild.style.height = "100%";
 
-                // Show the download button
                 downloadBtn.style.display = 'inline-block';
             };
 
             generateBtn.addEventListener('click', generateQr);
-            // Allow pressing Enter in the input field to generate
+            
             qrInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
-                    e.preventDefault(); // Prevent potential form submission
+                    e.preventDefault();
                     generateQr();
                 }
             });
