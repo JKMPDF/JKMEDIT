@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    
+    <title>Advanced Calculator - JKM Edit</title>
+    <meta name="description" content="A fully advanced, multi-mode online calculator with scientific, programmer, and unit conversion capabilities. Fully keyboard-controlled and integrated with the JKM Edit theme."/>
+    <meta name="keywords" content="advanced calculator, scientific calculator, programmer calculator, unit converter, online calculator, jkm edit"/>
+    <meta name="author" content="JKM Edit"/>
+
+    <!-- Math.js Library for safe and powerful calculations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    
+    <!-- SCRIPT TO PREVENT THEME FLICKERING -->
+    <script>
+        (function() {
+            try {
+                const themeBgColors = {
+                    'corporate-blue': { light: '#f4f5f7', dark: '#121212' },'forest-green':   { light: '#f0f3f2', dark: '#121212' },'sunset-gradient':{ light: '#fff8f2', dark: '#121212' },'tech-noir':      { light: '#1a1a2e', dark: '#0f0f1e' },'minty-fresh':    { light: '#f1fefb', dark: '#121212' },'royal-purple':   { light: '#f8f7fa', dark: '#121212' },'graphite-gray':  { light: '#e9ecef', dark: '#121212' },'crimson-red':    { light: '#fdf5f6', dark: '#121212' }
+                };
+                const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
+                const mode = localStorage.getItem('jkm-edit-mode') || 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                if (mode === 'dark') { document.documentElement.classList.add('dark-mode'); }
+                const bgColor = (themeBgColors[theme] && themeBgColors[theme][mode]) || '#f4f5f7';
+                const style = document.createElement('style');
+                style.innerHTML = `html { background-color: ${bgColor} !important; }`;
+                document.head.appendChild(style);
+            } catch (e) { console.error("Error applying initial theme:", e); }
+        })();
+    </script>
+    
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+    <style>
+        :root {
+            font-family: 'Poppins', sans-serif;
+            --transition-speed: 0.3s;
+        }
+        html { 
+            background-color: var(--bg-color); 
+            transition: background-color var(--transition-speed); 
+        }
+        body { 
+            margin: 0; 
+            color: var(--text-color); 
+            transition: color var(--transition-speed); 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* THEME DEFINITIONS (from original code) */
+        [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
+        [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
+        [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
+        [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-gradient(45deg, #4a00e0, #8e2de2); }
+        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
+        [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
+        [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
+        [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
+        
+        /* DARK MODE THEME OVERRIDES */
+        html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
+        html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
+        html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
+
+        /* HEADER STYLES (from original code) */
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 100; position: relative; }
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); transition: color var(--transition-speed), text-shadow var(--transition-speed); }
+        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+        .main-nav { display: flex; align-items: center; gap: 1.5rem; }
+        #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
+        #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
+        #dark-mode-toggle .fa-sun { display: none; }
+        html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
+        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+        /* CALCULATOR PAGE LAYOUT */
+        .calculator-page-container {
+            display: flex;
+            flex-grow: 1;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        /* CALCULATOR MAIN STYLES */
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            width: 100%;
+            max-width: 400px;
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid color-mix(in srgb, var(--primary-color) 20%, transparent);
+        }
+        .calculator-display {
+            grid-column: 1 / -1;
+            background: color-mix(in srgb, var(--bg-color) 50%, #fff 50%);
+            html.dark-mode & { background: color-mix(in srgb, var(--bg-color) 50%, #000 50%); }
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            text-align: right;
+            word-wrap: break-word;
+            word-break: break-all;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        #history-display {
+            min-height: 24px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            color: var(--text-color);
+        }
+        #main-display {
+            min-height: 58px;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        .calculator-btn {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            padding: 1.2rem 0;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            background-color: color-mix(in srgb, var(--surface-color) 80%, var(--bg-color) 20%);
+            color: var(--text-color);
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .calculator-btn:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 15%, var(--surface-color) 85%);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .calculator-btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .operator { 
+            background-color: color-mix(in srgb, var(--accent-color) 15%, var(--surface-color) 85%);
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        .equals {
+            grid-column: span 2;
+            background-image: var(--gradient);
+            color: white;
+            font-weight: 700;
+        }
+
+        /* MODE-SPECIFIC STYLES */
+        [data-mode="scientific"] .calculator-grid { grid-template-columns: repeat(5, 1fr); max-width: 520px; }
+        .scientific-btn, .programmer-btn, .converter-ui { display: none; }
+        [data-mode="scientific"] .scientific-btn { display: inline-block; }
+        [data-mode="programmer"] .programmer-btn { display: inline-block; }
+        [data-mode="converter"] .converter-ui { display: block; }
+        
+        .mode-switcher {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 0.6rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            background-color: color-mix(in srgb, var(--bg-color) 90%, var(--surface-color) 10%);
+            color: var(--text-color);
+            opacity: 0.7;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+        .mode-btn.active {
+            opacity: 1;
+            background-color: var(--surface-color);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* PROGRAMMER & CONVERTER UI */
+        .prog-base-switcher, .converter-row {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+         .converter-row { align-items: center; }
+        .converter-row select, .converter-row input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 6px;
+            border: 1px solid color-mix(in srgb, var(--text-color) 20%, transparent);
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        /* HISTORY PANEL */
+        .history-panel {
+            background-color: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 300px;
+            height: 550px;
+            display: flex;
+            flex-direction: column;
+        }
+        .history-panel h3 {
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        #history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        #history-list li {
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color var(--transition-speed);
+            opacity: 0.9;
+        }
+        #history-list li:hover {
+            background-color: var(--bg-color);
+            opacity: 1;
+        }
+        .history-expr {
+            display: block;
+            font-size: 0.8rem;
+            color: #6c757d;
+            html.dark-mode & { color: #a0a0a0; }
+        }
+        .history-result {
+            display: block;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 992px) {
+            .calculator-page-container { flex-direction: column; }
+            .history-panel { width: 100%; max-width: 520px; height: 200px; }
+        }
+        @media (max-width: 768px) { .main-header { flex-direction: column; gap: 1rem; } }
+        
+    </style>
+</head>
+<body data-mode="scientific">
+    <header class='main-header'>
+        <div class='logo-container'>
+             <a href='#' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
+                <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
+                <h1>JKM Edit</h1>
+            </a>
+        </div>
+        <nav class='main-nav'>
+            <div class='theme-selector'>
+                <label for='theme-picker'>Theme:</label>
+                <select id='theme-picker'>
+                    <option value='corporate-blue' selected>Corporate Blue</option>
+                    <option value='forest-green'>Forest Green</option>
+                    <option value='sunset-gradient'>Sunset Gradient</option>
+                    <option value='tech-noir'>Tech Noir</option>
+                    <option value='minty-fresh'>Minty Fresh</option>
+                    <option value='royal-purple'>Royal Purple</option>
+                    <option value='graphite-gray'>Graphite Gray</option>
+                    <option value='crimson-red'>Crimson Red</option>
+                </select>
+            </div>
+            <button id='dark-mode-toggle' aria-label='Toggle Dark Mode'>
+                <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
+            </button>
+        </nav>
+    </header>
+
+    <main class="calculator-page-container">
+        <div class="calculator-grid">
+            <!-- Mode Switcher -->
+            <div class="mode-switcher">
+                <button class="mode-btn" data-mode="standard">Standard</button>
+                <button class="mode-btn active" data-mode="scientific">Scientific</button>
+                <button class="mode-btn" data-mode="programmer">Programmer</button>
+                <button class="mode-btn" data-mode="converter">Converter</button>
+            </div>
+
+            <!-- Display -->
+            <div class="calculator-display">
+                <div id="history-display"></div>
+                <div id="main-display">0</div>
+            </div>
+
+            <!-- Converter UI (hidden by default) -->
+            <div class="converter-ui converter-row">
+                <select id="converter-type">
+                    <option value="length">Length</option>
+                    <option value="mass">Mass</option>
+                    <option value="temp">Temperature</option>
+                </select>
+            </div>
+             <div class="converter-ui converter-row">
+                <input type="number" id="converter-input" value="1">
+                <select id="converter-from"></select>
+            </div>
+            <div class="converter-ui converter-row">
+                <input type="text" id="converter-output" readonly>
+                <select id="converter-to"></select>
+            </div>
+
+            <!-- Programmer UI (hidden by default) -->
+            <div class="programmer-btn prog-base-switcher">
+                 <button class="mode-btn" data-base="16">HEX</button>
+                 <button class="mode-btn active" data-base="10">DEC</button>
+                 <button class="mode-btn" data-base="8">OCT</button>
+                 <button class="mode-btn" data-base="2">BIN</button>
+            </div>
+
+            <!-- Buttons -->
+            <button class="calculator-btn scientific-btn" data-key="s" data-value="sin(">sin</button>
+            <button class="calculator-btn scientific-btn" data-key="c" data-value="cos(">cos</button>
+            <button class="calculator-btn scientific-btn" data-key="t" data-value="tan(">tan</button>
+            <button class="calculator-btn scientific-btn" data-key="p" data-value="pi">π</button>
+            <button class="calculator-btn scientific-btn" data-key="e" data-value="e">e</button>
+
+            <button class="calculator-btn scientific-btn" data-value="asin(">sin⁻¹</button>
+            <button class="calculator-btn scientific-btn" data-value="acos(">cos⁻¹</button>
+            <button class="calculator-btn scientific-btn" data-value="atan(">tan⁻¹</button>
+            <button class="calculator-btn scientific-btn" data-key="l" data-value="log10(">log</button>
+            <button class="calculator-btn scientific-btn" data-value="ln(">ln</button>
+
+            <button class="calculator-btn scientific-btn" data-value="^2">x²</button>
+            <button class="calculator-btn scientific-btn" data-value="^">xʸ</button>
+            <button class="calculator-btn scientific-btn" data-value="sqrt(">√</button>
+            <button class="calculator-btn scientific-btn" data-key="!" data-value="!">n!</button>
+            <button class="calculator-btn scientific-btn" data-value="exp(">eˣ</button>
+
+            <button class="calculator-btn programmer-btn" data-value="A">A</button>
+            <button class="calculator-btn programmer-btn" data-value="B">B</button>
+            <button class="calculator-btn programmer-btn" data-value="C">C</button>
+            <button class="calculator-btn programmer-btn" data-value="D">D</button>
+            <button class="calculator-btn programmer-btn" data-value="E">E</button>
+            <button class="calculator-btn programmer-btn" data-value="F">F</button>
+            <button class="calculator-btn programmer-btn" data-value="&">AND</button>
+            <button class="calculator-btn programmer-btn" data-value="|">OR</button>
+            <button class="calculator-btn programmer-btn" data-value="~">NOT</button>
+            <button class="calculator-btn programmer-btn" data-value="^">XOR</button>
+
+            <button class="calculator-btn" data-key="Delete" data-value="clear">AC</button>
+            <button class="calculator-btn" data-key="Backspace" data-value="backspace">⌫</button>
+            <button class="calculator-btn" data-key="(" data-value="(">(</button>
+            <button class="calculator-btn" data-key=")" data-value=")">)</button>
+            <button class="calculator-btn operator" data-key="/" data-value="/">÷</button>
+
+            <button class="calculator-btn" data-key="7" data-value="7">7</button>
+            <button class="calculator-btn" data-key="8" data-value="8">8</button>
+            <button class="calculator-btn" data-key="9" data-value="9">9</button>
+            <button class="calculator-btn operator" data-key="*" data-value="*">×</button>
+            
+            <button class="calculator-btn" data-key="4" data-value="4">4</button>
+            <button class="calculator-btn" data-key="5" data-value="5">5</button>
+            <button class="calculator-btn" data-key="6" data-value="6">6</button>
+            <button class="calculator-btn operator" data-key="-" data-value="-">-</button>
+
+            <button class="calculator-btn" data-key="1" data-value="1">1</button>
+            <button class="calculator-btn" data-key="2" data-value="2">2</button>
+            <button class="calculator-btn" data-key="3" data-value="3">3</button>
+            <button class="calculator-btn operator" data-key="+" data-value="+">+</button>
+
+            <button class="calculator-btn" data-key="." data-value=".">.</button>
+            <button class="calculator-btn" data-key="0" data-value="0">0</button>
+            <button class="calculator-btn equals" data-key="Enter" data-value="=">=</button>
+        </div>
+
+        <div class="history-panel">
+            <h3>History</h3>
+            <ul id="history-list">
+                <!-- History items will be added here -->
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // THEME AND DARK MODE LOGIC (from original code)
+            const themePicker = document.getElementById('theme-picker');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const htmlElement = document.documentElement;
+
+            const setTheme = (theme) => {
+                htmlElement.dataset.theme = theme;
+                localStorage.setItem('jkm-edit-theme', theme);
+            };
+
+            const enableDarkMode = () => {
+                htmlElement.classList.add('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'dark');
+            };
+
+            const disableDarkMode = () => {
+                htmlElement.classList.remove('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'light');
+            };
+
+            themePicker.addEventListener('change', () => setTheme(themePicker.value));
+            darkModeToggle.addEventListener('click', () => {
+                htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+            });
+
+            const savedTheme = localStorage.getItem('jkm-edit-theme');
+            if (savedTheme) {
+                themePicker.value = savedTheme;
+                setTheme(savedTheme);
+            }
+            const savedMode = localStorage.getItem('jkm-edit-mode');
+            if (savedMode === 'dark') {
+                enableDarkMode();
+            }
+
+            // CALCULATOR LOGIC
+            const mainDisplay = document.getElementById('main-display');
+            const historyDisplay = document.getElementById('history-display');
+            const historyList = document.getElementById('history-list');
+            const calculatorGrid = document.querySelector('.calculator-grid');
+            const body = document.body;
+
+            let currentExpression = '';
+            let historyExpression = '';
+            let isResultDisplayed = false;
+
+            const updateDisplay = () => {
+                mainDisplay.textContent = currentExpression || '0';
+                historyDisplay.textContent = historyExpression;
+            };
+
+            const handleInput = (value) => {
+                if (isResultDisplayed) {
+                    // If the last action was '=', start a new calculation
+                    // unless an operator is pressed.
+                    if (['+', '-', '*', '/', '^'].includes(value)) {
+                        historyExpression = currentExpression;
+                    } else {
+                        currentExpression = '';
+                        historyExpression = '';
+                    }
+                    isResultDisplayed = false;
+                }
+
+                if (currentExpression === '0' && value !== '.') currentExpression = '';
+                
+                currentExpression += value;
+                updateDisplay();
+            };
+
+            const clear = () => {
+                currentExpression = '';
+                historyExpression = '';
+                isResultDisplayed = false;
+                updateDisplay();
+            };
+            
+            const backspace = () => {
+                if (isResultDisplayed) return;
+                currentExpression = currentExpression.slice(0, -1);
+                updateDisplay();
+            };
+
+            const calculate = () => {
+                if (!currentExpression) return;
+                try {
+                    // Use math.js for safe evaluation
+                    const result = math.evaluate(currentExpression);
+                    historyExpression = currentExpression + ' =';
+                    currentExpression = String(result);
+                    addToHistory(historyExpression, currentExpression);
+                    isResultDisplayed = true;
+                } catch (error) {
+                    currentExpression = 'Error';
+                    isResultDisplayed = true;
+                }
+                updateDisplay();
+            };
+
+            const addToHistory = (expr, res) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="history-expr">${expr}</span><span class="history-result">${res}</span>`;
+                li.addEventListener('click', () => {
+                     currentExpression = res;
+                     historyExpression = expr;
+                     isResultDisplayed = true;
+                     updateDisplay();
+                });
+                historyList.prepend(li);
+            };
+
+            // Event listener for all buttons
+            calculatorGrid.addEventListener('click', (e) => {
+                if (e.target.matches('.calculator-btn')) {
+                    const value = e.target.dataset.value;
+                    
+                    switch(value) {
+                        case 'clear': clear(); break;
+                        case 'backspace': backspace(); break;
+                        case '=': calculate(); break;
+                        default: handleInput(value);
+                    }
+                }
+            });
+
+            // Keyboard support
+            document.addEventListener('keydown', (e) => {
+                const key = e.key;
+                const button = document.querySelector(`.calculator-btn[data-key="${key}"]`);
+                if (button) {
+                    e.preventDefault();
+                    button.click();
+                }
+            });
+
+            // Mode Switcher Logic
+            const modeButtons = document.querySelectorAll('.mode-btn[data-mode]');
+            modeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const newMode = btn.dataset.mode;
+                    body.dataset.mode = newMode;
+                    modeButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+            });
+
+            // Converter Logic
+            // ... (Add converter logic here if needed) ...
+
+        });
+    </script>
+</body>
+</html>
