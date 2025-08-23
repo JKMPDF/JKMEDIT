@@ -46,10 +46,8 @@
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
-    <!-- JS Libraries for Word to PDF -->
-    <script src="https://unpkg.com/docx-preview@0.1.15/dist/docx-preview.js"></script>
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+    <!-- JS Library for Word to PDF -->
+    <script src="https://unpkg.com/docx-pdf@0.0.1/dist/docx-pdf.js"></script>
 
     <style>
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
@@ -173,9 +171,6 @@
             
             <div class="download-section" id="download-section"></div>
         </div>
-        
-        <!-- Preview container (hidden) -->
-        <div id="docx-container" style="display: none;"></div>
 
         <div style='display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 3rem;'>
             <a href='#' id='go-back-btn' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Go Back</a>
@@ -272,13 +267,12 @@
             }
         });
 
-        // --- NEW SCRIPT FOR WORD TO PDF FUNCTIONALITY ---
+        // --- IMPROVED SCRIPT FOR WORD TO PDF FUNCTIONALITY ---
         const uploadArea = document.getElementById('upload-area');
         const wordUpload = document.getElementById('word-upload');
         const convertBtn = document.getElementById('convert-btn');
         const statusMessage = document.getElementById('status-message');
         const downloadSection = document.getElementById('download-section');
-        const docxContainer = document.getElementById('docx-container');
         let selectedWordFile = null;
 
         // --- Drag and Drop Events ---
@@ -303,101 +297,56 @@
         });
 
         function handleFile(file) {
-            const allowedTypes = [
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/msword'
-            ];
-            if (allowedTypes.includes(file.type)) {
+            // The docx-pdf library is specific to .docx
+            if (file.name.endsWith('.docx')) {
                 selectedWordFile = file;
                 statusMessage.textContent = `File selected: ${file.name}`;
                 convertBtn.disabled = false;
                 downloadSection.innerHTML = '';
             } else {
-                statusMessage.textContent = 'Invalid file type. Please select a .doc or .docx file.';
+                statusMessage.textContent = 'Invalid file type. Please select a .docx file.';
                 selectedWordFile = null;
                 convertBtn.disabled = true;
             }
         }
 
-        // --- Conversion Logic ---
+        // --- Conversion Logic using docx-pdf library ---
         convertBtn.addEventListener('click', async () => {
             if (!selectedWordFile) {
-                statusMessage.textContent = 'Please select a Word file first.';
+                statusMessage.textContent = 'Please select a DOCX file first.';
                 return;
             }
 
             convertBtn.disabled = true;
-            statusMessage.textContent = 'Processing... Please wait.';
+            statusMessage.textContent = 'Converting... This may take a moment.';
             downloadSection.innerHTML = '';
             
             try {
-                // Render the DOCX to a hidden div to extract its text content
-                await docx.renderAsync(selectedWordFile, docxContainer);
+                // The docx.toPdf function takes the file and returns a PDF blob
+                const pdfBlob = await docx.toPdf(selectedWordFile);
 
-                // Extract text from the rendered output
-                const textContent = docxContainer.innerText;
-
-                // Create a new PDF document
-                const { PDFDocument, rgb, StandardFonts } = PDFLib;
-                const pdfDoc = await PDFDocument.create();
-                pdfDoc.registerFontkit(fontkit);
-
-                // Embed a standard font
-                const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-                
-                // Add a new page
-                let page = pdfDoc.addPage();
-                const { width, height } = page.getSize();
-                const fontSize = 12;
-                const margin = 50;
-                let y = height - margin - fontSize;
-
-                const textLines = textContent.split('\n');
-                
-                for (const line of textLines) {
-                    // If text exceeds page boundary, add a new page
-                    if (y < margin) {
-                        page = pdfDoc.addPage();
-                        y = height - margin - fontSize;
-                    }
-
-                    page.drawText(line, {
-                        x: margin,
-                        y: y,
-                        font: timesRomanFont,
-                        size: fontSize,
-                        color: rgb(0, 0, 0),
-                    });
-                    
-                    y -= (fontSize * 1.2); // Move to the next line
-                }
-
-                // Save the PDF to a Uint8Array
-                const pdfBytes = await pdfDoc.save();
-
-                // Create a blob and generate a URL for downloading
-                const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+                // Create a URL for the generated PDF blob
                 const downloadUrl = URL.createObjectURL(pdfBlob);
                 
-                const newFileName = selectedWordFile.name.replace(/\.(docx|doc)$/, '.pdf');
+                // Create a new file name for the download
+                const newFileName = selectedWordFile.name.replace(/\.docx$/, '.pdf');
 
                 const downloadLink = document.createElement('a');
                 downloadLink.href = downloadUrl;
                 downloadLink.download = newFileName;
                 downloadLink.textContent = `Download ${newFileName}`;
-                downloadLink.className = 'back-to-dashboard-btn'; // Re-using your button style
+                downloadLink.className = 'back-to-dashboard-btn'; // Re-use your button style
 
                 downloadSection.appendChild(downloadLink);
                 statusMessage.textContent = 'Conversion successful!';
 
             } catch (error) {
-                console.error('Error converting Word to PDF:', error);
-                statusMessage.textContent = 'An error occurred during conversion. This DOCX may not be fully supported.';
+                console.error('Error converting DOCX to PDF:', error);
+                statusMessage.textContent = 'Conversion failed. The file may be corrupted or too complex.';
             } finally {
                 convertBtn.disabled = false;
-                docxContainer.innerHTML = ''; // Clean up the preview container
             }
         });
     </script>
 </body>
-</html>```
+</html>
