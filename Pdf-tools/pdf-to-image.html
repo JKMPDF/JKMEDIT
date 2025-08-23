@@ -87,7 +87,7 @@
         .dashboard-header p { font-size: 1.1rem; color: #6c757d; }
         html.dark-mode .dashboard-header p { color: #a0a0a0; }
         
-        /* New Styles for PDF to Image Tool */
+        /* Styles for PDF to Image Tool */
         .tool-container { background: var(--surface-color); padding: 2.5rem; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
         .upload-area { border: 3px dashed var(--primary-color); border-radius: 10px; padding: 3rem 1.5rem; margin-bottom: 2rem; cursor: pointer; transition: background-color var(--transition-speed); }
         .upload-area.drag-over { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--primary-color) 10%); }
@@ -110,7 +110,7 @@
         .download-btn { display: inline-block; width: 100%; padding: 0.6rem 1rem; background-color: var(--primary-color); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: background-color var(--transition-speed); }
         .download-btn:hover { background-color: var(--secondary-color); }
 
-        .back-to-dashboard-btn { display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .back-to-dashboard-btn { display: inline-block; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeInModal 0.3s; }
         .modal.show-modal { display: flex; align-items: center; justify-content: center; }
@@ -192,9 +192,10 @@
 
         <div class="results-grid" id="results-grid"></div>
 
-        <div style='text-align: center; margin-top: 3rem;'>
-            <!-- ========== MODIFIED BUTTON AS REQUESTED ========== -->
-            <a href='../pdf-tools.html' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Go back to Dashboard</a>
+        <!-- ========== MODIFIED BUTTONS AS REQUESTED ========== -->
+        <div style='display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 3rem;'>
+            <a href='#' id='go-back-btn' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href='../pdf-tools.html' class='back-to-dashboard-btn'><i class="fa-solid fa-house"></i> Dashboard</a>
         </div>
     </main>
     
@@ -202,8 +203,8 @@
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
     <script>
-        // --- THEME & MODAL SCRIPT (FROM YOUR ORIGINAL CODE) ---
         document.addEventListener('DOMContentLoaded', () => {
+            // --- THEME & MODAL SCRIPT ---
             const aboutModal = document.getElementById('about-modal');
             const contactModal = document.getElementById('contact-modal');
             const aboutBtn = document.getElementById('about-btn');
@@ -248,7 +249,6 @@
             };
 
             themePicker.addEventListener('change', () => setTheme(themePicker.value));
-            
             darkModeToggle.addEventListener('click', () => {
                 htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
             });
@@ -258,14 +258,16 @@
                 themePicker.value = savedTheme;
             }
 
-            // --- PAGE TRANSITION SCRIPT (FROM YOUR ORIGINAL CODE) ---
+            // --- PAGE TRANSITION SCRIPT ---
             window.addEventListener('pageshow', function (event) {
                 if (event.persisted) {
                     document.body.classList.remove('fade-out');
                 }
             });
+
             document.querySelectorAll('a').forEach(link => {
                 const linkUrl = link.getAttribute('href');
+                // Make sure the link is a page link and not the new 'Go Back' button
                 if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:')) {
                     link.addEventListener('click', function(e) {
                         e.preventDefault(); 
@@ -274,9 +276,21 @@
                     });
                 }
             });
+
+            // --- NEW: GO BACK BUTTON FUNCTIONALITY ---
+            const goBackBtn = document.getElementById('go-back-btn');
+            if (goBackBtn) {
+                goBackBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.body.classList.add('fade-out');
+                    setTimeout(() => {
+                        window.history.back();
+                    }, 400);
+                });
+            }
         });
 
-        // --- NEW SCRIPT FOR PDF TO IMAGE FUNCTIONALITY ---
+        // --- PDF TO IMAGE FUNCTIONALITY SCRIPT ---
         const uploadArea = document.getElementById('upload-area');
         const pdfUpload = document.getElementById('pdf-upload');
         const convertBtn = document.getElementById('convert-btn');
@@ -284,10 +298,8 @@
         const resultsGrid = document.getElementById('results-grid');
         let selectedPdfFile = null;
 
-        // Set PDF.js worker source
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
 
-        // --- Drag and Drop Events ---
         uploadArea.addEventListener('click', () => pdfUpload.click());
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -314,7 +326,6 @@
             convertBtn.disabled = false;
         }
 
-        // --- Conversion Logic ---
         convertBtn.addEventListener('click', async () => {
             if (!selectedPdfFile) {
                 statusMessage.textContent = 'Please select a PDF file first.';
@@ -342,7 +353,7 @@
                     for (let i = 1; i <= numPages; i++) {
                         statusMessage.textContent = `Processing page ${i} of ${numPages}...`;
                         const page = await pdfDoc.getPage(i);
-                        const viewport = page.getViewport({ scale: 2.0 }); // Increase scale for higher quality
+                        const viewport = page.getViewport({ scale: 2.0 });
                         const canvas = document.createElement('canvas');
                         const context = canvas.getContext('2d');
                         canvas.height = viewport.height;
@@ -350,7 +361,7 @@
 
                         await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-                        const imageDataUrl = canvas.toDataURL(mimeType, 0.9); // 0.9 quality for JPG
+                        const imageDataUrl = canvas.toDataURL(mimeType, 0.9);
                         createResultCard(i, imageDataUrl, fileExtension);
                     }
                     statusMessage.textContent = 'Conversion complete!';
