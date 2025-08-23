@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang='en' data-theme='corporate-blue'>
 <head>
@@ -67,6 +66,9 @@
         .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
         .main-nav { display: flex; align-items: center; gap: 1.5rem; }
         .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; transition: color var(--transition-speed); }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width var(--transition-speed); }
+        .nav-link:hover { color: var(--primary-color); }
+        .nav-link:hover::after { width: 100%; }
         .theme-selector { display: flex; align-items: center; gap: 0.5rem; }
         #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
         #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
@@ -78,86 +80,46 @@
         .dashboard-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; background-image: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent; }
         .dashboard-header p { font-size: 1.1rem; color: #6c757d; }
         html.dark-mode .dashboard-header p { color: #a0a0a0; }
-        .back-to-dashboard-btn { display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .back-to-dashboard-btn { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        .back-to-dashboard-btn.secondary-btn { background: var(--surface-color); color: var(--primary-color) !important; border: 2px solid var(--primary-color); }
+        .back-to-dashboard-btn.secondary-btn:hover { background: var(--primary-color); color: white !important; }
+
+        /* Animation Styles */
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
         @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeInModal 0.3s; }
+        .modal.show-modal { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
+        .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover,.close-btn:focus { color: var(--text-color); }
+        .modal-content h2 { color: var(--primary-color); margin-top: 0; }
+        .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
+        .contact-email:hover { transform: scale(1.05); }
 
         /* New Styles for Converter Tool */
         .converter-container { display: flex; gap: 2rem; }
         .converter-col { flex: 1; display: flex; flex-direction: column; }
-        textarea {
-            width: 100%;
-            height: 400px;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 2px solid #ccc;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            background-color: var(--surface-color);
-            color: var(--text-color);
-            transition: border-color var(--transition-speed), background-color var(--transition-speed);
-            resize: vertical;
-        }
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 25%, transparent);
-        }
+        textarea { width: 100%; height: 400px; padding: 1rem; border-radius: 8px; border: 2px solid #ccc; font-family: 'Poppins', sans-serif; font-size: 1rem; background-color: var(--surface-color); color: var(--text-color); transition: border-color var(--transition-speed), background-color var(--transition-speed); resize: vertical; }
+        textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 25%, transparent); }
         #output-text { background-color: color-mix(in srgb, var(--bg-color) 50%, var(--surface-color) 50%); }
         html.dark-mode #output-text { background-color: #2a2a2a; }
-        
-        .controls-bar {
-            background: var(--surface-color);
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-top: 1rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            justify-content: center;
-        }
-
-        .control-btn {
-            padding: 0.75rem 1.25rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            color: white;
-            background: var(--gradient);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .control-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-        .control-btn.ai-btn {
-            background: linear-gradient(45deg, var(--accent-color), #ffc107);
-        }
-        .utility-btn {
-            background: none;
-            border: 2px solid var(--secondary-color);
-            color: var(--secondary-color);
-        }
-        .utility-btn:hover {
-             background: var(--secondary-color);
-             color: white;
-        }
-
-        .stats-bar {
-            margin-top: 1rem;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            color: #6c757d;
-            background: var(--surface-color);
-            border-radius: 8px;
-        }
+        .controls-bar { background: var(--surface-color); padding: 1rem; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+        .control-btn { padding: 0.75rem 1.25rem; font-size: 0.9rem; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; color: white; background: var(--gradient); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .control-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .control-btn.ai-btn { background: linear-gradient(45deg, var(--accent-color), #ffc107); }
+        .utility-btn { background: none; border: 2px solid var(--secondary-color); color: var(--secondary-color); }
+        .utility-btn:hover { background: var(--secondary-color); color: white; }
+        .stats-bar { margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem; color: #6c757d; background: var(--surface-color); border-radius: 8px; text-align: center; }
         html.dark-mode .stats-bar { color: #a0a0a0; }
+        .footer-nav-buttons { text-align: center; margin-top: 3rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
 
+        /* Media Queries for Responsive Design */
         @media (max-width: 768px) {
             .main-header { flex-direction: column; gap: 1rem; }
             .dashboard-container { padding: 2rem 1.5rem; }
@@ -166,7 +128,6 @@
     </style>
 </head>
 <body>
-    <!-- Re-using the same header for consistent design -->
     <header class='main-header'>
         <div class='logo-container'>
             <a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
@@ -191,6 +152,8 @@
             <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'>
                 <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
             </button>
+            <a href='#' id='about-btn' class='nav-link'>About</a>
+            <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
         </nav>
     </header>
 
@@ -204,9 +167,7 @@
             <!-- Left Column: Input -->
             <div class="converter-col">
                 <textarea id="input-text" placeholder="Paste or type your text here..."></textarea>
-                <div id="stats-bar" class="stats-bar">
-                    Characters: 0 | Words: 0 | Lines: 0
-                </div>
+                <div id="stats-bar" class="stats-bar">Characters: 0 | Words: 0 | Lines: 0</div>
             </div>
 
             <!-- Right Column: Output -->
@@ -219,7 +180,6 @@
             </div>
         </div>
         
-        <!-- Controls Bar -->
         <div class="controls-bar">
             <button id="upper-btn" class="control-btn">UPPERCASE</button>
             <button id="lower-btn" class="control-btn">lowercase</button>
@@ -228,10 +188,19 @@
             <button id="ai-btn" class="control-btn ai-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Correct Case</button>
         </div>
         
-        <div style='text-align: center; margin-top: 3rem;'>
-            <a href='utility-tools.html' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Back to All Tools</a>
+        <div class='footer-nav-buttons'>
+            <a href='#' onclick='event.preventDefault(); window.history.back();' class='back-to-dashboard-btn secondary-btn'>
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href='https://jkmpdf.github.io/JKMEDIT/' class='back-to-dashboard-btn'>
+                <i class="fa-solid fa-layer-group"></i> Go to Dashboard
+            </a>
         </div>
     </main>
+
+    <!-- Modal HTML Structures -->
+    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation. From text utilities to file conversions, we provide a suite of tools designed to be simple, fast, and effective, all from within your browser.</p></div></div>
+    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>Contact Us</h2><p>For any inquiries, feedback, or support requests, please feel free to email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -247,25 +216,41 @@
                 htmlElement.dataset.theme = theme;
                 localStorage.setItem('jkm-edit-theme', theme);
             };
-
             const enableDarkMode = () => {
                 htmlElement.classList.add('dark-mode');
                 localStorage.setItem('jkm-edit-mode', 'dark');
             };
-
             const disableDarkMode = () => {
                 htmlElement.classList.remove('dark-mode');
                 localStorage.setItem('jkm-edit-mode', 'light');
             };
-
             themePicker.addEventListener('change', () => setTheme(themePicker.value));
             darkModeToggle.addEventListener('click', () => {
                 htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
             });
-
             const savedTheme = localStorage.getItem('jkm-edit-theme');
             if (savedTheme) themePicker.value = savedTheme;
-            // No need to set mode here as the flicker script handles it
+
+            // --- MODAL LOGIC (from main page) ---
+            const aboutModal = document.getElementById('about-modal');
+            const contactModal = document.getElementById('contact-modal');
+            const aboutBtn = document.getElementById('about-btn');
+            const contactBtn = document.getElementById('contact-btn');
+            const closeBtns = document.querySelectorAll('.close-btn');
+
+            const openModal = (modal) => modal.classList.add('show-modal');
+            const closeModal = (modal) => modal.classList.remove('show-modal');
+
+            aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+            contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+            closeBtns.forEach(btn => btn.addEventListener('click', () => {
+                closeModal(aboutModal);
+                closeModal(contactModal);
+            }));
+            window.addEventListener('click', (e) => {
+                if (e.target === aboutModal) closeModal(aboutModal);
+                if (e.target === contactModal) closeModal(contactModal);
+            });
 
             // --- PAGE TRANSITION LOGIC ---
              window.addEventListener('pageshow', (event) => {
@@ -273,103 +258,63 @@
             });
             document.querySelectorAll('a').forEach(link => {
                 const linkUrl = link.getAttribute('href');
-                if (linkUrl && !linkUrl.startsWith('http') && !linkUrl.startsWith('mailto:')) {
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault(); 
-                        document.body.classList.add('fade-out');
-                        setTimeout(() => window.location.href = this.href, 400); 
-                    });
+                if (linkUrl && !linkUrl.startsWith('http') && !linkUrl.startsWith('mailto:') && !link.hasAttribute('onclick')) {
+                    if (link.id !== 'about-btn' && link.id !== 'contact-btn') { // Prevents fade-out on modal triggers
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); 
+                            document.body.classList.add('fade-out');
+                            setTimeout(() => window.location.href = this.href, 400); 
+                        });
+                    }
                 }
             });
-
 
             // --- TEXT CONVERTER FUNCTIONALITY ---
             const inputText = document.getElementById('input-text');
             const outputText = document.getElementById('output-text');
             const statsBar = document.getElementById('stats-bar');
-
-            const upperBtn = document.getElementById('upper-btn');
-            const lowerBtn = document.getElementById('lower-btn');
-            const titleBtn = document.getElementById('title-btn');
-            const sentenceBtn = document.getElementById('sentence-btn');
-            const aiBtn = document.getElementById('ai-btn');
-            const copyBtn = document.getElementById('copy-btn');
-            const clearBtn = document.getElementById('clear-btn');
+            const [upperBtn, lowerBtn, titleBtn, sentenceBtn, aiBtn, copyBtn, clearBtn] = 
+                ['upper-btn', 'lower-btn', 'title-btn', 'sentence-btn', 'ai-btn', 'copy-btn', 'clear-btn'].map(id => document.getElementById(id));
             
-            // Function to update output and stats
-            const updateOutput = (newText) => {
-                outputText.value = newText;
-                updateStats();
-            };
-
-            // Function to update stats
+            const updateOutput = (newText) => { outputText.value = newText; };
             const updateStats = () => {
                 const text = inputText.value;
                 const charCount = text.length;
-                const wordCount = text.trim().split(/\s+/).filter(word => word.length > 0).length;
-                const lineCount = text.split(/\r\n|\r|\n/).length;
+                const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+                const lineCount = text.length === 0 ? 0 : text.split(/\r\n|\r|\n/).length;
                 statsBar.textContent = `Characters: ${charCount} | Words: ${wordCount} | Lines: ${lineCount}`;
             };
             
-            // Event Listeners for conversion buttons
-            upperBtn.addEventListener('click', () => {
-                updateOutput(inputText.value.toUpperCase());
-            });
-
-            lowerBtn.addEventListener('click', () => {
-                updateOutput(inputText.value.toLowerCase());
-            });
-
+            upperBtn.addEventListener('click', () => updateOutput(inputText.value.toUpperCase()));
+            lowerBtn.addEventListener('click', () => updateOutput(inputText.value.toLowerCase()));
             titleBtn.addEventListener('click', () => {
-                const result = inputText.value.toLowerCase().split(' ').map(word => {
-                    return (word.charAt(0).toUpperCase() + word.slice(1));
-                }).join(' ');
-                updateOutput(result);
+                updateOutput(inputText.value.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
             });
-            
-            // Basic Sentence Case
             sentenceBtn.addEventListener('click', () => {
-                const text = inputText.value.toLowerCase();
-                const result = text.replace(/(^\s*\w|[.!?]\s+\w)/g, (c) => c.toUpperCase());
-                updateOutput(result);
+                updateOutput(inputText.value.toLowerCase().replace(/(^\s*\w|[.!?]\s+\w)/g, c => c.toUpperCase()));
             });
-
-            // "AI" Auto-Correct Case
             aiBtn.addEventListener('click', () => {
                 let text = inputText.value.toLowerCase().trim();
-                // Capitalize the first letter of the whole text
-                text = text.charAt(0).toUpperCase() + text.slice(1);
-                // Capitalize after sentence-ending punctuation. Handles multiple spaces.
-                text = text.replace(/([.!?]\s*)([a-z])/g, (match, p1, p2) => p1 + p2.toUpperCase());
-                 // Capitalize 'i' when it's a word
-                text = text.replace(/\b(i)\b/g, 'I');
+                if (text.length > 0) text = text.charAt(0).toUpperCase() + text.slice(1);
+                text = text.replace(/([.!?]\s*)([a-z])/g, (_, p1, p2) => p1 + p2.toUpperCase());
+                text = text.replace(/\bi\b/g, 'I');
                 updateOutput(text);
             });
-            
-            // Utility Buttons
             copyBtn.addEventListener('click', () => {
-                outputText.select();
-                document.execCommand('copy');
+                navigator.clipboard.writeText(outputText.value);
                 copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-                setTimeout(() => {
-                   copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy';
-                }, 2000);
+                setTimeout(() => { copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy'; }, 2000);
             });
-
             clearBtn.addEventListener('click', () => {
                 inputText.value = '';
-                outputText.value = '';
+                updateOutput('');
                 updateStats();
                 inputText.focus();
             });
             
-            // Update stats on input
             inputText.addEventListener('input', updateStats);
-            
-            // Initial stats update
             updateStats();
         });
     </script>
 </body>
 </html>
-```
