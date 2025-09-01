@@ -8,19 +8,19 @@
     <!-- SEO & META TAGS - FOR INCOME & EXPENSES TRACKER PAGE -->
     <!-- =================================================================== -->
     <title>Income & Expenses Tracker | JKM Edit</title>
-    <meta name="description" content="Track your monthly income and expenses with JKM Edit's free online tool. Log in, categorize transactions, view summaries, and download PDF reports."/>
-    <meta name="keywords" content="income tracker, expense tracker, monthly budget, personal finance, financial management, online budgeting tool, jkm edit"/>
+    <meta name="description" content="Track your monthly income and expenses with JKM Edit's free online tracker. Manage your finances easily."/>
+    <meta name="keywords" content="income tracker, expense tracker, personal finance, budget planner, online finance, jkm edit"/>
     <meta name="author" content="JKM Edit"/>
     <meta name="robots" content="index, follow"/>
     <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/Utilities/Income-Expenses-Tracker.html"/>
     <meta property="og:title" content="Income & Expenses Tracker | JKM Edit"/>
-    <meta property="og:description" content="Manage your personal finances with ease. Track income, expenses, and generate reports."/>
+    <meta property="og:description" content="Track your monthly income and expenses with JKM Edit's free online tracker."/>
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/Utilities/Income-Expenses-Tracker.html"/>
     <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Income & Expenses Tracker | JKM Edit"/>
-    <meta name="twitter:description" content="Manage your personal finances with ease. Track income, expenses, and generate reports."/>
+    <meta name="twitter:description" content="Track your monthly income and expenses with JKM Edit's free online tracker."/>
     <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
     <!-- =================================================================== -->
 
@@ -47,13 +47,7 @@
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
-    <!-- jsPDF and html2canvas for PDF generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-
     <style>
-        /* General Styles - Copied from your main code */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
         html { background-color: var(--bg-color); transition: background-color var(--transition-speed); }
         body { margin: 0; color: var(--text-color); transition: color var(--transition-speed); }
@@ -84,121 +78,101 @@
         #dark-mode-toggle .fa-sun { display: none; }
         html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
         html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+        /* Tracker Specific Styles */
+        .tracker-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
+        .tracker-header { text-align: center; margin-bottom: 2rem; }
+        .tracker-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary-color); }
+        .tracker-header p { font-size: 1.1rem; color: var(--text-color); opacity: 0.8; }
+
+        .month-selector { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
+        .month-selector button { background: var(--surface-color); border: 1px solid var(--primary-color); color: var(--primary-color); padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all var(--transition-speed); }
+        .month-selector button.active, .month-selector button:hover { background: var(--gradient); color: white; border-color: transparent; }
+
+        .tracker-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+        @media (max-width: 768px) { .tracker-grid { grid-template-columns: 1fr; } }
+
+        .card { background: var(--surface-color); border-radius: 10px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary-color); transition: background-color var(--transition-speed), border-color var(--transition-speed); }
+        .card h3 { color: var(--primary-color); margin-top: 0; margin-bottom: 1.5rem; font-size: 1.8rem; text-align: center; }
         
-        .dashboard-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
-        .dashboard-header { text-align: center; margin-bottom: 3rem; }
-        .dashboard-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .dashboard-header p { font-size: 1.1rem; color: #6c757d; }
-        html.dark-mode .dashboard-header p { color: #a0a0a0; }
-
-        /* Specific styles for Income & Expenses Tracker */
-        .login-section { text-align: center; margin-bottom: 2rem; padding: 2rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-color); }
-        .login-button { background-color: #4285F4; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 5px; cursor: pointer; font-size: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; }
-        .login-button:hover { background-color: #357ae8; }
-        .google-icon { background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png') center / contain no-repeat; width: 20px; height: 20px; display: inline-block; vertical-align: middle; }
-        .user-info { display: flex; align-items: center; justify-content: center; gap: 1rem; font-size: 1.1rem; font-weight: 600; color: var(--text-color); }
-        .user-info img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--primary-color); }
-        .logout-button { background: var(--gradient); color: white; border: none; padding: 0.6rem 1rem; border-radius: 5px; cursor: pointer; font-size: 0.9rem; margin-left: 1rem; }
-        .logout-button:hover { opacity: 0.9; }
-
-        .tracker-section { display: none; margin-top: 2rem; } /* Hidden until logged in */
-
-        .balance-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .summary-card { background: var(--surface-color); padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .summary-card h4 { margin: 0 0 0.5rem 0; color: var(--text-color); font-size: 1.1rem; }
-        .summary-card p { font-size: 1.8rem; font-weight: 700; margin: 0; }
-        .income-amount { color: #28a745; } /* Green */
-        .expense-amount { color: #dc3545; } /* Red */
-        .balance-amount { color: var(--primary-color); }
-
-        .form-section, .ledger-section { background: var(--surface-color); padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 2rem; border-bottom: 4px solid var(--primary-color); }
-        .form-section h3, .ledger-section h3 { color: var(--primary-color); margin-top: 0; margin-bottom: 1.5rem; }
-
-        .tracker-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
-        .tracker-form input[type="date"],
-        .tracker-form input[type="text"],
-        .tracker-form input[type="number"],
-        .tracker-form select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--primary-color);
-            border-radius: 5px;
-            background: var(--bg-color); /* Use bg-color for input fields to differentiate from surface */
-            color: var(--text-color);
-            font-family: 'Poppins', sans-serif;
-            transition: border-color var(--transition-speed);
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color); }
+        .form-group input[type="text"], .form-group input[type="number"], .form-group select {
+            width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 5px;
+            background-color: var(--bg-color); color: var(--text-color);
+            transition: border-color var(--transition-speed), background-color var(--transition-speed);
         }
-        .tracker-form input:focus, .tracker-form select:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.2);
+        .form-group input[type="text"]:focus, .form-group input[type="number"]:focus, .form-group select:focus {
+            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 30%, transparent);
         }
 
-        /* Calculate RGB from hex for box-shadow, if needed */
-        [data-theme='corporate-blue'] { --accent-color-rgb: 255,171,0; }
-        [data-theme='forest-green'] { --accent-color-rgb: 255,193,7; }
-        [data-theme='sunset-gradient'] { --accent-color-rgb: 32,201,151; }
-        [data-theme='tech-noir'] { --accent-color-rgb: 0,188,212; }
-        [data-theme='minty-fresh'] { --accent-color-rgb: 243,156,18; }
-        [data-theme='royal-purple'] { --accent-color-rgb: 253,126,20; }
-        [data-theme='graphite-gray'] { --accent-color-rgb: 0,123,255; }
-        [data-theme='crimson-red'] { --accent-color-rgb: 255,193,7; }
-
-        .add-entry-btn {
-            background: var(--gradient);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
+        .add-btn {
+            display: block; width: 100%; padding: 0.8rem; background: var(--gradient);
+            color: white; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 1.1rem; font-weight: 600; margin-top: 1.5rem;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .add-entry-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .add-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
 
-        .ledger-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
-        .ledger-table th, .ledger-table td { text-align: left; padding: 0.8rem; border-bottom: 1px solid #eee; color: var(--text-color); }
-        html.dark-mode .ledger-table th, html.dark-mode .ledger-table td { border-bottom-color: #333; }
-        .ledger-table th { background-color: var(--primary-color); color: white; font-weight: 600; }
-        .ledger-table tr:nth-child(even) { background-color: color-mix(in srgb, var(--surface-color) 95%, var(--primary-color) 2%); }
-        html.dark-mode .ledger-table tr:nth-child(even) { background-color: color-mix(in srgb, var(--surface-color) 95%, var(--primary-color) 5%); }
-
-        .ledger-table .actions button { background: none; border: none; font-size: 1rem; cursor: pointer; margin-right: 0.5rem; color: var(--primary-color); transition: color 0.2s; }
-        .ledger-table .actions button:hover { color: var(--accent-color); }
-
-        .report-summary-btn {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-top: 1rem;
-            display: inline-block;
-            transition: background-color 0.2s ease;
+        .total-summary {
+            display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem;
+            margin-top: 2rem; padding: 1.5rem; background: color-mix(in srgb, var(--surface-color) 80%, var(--primary-color) 10%);
+            border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-bottom: 3px solid var(--accent-color);
         }
-        .report-summary-btn:hover { background-color: color-mix(in srgb, var(--accent-color) 80%, black 20%); }
+        .summary-item { text-align: center; }
+        .summary-item h4 { margin: 0; font-size: 1rem; color: var(--text-color); opacity: 0.7; }
+        .summary-item p { margin: 0.5rem 0 0; font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
+        .summary-item.income p { color: #28a745; } /* Green for income */
+        .summary-item.expense p { color: #dc3545; } /* Red for expense */
+        .summary-item.balance p { color: var(--primary-color); }
 
-        /* Monthly Navigation */
-        .month-nav { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
-        .month-nav button {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: background-color 0.2s;
+        .transactions-section { margin-top: 3rem; }
+        .transactions-section h3 { color: var(--primary-color); margin-bottom: 1.5rem; font-size: 1.8rem; text-align: center; }
+
+        .transaction-list { list-style: none; padding: 0; margin: 0; }
+        .transaction-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem 1.5rem; background: var(--surface-color);
+            border-bottom: 1px solid #eee; transition: background-color var(--transition-speed);
         }
-        .month-nav button:hover { background-color: var(--secondary-color); }
-        .current-month-display { font-size: 1.4rem; font-weight: 700; color: var(--text-color); }
+        html.dark-mode .transaction-item { border-bottom-color: #333; }
 
-        /* Modals - Copied from your main code */
+        .transaction-item:last-child { border-bottom: none; border-radius: 0 0 10px 10px; }
+        .transaction-item:first-child { border-radius: 10px 10px 0 0; }
+        .transaction-item:hover { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--primary-color) 5%); }
+
+        .transaction-info { flex-grow: 1; }
+        .transaction-info h4 { margin: 0; font-size: 1.1rem; color: var(--text-color); }
+        .transaction-info p { margin: 0.2rem 0 0; font-size: 0.9rem; color: #6c757d; }
+        html.dark-mode .transaction-info p { color: #a0a0a0; }
+
+        .transaction-amount { font-size: 1.2rem; font-weight: 600; }
+        .transaction-amount.income { color: #28a745; }
+        .transaction-amount.expense { color: #dc3545; }
+
+        .delete-btn { background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.1rem; margin-left: 1rem; opacity: 0.7; transition: opacity 0.2s; }
+        .delete-btn:hover { opacity: 1; }
+
+        .report-summary-section {
+            background: var(--surface-color); border-radius: 10px; padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--accent-color);
+            margin-top: 3rem; text-align: center;
+        }
+        .report-summary-section h3 { color: var(--accent-color); margin-top: 0; margin-bottom: 1.5rem; font-size: 1.8rem; }
+        .report-summary-section p { font-size: 1rem; color: var(--text-color); opacity: 0.8; margin-bottom: 1.5rem; }
+
+        .download-report-btn {
+            display: inline-block; padding: 0.75rem 2rem; background: var(--accent-color);
+            color: white; text-decoration: none; border-radius: 8px; font-weight: 600;
+            font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: none; cursor: pointer;
+        }
+        .download-report-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); background: color-mix(in srgb, var(--accent-color) 80%, black); }
+
+        .back-to-dashboard-btn { display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeInModal 0.3s; }
         .modal.show-modal { display: flex; align-items: center; justify-content: center; }
         .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
@@ -207,22 +181,16 @@
         .modal-content h2 { color: var(--primary-color); margin-top: 0; }
         .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
         .contact-email:hover { transform: scale(1.05); }
-
-        /* Page Transitions - Copied from your main code */
         body { animation: fadeInPage 0.5s ease-in-out; }
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
         @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        @media (max-width: 768px) {
-            .main-header { flex-direction: column; gap: 1rem; }
-            .dashboard-container { padding: 2rem 1.5rem; }
-            .balance-summary { grid-template-columns: 1fr; }
-            .tracker-form { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 768px) { .main-header { flex-direction: column; gap: 1rem; } .tracker-container { padding: 2rem 1.5rem; } }
     </style>
+    <!-- Include jsPDF library for client-side PDF generation - **Note: This is a client-side solution and not suitable for complex server-side reports.** -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <header class='main-header'>
@@ -254,91 +222,99 @@
         </nav>
     </header>
 
-    <main class='dashboard-container'>
-        <div class='dashboard-header'>
+    <main class='tracker-container'>
+        <div class='tracker-header'>
             <h2>Income & Expenses Tracker</h2>
-            <p>Effortlessly manage your monthly finances and track your spending.</p>
+            <p>Effortlessly manage your monthly finances. Track, categorize, and understand your money.</p>
         </div>
 
-        <section class='login-section'>
-            <div id="logged-out-view">
-                <h3>Login to Save Your Data</h3>
-                <button class="login-button" id="google-login-btn">
-                    <span class="google-icon"></span>
-                    Login with Google (Simulated)
-                </button>
-            </div>
-            <div id="logged-in-view" style="display: none;">
-                <div class="user-info">
-                    <img id="user-profile-pic" src="https://via.placeholder.com/40" alt="User Profile">
-                    Welcome, <span id="user-display-name">Guest</span>!
-                    <button class="logout-button" id="google-logout-btn">Logout</button>
-                </div>
-            </div>
-        </section>
+        <div class="month-selector">
+            <!-- These buttons will be dynamically managed by JS -->
+            <button id="prev-month-btn"><i class="fas fa-chevron-left"></i> Previous</button>
+            <button id="current-month-display" class="active">Loading Month...</button>
+            <button id="next-month-btn">Next <i class="fas fa-chevron-right"></i></button>
+        </div>
 
-        <section class='tracker-section' id="main-tracker-content">
-            <div class="balance-summary">
-                <div class="summary-card">
-                    <h4>Total Income</h4>
-                    <p class="income-amount" id="total-income">0.00</p>
-                </div>
-                <div class="summary-card">
-                    <h4>Total Expenses</h4>
-                    <p class="expense-amount" id="total-expenses">0.00</p>
-                </div>
-                <div class="summary-card">
-                    <h4>Net Balance</h4>
-                    <p class="balance-amount" id="net-balance">0.00</p>
-                </div>
+        <div class="total-summary">
+            <div class="summary-item income">
+                <h4>Total Income</h4>
+                <p id="total-income">0.00</p>
             </div>
+            <div class="summary-item expense">
+                <h4>Total Expenses</h4>
+                <p id="total-expenses">0.00</p>
+            </div>
+            <div class="summary-item balance">
+                <h4>Net Balance</h4>
+                <p id="net-balance">0.00</p>
+            </div>
+        </div>
 
-            <div class="form-section">
-                <h3>Add New Transaction</h3>
-                <div class="tracker-form">
-                    <input type="date" id="transaction-date" required>
-                    <input type="text" id="transaction-description" placeholder="Description" required>
-                    <input type="number" id="transaction-amount" placeholder="Amount" step="0.01" required>
-                    <select id="transaction-type">
-                        <option value="income">Income</option>
-                        <option value="expense">Expense</option>
-                    </select>
-                    <button class="add-entry-btn" id="add-transaction-btn">Add Transaction</button>
-                </div>
+        <div class='tracker-grid'>
+            <div class='card'>
+                <h3>Add Income</h3>
+                <form id="income-form">
+                    <div class="form-group">
+                        <label for="income-description">Description</label>
+                        <input type="text" id="income-description" placeholder="e.g., Salary, Freelance" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="income-amount">Amount</label>
+                        <input type="number" id="income-amount" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <button type="submit" class="add-btn"><i class="fas fa-plus-circle"></i> Add Income</button>
+                </form>
             </div>
 
-            <div class="ledger-section">
-                <div class="month-nav">
-                    <button id="prev-month-btn"><i class="fas fa-chevron-left"></i></button>
-                    <h3 class="current-month-display" id="current-month-year"></h3>
-                    <button id="next-month-btn"><i class="fas fa-chevron-right"></i></button>
-                </div>
-
-                <h3>Transaction History</h3>
-                <table class="ledger-table" id="transaction-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Amount</th>
-                            <th>Type</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transaction-list">
-                        <!-- Transactions will be loaded here by JavaScript -->
-                    </tbody>
-                </table>
-                <button class="report-summary-btn" id="download-pdf-btn">Download Monthly Report (PDF)</button>
+            <div class='card'>
+                <h3>Add Expense</h3>
+                <form id="expense-form">
+                    <div class="form-group">
+                        <label for="expense-description">Description</label>
+                        <input type="text" id="expense-description" placeholder="e.g., Rent, Groceries, Utilities" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expense-amount">Amount</label>
+                        <input type="number" id="expense-amount" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expense-category">Category</label>
+                        <select id="expense-category">
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Housing">Housing</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Health">Health</option>
+                            <option value="Education">Education</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="add-btn"><i class="fas fa-minus-circle"></i> Add Expense</button>
+                </form>
             </div>
-        </section>
+        </div>
+
+        <div class="transactions-section">
+            <h3>Monthly Transactions</h3>
+            <ul id="transaction-list" class="transaction-list card">
+                <!-- Transactions will be dynamically added here -->
+                <li style="text-align: center; color: var(--text-color); opacity: 0.7; padding: 1rem;">No transactions for this month yet.</li>
+            </ul>
+        </div>
+
+        <div class="report-summary-section">
+            <h3>Report Summary</h3>
+            <p>Generate a detailed PDF report of your income and expenses for the current month.</p>
+            <button id="download-report-btn" class="download-report-btn"><i class="fas fa-file-pdf"></i> Download Monthly Report (PDF)</button>
+        </div>
 
         <div style='text-align: center; margin-top: 3rem;'>
             <a href='../utility-tools.html' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Back to Utility Tools</a>
         </div>
     </main>
     
-    <!-- Modals (Copied from your main code) -->
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
@@ -354,37 +330,10 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            // MODIFICATION: Dark mode fix - remove the flicker-prevention style
             const flickerFix = document.getElementById('theme-flicker-fix');
             if (flickerFix) {
                 flickerFix.remove();
             }
 
-            // Modal functionality (Copied from your main code)
-            const aboutModal = document.getElementById('about-modal');
-            const contactModal = document.getElementById('contact-modal');
-            const aboutBtn = document.getElementById('about-btn');
-            const contactBtn = document.getElementById('contact-btn');
-            const closeBtns = document.querySelectorAll('.close-btn');
-
-            const openModal = (modal) => { modal.classList.add('show-modal'); };
-            const closeModal = (modal) => { modal.classList.remove('show-modal'); };
-
-            aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
-            contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
-            
-            closeBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    closeModal(aboutModal);
-                    closeModal(contactModal);
-                });
-            });
-
-            window.addEventListener('click', (e) => {
-                if (e.target === aboutModal) closeModal(aboutModal);
-                if (e.target === contactModal) closeModal(contactModal);
-            });
-
-            // Theme and Dark Mode functionality (Copied from your main code)
-            const themePicker = document.getElementById('theme-picker');
-            const darkModeToggle =
+            // Modal functionality (copied from your main code)
+            const aboutModal = document.getElementById
