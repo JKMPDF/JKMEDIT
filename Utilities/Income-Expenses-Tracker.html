@@ -1,339 +1,795 @@
-<!DOCTYPE html>
-<html lang='en' data-theme='corporate-blue'>
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset='UTF-8'/>
-    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    
-    <!-- =================================================================== -->
-    <!-- SEO & META TAGS - FOR INCOME & EXPENSES TRACKER PAGE -->
-    <!-- =================================================================== -->
-    <title>Income & Expenses Tracker | JKM Edit</title>
-    <meta name="description" content="Track your monthly income and expenses with JKM Edit's free online tracker. Manage your finances easily."/>
-    <meta name="keywords" content="income tracker, expense tracker, personal finance, budget planner, online finance, jkm edit"/>
-    <meta name="author" content="JKM Edit"/>
-    <meta name="robots" content="index, follow"/>
-    <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/Utilities/Income-Expenses-Tracker.html"/>
-    <meta property="og:title" content="Income & Expenses Tracker | JKM Edit"/>
-    <meta property="og:description" content="Track your monthly income and expenses with JKM Edit's free online tracker."/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/Utilities/Income-Expenses-Tracker.html"/>
-    <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="Income & Expenses Tracker | JKM Edit"/>
-    <meta name="twitter:description" content="Track your monthly income and expenses with JKM Edit's free online tracker."/>
-    <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
-    <!-- =================================================================== -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Browser Accounting App — No Server</title>
 
-    <!-- SCRIPT TO PREVENT THEME AND BACKGROUND FLICKERING (KEEP THIS) -->
-    <script>
-        (function() {
-            try {
-                const themeBgColors = {
-                    'corporate-blue': { light: '#f4f5f7', dark: '#121212' },'forest-green':   { light: '#f0f3f2', dark: '#121212' },'sunset-gradient':{ light: '#fff8f2', dark: '#121212' },'tech-noir':      { light: '#1a1a2e', dark: '#0f0f1e' },'minty-fresh':    { light: '#f1fefb', dark: '#121212' },'royal-purple':   { light: '#f8f7fa', dark: '#121212' },'graphite-gray':  { light: '#e9ecef', dark: '#121212' },'crimson-red':    { light: '#fdf5f6', dark: '#121212' }
-                };
-                const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
-                const mode = localStorage.getItem('jkm-edit-mode') || 'light';
-                document.documentElement.setAttribute('data-theme', theme);
-                if (mode === 'dark') { document.documentElement.classList.add('dark-mode'); }
-                const bgColor = (themeBgColors[theme] && themeBgColors[theme][mode]) || '#f4f5f7';
-                const style = document.createElement('style');
-                style.id = 'theme-flicker-fix';
-                style.innerHTML = `html { background-color: ${bgColor} !important; }`;
-                document.head.appendChild(style);
-            } catch (e) { console.error("Error applying initial theme:", e); }
-        })();
-    </script>
-    
-    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+  <!-- SheetJS for Excel import/export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    <style>
-        :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
-        html { background-color: var(--bg-color); transition: background-color var(--transition-speed); }
-        body { margin: 0; color: var(--text-color); transition: color var(--transition-speed); }
-        *, *::before, *::after { box-sizing: border-box; }
-        [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
-        [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
-        [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
-        [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-gradient(45deg, #4a00e0, #8e2de2); }
-        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
-        [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
-        [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
-        [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
-        html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
-        html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
-        html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
-        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 100; position: relative; }
-        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
-        .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); transition: color var(--transition-speed), text-shadow var(--transition-speed); }
-        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
-        .main-nav { display: flex; align-items: center; gap: 1.5rem; }
-        .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; transition: color var(--transition-speed); }
-        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width var(--transition-speed); }
-        .nav-link:hover { color: var(--primary-color); }
-        .nav-link:hover::after { width: 100%; }
-        .theme-selector { display: flex; align-items: center; gap: 0.5rem; }
-        #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
-        #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
-        #dark-mode-toggle .fa-sun { display: none; }
-        html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
-        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
-
-        /* Tracker Specific Styles */
-        .tracker-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
-        .tracker-header { text-align: center; margin-bottom: 2rem; }
-        .tracker-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary-color); }
-        .tracker-header p { font-size: 1.1rem; color: var(--text-color); opacity: 0.8; }
-
-        .month-selector { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
-        .month-selector button { background: var(--surface-color); border: 1px solid var(--primary-color); color: var(--primary-color); padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all var(--transition-speed); }
-        .month-selector button.active, .month-selector button:hover { background: var(--gradient); color: white; border-color: transparent; }
-
-        .tracker-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
-        @media (max-width: 768px) { .tracker-grid { grid-template-columns: 1fr; } }
-
-        .card { background: var(--surface-color); border-radius: 10px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary-color); transition: background-color var(--transition-speed), border-color var(--transition-speed); }
-        .card h3 { color: var(--primary-color); margin-top: 0; margin-bottom: 1.5rem; font-size: 1.8rem; text-align: center; }
-        
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color); }
-        .form-group input[type="text"], .form-group input[type="number"], .form-group select {
-            width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 5px;
-            background-color: var(--bg-color); color: var(--text-color);
-            transition: border-color var(--transition-speed), background-color var(--transition-speed);
-        }
-        .form-group input[type="text"]:focus, .form-group input[type="number"]:focus, .form-group select:focus {
-            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 30%, transparent);
-        }
-
-        .add-btn {
-            display: block; width: 100%; padding: 0.8rem; background: var(--gradient);
-            color: white; border: none; border-radius: 8px; cursor: pointer;
-            font-size: 1.1rem; font-weight: 600; margin-top: 1.5rem;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .add-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-
-        .total-summary {
-            display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem;
-            margin-top: 2rem; padding: 1.5rem; background: color-mix(in srgb, var(--surface-color) 80%, var(--primary-color) 10%);
-            border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            border-bottom: 3px solid var(--accent-color);
-        }
-        .summary-item { text-align: center; }
-        .summary-item h4 { margin: 0; font-size: 1rem; color: var(--text-color); opacity: 0.7; }
-        .summary-item p { margin: 0.5rem 0 0; font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
-        .summary-item.income p { color: #28a745; } /* Green for income */
-        .summary-item.expense p { color: #dc3545; } /* Red for expense */
-        .summary-item.balance p { color: var(--primary-color); }
-
-        .transactions-section { margin-top: 3rem; }
-        .transactions-section h3 { color: var(--primary-color); margin-bottom: 1.5rem; font-size: 1.8rem; text-align: center; }
-
-        .transaction-list { list-style: none; padding: 0; margin: 0; }
-        .transaction-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1rem 1.5rem; background: var(--surface-color);
-            border-bottom: 1px solid #eee; transition: background-color var(--transition-speed);
-        }
-        html.dark-mode .transaction-item { border-bottom-color: #333; }
-
-        .transaction-item:last-child { border-bottom: none; border-radius: 0 0 10px 10px; }
-        .transaction-item:first-child { border-radius: 10px 10px 0 0; }
-        .transaction-item:hover { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--primary-color) 5%); }
-
-        .transaction-info { flex-grow: 1; }
-        .transaction-info h4 { margin: 0; font-size: 1.1rem; color: var(--text-color); }
-        .transaction-info p { margin: 0.2rem 0 0; font-size: 0.9rem; color: #6c757d; }
-        html.dark-mode .transaction-info p { color: #a0a0a0; }
-
-        .transaction-amount { font-size: 1.2rem; font-weight: 600; }
-        .transaction-amount.income { color: #28a745; }
-        .transaction-amount.expense { color: #dc3545; }
-
-        .delete-btn { background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.1rem; margin-left: 1rem; opacity: 0.7; transition: opacity 0.2s; }
-        .delete-btn:hover { opacity: 1; }
-
-        .report-summary-section {
-            background: var(--surface-color); border-radius: 10px; padding: 2rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--accent-color);
-            margin-top: 3rem; text-align: center;
-        }
-        .report-summary-section h3 { color: var(--accent-color); margin-top: 0; margin-bottom: 1.5rem; font-size: 1.8rem; }
-        .report-summary-section p { font-size: 1rem; color: var(--text-color); opacity: 0.8; margin-bottom: 1.5rem; }
-
-        .download-report-btn {
-            display: inline-block; padding: 0.75rem 2rem; background: var(--accent-color);
-            color: white; text-decoration: none; border-radius: 8px; font-weight: 600;
-            font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: none; cursor: pointer;
-        }
-        .download-report-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); background: color-mix(in srgb, var(--accent-color) 80%, black); }
-
-        .back-to-dashboard-btn { display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-        
-        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeInModal 0.3s; }
-        .modal.show-modal { display: flex; align-items: center; justify-content: center; }
-        .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
-        .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .close-btn:hover,.close-btn:focus { color: var(--text-color); }
-        .modal-content h2 { color: var(--primary-color); margin-top: 0; }
-        .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
-        .contact-email:hover { transform: scale(1.05); }
-        body { animation: fadeInPage 0.5s ease-in-out; }
-        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
-        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
-        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @media (max-width: 768px) { .main-header { flex-direction: column; gap: 1rem; } .tracker-container { padding: 2rem 1.5rem; } }
-    </style>
-    <!-- Include jsPDF library for client-side PDF generation - **Note: This is a client-side solution and not suitable for complex server-side reports.** -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* Simple clean styling */
+    :root{
+      --bg:#f6f7fb; --card:#fff; --muted:#6b7280; --accent:#0b64d6; --danger:#ef4444;
+      --ok:#10b981;
+    }
+    html,body{height:100%; margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    body{background:var(--bg); color:#0f172a;}
+    .container{max-width:1100px; margin:24px auto; padding:20px;}
+    header{display:flex; gap:8px; align-items:center; margin-bottom:18px;}
+    header h1{margin:0; font-size:20px;}
+    .btn{background:var(--card); border:1px solid #e6e9ef; padding:8px 12px; border-radius:8px; cursor:pointer;}
+    .btn.primary{background:var(--accent); color:#fff; border:none;}
+    .btn.ghost{background:transparent;}
+    .btn.danger{background:var(--danger); color:#fff; border:none;}
+    .toolbar{margin-left:auto; display:flex; gap:8px;}
+    .card{background:var(--card); border-radius:12px; padding:14px; box-shadow: 0 1px 4px rgba(15,23,42,0.04); margin-bottom:12px;}
+    nav.tabs{display:flex; gap:8px; margin-bottom:12px;}
+    nav.tabs button{padding:8px 14px; border-radius:999px; border:1px solid transparent; background:transparent; cursor:pointer;}
+    nav.tabs button.active{background:#0f172a; color:#fff;}
+    .grid{display:grid; gap:12px;}
+    .grid.cols-3{grid-template-columns:repeat(3,1fr);}
+    .form-row{display:flex; gap:8px; align-items:center;}
+    input[type=text], input[type=number], input[type=date], select, textarea{padding:8px 10px; border-radius:8px; border:1px solid #e6e9ef; width:100%;}
+    table{width:100%; border-collapse:collapse; font-size:14px;}
+    table thead th{background:#f3f4f6; text-align:left; padding:8px;}
+    table tbody td{padding:8px; border-top:1px solid #f1f5f9;}
+    .text-right{text-align:right;}
+    .muted{color:var(--muted); font-size:13px;}
+    footer{font-size:12px; color:var(--muted); text-align:center; margin-top:16px;}
+    .badge{background:#eef2ff; color:#3730a3; padding:4px 8px; border-radius:999px; font-size:12px;}
+    .flex{display:flex; gap:8px; align-items:center;}
+    .space-y-2 > * + *{margin-top:8px;}
+    .danger-note{color:var(--danger); font-weight:600;}
+    .ok-note{color:var(--ok); font-weight:600;}
+    @media (max-width:880px){
+      .grid.cols-3{grid-template-columns:1fr;}
+      .toolbar{flex-wrap:wrap;}
+    }
+  </style>
 </head>
 <body>
-    <header class='main-header'>
-        <div class='logo-container'>
-            <a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
-                <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
-                <h1>JKM Edit</h1>
-            </a>
-        </div>
-        <nav class='main-nav'>
-            <div class='theme-selector'>
-                <label for='theme-picker'>Theme:</label>
-                <select id='theme-picker'>
-                    <option value='corporate-blue' selected='selected'>Corporate Blue</option>
-                    <option value='forest-green'>Forest Green</option>
-                    <option value='sunset-gradient'>Sunset Gradient</option>
-                    <option value='tech-noir'>Tech Noir</option>
-                    <option value='minty-fresh'>Minty Fresh</option>
-                    <option value='royal-purple'>Royal Purple</option>
-                    <option value='graphite-gray'>Graphite Gray</option>
-                    <option value='crimson-red'>Crimson Red</option>
-                </select>
-            </div>
-            <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'>
-                <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
-            </button>
-            <a href='#' id='about-btn' class='nav-link'>About</a>
-            <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
-        </nav>
+  <div class="container">
+    <header>
+      <h1>Browser Accounting App — Client-only</h1>
+      <div class="toolbar">
+        <button class="btn" id="btn-import">Import</button>
+        <input id="file-input" type="file" accept=".json,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" style="display:none" />
+        <button class="btn" id="btn-export-json">Export JSON</button>
+        <button class="btn" id="btn-export-xlsx">Export Excel</button>
+        <button class="btn danger" id="btn-reset">Reset</button>
+      </div>
     </header>
 
-    <main class='tracker-container'>
-        <div class='tracker-header'>
-            <h2>Income & Expenses Tracker</h2>
-            <p>Effortlessly manage your monthly finances. Track, categorize, and understand your money.</p>
-        </div>
+    <div class="card">
+      <nav class="tabs">
+        <button data-tab="vouchers" class="active">Vouchers</button>
+        <button data-tab="ledgers">Ledgers</button>
+        <button data-tab="reports">Reports</button>
+      </nav>
 
-        <div class="month-selector">
-            <!-- These buttons will be dynamically managed by JS -->
-            <button id="prev-month-btn"><i class="fas fa-chevron-left"></i> Previous</button>
-            <button id="current-month-display" class="active">Loading Month...</button>
-            <button id="next-month-btn">Next <i class="fas fa-chevron-right"></i></button>
-        </div>
+      <!-- Search bar -->
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <input id="search" type="text" placeholder="Search vouchers by ledger name, narration or date..." />
+        <div style="margin-left:auto;" class="muted">All data is stored locally in this browser (IndexedDB).</div>
+      </div>
 
-        <div class="total-summary">
-            <div class="summary-item income">
-                <h4>Total Income</h4>
-                <p id="total-income">0.00</p>
+      <!-- Vouchers -->
+      <section id="tab-vouchers">
+        <div class="card">
+          <div class="grid cols-3">
+            <input id="v-date" type="date" />
+            <select id="v-debit"></select>
+            <select id="v-credit"></select>
+            <input id="v-amount" type="number" placeholder="Amount" />
+            <input id="v-narration" type="text" placeholder="Narration (optional)" />
+            <div style="display:flex; gap:8px;">
+              <button class="btn primary" id="v-save">Add Voucher</button>
+              <button class="btn" id="v-cancel">Cancel</button>
             </div>
-            <div class="summary-item expense">
-                <h4>Total Expenses</h4>
-                <p id="total-expenses">0.00</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th><th>Debit</th><th>Credit</th><th class="text-right">Amount</th><th>Narration</th><th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="v-list"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Ledgers -->
+      <section id="tab-ledgers" style="display:none;">
+        <div class="card">
+          <div class="grid cols-3">
+            <input id="l-name" type="text" placeholder="Ledger name" />
+            <select id="l-group">
+              <option>Assets</option><option>Liabilities</option><option>Equity</option><option>Income</option><option>Expenses</option>
+            </select>
+            <div style="display:flex; gap:8px;">
+              <button class="btn primary" id="l-save">Add Ledger</button>
+              <button class="btn" id="l-cancel">Cancel</button>
             </div>
-            <div class="summary-item balance">
-                <h4>Net Balance</h4>
-                <p id="net-balance">0.00</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <table>
+            <thead><tr><th>#</th><th>Name</th><th>Group</th><th class="text-right">Actions</th></tr></thead>
+            <tbody id="l-list"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Reports -->
+      <section id="tab-reports" style="display:none;">
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="font-weight:700;">Reports</div>
+            <div style="margin-left:auto; display:flex; gap:8px;">
+              <button class="btn" id="export-reports-xlsx">Export Reports (Excel)</button>
             </div>
+          </div>
         </div>
 
-        <div class='tracker-grid'>
-            <div class='card'>
-                <h3>Add Income</h3>
-                <form id="income-form">
-                    <div class="form-group">
-                        <label for="income-description">Description</label>
-                        <input type="text" id="income-description" placeholder="e.g., Salary, Freelance" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="income-amount">Amount</label>
-                        <input type="number" id="income-amount" step="0.01" min="0" placeholder="0.00" required>
-                    </div>
-                    <button type="submit" class="add-btn"><i class="fas fa-plus-circle"></i> Add Income</button>
-                </form>
+        <div class="card">
+          <div style="font-weight:600; margin-bottom:8px;">Trial Balance</div>
+          <div style="overflow:auto;">
+            <table>
+              <thead><tr><th>Ledger</th><th>Group</th><th class="text-right">Debit</th><th class="text-right">Credit</th><th class="text-right">Balance (Dr-Cr)</th></tr></thead>
+              <tbody id="tb-rows"></tbody>
+              <tfoot><tr><td colspan="2"><strong>Totals</strong></td><td id="tb-total-debit" class="text-right"></td><td id="tb-total-credit" class="text-right"></td><td id="tb-balance" class="text-right"></td></tr></tfoot>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <div style="font-weight:600;">Income</div>
+              <div id="pl-income"></div>
+              <div style="font-weight:700; margin-top:8px;">Total Income: <span id="pl-income-total"></span></div>
             </div>
-
-            <div class='card'>
-                <h3>Add Expense</h3>
-                <form id="expense-form">
-                    <div class="form-group">
-                        <label for="expense-description">Description</label>
-                        <input type="text" id="expense-description" placeholder="e.g., Rent, Groceries, Utilities" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="expense-amount">Amount</label>
-                        <input type="number" id="expense-amount" step="0.01" min="0" placeholder="0.00" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="expense-category">Category</label>
-                        <select id="expense-category">
-                            <option value="Food">Food</option>
-                            <option value="Transport">Transport</option>
-                            <option value="Housing">Housing</option>
-                            <option value="Utilities">Utilities</option>
-                            <option value="Entertainment">Entertainment</option>
-                            <option value="Shopping">Shopping</option>
-                            <option value="Health">Health</option>
-                            <option value="Education">Education</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="add-btn"><i class="fas fa-minus-circle"></i> Add Expense</button>
-                </form>
+            <div>
+              <div style="font-weight:600;">Expenses</div>
+              <div id="pl-expenses"></div>
+              <div style="font-weight:700; margin-top:8px;">Total Expense: <span id="pl-expense-total"></span></div>
             </div>
+          </div>
+          <div style="margin-top:12px; font-weight:700;">Net <span id="pl-type"></span>: <span id="pl-net"></span></div>
         </div>
 
-        <div class="transactions-section">
-            <h3>Monthly Transactions</h3>
-            <ul id="transaction-list" class="transaction-list card">
-                <!-- Transactions will be dynamically added here -->
-                <li style="text-align: center; color: var(--text-color); opacity: 0.7; padding: 1rem;">No transactions for this month yet.</li>
-            </ul>
+        <div class="card">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <div style="font-weight:600;">Assets</div>
+              <div id="bs-assets"></div>
+              <div style="font-weight:700; margin-top:8px;">Total Assets: <span id="bs-assets-total"></span></div>
+            </div>
+            <div>
+              <div style="font-weight:600;">Liabilities & Equity</div>
+              <div id="bs-liabilities"></div>
+              <div id="bs-equity"></div>
+              <div style="font-weight:700; margin-top:8px;">Total Liabilities + Equity: <span id="bs-right-total"></span></div>
+            </div>
+          </div>
+          <div style="margin-top:12px;" id="bs-check"></div>
         </div>
+      </section>
+    </div>
 
-        <div class="report-summary-section">
-            <h3>Report Summary</h3>
-            <p>Generate a detailed PDF report of your income and expenses for the current month.</p>
-            <button id="download-report-btn" class="download-report-btn"><i class="fas fa-file-pdf"></i> Download Monthly Report (PDF)</button>
-        </div>
+    <footer>
+      Save this HTML file — the app runs entirely in your browser. Clear browser data to erase saved accounts.
+    </footer>
+  </div>
 
-        <div style='text-align: center; margin-top: 3rem;'>
-            <a href='../utility-tools.html' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Back to Utility Tools</a>
-        </div>
-    </main>
-    
-    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
-    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
+<script>
+/*
+  Browser Accounting App (vanilla JS)
+  - IndexedDB storage (ledgers, vouchers)
+  - Import (JSON/CSV/XLSX), Export (JSON/XLSX)
+  - Reports: Trial Balance, P&L, Balance Sheet
+  Note: This is a portable single-file app. For large projects, split into modules.
+*/
 
-    <!-- [START] --- DEFINITIVE FIX FOR PAGE TRANSITIONS --- -->
-    <script>
-        // FIX FOR BFCACHE: This ensures the page is visible when navigating back.
-        window.addEventListener('pageshow', function (event) {
-            // event.persisted is true if the page was restored from the back-forward cache.
-            if (event.persisted) {
-                // Remove the fade-out class to make the page visible again.
-                document.body.classList.remove('fade-out');
-            }
-        });
+const DB_NAME = 'acctdb_v1';
+const DB_VERSION = 1;
+const STORE_LEDGER = 'ledgers';
+const STORE_VOUCHER = 'vouchers';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const flickerFix = document.getElementById('theme-flicker-fix');
-            if (flickerFix) {
-                flickerFix.remove();
-            }
+const GROUPS = ['Assets','Liabilities','Equity','Income','Expenses'];
 
-            // Modal functionality (copied from your main code)
-            const aboutModal = document.getElementById
+// ---------------- IndexedDB helpers ----------------
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(STORE_LEDGER)) {
+        const s = db.createObjectStore(STORE_LEDGER, { keyPath:'id', autoIncrement:true });
+        s.createIndex('name','name',{unique:false});
+      }
+      if (!db.objectStoreNames.contains(STORE_VOUCHER)) {
+        const s = db.createObjectStore(STORE_VOUCHER, { keyPath:'id', autoIncrement:true });
+        s.createIndex('date','date',{unique:false});
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function getStore(db, name, mode='readonly') {
+  return db.transaction(name, mode).objectStore(name);
+}
+
+async function dbGetAll(store) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const req = getStore(db, store).getAll();
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+
+async function dbAdd(store, obj) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const req = getStore(db, store, 'readwrite').add(obj);
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+
+async function dbPut(store, obj) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const req = getStore(db, store, 'readwrite').put(obj);
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+
+async function dbDelete(store, id) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const req = getStore(db, store, 'readwrite').delete(id);
+    req.onsuccess = () => res();
+    req.onerror = () => rej(req.error);
+  });
+}
+
+async function dbClear(store) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const req = getStore(db, store, 'readwrite').clear();
+    req.onsuccess = () => res();
+    req.onerror = () => rej(req.error);
+  });
+}
+
+// ---------------- Utilities ----------------
+function ensureDate(d) {
+  if (!d) return new Date().toISOString().slice(0,10);
+  if (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+  const dt = new Date(d);
+  return dt.toISOString().slice(0,10);
+}
+
+function downloadFile(filename, blob, mime) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 5000);
+}
+function downloadText(filename, text) {
+  const blob = new Blob([text], {type:'application/json'});
+  downloadFile(filename, blob);
+}
+
+// ---------------- App State ----------------
+let ledgers = []; // {id, name, group}
+let vouchers = []; // {id, date, debitLedgerId, creditLedgerId, amount, narration}
+let editingLedgerId = null;
+let editingVoucherId = null;
+
+// ---------------- DOM refs ----------------
+const fileInput = document.getElementById('file-input');
+document.getElementById('btn-import').addEventListener('click', ()=> fileInput.click());
+document.getElementById('btn-export-json').addEventListener('click', exportJSON);
+document.getElementById('btn-export-xlsx').addEventListener('click', exportExcel);
+document.getElementById('btn-reset').addEventListener('click', resetAll);
+fileInput.addEventListener('change', handleFile);
+
+// tabs
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=> {
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const t = btn.dataset.tab;
+    document.getElementById('tab-vouchers').style.display = t==='vouchers' ? '' : 'none';
+    document.getElementById('tab-ledgers').style.display = t==='ledgers' ? '' : 'none';
+    document.getElementById('tab-reports').style.display = t==='reports' ? '' : 'none';
+  });
+});
+
+// search
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('input', renderVouchers);
+
+// ledger form
+const lName = document.getElementById('l-name');
+const lGroup = document.getElementById('l-group');
+document.getElementById('l-save').addEventListener('click', async ()=> {
+  const name = (lName.value||'').trim();
+  const group = lGroup.value || 'Assets';
+  if (!name) { alert('Ledger name required'); return; }
+  if (editingLedgerId) {
+    await dbPut(STORE_LEDGER, { id: editingLedgerId, name, group });
+    editingLedgerId = null;
+    document.getElementById('l-save').textContent = 'Add Ledger';
+  } else {
+    await dbAdd(STORE_LEDGER, { name, group });
+  }
+  lName.value=''; lGroup.value='Assets';
+  await reloadAll();
+});
+document.getElementById('l-cancel').addEventListener('click', ()=> { editingLedgerId=null; lName.value=''; lGroup.value='Assets'; document.getElementById('l-save').textContent='Add Ledger'; });
+
+// voucher form
+const vDate = document.getElementById('v-date');
+const vDebit = document.getElementById('v-debit');
+const vCredit = document.getElementById('v-credit');
+const vAmount = document.getElementById('v-amount');
+const vNarration = document.getElementById('v-narration');
+document.getElementById('v-save').addEventListener('click', async ()=> {
+  const date = ensureDate(vDate.value || new Date());
+  const debit = Number(vDebit.value);
+  const credit = Number(vCredit.value);
+  const amount = Number(vAmount.value);
+  const narration = (vNarration.value||'').trim();
+  if (!debit || !credit) { alert('Select both debit and credit ledgers'); return; }
+  if (!amount || amount <= 0) { alert('Amount > 0 required'); return; }
+  const rec = { date, debitLedgerId: debit, creditLedgerId: credit, amount, narration };
+  if (editingVoucherId) {
+    rec.id = editingVoucherId;
+    await dbPut(STORE_VOUCHER, rec);
+    editingVoucherId = null;
+    document.getElementById('v-save').textContent = 'Add Voucher';
+  } else {
+    await dbAdd(STORE_VOUCHER, rec);
+  }
+  // reset form
+  vDate.value = ensureDate(new Date());
+  vDebit.value = '0'; vCredit.value='0'; vAmount.value=''; vNarration.value='';
+  await reloadAll();
+});
+document.getElementById('v-cancel').addEventListener('click', ()=> {
+  editingVoucherId = null; document.getElementById('v-save').textContent = 'Add Voucher';
+  vDate.value = ensureDate(new Date()); vDebit.value='0'; vCredit.value='0'; vAmount.value=''; vNarration.value='';
+});
+
+// export reports
+document.getElementById('export-reports-xlsx').addEventListener('click', exportReportsExcel);
+
+// ---------------- Loading & Rendering ----------------
+async function reloadAll() {
+  ledgers = await dbGetAll(STORE_LEDGER);
+  vouchers = await dbGetAll(STORE_VOUCHER);
+  // ensure date initialization
+  if (!vDate.value) vDate.value = ensureDate(new Date());
+  renderLedgers();
+  renderVouchers();
+  renderReports();
+}
+
+function renderLedgers() {
+  const tbody = document.getElementById('l-list');
+  tbody.innerHTML = '';
+  ledgers.forEach((l, idx)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${idx+1}</td><td>${escapeHtml(l.name)}</td><td>${l.group}</td>
+      <td class="text-right">
+        <button class="btn" data-edit="${l.id}">Edit</button>
+        <button class="btn" data-del="${l.id}">Delete</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  // populate selects for voucher form
+  [vDebit, vCredit].forEach(sel=>{
+    sel.innerHTML = '<option value="0">-- Select Ledger --</option>';
+    ledgers.forEach(l=> {
+      const opt = document.createElement('option'); opt.value = l.id; opt.textContent = l.name; sel.appendChild(opt);
+    });
+  });
+  // attach events
+  tbody.querySelectorAll('button[data-edit]').forEach(btn=>{
+    btn.addEventListener('click', async ()=> {
+      const id = Number(btn.dataset.edit);
+      const l = ledgers.find(x=>x.id===id);
+      if (!l) return;
+      editingLedgerId = id; lName.value = l.name; lGroup.value = l.group;
+      document.getElementById('l-save').textContent = 'Update Ledger';
+      // switch to ledger tab if not
+      showTab('ledgers');
+    });
+  });
+  tbody.querySelectorAll('button[data-del]').forEach(btn=>{
+    btn.addEventListener('click', async ()=> {
+      const id = Number(btn.dataset.del);
+      // check usage
+      const used = vouchers.some(v => v.debitLedgerId===id || v.creditLedgerId===id);
+      if (used) { alert('Cannot delete ledger referenced by vouchers. Remove vouchers first.'); return; }
+      if (!confirm('Delete this ledger?')) return;
+      await dbDelete(STORE_LEDGER, id);
+      await reloadAll();
+    });
+  });
+}
+
+function renderVouchers() {
+  const q = (searchInput.value||'').toLowerCase().trim();
+  const tbody = document.getElementById('v-list');
+  tbody.innerHTML = '';
+  let rows = vouchers.slice().sort((a,b)=> a.date.localeCompare(b.date));
+  if (q) {
+    rows = rows.filter(v=>{
+      const dl = ledgerName(v.debitLedgerId).toLowerCase();
+      const cl = ledgerName(v.creditLedgerId).toLowerCase();
+      const n = (v.narration||'').toLowerCase();
+      return dl.includes(q) || cl.includes(q) || n.includes(q) || v.date.includes(q);
+    });
+  }
+  rows.forEach(v=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${v.date}</td>
+      <td>${escapeHtml(ledgerName(v.debitLedgerId))}</td>
+      <td>${escapeHtml(ledgerName(v.creditLedgerId))}</td>
+      <td class="text-right">${Number(v.amount).toLocaleString()}</td>
+      <td>${escapeHtml(v.narration||'')}</td>
+      <td class="text-right">
+        <button class="btn" data-edit="${v.id}">Edit</button>
+        <button class="btn" data-del="${v.id}">Delete</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  // attach events
+  tbody.querySelectorAll('button[data-edit]').forEach(btn=>{
+    btn.addEventListener('click', ()=> {
+      const id = Number(btn.dataset.edit);
+      const v = vouchers.find(x=>x.id===id);
+      if (!v) return;
+      editingVoucherId = id;
+      vDate.value = v.date; vDebit.value = v.debitLedgerId; vCredit.value = v.creditLedgerId; vAmount.value = v.amount; vNarration.value = v.narration||'';
+      document.getElementById('v-save').textContent = 'Update Voucher';
+      showTab('vouchers');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+  tbody.querySelectorAll('button[data-del]').forEach(btn=>{
+    btn.addEventListener('click', async ()=> {
+      const id = Number(btn.dataset.del);
+      if (!confirm('Delete this voucher?')) return;
+      await dbDelete(STORE_VOUCHER, id);
+      await reloadAll();
+    });
+  });
+}
+
+function renderReports() {
+  // Trial Balance
+  const totals = new Map();
+  ledgers.forEach(l=> totals.set(l.id, {debit:0, credit:0}));
+  vouchers.forEach(v=>{
+    if (!totals.has(v.debitLedgerId)) totals.set(v.debitLedgerId, {debit:0, credit:0});
+    if (!totals.has(v.creditLedgerId)) totals.set(v.creditLedgerId, {debit:0, credit:0});
+    totals.get(v.debitLedgerId).debit += Number(v.amount);
+    totals.get(v.creditLedgerId).credit += Number(v.amount);
+  });
+  const tbRows = [];
+  for (const [id, t] of totals.entries()) {
+    const l = ledgers.find(x=>x.id===id);
+    if (!l) continue;
+    const balance = (t.debit - t.credit);
+    tbRows.push({id, name:l.name, group:l.group, debit:t.debit, credit:t.credit, balance});
+  }
+  // populate table
+  const tbBody = document.getElementById('tb-rows'); tbBody.innerHTML='';
+  let totalDebit=0, totalCredit=0;
+  tbRows.forEach(r=>{
+    totalDebit += r.debit; totalCredit += r.credit;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${escapeHtml(r.name)}</td><td>${r.group}</td><td class="text-right">${r.debit.toLocaleString()}</td><td class="text-right">${r.credit.toLocaleString()}</td><td class="text-right">${r.balance.toLocaleString()}</td>`;
+    tbBody.appendChild(tr);
+  });
+  document.getElementById('tb-total-debit').textContent = totalDebit.toLocaleString();
+  document.getElementById('tb-total-credit').textContent = totalCredit.toLocaleString();
+  document.getElementById('tb-balance').textContent = (totalDebit - totalCredit).toLocaleString();
+
+  // P&L
+  const incomeRows = tbRows.filter(r=> r.group==='Income');
+  const expenseRows = tbRows.filter(r=> r.group==='Expenses');
+  const incomeTotal = incomeRows.reduce((s,r)=> s + (r.credit - r.debit), 0);
+  const expenseTotal = expenseRows.reduce((s,r)=> s + (r.debit - r.credit), 0);
+  const net = incomeTotal - expenseTotal;
+  const incDiv = document.getElementById('pl-income'); incDiv.innerHTML=''; incomeRows.forEach(r=>{
+    const d = document.createElement('div'); d.textContent = `${r.name} — ${ (r.credit - r.debit).toLocaleString() }`; incDiv.appendChild(d);
+  });
+  const expDiv = document.getElementById('pl-expenses'); expDiv.innerHTML=''; expenseRows.forEach(r=>{
+    const d = document.createElement('div'); d.textContent = `${r.name} — ${ (r.debit - r.credit).toLocaleString() }`; expDiv.appendChild(d);
+  });
+  document.getElementById('pl-income-total').textContent = incomeTotal.toLocaleString();
+  document.getElementById('pl-expense-total').textContent = expenseTotal.toLocaleString();
+  document.getElementById('pl-net').textContent = Math.abs(net).toLocaleString();
+  document.getElementById('pl-type').textContent = net >= 0 ? 'Profit' : 'Loss';
+
+  // Balance Sheet
+  const assets = tbRows.filter(r=> r.group==='Assets');
+  const liabilities = tbRows.filter(r=> r.group==='Liabilities');
+  const equity = tbRows.filter(r=> r.group==='Equity');
+  const assetsTotal = assets.reduce((s,r)=> s + (r.debit - r.credit), 0);
+  const liabilitiesTotal = liabilities.reduce((s,r)=> s + (r.credit - r.debit), 0);
+  const equityTotal = equity.reduce((s,r)=> s + (r.credit - r.debit), 0);
+  const equityWithProfit = equityTotal + net;
+  const left = assetsTotal;
+  const right = liabilitiesTotal + equityWithProfit;
+
+  const bsAssetsDiv = document.getElementById('bs-assets'); bsAssetsDiv.innerHTML='';
+  assets.forEach(r => { const d=document.createElement('div'); d.textContent = `${r.name} — ${ (r.debit - r.credit).toLocaleString() }`; bsAssetsDiv.appendChild(d); });
+  document.getElementById('bs-assets-total').textContent = assetsTotal.toLocaleString();
+
+  const bsLiabDiv = document.getElementById('bs-liabilities'); bsLiabDiv.innerHTML='';
+  liabilities.forEach(r => { const d=document.createElement('div'); d.textContent = `${r.name} — ${ (r.credit - r.debit).toLocaleString() }`; bsLiabDiv.appendChild(d); });
+  const bsEquityDiv = document.getElementById('bs-equity'); bsEquityDiv.innerHTML='';
+  equity.forEach(r => { const d=document.createElement('div'); d.textContent = `${r.name} — ${ (r.credit - r.debit).toLocaleString() }`; bsEquityDiv.appendChild(d); });
+  const reDiv = document.createElement('div'); reDiv.style.fontWeight='600'; reDiv.textContent = `Retained Earnings (Net Profit): ${net.toLocaleString()}`; bsEquityDiv.appendChild(reDiv);
+  document.getElementById('bs-right-total').textContent = right.toLocaleString();
+
+  const check = document.getElementById('bs-check');
+  if (left === right) {
+    check.innerHTML = '<div class="ok-note">Balanced ✓</div>';
+  } else {
+    check.innerHTML = '<div class="danger-note">Not Balanced — Assets (left) ≠ Liabilities+Equity (right)</div>';
+  }
+}
+
+// ---------------- Helpers ----------------
+function ledgerName(id) {
+  const l = ledgers.find(x=>x.id===id);
+  return l ? l.name : String(id);
+}
+function escapeHtml(s) {
+  if (!s) return '';
+  return (''+s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function showTab(name) {
+  document.querySelectorAll('nav.tabs button').forEach(b=> b.classList.toggle('active', b.dataset.tab===name));
+  document.getElementById('tab-vouchers').style.display = name==='vouchers' ? '' : 'none';
+  document.getElementById('tab-ledgers').style.display = name==='ledgers' ? '' : 'none';
+  document.getElementById('tab-reports').style.display = name==='reports' ? '' : 'none';
+}
+
+// ---------------- Import handlers ----------------
+async function handleFile(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const name = file.name.toLowerCase();
+  try {
+    if (name.endsWith('.json')) {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      await importFromJSON(data);
+    } else if (name.endsWith('.csv')) {
+      const text = await file.text();
+      const rows = parseCSV(text);
+      await importFromCSV(rows);
+    } else if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+      const ab = await file.arrayBuffer();
+      const wb = XLSX.read(ab, {type:'array'});
+      // heuristics: find sheets named ledger/voucher else use first/second
+      const names = wb.SheetNames;
+      let ledgerSheet = names.find(n => n.toLowerCase().includes('ledger')) || names[0];
+      let voucherSheet = names.find(n => n.toLowerCase().includes('voucher')) || names[1] || names[0];
+      const Lraw = XLSX.utils.sheet_to_json(wb.Sheets[ledgerSheet]);
+      const Vraw = XLSX.utils.sheet_to_json(wb.Sheets[voucherSheet]);
+      await importFromRows(Lraw, Vraw);
+    } else {
+      alert('Unsupported file. Use JSON, CSV, or XLSX.');
+    }
+    alert('Import complete. Data saved in your browser (IndexedDB).');
+  } catch (err) {
+    console.error(err);
+    alert('Import failed: ' + (err && err.message ? err.message : String(err)));
+  } finally {
+    fileInput.value = '';
+    await reloadAll();
+  }
+}
+
+async function importFromJSON(data) {
+  // expected: { ledgers: [...], vouchers: [...] }
+  const L = Array.isArray(data.ledgers) ? data.ledgers : [];
+  const V = Array.isArray(data.vouchers) ? data.vouchers : [];
+  await dbClear(STORE_LEDGER);
+  await dbClear(STORE_VOUCHER);
+  // create ledgers
+  for (const l of L) {
+    const name = (l.name || l.Name || '').toString().trim();
+    if (!name) continue;
+    const group = GROUPS.includes(l.group) ? l.group : (l.Group || 'Assets');
+    await dbAdd(STORE_LEDGER, { name, group });
+  }
+  const saved = await dbGetAll(STORE_LEDGER);
+  const map = new Map(saved.map(s => [s.name.trim().toLowerCase(), s.id]));
+  for (const v of V) {
+    const debit = v.debitLedgerId || map.get((v.debit||v.Debit||'').toString().trim().toLowerCase());
+    const credit = v.creditLedgerId || map.get((v.credit||v.Credit||'').toString().trim().toLowerCase());
+    if (!debit || !credit) continue;
+    await dbAdd(STORE_VOUCHER, {
+      date: ensureDate(v.date||v.Date||new Date()),
+      debitLedgerId: Number(debit),
+      creditLedgerId: Number(credit),
+      amount: Number(v.amount || v.Amount || 0) || 0,
+      narration: v.narration || v.Narration || ''
+    });
+  }
+}
+
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(Boolean);
+  if (!lines.length) return [];
+  const header = lines.shift().split(',').map(h => h.trim());
+  return lines.map(line=>{
+    // simple split (no quoted fields support). Works for basic CSVs.
+    const cols = line.split(',').map(c => c.trim());
+    const obj = {};
+    header.forEach((h,i)=> obj[h] = cols[i]);
+    return obj;
+  });
+}
+
+async function importFromCSV(rows) {
+  // Expect vouchers CSV with columns like date,debit,credit,amount,narration
+  await dbClear(STORE_LEDGER);
+  await dbClear(STORE_VOUCHER);
+  const names = new Set();
+  rows.forEach(r => { if (r.debit) names.add(String(r.debit).trim()); if (r.credit) names.add(String(r.credit).trim()); });
+  // guess groups
+  const guessGroup = name => {
+    const n = name.toLowerCase();
+    if (/(sales|revenue|interest|commission)/.test(n)) return 'Income';
+    if (/(purchase|expense|rent|salary|wages|electric|fuel|travel|repair)/.test(n)) return 'Expenses';
+    if (/(loan|creditor|payable|tax)/.test(n)) return 'Liabilities';
+    if (/(capital|equity|retained)/.test(n)) return 'Equity';
+    return 'Assets';
+  }
+  const map = new Map();
+  for (const nm of names) {
+    const id = await dbAdd(STORE_LEDGER, { name: nm, group: guessGroup(nm) });
+    map.set(nm.toLowerCase(), id);
+  }
+  for (const r of rows) {
+    const debitId = map.get((r.debit||'').toLowerCase());
+    const creditId = map.get((r.credit||'').toLowerCase());
+    if (!debitId || !creditId) continue;
+    await dbAdd(STORE_VOUCHER, {
+      date: ensureDate(r.date || new Date()),
+      debitLedgerId: debitId,
+      creditLedgerId: creditId,
+      amount: Number(r.amount||0) || 0,
+      narration: r.narration || ''
+    });
+  }
+}
+
+async function importFromRows(Lraw, Vraw) {
+  await dbClear(STORE_LEDGER);
+  await dbClear(STORE_VOUCHER);
+  // Lraw rows: { name, group } flexible
+  const ids = new Map();
+  for (const r of Lraw) {
+    const name = (r.name || r.Name || r.Ledger || r.ledger || '').toString().trim();
+    if (!name) continue;
+    const group = GROUPS.includes(r.group) ? r.group : (r.Group || 'Assets');
+    const id = await dbAdd(STORE_LEDGER, { name, group });
+    ids.set(name.toLowerCase(), id);
+  }
+  for (const r of Vraw) {
+    const debitName = (r.debit || r.Debit || r.dr || r.Dr || '').toString().trim();
+    const creditName = (r.credit || r.Credit || r.cr || r.Cr || '').toString().trim();
+    const debitId = ids.get(debitName.toLowerCase());
+    const creditId = ids.get(creditName.toLowerCase());
+    if (!debitId || !creditId) continue;
+    await dbAdd(STORE_VOUCHER, {
+      date: ensureDate(r.date || r.Date || new Date()),
+      debitLedgerId: debitId,
+      creditLedgerId: creditId,
+      amount: Number(r.amount || r.Amount || 0) || 0,
+      narration: r.narration || r.Narration || ''
+    });
+  }
+}
+
+// ---------------- Export handlers ----------------
+async function exportJSON() {
+  const L = await dbGetAll(STORE_LEDGER);
+  const V = await dbGetAll(STORE_VOUCHER);
+  downloadText(`accounting-backup-${(new Date()).toISOString().slice(0,10)}.json`, JSON.stringify({ ledgers: L, vouchers: V }, null, 2));
+}
+
+async function exportExcel() {
+  const L = await dbGetAll(STORE_LEDGER);
+  const V = await dbGetAll(STORE_VOUCHER);
+  const wb = XLSX.utils.book_new();
+  const Lws = XLSX.utils.json_to_sheet(L.map(({id, ...rest}) => rest));
+  const Vws = XLSX.utils.json_to_sheet(V.map(v => ({
+    date: v.date,
+    debit: ledgerName(v.debitLedgerId),
+    credit: ledgerName(v.creditLedgerId),
+    amount: v.amount,
+    narration: v.narration || ''
+  })));
+  XLSX.utils.book_append_sheet(wb, Lws, 'Ledgers');
+  XLSX.utils.book_append_sheet(wb, Vws, 'Vouchers');
+  const out = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+  const blob = new Blob([out], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  downloadFile(`accounting-backup-${(new Date()).toISOString().slice(0,10)}.xlsx`, blob);
+}
+
+async function exportReportsExcel() {
+  // build trial balance & P&L & BS
+  const dbLedgers = await dbGetAll(STORE_LEDGER);
+  const dbVouchers = await dbGetAll(STORE_VOUCHER);
+  // compute trial
+  const totals = new Map();
+  dbLedgers.forEach(l => totals.set(l.id, {debit:0, credit:0, name:l.name, group:l.group}));
+  dbVouchers.forEach(v => {
+    if (!totals.has(v.debitLedgerId)) totals.set(v.debitLedgerId, {debit:0, credit:0, name:ledgerName(v.debitLedgerId), group:'Assets'});
+    if (!totals.has(v.creditLedgerId)) totals.set(v.creditLedgerId, {debit:0, credit:0, name:ledgerName(v.creditLedgerId), group:'Assets'});
+    totals.get(v.debitLedgerId).debit += Number(v.amount);
+    totals.get(v.creditLedgerId).credit += Number(v.amount);
+  });
+  const TB = Array.from(totals.values()).map(t=> ({Ledger: t.name, Group: t.group, Debit: t.debit, Credit: t.credit}));
+  // P&L
+  const income = TB.filter(r=> r.Group==='Income').map(r=> ({Ledger: r.Ledger, Amount: r.Credit - r.Debit}));
+  const expenses = TB.filter(r=> r.Group==='Expenses').map(r=> ({Ledger: r.Ledger, Amount: r.Debit - r.Credit}));
+  const PLsum = [{ IncomeTotal: income.reduce((s,r)=>s+r.Amount,0), ExpenseTotal: expenses.reduce((s,r)=>s+r.Amount,0)}];
+  // BS summary
+  const assetsTotal = TB.filter(r=> r.Group==='Assets').reduce((s,r)=> s + (r.Debit - r.Credit),0);
+  const liabilitiesTotal = TB.filter(r=> r.Group==='Liabilities').reduce((s,r)=> s + (r.Credit - r.Debit),0);
+  const equityTotal = TB.filter(r=> r.Group==='Equity').reduce((s,r)=> s + (r.Credit - r.Debit),0);
+  const BS = [{Side:'Assets', Total: assetsTotal},{Side:'Liabilities', Total: liabilitiesTotal},{Side:'Equity', Total: equityTotal}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(TB), 'Trial Balance');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(income), 'P&L Income');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(expenses), 'P&L Expenses');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(PLsum), 'P&L Summary');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(BS), 'Balance Sheet');
+  const out = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+  const blob = new Blob([out], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  downloadFile(`reports-${(new Date()).toISOString().slice(0,10)}.xlsx`, blob);
+}
+
+// ---------------- Reset ----------------
+async function resetAll() {
+  if (!confirm('This will delete all saved ledgers & vouchers in this browser. Continue?')) return;
+  await dbClear(STORE_LEDGER);
+  await dbClear(STORE_VOUCHER);
+  ledgers = []; vouchers = [];
+  renderLedgers(); renderVouchers(); renderReports();
+}
+
+// ---------------- Init ----------------
+(async ()=> {
+  await reloadAll();
+})();
+
+</script>
+</body>
+</html>
