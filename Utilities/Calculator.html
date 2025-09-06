@@ -1,404 +1,937 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en' data-theme='corporate-blue'>
 <head>
-  <meta charset="UTF-8">
-  <title>Calculator & Notepad Pro</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #ececec;
-      margin: 0;
-      height: 100vh;
-    }
-    .center-box {
-      max-width: 420px;
-      margin: 8vh auto;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      border-radius: 18px;
-      background: #fff;
-      padding: 38px 28px;
-      text-align: center;
-    }
-    .form-title {
-      color: #0477BF;
-      font-size: 2rem;
-      margin-bottom: 22px;
-    }
-    .auth-form input {
-      font-size: 1.09rem;
-      padding: 12px 18px;
-      border-radius: 7px;
-      width: 90%;
-      margin: 8px 0 12px;
-      border: 1px solid #dde1e5;
-      outline: none;
-    }
-    .auth-form button, .logout-btn {
-      background: #0477BF;
-      color: #fff;
-      border: none;
-      padding: 12px 32px;
-      border-radius: 7px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      margin: 10px 0 6px;
-      transition: background 0.18s;
-    }
-    .auth-form button:hover, .logout-btn:hover { background:#0461a2;}
-    .auth-toggle {
-      color: #444;
-      font-size: 1rem;
-      margin: 14px 0 0;
-    }
-    .auth-toggle span {
-      color: #0477BF;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-    .error-msg { color: #f45b69; margin-bottom:6px; }
-    .welcome { font-size:1.2rem; color:#0477BF; margin-bottom:20px; }
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>Free PDF Tools - Merge, Split, Compress & Convert | JKM Edit</title>
+    <meta name='description' content='A complete suite of free online PDF tools by JKM Edit. Merge, split, compress, convert PDF to Word, JPG, and more. Secure, fast, and no installation required.'/>
+    <meta name='keywords' content='pdf tools, merge pdf, split pdf, compress pdf, pdf to word, pdf converter, free pdf editor, online pdf tools, jkm edit pdf, pdf to jpg, protect pdf'/>
+    <meta name='author' content='JKM Edit'/>
+    <meta name='robots' content='index, follow'/>
+    <link rel='canonical' href='https://jkmpdf.github.io/JKMEDIT/pdf-tools.html'/>
+    <meta property='og:title' content='Free PDF Tools - Merge, Split, Compress & Convert | JKM Edit'/>
+    <meta property='og:description' content='A complete suite of free online PDF tools. Merge, split, compress, convert PDF to Word, and much more.'/>
+    <meta property='og:type' content='website'/>
+    <meta property='og:url' content='https://jkmpdf.github.io/JKMEDIT/pdf-tools.html'/>
+    <meta property='og:image' content='https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png'/>
+    <meta name='twitter:card' content='summary_large_image'/>
+    <meta name='twitter:title' content='Free PDF Tools - Merge, Split, Compress & Convert | JKM Edit'/>
+    <meta name='twitter:description' content='A complete suite of free online PDF tools. Merge, split, compress, convert PDF to Word, and much more.'/>
+    <meta name='twitter:image' content='https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png'/>
 
-    .container {
-      display: flex;
-      flex-direction: row;
-      height: 90vh;
-      width: 90vw;
-      margin: 5vh auto;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      border-radius: 24px;
-      background: #f6f8fa;
-      overflow: hidden;
-    }
-    .calc-section, .note-section {
-      flex: 1;
-      padding: 40px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #fff;
-    }
-    .calc-section { border-right: 2px solid #e0e0e0;}
-    h2 {
-      font-size: 2rem;
-      color: #0477BF;
-      margin-bottom: 24px;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-    }
-    .pencil-icon { font-size: 1.6rem; margin-right: 8px; }
+    <script>
+        (function() {
+            try {
+                const themeBgColors = {
+                    'corporate-blue': { light: '#f4f5f7', dark: '#121212' },
+                    'forest-green': { light: '#f0f3f2', dark: '#121212' },
+                    'sunset-gradient': { light: '#fff8f2', dark: '#121212' },
+                    'tech-noir': { light: '#1a1a2e', dark: '#0f0f1e' },
+                    'minty-fresh': { light: '#f1fefb', dark: '#121212' },
+                    'royal-purple': { light: '#f8f7fa', dark: '#121212' },
+                    'graphite-gray': { light: '#e9ecef', dark: '#121212' },
+                    'crimson-red': { light: '#fdf5f6', dark: '#121212' }
+                };
+                const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
+                const mode = localStorage.getItem('jkm-edit-mode') || 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                if (mode === 'dark') { document.documentElement.classList.add('dark-mode'); }
+                const bgColor = (themeBgColors[theme] && themeBgColors[theme][mode]) || '#f4f5f7';
+                const style = document.createElement('style');
+                style.innerHTML = `html { background-color: ${bgColor} !important; }`;
+                document.head.appendChild(style);
+            } catch (e) { console.error("Error applying initial theme:", e); }
+        })();
+    </script>
 
-    .calculator {
-      width: 100%;
-      max-width: 350px;
-      border-radius: 18px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
-      background: #F9F9FB;
-      padding: 18px;
-    }
-    .display {
-      width: 100%;
-      height: 55px;
-      font-size: 1.7rem;
-      text-align: right;
-      padding: 10px;
-      margin-bottom: 22px;
-      background-color: #E2F0FB;
-      border-radius: 7px;
-      border: none;
-      color: #2B2B2B;
-      box-shadow: 0 2px 8px rgba(0,183,255,0.06);
-      outline: none;
-    }
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-    .button {
-      background-color: #0477BF;
-      border: none;
-      color: white;
-      font-size: 1.22rem;
-      padding: 18px 0;
-      cursor: pointer;
-      border-radius: 7px;
-      transition: background 0.25s, transform 0.17s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .button:hover { background: #0461a2; transform: scale(1.08);}
-    .button:active { transform: scale(0.96);}
-    .button.clear { background:#f45b69;}
-    .button.clear:hover { background: #b52837;}
-    .button.equal { background:#36d172;}
-    .button.equal:hover { background:#2aaf5b;}
-    .button.operator { background:#fca311; color: #484848;}
-    .button.operator:hover { background: #ca880b;}
-    .link-notepad {
-      margin-top: 20px;
-      text-align: center;
-    }
-    .link-notepad button {
-      background: #7dd56f;
-      color: #fff;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 1.05rem;
-      cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
-      transition: background 0.2s;
-    }
-    .link-notepad button:hover {
-      background: #52a848;
-    }
-    .note-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #fbfbfc;
-      height: 100%;
-    }
-    #notepad {
-      width: 100%;
-      min-height: 350px;
-      max-width: 450px;
-      padding: 18px;
-      font-size: 1.19rem;
-      background: #F6F8FA;
-      border-radius: 10px;
-      border: 1px solid #dde1e5;
-      resize: vertical;
-      color: #202020;
-      outline: none;
-      margin-top: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
-    }
-    #notepad:focus {
-      border-color: #4C99CF;
-      background: #eaf2fb;
-    }
-    .logout-btn {
-      position: absolute;
-      top: 22px;
-      right: 42px;
-      z-index: 99;
-      padding:8px 28px;
-    }
-    @media (max-width:900px) {
-      .container { flex-direction: column; width:98vw; height:98vh;}
-      .calc-section, .note-section { border-right:none; }
-    }
-  </style>
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    <style>
+        :root {
+            font-family: 'Poppins', sans-serif;
+            --transition-speed: 0.3s;
+        }
+        html {
+            background-color: var(--bg-color);
+            transition: background-color var(--transition-speed);
+        }
+        body {
+            margin: 0;
+            color: var(--text-color);
+            transition: color var(--transition-speed);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        [data-theme='corporate-blue'] {
+            --primary-color: #0052cc;
+            --secondary-color: #0747a6;
+            --bg-color: #f4f5f7;
+            --surface-color: #ffffff;
+            --text-color: #172b4d;
+            --accent-color: #ffab00;
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff);
+        }
+        [data-theme='forest-green'] {
+            --primary-color: #28a745;
+            --secondary-color: #218838;
+            --bg-color: #f0f3f2;
+            --surface-color: #ffffff;
+            --text-color: #343a40;
+            --accent-color: #ffc107;
+            --gradient: linear-gradient(45deg, var(--primary-color), #34d058);
+        }
+        [data-theme='sunset-gradient'] {
+            --primary-color: #fd7e14;
+            --secondary-color: #e65100;
+            --bg-color: #fff8f2;
+            --surface-color: #ffffff;
+            --text-color: #492b0e;
+            --accent-color: #20c997;
+            --gradient: linear-gradient(45deg, #ff4e50, #f9d423);
+        }
+        [data-theme='tech-noir'] {
+            --primary-color: #e83e8c;
+            --secondary-color: #d81b60;
+            --bg-color: #1a1a2e;
+            --surface-color: #242444;
+            --text-color: #e0e0e0;
+            --accent-color: #00bcd4;
+            --gradient: linear-gradient(45deg, #4a00e0, #8e2de2);
+        }
+        [data-theme='minty-fresh'] {
+            --primary-color: #1abc9c;
+            --secondary-color: #16a085;
+            --bg-color: #f1fefb;
+            --surface-color: #ffffff;
+            --text-color: #3d524d;
+            --accent-color: #f39c12;
+            --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0);
+        }
+        [data-theme='royal-purple'] {
+            --primary-color: #6f42c1;
+            --secondary-color: #5a32a3;
+            --bg-color: #f8f7fa;
+            --surface-color: #ffffff;
+            --text-color: #343a40;
+            --accent-color: #fd7e14;
+            --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6);
+        }
+        [data-theme='graphite-gray'] {
+            --primary-color: #6c757d;
+            --secondary-color: #5a6268;
+            --bg-color: #e9ecef;
+            --surface-color: #f8f9fa;
+            --text-color: #212529;
+            --accent-color: #007bff;
+            --gradient: linear-gradient(45deg, #6c757d, #adb5bd);
+        }
+        [data-theme='crimson-red'] {
+            --primary-color: #dc3545;
+            --secondary-color: #c82333;
+            --bg-color: #fdf5f6;
+            --surface-color: #ffffff;
+            --text-color: #343a40;
+            --accent-color: #ffc107;
+            --gradient: linear-gradient(45deg, #dc3545, #f05a68);
+        }
+        html.dark-mode {
+            --bg-color: #121212;
+            --surface-color: #1e1e1e;
+            --text-color: #e0e0e0;
+        }
+        html.dark-mode[data-theme='tech-noir'] {
+            --bg-color: #0f0f1e;
+            --surface-color: #1a1a2e;
+        }
+        html.dark-mode[data-theme='corporate-blue'] {
+            --text-color: #d0d5dd;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+            transition: background-color var(--transition-speed);
+            z-index: 100;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon-3d {
+            font-size: 2rem;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1);
+            transform: rotateY(10deg) rotateX(-5deg);
+            transition: color var(--transition-speed), text-shadow var(--transition-speed);
+        }
+
+        .logo-container h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            position: relative;
+            transition: color var(--transition-speed);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width var(--transition-speed);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .theme-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #theme-picker {
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            border: 1px solid var(--primary-color);
+            background: var(--surface-color);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        #dark-mode-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--text-color);
+            padding: 0.5rem;
+        }
+
+        #dark-mode-toggle .fa-sun {
+            display: none;
+        }
+
+        html.dark-mode #dark-mode-toggle .fa-sun {
+            display: inline;
+        }
+
+        html.dark-mode #dark-mode-toggle .fa-moon {
+            display: none;
+        }
+
+        main.dashboard-container {
+            padding: 2rem 4rem;
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .calculator-container, .notepad-container {
+            background: var(--surface-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            flex: 1 1 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 600px;
+            transition: box-shadow var(--transition-speed);
+        }
+
+        .calculator-container:hover, .notepad-container:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .calc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calc-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .toggle-btn {
+            padding: 0.4rem 1rem;
+            border: none;
+            background: var(--gradient);
+            color: white;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Calculator display */
+        #calc-display {
+            font-size: 1.6rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 6px;
+            text-align: right;
+            min-height: 50px;
+            overflow-x: auto;
+            color: var(--text-color);
+            font-family: monospace;
+            user-select: text;
+        }
+
+        /* Calculator buttons grid */
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        button.calc-btn {
+            padding: 15px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            background: var(--primary-color);
+            box-shadow: 0 4px 8px rgba(0, 82, 204, 0.6);
+            transition: background-color 0.2s ease;
+            user-select: none;
+        }
+
+        button.calc-btn.operator {
+            background: var(--accent-color);
+            box-shadow: 0 4px 8px rgba(255, 171, 0, 0.7);
+            color: var(--text-color);
+        }
+
+        button.calc-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        button.calc-btn:active {
+            filter: brightness(0.9);
+        }
+
+        /* History container */
+        .history-container {
+            background: var(--bg-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 1rem;
+            height: 140px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .reset-history {
+            background: var(--accent-color);
+            border: none;
+            color: var(--text-color);
+            padding: 0.3rem 0.7rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.25s ease;
+        }
+
+        .reset-history:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Notepad styling */
+        .notepad-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .notepad-toolbar > * {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notepad-color-picker input[type='color'] {
+            width: 34px;
+            height: 34px;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+
+        .notepad-textarea {
+            flex-grow: 1;
+            width: 100%;
+            min-height: 300px;
+            border: 2px solid var(--primary-color);
+            border-radius: 6px;
+            padding: 10px;
+            resize: vertical;
+            font-family: monospace;
+            font-size: 1rem;
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        /* Drawing canvas container */
+        .canvas-container {
+            position: relative;
+            border: 2px solid var(--primary-color);
+            border-radius: 6px;
+            margin-top: 1rem;
+            height: 280px;
+            background: var(--bg-color);
+        }
+
+        canvas#draw-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 6px;
+            cursor: crosshair;
+        }
+
+        .notepad-btns {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: filter 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--accent-color);
+            color: var(--text-color);
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            main.dashboard-container {
+                flex-direction: column;
+                padding: 2rem 2rem;
+            }
+            .calculator-container,
+            .notepad-container {
+                flex: 1 1 100%;
+                min-height: auto;
+            }
+            .canvas-container {
+                height: 200px;
+            }
+        }
+
+    </style>
+
 </head>
 <body>
-  <div id="auth-root" class="center-box">
-    <div id="auth-login" style="display:none;">
-      <div class="form-title">Login</div>
-      <form class="auth-form" id="loginForm">
-        <div class="error-msg" id="loginErr" style="display:none;"></div>
-        <input type="text" placeholder="Username" id="login-username" required>
-        <input type="password" placeholder="Password" id="login-password" required>
-        <button type="submit">Login</button>
-      </form>
-      <div class="auth-toggle">New User? <span onclick="authShow('signup')">Sign Up</span></div>
-    </div>
-    <div id="auth-signup" style="display:none;">
-      <div class="form-title">Sign Up</div>
-      <form class="auth-form" id="signupForm">
-        <div class="error-msg" id="signupErr" style="display:none;"></div>
-        <input type="text" placeholder="Username" id="signup-username" required>
-        <input type="password" placeholder="Password" id="signup-password" required>
-        <input type="password" placeholder="Confirm Password" id="signup-confirm-password" required>
-        <button type="submit">Sign Up</button>
-      </form>
-      <div class="auth-toggle">Have Account? <span onclick="authShow('login')">Login</span></div>
-    </div>
-  </div>
-
-  <div id="main-root" style="display:none;">
-    <button class="logout-btn" onclick="logout()">Logout</button>
-    <div class="welcome" id="welcomeMsg"></div>
-    <div class="container">
-      <div class="calc-section">
-        <h2>Calculator</h2>
-        <div class="calculator">
-          <input type="text" id="display" class="display" disabled>
-          <div class="buttons">
-            <button class="button clear" onclick="clearDisplay()">C</button>
-            <button class="button operator" onclick="appendOperation('/')">/</button>
-            <button class="button operator" onclick="appendOperation('*')">*</button>
-            <button class="button operator" onclick="appendOperation('-')">-</button>
-            <button class="button" onclick="appendNumber('7')">7</button>
-            <button class="button" onclick="appendNumber('8')">8</button>
-            <button class="button" onclick="appendNumber('9')">9</button>
-            <button class="button operator" onclick="appendOperation('+')">+</button>
-            <button class="button" onclick="appendNumber('4')">4</button>
-            <button class="button" onclick="appendNumber('5')">5</button>
-            <button class="button" onclick="appendNumber('6')">6</button>
-            <button class="button equal" onclick="calculate()">=</button>
-            <button class="button" onclick="appendNumber('1')">1</button>
-            <button class="button" onclick="appendNumber('2')">2</button>
-            <button class="button" onclick="appendNumber('3')">3</button>
-            <button class="button" onclick="appendNumber('0')">0</button>
-          </div>
-          <div class="link-notepad">
-            <button onclick="sendToNotepad()" title="Insert result into notepad">📄 Insert Result to Notepad</button>
-          </div>
+    <header class='main-header'>
+        <div class='logo-container'>
+            <a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
+                <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
+                <h1>JKM Edit</h1>
+            </a>
         </div>
-      </div>
-      <div class="note-section">
-        <h2>
-          <span class="pencil-icon">✏️</span> Notepad
-        </h2>
-        <textarea id="notepad" placeholder="Type your notes here..."></textarea>
-      </div>
-    </div>
-  </div>
-  <script>
-    // Auth logic (localStorage)
-    let activeUser = null;
-    function authShow(mode) {
-      document.getElementById('auth-login').style.display = mode === 'login' ? 'block' : 'none';
-      document.getElementById('auth-signup').style.display = mode === 'signup' ? 'block' : 'none';
-      document.getElementById('loginErr').style.display = 'none';
-      document.getElementById('signupErr').style.display = 'none';
-    }
-    function validateUser(u,p) {
-      let users = JSON.parse(localStorage.getItem('users') || '{}');
-      if (users[u] && users[u].password === p) return true;
-      return false;
-    }
-    function saveUser(u,p) {
-      let users = JSON.parse(localStorage.getItem('users') || '{}');
-      if (users[u]) return false;
-      users[u] = {password:p};
-      localStorage.setItem('users', JSON.stringify(users));
-      return true;
-    }
-    // Sign Up
-    document.getElementById('signupForm').onsubmit = function(e) {
-      e.preventDefault();
-      const username = document.getElementById('signup-username').value.trim();
-      const password = document.getElementById('signup-password').value;
-      const confirm = document.getElementById('signup-confirm-password').value;
-      if (!username || password.length<4) {
-        document.getElementById('signupErr').innerText = "Username and password (min 4 chars) are required.";
-        document.getElementById('signupErr').style.display = "block";
-        return;
-      }
-      if (password !== confirm) {
-        document.getElementById('signupErr').innerText = "Passwords do not match.";
-        document.getElementById('signupErr').style.display = "block";
-        return;
-      }
-      if(!saveUser(username, password)){
-        document.getElementById('signupErr').innerText = "Username already exists.";
-        document.getElementById('signupErr').style.display = "block";
-        return;
-      }
-      document.getElementById('signupErr').style.display = "none";
-      alert('Sign up successful! Please login.');
-      authShow('login');
-    };
+        <nav class='main-nav'>
+            <div class='theme-selector'>
+                <label for='theme-picker'>Theme:</label>
+                <select id='theme-picker'>
+                    <option value='corporate-blue' selected='selected'>Corporate Blue</option>
+                    <option value='forest-green'>Forest Green</option>
+                    <option value='sunset-gradient'>Sunset Gradient</option>
+                    <option value='tech-noir'>Tech Noir</option>
+                    <option value='minty-fresh'>Minty Fresh</option>
+                    <option value='royal-purple'>Royal Purple</option>
+                    <option value='graphite-gray'>Graphite Gray</option>
+                    <option value='crimson-red'>Crimson Red</option>
+                </select>
+            </div>
+            <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'>
+                <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
+            </button>
+            <a href='#' id='about-btn' class='nav-link'>About</a>
+            <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
+        </nav>
+    </header>
 
-    // Login
-    document.getElementById('loginForm').onsubmit = function(e){
-      e.preventDefault();
-      const username = document.getElementById('login-username').value.trim();
-      const password = document.getElementById('login-password').value;
-      if (validateUser(username, password)) {
-        activeUser = username;
-        document.getElementById('welcomeMsg').innerText = "Welcome, " + activeUser + "!";
-        document.getElementById('auth-root').style.display = 'none';
-        document.getElementById('main-root').style.display = 'block';
-      } else {
-        document.getElementById('loginErr').innerText = "Invalid username or password.";
-        document.getElementById('loginErr').style.display = "block";
-      }
-    };
+    <main class='dashboard-container'>
+        <!-- Calculator Section -->
+        <section class='calculator-container' aria-label='Calculator Section'>
+            <div class='calc-header'>
+                <h2 class='calc-title'>Calculator</h2>
+                <button class='toggle-btn' id='calc-mode-toggle' aria-pressed='false' aria-label='Toggle Calculator Mode'>Switch to Advanced</button>
+            </div>
+            <div id='calc-display' aria-live='polite' aria-atomic='true' role='textbox' tabindex='0'>0</div>
+            <div class='calc-buttons' id='calc-buttons'>
+                <!-- Buttons added by JS -->
+            </div>
+            <div class='history-header'>
+                <span>History</span>
+                <button class='reset-history' id='history-reset'>Reset</button>
+            </div>
+            <div class='history-container' id='calc-history' aria-label='Calculator history' tabindex='0'>
+                <!-- History entries here -->
+            </div>
+        </section>
 
-    function logout() {
-      activeUser = null;
-      document.getElementById('main-root').style.display = 'none';
-      document.getElementById('auth-root').style.display = 'block';
-      authShow('login');
-      document.getElementById('login-username').value = "";
-      document.getElementById('login-password').value = "";
-      document.getElementById('display').value = "";
-      document.getElementById('notepad').value = "";
-    }
+        <!-- Notepad Section -->
+        <section class='notepad-container' aria-label='Notepad Section'>
+            <div class='notepad-toolbar'>
+                <div class='notepad-color-picker'>
+                    <label for='draw-color'>Pen Color:</label>
+                    <input type='color' id='draw-color' title='Choose pen color' value='#0052cc'>
+                </div>
+                <div class='notepad-color-picker'>
+                    <label for='text-color'>Text Color:</label>
+                    <input type='color' id='text-color' title='Choose text color' value='#172b4d'>
+                </div>
+                <div class='notepad-btns'>
+                    <button class='btn btn-primary' id='clear-canvas'>Clear Drawing</button>
+                    <button class='btn btn-secondary' id='import-result'>Import Calc Result</button>
+                    <button class='btn btn-primary' id='export-pdf'>Export to PDF</button>
+                </div>
+            </div>
+            <textarea id='notepad-textarea' class='notepad-textarea' aria-label='Notepad text area'></textarea>
+            <div class='canvas-container' aria-label='Drawable canvas'>
+                <canvas id='draw-canvas'></canvas>
+            </div>
+        </section>
+    </main>
 
-    // Show initial - login form
-    authShow('login');
+    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
+    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
-    // Calculator logic
-    let currentInput = '';
-    let currentOperation = '';
-    let previousInput = '';
-    function appendNumber(number) {
-      currentInput += number;
-      updateDisplay();
-    }
-    function appendOperation(operation) {
-      if (currentInput === '') return;
-      if (previousInput !== '') calculate();
-      currentOperation = operation;
-      previousInput = currentInput;
-      currentInput = '';
-      updateDisplay();
-    }
-    function calculate() {
-      if (previousInput === '' || currentInput === '') return;
-      let result;
-      let prev = parseFloat(previousInput);
-      let current = parseFloat(currentInput);
-      switch (currentOperation) {
-        case '+': result = prev + current; break;
-        case '-': result = prev - current; break;
-        case '*': result = prev * current; break;
-        case '/':
-          if (current === 0) { alert("Cannot divide by zero"); return;}
-          result = prev / current; break;
-        default: return;
-      }
-      currentInput = result.toString();
-      currentOperation = '';
-      previousInput = '';
-      updateDisplay();
-    }
-    function clearDisplay() {
-      currentInput = '';
-      previousInput = '';
-      currentOperation = '';
-      updateDisplay();
-    }
-    function updateDisplay() {
-      const display = document.getElementById('display');
-      if (!display) return;
-      if (previousInput && currentOperation) {
-        display.value = `${previousInput} ${currentOperation} ${currentInput}`;
-      } else {
-        display.value = currentInput;
-      }
-    }
-    // Keyboard support for calculator
-    document.addEventListener('keydown', function(e) {
-      if (document.getElementById('main-root').style.display !== 'block') return;
-      if (e.target === document.getElementById('notepad')) return;
-      if (e.key >= '0' && e.key <= '9') appendNumber(e.key);
-      if (['+', '-', '*', '/'].includes(e.key)) appendOperation(e.key);
-      if (e.key === 'Enter') calculate();
-      if (e.key === 'c' || e.key === 'C') clearDisplay();
-    });
-    // Link calculator result to notepad
-    function sendToNotepad() {
-      const display = document.getElementById('display');
-      if (display && display.value) {
-        const nt = document.getElementById('notepad');
-        nt.value += (nt.value ? '\n' : '') + 'Calculator result: ' + display.value;
-      }
-    }
-  </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'></script>
+
+    <script>
+        (() => {
+            // Calculator Buttons Setup
+            const basicButtons = [
+                { label: '7', type: 'number' }, { label: '8', type: 'number' }, { label: '9', type: 'number' }, { label: '/', type: 'operator' }, { label: 'C', type: 'clear' },
+                { label: '4', type: 'number' }, { label: '5', type: 'number' }, { label: '6', type: 'number' }, { label: '*', type: 'operator' }, { label: '⌫', type: 'backspace' },
+                { label: '1', type: 'number' }, { label: '2', type: 'number' }, { label: '3', type: 'number' }, { label: '-', type: 'operator' }, { label: '(', type: 'parentheses' },
+                { label: '0', type: 'number' }, { label: '.', type: 'number' }, { label: '=', type: 'equals' }, { label: '+', type: 'operator' }, { label: ')', type: 'parentheses' }
+            ];
+
+            const advancedButtons = [
+                ...basicButtons.slice(0, 10),
+                { label: '√', type: 'function' }, { label: 'x²', type: 'function' }, { label: 'x³', type: 'function' }, { label: '^', type: 'operator' },
+                ...basicButtons.slice(10)
+            ];
+
+            let isAdvanced = false;
+            const calcButtonsContainer = document.getElementById('calc-buttons');
+            const calcDisplay = document.getElementById('calc-display');
+            const calcHistoryContainer = document.getElementById('calc-history');
+            const historyResetBtn = document.getElementById('history-reset');
+            const calcModeToggle = document.getElementById('calc-mode-toggle');
+            const importResultBtn = document.getElementById('import-result');
+            const notepadTextarea = document.getElementById('notepad-textarea');
+
+            // Calculator Logic
+            let calcExpression = '';
+            let history = [];
+
+            function renderButtons() {
+                calcButtonsContainer.innerHTML = '';
+                const buttonsToUse = isAdvanced ? advancedButtons : basicButtons;
+                buttonsToUse.forEach(btn => {
+                    const button = document.createElement('button');
+                    button.textContent = btn.label;
+                    button.classList.add('calc-btn');
+                    if (btn.type === 'operator' || btn.type === 'function') {
+                        button.classList.add('operator');
+                    }
+                    button.setAttribute('aria-label', btn.label);
+                    button.addEventListener('click', () => buttonClick(btn));
+                    calcButtonsContainer.appendChild(button);
+                });
+            }
+
+            function buttonClick(btn) {
+                switch (btn.type) {
+                    case 'number':
+                        if (calcExpression === '0') {
+                            calcExpression = btn.label;
+                        } else {
+                            calcExpression += btn.label;
+                        }
+                        updateDisplay();
+                        break;
+                    case 'operator':
+                        if (calcExpression && !isOperator(calcExpression.slice(-1))) {
+                            calcExpression += btn.label;
+                        }
+                        updateDisplay();
+                        break;
+                    case 'parentheses':
+                        calcExpression += btn.label;
+                        updateDisplay();
+                        break;
+                    case 'clear':
+                        calcExpression = '';
+                        updateDisplay();
+                        break;
+                    case 'backspace':
+                        if (calcExpression.length > 0) {
+                            calcExpression = calcExpression.slice(0, -1);
+                            updateDisplay();
+                        }
+                        break;
+                    case 'equals':
+                        calculateResult();
+                        break;
+                    case 'function':
+                        handleFunction(btn.label);
+                        break;
+                }
+            }
+
+            function isOperator(c) {
+                return ['+', '-', '*', '/', '^'].includes(c);
+            }
+
+            function updateDisplay() {
+                calcDisplay.textContent = calcExpression || '0';
+            }
+
+            function calculateResult() {
+                try {
+                    let expr = calcExpression.replace(/√/g, 'Math.sqrt')
+                    .replace(/x²/g, '**2')
+                    .replace(/x³/g, '**3')
+                    .replace(/\^/g, '**');
+                    // Evaluate expression safely
+                    let result = Function('return ' + expr)();
+                    if (result === undefined) throw new Error('Invalid');
+                    result = Number.isFinite(result) ? result : 'Error';
+                    addHistory(`${calcExpression} = ${result}`);
+                    calcExpression = String(result);
+                    updateDisplay();
+                } catch (e) {
+                    calcDisplay.textContent = 'Error';
+                    calcExpression = '';
+                }
+            }
+
+            function addHistory(entry) {
+                history.unshift(entry);
+                renderHistory();
+            }
+
+            function renderHistory() {
+                calcHistoryContainer.innerHTML = history.map(h => `<div>${h}</div>`).join('');
+            }
+
+            historyResetBtn.addEventListener('click', () => {
+                history = [];
+                renderHistory();
+            });
+
+            calcModeToggle.addEventListener('click', () => {
+                isAdvanced = !isAdvanced;
+                calcModeToggle.textContent = isAdvanced ? 'Switch to Basic' : 'Switch to Advanced';
+                calcModeToggle.setAttribute('aria-pressed', isAdvanced);
+                renderButtons();
+                calcExpression = '';
+                updateDisplay();
+            });
+
+            function handleFunction(func) {
+                try {
+                    if (func === '√') {
+                        calcExpression = '√(' + (calcExpression || '0') + ')';
+                    } else if (func === 'x²') {
+                        calcExpression = '(' + (calcExpression || '0') + ')x²';
+                    } else if (func === 'x³') {
+                        calcExpression = '(' + (calcExpression || '0') + ')x³';
+                    }
+                    updateDisplay();
+                } catch (error) {
+                    calcDisplay.textContent = 'Error';
+                    calcExpression = '';
+                }
+            }
+
+            // Initial render
+            renderButtons();
+            updateDisplay();
+
+            // Notepad Drawing and Text Setup
+            const canvas = document.getElementById('draw-canvas');
+            const ctx = canvas.getContext('2d');
+            let drawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            const drawColorPicker = document.getElementById('draw-color');
+            const textColorPicker = document.getElementById('text-color');
+
+            function resizeCanvas() {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                canvas.style.width = rect.width + 'px';
+                canvas.style.height = rect.height + 'px';
+                ctx.scale(dpr, dpr);
+                clearCanvas();
+            }
+
+            function clearCanvas() {
+                // Use computed style for background color
+                const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim();
+                ctx.fillStyle = bgColor || '#fff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            canvas.addEventListener('mousedown', (e) => {
+                drawing = true;
+                [lastX, lastY] = [e.offsetX, e.offsetY];
+            });
+            canvas.addEventListener('mouseup', () => {
+                drawing = false;
+            });
+            canvas.addEventListener('mouseout', () => {
+                drawing = false;
+            });
+            canvas.addEventListener('mousemove', (e) => {
+                if (!drawing) return;
+                ctx.strokeStyle = drawColorPicker.value;
+                ctx.lineWidth = 2;
+                ctx.lineJoin = 'round';
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+                [lastX, lastY] = [e.offsetX, e.offsetY];
+            });
+
+            // For touch devices
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (e.touches.length > 0) {
+                    const rect = canvas.getBoundingClientRect();
+                    const touch = e.touches[0];
+                    lastX = touch.clientX - rect.left;
+                    lastY = touch.clientY - rect.top;
+                    drawing = true;
+                }
+            }, { passive: false });
+
+            canvas.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                drawing = false;
+            }, { passive: false });
+
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                if (drawing && e.touches.length > 0) {
+                    const rect = canvas.getBoundingClientRect();
+                    const touch = e.touches[0];
+                    const x = touch.clientX - rect.left;
+                    const y = touch.clientY - rect.top;
+                    ctx.strokeStyle = drawColorPicker.value;
+                    ctx.lineWidth = 2;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(lastX, lastY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    lastX = x;
+                    lastY = y;
+                }
+            }, { passive: false });
+
+            // Clear Drawing Button
+            document.getElementById('clear-canvas').addEventListener('click', clearCanvas);
+
+            // Import calculator result to notepad
+            importResultBtn.addEventListener('click', () => {
+                const currentCalc = calcDisplay.textContent.trim();
+                if (currentCalc && currentCalc !== '0' && currentCalc !== 'Error') {
+                    let cursorPos = notepadTextarea.selectionStart || 0;
+                    let textBefore = notepadTextarea.value.substring(0, cursorPos);
+                    let textAfter = notepadTextarea.value.substring(cursorPos);
+                    notepadTextarea.value = textBefore + currentCalc + textAfter;
+                }
+            });
+
+            // Export notepad content & drawing to PDF using jsPDF
+            const { jsPDF } = window.jspdf;
+
+            document.getElementById('export-pdf').addEventListener('click', () => {
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'px',
+                    format: [595, 842] // A4 size
+                });
+
+                let yPosition = 20;
+                const margin = 20;
+                const lineHeight = 18;
+
+                pdf.setFont('Courier', 'normal');
+                pdf.setFontSize(12);
+
+                // Add text content
+                const textLines = pdf.splitTextToSize(notepadTextarea.value, 555);
+                pdf.text(textLines, margin, yPosition);
+                yPosition += lineHeight * textLines.length + 20;
+
+                // Add drawing image
+                const canvasImage = canvas.toDataURL('image/png');
+                const imgWidth = 555;
+                const imgHeight = canvas.height * (imgWidth / canvas.width);
+
+                if (yPosition + imgHeight > 842 - margin) {
+                    pdf.addPage();
+                    yPosition = margin;
+                }
+                pdf.addImage(canvasImage, 'PNG', margin, yPosition, imgWidth, imgHeight);
+
+                pdf.save('notepad-content.pdf');
+            });
+
+            // On window resize - adjust canvas size
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+            });
+
+            // Initial canvas setup
+            resizeCanvas();
+
+        })();
+
+        // Modal logic for About and Contact
+        document.addEventListener('DOMContentLoaded', () => {
+            const aboutModal = document.getElementById('about-modal');
+            const contactModal = document.getElementById('contact-modal');
+            const aboutBtn = document.getElementById('about-btn');
+            const contactBtn = document.getElementById('contact-btn');
+            const closeBtns = document.querySelectorAll('.close-btn');
+            const openModal = (modal) => { modal.classList.add('show-modal'); };
+            const closeModal = (modal) => { modal.classList.remove('show-modal'); };
+
+            aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+            contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    closeModal(aboutModal);
+                    closeModal(contactModal);
+                });
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === aboutModal) closeModal(aboutModal);
+                if (e.target === contactModal) closeModal(contactModal);
+            });
+
+            // Theme Picker and Dark Mode Toggle Logic (from your base code)
+            const themePicker = document.getElementById('theme-picker');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const htmlElement = document.documentElement;
+
+            themePicker.addEventListener('change', () => {
+                htmlElement.dataset.theme = themePicker.value;
+                localStorage.setItem('jkm-edit-theme', themePicker.value);
+            });
+
+            darkModeToggle.addEventListener('click', () => {
+                if (htmlElement.classList.contains('dark-mode')) {
+                    htmlElement.classList.remove('dark-mode');
+                    localStorage.setItem('jkm-edit-mode', 'light');
+                } else {
+                    htmlElement.classList.add('dark-mode');
+                    localStorage.setItem('jkm-edit-mode', 'dark');
+                }
+            });
+
+            // Initialize theme controls on load
+            const savedTheme = localStorage.getItem('jkm-edit-theme');
+            if (savedTheme) {
+                themePicker.value = savedTheme;
+                htmlElement.dataset.theme = savedTheme;
+            }
+            const savedMode = localStorage.getItem('jkm-edit-mode');
+            if (savedMode === 'dark') {
+                htmlElement.classList.add('dark-mode');
+            }
+        });
+    </script>
 </body>
 </html>
