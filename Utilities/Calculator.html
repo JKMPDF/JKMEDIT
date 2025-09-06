@@ -1,357 +1,264 @@
 <!DOCTYPE html>
-<html lang='en' data-theme='corporate-blue'>
+<html lang="en">
 <head>
-    <meta charset='UTF-8'/>
-    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    
-    <title>Professional Calculator & Notepad - JKM Edit</title>
-    <meta name="description" content="A professional, multi-function tool featuring an advanced calculator, live history, and a unique dual-mode notepad for text, sketching, and ledger calculations."/>
-    <meta name="keywords" content="advanced calculator, sketch notepad, online drawing, ledger calculator, professional tools, jkm edit"/>
-    <meta name="author" content="JKM Edit"/>
-
-    <!-- Math.js Library for safe and powerful calculations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
-    
-    <!-- Initial Theme/Mode Script to Prevent Flickering -->
-    <script>
-        (function() {
-            try {
-                const themeBgColors = {
-                    'corporate-blue': { light: '#f4f5f7', dark: '#121212' },'forest-green':   { light: '#f0f3f2', dark: '#121212' },'sunset-gradient':{ light: '#fff8f2', dark: '#121212' },'tech-noir':      { light: '#1a1a2e', dark: '#0f0f1e' },'minty-fresh':    { light: '#f1fefb', dark: '#121212' },'royal-purple':   { light: '#f8f7fa', dark: '#121212' },'graphite-gray':  { light: '#e9ecef', dark: '#121212' },'crimson-red':    { light: '#fdf5f6', dark: '#121212' }
-                };
-                const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
-                const mode = localStorage.getItem('jkm-edit-mode') || 'light';
-                document.documentElement.setAttribute('data-theme', theme);
-                if (mode === 'dark') { document.documentElement.classList.add('dark-mode'); }
-                const bgColor = (themeBgColors[theme] && themeBgColors[theme][mode]) || '#f4f5f7';
-                const style = document.createElement('style');
-                style.innerHTML = `html { background-color: ${bgColor} !important; }`;
-                document.head.appendChild(style);
-            } catch (e) { console.error("Error applying initial theme:", e); }
-        })();
-    </script>
-    
-    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap' rel='stylesheet'/>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
-
-    <style>
-        :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
-        html { background-color: var(--bg-color); }
-        body { margin: 0; color: var(--text-color); background-color: var(--bg-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
-        *, *::before, *::after { box-sizing: border-box; }
-
-        /* THEME DEFINITIONS */
-        [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
-        [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
-        [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
-        [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-gradient(45deg, #4a00e0, #8e2de2); }
-        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
-        [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
-        [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
-        [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
-        html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
-        html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
-
-        /* HEADER */
-        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 1000; }
-        .main-nav { display: flex; align-items: center; gap: 1.5rem; }
-        #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); }
-        #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); }
-        #dark-mode-toggle .fa-sun { display: none; }
-        html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
-        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
-
-        /* MAIN LAYOUT */
-        .page-wrapper { display: flex; padding: 2rem; gap: 2rem; align-items: flex-start; }
-        .left-panel { flex: 0 0 450px; display: flex; flex-direction: column; gap: 2rem; }
-        .right-panel { flex: 1; min-width: 0; }
-        .pro-tool-card { background: var(--surface-color); border-radius: 20px; padding: 1.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
-
-        /* PROFESSIONAL CALCULATOR */
-        .calculator-display { text-align: right; padding: 0.5rem 1rem; margin-bottom: 1.5rem; border-radius: 12px; background-color: var(--bg-color); }
-        .calculator-expression { min-height: 24px; font-size: 1rem; opacity: 0.7; word-wrap: break-word; }
-        .calculator-result { font-size: 2.8rem; font-weight: 600; min-height: 52px; word-wrap: break-word; word-break: break-all; }
-        .calculator-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
-        .calc-btn { font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 500; border: none; border-radius: 12px; aspect-ratio: 1/1; cursor: pointer; transition: all 0.2s ease; background-color: color-mix(in srgb, var(--text-color) 10%, transparent); color: var(--text-color); }
-        html.dark-mode .calc-btn { background-color: color-mix(in srgb, var(--text-color) 20%, transparent); }
-        .calc-btn:hover { filter: brightness(0.95); } .calc-btn:active { transform: scale(0.95); }
-        .calc-btn.op { background-color: var(--accent-color); color: white; font-size: 1.5rem; }
-        .calc-btn.func { background-color: var(--bg-color); }
-        .calc-btn.equals { background-image: var(--gradient); color: white; font-size: 1.5rem; }
-
-        /* HISTORY PANEL */
-        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary-color); }
-        .history-header h3 { margin: 0; color: var(--primary-color); }
-        #clear-history-btn { background: none; border: none; color: var(--text-color); opacity: 0.6; cursor: pointer; font-size: 1rem; }
-        #history-list { list-style: none; padding: 0; margin: 0; max-height: 250px; overflow-y: auto; }
-        #history-list li { padding: 0.75rem; border-bottom: 1px solid var(--bg-color); font-size: 0.9rem; }
-        .history-expr { display: block; opacity: 0.7; }
-        .history-res { font-weight: 600; }
-
-        /* NOTEPAD SECTION */
-        .notepad-controls { display: flex; justify-content: center; margin-bottom: 1.5rem; background: var(--bg-color); border-radius: 30px; padding: 0.3rem; }
-        .notepad-switch-btn { flex: 1; padding: 0.7rem; border: none; background: transparent; color: var(--text-color); font-weight: 600; font-size: 0.9rem; border-radius: 25px; cursor: pointer; transition: all var(--transition-speed); }
-        .notepad-switch-btn.active { background-image: var(--gradient); color: white; }
-
-        /* SKETCH & NOTE PAD */
-        #sketch-pad-container { position: relative; }
-        #sketch-canvas { position: absolute; top: 0; left: 0; cursor: crosshair; }
-        #notes-textarea { width: 100%; height: 500px; background: transparent; border: 1px solid var(--bg-color); border-radius: 12px; padding: 1rem; font-family: 'Poppins'; font-size: 1rem; color: var(--text-color); resize: vertical; line-height: 1.6; }
-        .sketch-controls { display: flex; gap: 1rem; align-items: center; margin-top: 1rem; }
-        .sketch-controls input[type="color"] { border: none; background: var(--bg-color); padding: 2px; border-radius: 4px; }
-        
-        /* LEDGER PAD */
-        #ledger-pad { display: none; }
-        #ledger-table { width: 100%; border-collapse: collapse; }
-        #ledger-table th, #ledger-table td { padding: 0.8rem; text-align: left; border-bottom: 1px solid var(--bg-color); }
-        #ledger-table th { color: var(--primary-color); }
-        .ledger-row .particular-input { width: 100%; background: transparent; border: none; color: var(--text-color); font-family: 'Poppins'; }
-        .ledger-row .amount-input { width: 100%; text-align: right; background: transparent; border: none; color: var(--text-color); font-family: 'Poppins'; font-size: 1rem; }
-        #add-row-btn { display: block; width: 100%; margin-top: 1rem; padding: 0.8rem; border: none; border-radius: 8px; background-color: color-mix(in srgb, var(--primary-color) 15%, transparent); color: var(--primary-color); font-weight: 600; cursor: pointer; }
-        .ledger-total { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px dashed var(--primary-color); display: flex; justify-content: space-between; align-items: center; font-size: 1.5rem; font-weight: 600; }
-        #ledger-total-amount { color: var(--primary-color); }
-
-        @media (max-width: 1200px) { .page-wrapper { flex-direction: column; } .left-panel { flex: 1; width: 100%; } }
-    </style>
+  <meta charset="UTF-8">
+  <title>Calculator & Notepad Pro</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #ececec;
+      margin: 0;
+      height: 100vh;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      height: 90vh;
+      width: 90vw;
+      margin: 5vh auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      border-radius: 24px;
+      background: #f6f8fa;
+      overflow: hidden;
+    }
+    .calc-section, .note-section {
+      flex: 1;
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fff;
+    }
+    .calc-section {
+      border-right: 2px solid #e0e0e0;
+    }
+    h2 {
+      font-size: 2rem;
+      color: #0477BF;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+    }
+    .pencil-icon {
+      font-size: 1.6rem;
+      margin-right: 8px;
+    }
+    .calculator {
+      width: 100%;
+      max-width: 350px;
+      border-radius: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      background: #F9F9FB;
+      padding: 18px;
+    }
+    .display {
+      width: 100%;
+      height: 55px;
+      font-size: 1.7rem;
+      text-align: right;
+      padding: 10px;
+      margin-bottom: 22px;
+      background-color: #E2F0FB;
+      border-radius: 7px;
+      border: none;
+      color: #2B2B2B;
+      box-shadow: 0 2px 8px rgba(0,183,255,0.06);
+      outline: none;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .button {
+      background-color: #0477BF;
+      border: none;
+      color: white;
+      font-size: 1.22rem;
+      padding: 18px 0;
+      cursor: pointer;
+      border-radius: 7px;
+      transition: background 0.25s, transform 0.17s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .button:hover {
+      background: #0461a2;
+      transform: scale(1.08);
+    }
+    .button:active {
+      transform: scale(0.96);
+    }
+    .button.clear { background:#f45b69; }
+    .button.clear:hover { background: #b52837; }
+    .button.equal { background:#36d172; }
+    .button.equal:hover { background:#2aaf5b; }
+    .button.operator { background:#fca311; color: #484848; }
+    .button.operator:hover { background: #ca880b; }
+    .link-notepad {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .link-notepad button {
+      background: #7dd56f;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+      transition: background 0.2s;
+    }
+    .link-notepad button:hover {
+      background: #52a848;
+    }
+    .note-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fbfbfc;
+      height: 100%;
+    }
+    #notepad {
+      width: 100%;
+      min-height: 350px;
+      max-width: 450px;
+      padding: 18px;
+      font-size: 1.19rem;
+      background: #F6F8FA;
+      border-radius: 10px;
+      border: 1px solid #dde1e5;
+      resize: vertical;
+      color: #202020;
+      outline: none;
+      margin-top: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+    #notepad:focus {
+      border-color: #4C99CF;
+      background: #eaf2fb;
+    }
+  </style>
 </head>
 <body>
-    <header class='main-header'>
-        <!-- Header content remains same -->
-    </header>
-
-    <main class="page-wrapper">
-        <div class="left-panel">
-            <div class="calculator-container pro-tool-card">
-                <div class="calculator-display">
-                    <div class="calculator-expression" id="calc-expression"></div>
-                    <div class="calculator-result" id="calc-result">0</div>
-                </div>
-                <div class="calculator-keys">
-                    <button class="calc-btn func" data-value="clear">AC</button>
-                    <button class="calc-btn func" data-value="backspace">⌫</button>
-                    <button class="calc-btn func" data-value="%">%</button>
-                    <button class="calc-btn op" data-value="/">÷</button>
-
-                    <button class="calc-btn func" data-value="M+">M+</button>
-                    <button class="calc-btn" data-value="7">7</button>
-                    <button class="calc-btn" data-value="8">8</button>
-                    <button class="calc-btn" data-value="9">9</button>
-                    <button class="calc-btn op" data-value="*">×</button>
-
-                    <button class="calc-btn func" data-value="M-">M-</button>
-                    <button class="calc-btn" data-value="4">4</button>
-                    <button class="calc-btn" data-value="5">5</button>
-                    <button class="calc-btn" data-value="6">6</button>
-                    <button class="calc-btn op" data-value="-">-</button>
-
-                    <button class="calc-btn func" data-value="MR">MR</button>
-                    <button class="calc-btn" data-value="1">1</button>
-                    <button class="calc-btn" data-value="2">2</button>
-                    <button class="calc-btn" data-value="3">3</button>
-                    <button class="calc-btn op" data-value="+">+</button>
-                    
-                    <button class="calc-btn func" data-value="MC">MC</button>
-                    <button class="calc-btn" data-value="sqrt">√</button>
-                    <button class="calc-btn" data-value="0">0</button>
-                    <button class="calc-btn" data-value=".">.</button>
-                    <button class="calc-btn equals" data-value="=">=</button>
-                </div>
-            </div>
-            <div class="history-container pro-tool-card">
-                <div class="history-header">
-                    <h3>History</h3>
-                    <button id="clear-history-btn"><i class="fa-solid fa-trash"></i> Clear</button>
-                </div>
-                <ul id="history-list"></ul>
-            </div>
+  <div class="container">
+    <!-- Calculator Section -->
+    <div class="calc-section">
+      <h2>Calculator</h2>
+      <div class="calculator">
+        <input type="text" id="display" class="display" disabled>
+        <div class="buttons">
+          <button class="button clear" onclick="clearDisplay()">C</button>
+          <button class="button operator" onclick="appendOperation('/')">/</button>
+          <button class="button operator" onclick="appendOperation('*')">*</button>
+          <button class="button operator" onclick="appendOperation('-')">-</button>
+          <button class="button" onclick="appendNumber('7')">7</button>
+          <button class="button" onclick="appendNumber('8')">8</button>
+          <button class="button" onclick="appendNumber('9')">9</button>
+          <button class="button operator" onclick="appendOperation('+')">+</button>
+          <button class="button" onclick="appendNumber('4')">4</button>
+          <button class="button" onclick="appendNumber('5')">5</button>
+          <button class="button" onclick="appendNumber('6')">6</button>
+          <button class="button equal" onclick="calculate()">=</button>
+          <button class="button" onclick="appendNumber('1')">1</button>
+          <button class="button" onclick="appendNumber('2')">2</button>
+          <button class="button" onclick="appendNumber('3')">3</button>
+          <button class="button" onclick="appendNumber('0')">0</button>
         </div>
-        <div class="right-panel">
-            <div class="notepad-container pro-tool-card">
-                <div class="notepad-controls">
-                    <button class="notepad-switch-btn active" data-mode="sketch">Notes & Sketch</button>
-                    <button class="notepad-switch-btn" data-mode="ledger">Ledger</button>
-                </div>
-
-                <div id="sketch-pad">
-                    <div id="sketch-pad-container">
-                        <canvas id="sketch-canvas"></canvas>
-                        <textarea id="notes-textarea" placeholder="Type your notes here... You can also draw over this area."></textarea>
-                    </div>
-                    <div class="sketch-controls">
-                        <span>Draw Color:</span>
-                        <input type="color" id="color-picker" value="#ff0000">
-                        <button id="clear-canvas-btn" class="calc-btn func" style="width:auto; padding: 0 1rem; aspect-ratio: auto; height: 35px;">Clear Drawing</button>
-                    </div>
-                </div>
-
-                <div id="ledger-pad">
-                    <table id="ledger-table">
-                        <thead><tr><th>Particulars</th><th style="text-align:right;">Amount</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                    <button id="add-row-btn"><i class="fa-solid fa-plus"></i> Add Item</button>
-                    <div class="ledger-total">
-                        <span>TOTAL:</span>
-                        <span id="ledger-total-amount">0.00</span>
-                    </div>
-                </div>
-            </div>
+        <div class="link-notepad">
+          <button onclick="sendToNotepad()" title="Insert result into notepad">📄 Insert Result to Notepad</button>
         </div>
-    </main>
+      </div>
+    </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- THEME & DARK MODE ---
-        const themePicker = document.getElementById('theme-picker');
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const htmlElement = document.documentElement;
-        const setTheme = (theme) => { htmlElement.dataset.theme = theme; localStorage.setItem('jkm-edit-theme', theme); };
-        const enableDarkMode = () => { htmlElement.classList.add('dark-mode'); localStorage.setItem('jkm-edit-mode', 'dark'); };
-        const disableDarkMode = () => { htmlElement.classList.remove('dark-mode'); localStorage.setItem('jkm-edit-mode', 'light'); };
-        themePicker.addEventListener('change', () => setTheme(themePicker.value));
-        darkModeToggle.addEventListener('click', () => { htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode(); });
-        const savedTheme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
-        const savedMode = localStorage.getItem('jkm-edit-mode');
-        themePicker.value = savedTheme; setTheme(savedTheme);
-        if (savedMode === 'dark') enableDarkMode();
+    <!-- Notepad Section -->
+    <div class="note-section">
+      <h2>
+        <span class="pencil-icon">✏️</span> Notepad
+      </h2>
+      <textarea id="notepad" placeholder="Type your notes here..."></textarea>
+    </div>
+  </div>
+  <script>
+    // Calculator logic
+    let currentInput = '';
+    let currentOperation = '';
+    let previousInput = '';
 
-        // --- CALCULATOR ---
-        const expDisplay = document.getElementById('calc-expression');
-        const resDisplay = document.getElementById('calc-result');
-        const keys = document.querySelector('.calculator-keys');
-        const historyList = document.getElementById('history-list');
-        let expression = '';
-        let memory = 0;
+    function appendNumber(number) {
+      currentInput += number;
+      updateDisplay();
+    }
 
-        const updateDisplay = () => {
-            expDisplay.textContent = expression.replace(/\*/g, '×').replace(/\//g, '÷');
-        };
+    function appendOperation(operation) {
+      if (currentInput === '') return;
+      if (previousInput !== '') {
+        calculate();
+      }
+      currentOperation = operation;
+      previousInput = currentInput;
+      currentInput = '';
+      updateDisplay();
+    }
 
-        const calculate = () => {
-            try {
-                let evalExpr = expression.replace(/%/g, '/100');
-                const result = math.evaluate(evalExpr);
-                addToHistory(expression, result);
-                resDisplay.textContent = result;
-                expression = String(result);
-            } catch {
-                resDisplay.textContent = 'Error';
-                expression = '';
-            }
-        };
+    function calculate() {
+      if (previousInput === '' || currentInput === '') return;
+      let result;
+      let prev = parseFloat(previousInput);
+      let current = parseFloat(currentInput);
+      switch (currentOperation) {
+        case '+': result = prev + current; break;
+        case '-': result = prev - current; break;
+        case '*': result = prev * current; break;
+        case '/':
+          if (current === 0) {
+            alert("Cannot divide by zero");
+            return;
+          }
+          result = prev / current;
+          break;
+        default: return;
+      }
+      currentInput = result.toString();
+      currentOperation = '';
+      previousInput = '';
+      updateDisplay();
+    }
 
-        const addToHistory = (expr, res) => {
-            const li = document.createElement('li');
-            li.innerHTML = `<span class="history-expr">${expr.replace(/\*/g, '×').replace(/\//g, '÷')} =</span><span class="history-res">${res}</span>`;
-            historyList.prepend(li);
-        };
+    function clearDisplay() {
+      currentInput = '';
+      previousInput = '';
+      currentOperation = '';
+      updateDisplay();
+    }
 
-        keys.addEventListener('click', e => {
-            if (!e.target.matches('.calc-btn')) return;
-            const value = e.target.dataset.value;
+    function updateDisplay() {
+      const display = document.getElementById('display');
+      if (previousInput && currentOperation) {
+        display.value = `${previousInput} ${currentOperation} ${currentInput}`;
+      } else {
+        display.value = currentInput;
+      }
+    }
 
-            switch(value) {
-                case '=': calculate(); break;
-                case 'clear': expression = ''; resDisplay.textContent = '0'; break;
-                case 'backspace': expression = expression.slice(0, -1); break;
-                case 'sqrt': expression += 'sqrt('; break;
-                case 'M+': memory += parseFloat(resDisplay.textContent) || 0; break;
-                case 'M-': memory -= parseFloat(resDisplay.textContent) || 0; break;
-                case 'MR': expression += String(memory); break;
-                case 'MC': memory = 0; break;
-                default: expression += value;
-            }
-            updateDisplay();
-        });
-
-        document.getElementById('clear-history-btn').addEventListener('click', () => historyList.innerHTML = '');
-        
-        // Keyboard Support
-        document.addEventListener('keydown', e => {
-            const keyMap = {
-                'Enter': '=', 'Escape': 'clear', 'Backspace': 'backspace',
-                '+': '+', '-': '-', '*': '*', '/': '/', '%': '%', '.': '.'
-            };
-            if (!isNaN(e.key)) {
-                expression += e.key;
-            } else if (keyMap[e.key]) {
-                e.preventDefault();
-                document.querySelector(`.calc-btn[data-value="${keyMap[e.key]}"]`).click();
-            }
-            updateDisplay();
-        });
-
-        // --- NOTEPAD ---
-        const switchBtns = document.querySelectorAll('.notepad-switch-btn');
-        const sketchPad = document.getElementById('sketch-pad');
-        const ledgerPad = document.getElementById('ledger-pad');
-
-        switchBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                switchBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                sketchPad.style.display = btn.dataset.mode === 'sketch' ? 'block' : 'none';
-                ledgerPad.style.display = btn.dataset.mode === 'ledger' ? 'block' : 'none';
-            });
-        });
-
-        // Sketch Pad Logic
-        const canvas = document.getElementById('sketch-canvas');
-        const ctx = canvas.getContext('2d');
-        const textarea = document.getElementById('notes-textarea');
-        const colorPicker = document.getElementById('color-picker');
-        let isDrawing = false;
-        
-        const resizeCanvas = () => {
-            canvas.width = textarea.clientWidth;
-            canvas.height = textarea.clientHeight;
-        };
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        const startDrawing = (e) => { isDrawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); };
-        const draw = (e) => {
-            if (!isDrawing) return;
-            ctx.strokeStyle = colorPicker.value;
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.lineTo(e.offsetX, e.offsetY);
-            ctx.stroke();
-        };
-        const stopDrawing = () => isDrawing = false;
-
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
-        document.getElementById('clear-canvas-btn').addEventListener('click', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
-
-        // Ledger Logic
-        const ledgerBody = document.querySelector('#ledger-table tbody');
-        const totalAmountEl = document.getElementById('ledger-total-amount');
-
-        const calculateTotal = () => {
-            let total = 0;
-            ledgerBody.querySelectorAll('.amount-input').forEach(input => {
-                total += parseFloat(input.value) || 0;
-            });
-            totalAmountEl.textContent = total.toFixed(2);
-        };
-
-        const createLedgerRow = () => {
-            const row = document.createElement('tr');
-            row.className = 'ledger-row';
-            row.innerHTML = `
-                <td><input type="text" class="particular-input" placeholder="Item description..."></td>
-                <td><input type="number" step="0.01" class="amount-input" placeholder="0.00"></td>
-            `;
-            row.querySelector('.amount-input').addEventListener('input', calculateTotal);
-            ledgerBody.appendChild(row);
-        };
-        
-        document.getElementById('add-row-btn').addEventListener('click', createLedgerRow);
-        createLedgerRow(); // Start with one row
+    // Keyboard support
+    document.addEventListener('keydown', function(e) {
+      if (e.target === document.getElementById('notepad')) return;
+      if (e.key >= '0' && e.key <= '9') appendNumber(e.key);
+      if (['+', '-', '*', '/'].includes(e.key)) appendOperation(e.key);
+      if (e.key === 'Enter') calculate();
+      if (e.key === 'c' || e.key === 'C') clearDisplay();
     });
-    </script>
+
+    // Linking calculator result to notepad
+    function sendToNotepad() {
+      const result = document.getElementById('display').value;
+      if (result) {
+        const notepad = document.getElementById('notepad');
+        notepad.value += (notepad.value ? '\n' : '') + 'Calculator result: ' + result;
+      }
+    }
+  </script>
 </body>
 </html>
