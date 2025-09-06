@@ -10,6 +10,54 @@
       margin: 0;
       height: 100vh;
     }
+    .center-box {
+      max-width: 420px;
+      margin: 8vh auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      border-radius: 18px;
+      background: #fff;
+      padding: 38px 28px;
+      text-align: center;
+    }
+    .form-title {
+      color: #0477BF;
+      font-size: 2rem;
+      margin-bottom: 22px;
+    }
+    .auth-form input {
+      font-size: 1.09rem;
+      padding: 12px 18px;
+      border-radius: 7px;
+      width: 90%;
+      margin: 8px 0 12px;
+      border: 1px solid #dde1e5;
+      outline: none;
+    }
+    .auth-form button, .logout-btn {
+      background: #0477BF;
+      color: #fff;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 7px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin: 10px 0 6px;
+      transition: background 0.18s;
+    }
+    .auth-form button:hover, .logout-btn:hover { background:#0461a2;}
+    .auth-toggle {
+      color: #444;
+      font-size: 1rem;
+      margin: 14px 0 0;
+    }
+    .auth-toggle span {
+      color: #0477BF;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .error-msg { color: #f45b69; margin-bottom:6px; }
+    .welcome { font-size:1.2rem; color:#0477BF; margin-bottom:20px; }
+
     .container {
       display: flex;
       flex-direction: row;
@@ -29,9 +77,7 @@
       align-items: center;
       background: #fff;
     }
-    .calc-section {
-      border-right: 2px solid #e0e0e0;
-    }
+    .calc-section { border-right: 2px solid #e0e0e0;}
     h2 {
       font-size: 2rem;
       color: #0477BF;
@@ -40,10 +86,8 @@
       display: flex;
       align-items: center;
     }
-    .pencil-icon {
-      font-size: 1.6rem;
-      margin-right: 8px;
-    }
+    .pencil-icon { font-size: 1.6rem; margin-right: 8px; }
+
     .calculator {
       width: 100%;
       max-width: 350px;
@@ -82,19 +126,14 @@
       transition: background 0.25s, transform 0.17s;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-    .button:hover {
-      background: #0461a2;
-      transform: scale(1.08);
-    }
-    .button:active {
-      transform: scale(0.96);
-    }
-    .button.clear { background:#f45b69; }
-    .button.clear:hover { background: #b52837; }
-    .button.equal { background:#36d172; }
-    .button.equal:hover { background:#2aaf5b; }
-    .button.operator { background:#fca311; color: #484848; }
-    .button.operator:hover { background: #ca880b; }
+    .button:hover { background: #0461a2; transform: scale(1.08);}
+    .button:active { transform: scale(0.96);}
+    .button.clear { background:#f45b69;}
+    .button.clear:hover { background: #b52837;}
+    .button.equal { background:#36d172;}
+    .button.equal:hover { background:#2aaf5b;}
+    .button.operator { background:#fca311; color: #484848;}
+    .button.operator:hover { background: #ca880b;}
     .link-notepad {
       margin-top: 20px;
       text-align: center;
@@ -139,69 +178,176 @@
       border-color: #4C99CF;
       background: #eaf2fb;
     }
+    .logout-btn {
+      position: absolute;
+      top: 22px;
+      right: 42px;
+      z-index: 99;
+      padding:8px 28px;
+    }
+    @media (max-width:900px) {
+      .container { flex-direction: column; width:98vw; height:98vh;}
+      .calc-section, .note-section { border-right:none; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Calculator Section -->
-    <div class="calc-section">
-      <h2>Calculator</h2>
-      <div class="calculator">
-        <input type="text" id="display" class="display" disabled>
-        <div class="buttons">
-          <button class="button clear" onclick="clearDisplay()">C</button>
-          <button class="button operator" onclick="appendOperation('/')">/</button>
-          <button class="button operator" onclick="appendOperation('*')">*</button>
-          <button class="button operator" onclick="appendOperation('-')">-</button>
-          <button class="button" onclick="appendNumber('7')">7</button>
-          <button class="button" onclick="appendNumber('8')">8</button>
-          <button class="button" onclick="appendNumber('9')">9</button>
-          <button class="button operator" onclick="appendOperation('+')">+</button>
-          <button class="button" onclick="appendNumber('4')">4</button>
-          <button class="button" onclick="appendNumber('5')">5</button>
-          <button class="button" onclick="appendNumber('6')">6</button>
-          <button class="button equal" onclick="calculate()">=</button>
-          <button class="button" onclick="appendNumber('1')">1</button>
-          <button class="button" onclick="appendNumber('2')">2</button>
-          <button class="button" onclick="appendNumber('3')">3</button>
-          <button class="button" onclick="appendNumber('0')">0</button>
-        </div>
-        <div class="link-notepad">
-          <button onclick="sendToNotepad()" title="Insert result into notepad">📄 Insert Result to Notepad</button>
+  <div id="auth-root" class="center-box">
+    <div id="auth-login" style="display:none;">
+      <div class="form-title">Login</div>
+      <form class="auth-form" id="loginForm">
+        <div class="error-msg" id="loginErr" style="display:none;"></div>
+        <input type="text" placeholder="Username" id="login-username" required>
+        <input type="password" placeholder="Password" id="login-password" required>
+        <button type="submit">Login</button>
+      </form>
+      <div class="auth-toggle">New User? <span onclick="authShow('signup')">Sign Up</span></div>
+    </div>
+    <div id="auth-signup" style="display:none;">
+      <div class="form-title">Sign Up</div>
+      <form class="auth-form" id="signupForm">
+        <div class="error-msg" id="signupErr" style="display:none;"></div>
+        <input type="text" placeholder="Username" id="signup-username" required>
+        <input type="password" placeholder="Password" id="signup-password" required>
+        <input type="password" placeholder="Confirm Password" id="signup-confirm-password" required>
+        <button type="submit">Sign Up</button>
+      </form>
+      <div class="auth-toggle">Have Account? <span onclick="authShow('login')">Login</span></div>
+    </div>
+  </div>
+
+  <div id="main-root" style="display:none;">
+    <button class="logout-btn" onclick="logout()">Logout</button>
+    <div class="welcome" id="welcomeMsg"></div>
+    <div class="container">
+      <div class="calc-section">
+        <h2>Calculator</h2>
+        <div class="calculator">
+          <input type="text" id="display" class="display" disabled>
+          <div class="buttons">
+            <button class="button clear" onclick="clearDisplay()">C</button>
+            <button class="button operator" onclick="appendOperation('/')">/</button>
+            <button class="button operator" onclick="appendOperation('*')">*</button>
+            <button class="button operator" onclick="appendOperation('-')">-</button>
+            <button class="button" onclick="appendNumber('7')">7</button>
+            <button class="button" onclick="appendNumber('8')">8</button>
+            <button class="button" onclick="appendNumber('9')">9</button>
+            <button class="button operator" onclick="appendOperation('+')">+</button>
+            <button class="button" onclick="appendNumber('4')">4</button>
+            <button class="button" onclick="appendNumber('5')">5</button>
+            <button class="button" onclick="appendNumber('6')">6</button>
+            <button class="button equal" onclick="calculate()">=</button>
+            <button class="button" onclick="appendNumber('1')">1</button>
+            <button class="button" onclick="appendNumber('2')">2</button>
+            <button class="button" onclick="appendNumber('3')">3</button>
+            <button class="button" onclick="appendNumber('0')">0</button>
+          </div>
+          <div class="link-notepad">
+            <button onclick="sendToNotepad()" title="Insert result into notepad">📄 Insert Result to Notepad</button>
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Notepad Section -->
-    <div class="note-section">
-      <h2>
-        <span class="pencil-icon">✏️</span> Notepad
-      </h2>
-      <textarea id="notepad" placeholder="Type your notes here..."></textarea>
+      <div class="note-section">
+        <h2>
+          <span class="pencil-icon">✏️</span> Notepad
+        </h2>
+        <textarea id="notepad" placeholder="Type your notes here..."></textarea>
+      </div>
     </div>
   </div>
   <script>
+    // Auth logic (localStorage)
+    let activeUser = null;
+    function authShow(mode) {
+      document.getElementById('auth-login').style.display = mode === 'login' ? 'block' : 'none';
+      document.getElementById('auth-signup').style.display = mode === 'signup' ? 'block' : 'none';
+      document.getElementById('loginErr').style.display = 'none';
+      document.getElementById('signupErr').style.display = 'none';
+    }
+    function validateUser(u,p) {
+      let users = JSON.parse(localStorage.getItem('users') || '{}');
+      if (users[u] && users[u].password === p) return true;
+      return false;
+    }
+    function saveUser(u,p) {
+      let users = JSON.parse(localStorage.getItem('users') || '{}');
+      if (users[u]) return false;
+      users[u] = {password:p};
+      localStorage.setItem('users', JSON.stringify(users));
+      return true;
+    }
+    // Sign Up
+    document.getElementById('signupForm').onsubmit = function(e) {
+      e.preventDefault();
+      const username = document.getElementById('signup-username').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const confirm = document.getElementById('signup-confirm-password').value;
+      if (!username || password.length<4) {
+        document.getElementById('signupErr').innerText = "Username and password (min 4 chars) are required.";
+        document.getElementById('signupErr').style.display = "block";
+        return;
+      }
+      if (password !== confirm) {
+        document.getElementById('signupErr').innerText = "Passwords do not match.";
+        document.getElementById('signupErr').style.display = "block";
+        return;
+      }
+      if(!saveUser(username, password)){
+        document.getElementById('signupErr').innerText = "Username already exists.";
+        document.getElementById('signupErr').style.display = "block";
+        return;
+      }
+      document.getElementById('signupErr').style.display = "none";
+      alert('Sign up successful! Please login.');
+      authShow('login');
+    };
+
+    // Login
+    document.getElementById('loginForm').onsubmit = function(e){
+      e.preventDefault();
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      if (validateUser(username, password)) {
+        activeUser = username;
+        document.getElementById('welcomeMsg').innerText = "Welcome, " + activeUser + "!";
+        document.getElementById('auth-root').style.display = 'none';
+        document.getElementById('main-root').style.display = 'block';
+      } else {
+        document.getElementById('loginErr').innerText = "Invalid username or password.";
+        document.getElementById('loginErr').style.display = "block";
+      }
+    };
+
+    function logout() {
+      activeUser = null;
+      document.getElementById('main-root').style.display = 'none';
+      document.getElementById('auth-root').style.display = 'block';
+      authShow('login');
+      document.getElementById('login-username').value = "";
+      document.getElementById('login-password').value = "";
+      document.getElementById('display').value = "";
+      document.getElementById('notepad').value = "";
+    }
+
+    // Show initial - login form
+    authShow('login');
+
     // Calculator logic
     let currentInput = '';
     let currentOperation = '';
     let previousInput = '';
-
     function appendNumber(number) {
       currentInput += number;
       updateDisplay();
     }
-
     function appendOperation(operation) {
       if (currentInput === '') return;
-      if (previousInput !== '') {
-        calculate();
-      }
+      if (previousInput !== '') calculate();
       currentOperation = operation;
       previousInput = currentInput;
       currentInput = '';
       updateDisplay();
     }
-
     function calculate() {
       if (previousInput === '' || currentInput === '') return;
       let result;
@@ -212,12 +358,8 @@
         case '-': result = prev - current; break;
         case '*': result = prev * current; break;
         case '/':
-          if (current === 0) {
-            alert("Cannot divide by zero");
-            return;
-          }
-          result = prev / current;
-          break;
+          if (current === 0) { alert("Cannot divide by zero"); return;}
+          result = prev / current; break;
         default: return;
       }
       currentInput = result.toString();
@@ -225,38 +367,36 @@
       previousInput = '';
       updateDisplay();
     }
-
     function clearDisplay() {
       currentInput = '';
       previousInput = '';
       currentOperation = '';
       updateDisplay();
     }
-
     function updateDisplay() {
       const display = document.getElementById('display');
+      if (!display) return;
       if (previousInput && currentOperation) {
         display.value = `${previousInput} ${currentOperation} ${currentInput}`;
       } else {
         display.value = currentInput;
       }
     }
-
-    // Keyboard support
+    // Keyboard support for calculator
     document.addEventListener('keydown', function(e) {
+      if (document.getElementById('main-root').style.display !== 'block') return;
       if (e.target === document.getElementById('notepad')) return;
       if (e.key >= '0' && e.key <= '9') appendNumber(e.key);
       if (['+', '-', '*', '/'].includes(e.key)) appendOperation(e.key);
       if (e.key === 'Enter') calculate();
       if (e.key === 'c' || e.key === 'C') clearDisplay();
     });
-
-    // Linking calculator result to notepad
+    // Link calculator result to notepad
     function sendToNotepad() {
-      const result = document.getElementById('display').value;
-      if (result) {
-        const notepad = document.getElementById('notepad');
-        notepad.value += (notepad.value ? '\n' : '') + 'Calculator result: ' + result;
+      const display = document.getElementById('display');
+      if (display && display.value) {
+        const nt = document.getElementById('notepad');
+        nt.value += (nt.value ? '\n' : '') + 'Calculator result: ' + display.value;
       }
     }
   </script>
