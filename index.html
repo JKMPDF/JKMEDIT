@@ -94,6 +94,24 @@
         html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
         html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
 
+        /* --- Tool Navigation Dropdown --- */
+        .tool-nav { display: flex; gap: 1rem; margin-left: 2rem; }
+        .tool-nav-item { position: relative; }
+        .tool-nav-button { background: none; border: none; color: var(--text-color); font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; padding: 0.5rem 0.75rem; border-radius: 4px; transition: all var(--transition-speed); }
+        .tool-nav-button:hover { color: var(--primary-color); background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+        .tool-dropdown { position: absolute; top: 100%; left: 0; background-color: var(--surface-color); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; min-width: 200px; display: none; z-index: 1000; padding: 0.5rem 0; border-top: 2px solid var(--primary-color); }
+        .tool-nav-item:hover .tool-dropdown { display: block; }
+        .tool-dropdown a { display: block; padding: 0.5rem 1rem; color: var(--text-color); text-decoration: none; transition: background-color var(--transition-speed); }
+        .tool-dropdown a:hover { background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+
+        /* --- Login/Signup Button --- */
+        .auth-buttons { display: flex; gap: 0.5rem; }
+        .auth-button { padding: 0.5rem 1rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all var(--transition-speed); }
+        .login-button { background: none; border: 1px solid var(--primary-color); color: var(--primary-color); }
+        .login-button:hover { background-color: var(--primary-color); color: white; }
+        .signup-button { background-color: var(--primary-color); border: 1px solid var(--primary-color); color: white; }
+        .signup-button:hover { background-color: var(--secondary-color); border-color: var(--secondary-color); }
+
         /* --- Main Dashboard & Content Area --- */
         .dashboard-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
         .dashboard-header { text-align: center; margin-bottom: 3rem; }
@@ -132,20 +150,113 @@
         .modal-content h2 { color: var(--primary-color); margin-top: 0; }
         .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
         .contact-email:hover { transform: scale(1.05); }
+        
+        /* --- Function List Styles --- */
+        .functions-section { padding: 4rem 2rem; background-color: var(--bg-color); }
+        .functions-container { max-width: 1100px; margin: auto; }
+        .function-category { margin-bottom: 3rem; }
+        .function-category h2 { text-align: center; font-size: 2.2rem; color: var(--primary-color); margin-bottom: 2rem; }
+        .function-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .function-item { background-color: var(--surface-color); padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 4px solid var(--primary-color); }
+        .function-item h3 { margin-top: 0; color: var(--primary-color); }
+        .function-item p { color: #6c757d; margin-bottom: 0; }
+        html.dark-mode .function-item p { color: #a0a0a0; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @media (max-width: 768px) { .main-header { flex-direction: column; gap: 1rem; } .dashboard-container { padding: 2rem 1.5rem; } }
+        
+        /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+            .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
+            .dashboard-container { padding: 2rem 1.5rem; }
+        }
+        @media (max-width: 768px) {
+            .main-nav { flex-wrap: wrap; justify-content: center; }
+            .tool-nav { gap: 0.5rem; }
+            .tool-nav-button { font-size: 0.9rem; padding: 0.4rem 0.6rem; }
+            .auth-buttons { margin-top: 0.5rem; }
+        }
     </style>
 </head>
 <body>
     <!-- Header Section -->
     <header class='main-header'>
-        <div class='logo-container'>
-            <a href='https://jkmpdf.github.io/JKMEDIT/#' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
-                <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
-                <h1>JKM Edit - By M&M</h1>
-            </a>
+        <div style="display: flex; align-items: center;">
+            <div class='logo-container'>
+                <a href='https://jkmpdf.github.io/JKMEDIT/#' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
+                    <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
+                    <h1>JKM Edit - By M&M</h1>
+                </a>
+            </div>
+            
+            <!-- Tool Navigation -->
+            <nav class='tool-nav'>
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>PDF Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='Pdf-tools/merge-pdf.html'>Merge PDF</a>
+                        <a href='pdf-tools.html#function2'>Split PDF</a>
+                        <a href='pdf-tools.html#function3'>Compress PDf</a>
+                        <a href='pdf-tools.html#function4'>PDF to Word</a>
+                        <a href='pdf-tools.html#function5'>PDF to Power Point</a>
+                        <a href='pdf-tools.html#function6'>PDF to Excel</a>
+                        <a href='pdf-tools.html#function7'>Function 7</a>
+                        <a href='pdf-tools.html#function8'>Function 8</a>
+                        <a href='pdf-tools.html#function9'>Function 9</a>
+                        <a href='pdf-tools.html#function10'>Function 10</a>
+                        <a href='pdf-tools.html#function11'>Function 11</a>
+                        <a href='pdf-tools.html#function12'>Function 12</a>
+                        <a href='pdf-tools.html#function13'>Function 13</a>
+                        <a href='pdf-tools.html#function14'>Function 14</a>
+                        <a href='pdf-tools.html#function15'>Function 15</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Video Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='Video-Tools.html#function1'>Function 1</a>
+                        <a href='Video-Tools.html#function2'>Function 2</a>
+                        <a href='Video-Tools.html#function3'>Function 3</a>
+                        <a href='Video-Tools.html#function4'>Function 4</a>
+                        <a href='Video-Tools.html#function5'>Function 5</a>
+                        <a href='Video-Tools.html#function6'>Function 6</a>
+                        <a href='Video-Tools.html#function7'>Function 7</a>
+                        <a href='Video-Tools.html#function8'>Function 8</a>
+                        <a href='Video-Tools.html#function9'>Function 9</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Files Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='File-Tools.html#function1'>Function 1</a>
+                        <a href='File-Tools.html#function2'>Function 2</a>
+                        <a href='File-Tools.html#function3'>Function 3</a>
+                        <a href='File-Tools.html#function4'>Function 4</a>
+                        <a href='File-Tools.html#function5'>Function 5</a>
+                        <a href='File-Tools.html#function6'>Function 6</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Utilities</button>
+                    <div class='tool-dropdown'>
+                        <a href='Utilities.html#function1'>Function 1</a>
+                        <a href='Utilities.html#function2'>Function 2</a>
+                        <a href='Utilities.html#function3'>Function 3</a>
+                        <a href='Utilities.html#function4'>Function 4</a>
+                        <a href='Utilities.html#function5'>Function 5</a>
+                        <a href='Utilities.html#function6'>Function 6</a>
+                        <a href='Utilities.html#function7'>Function 7</a>
+                        <a href='Utilities.html#function8'>Function 8</a>
+                        <a href='Utilities.html#function9'>Function 9</a>
+                    </div>
+                </div>
+            </nav>
         </div>
+        
         <nav class='main-nav'>
             <div class='theme-selector'>
                 <label for='theme-picker'>Theme:</label>
@@ -165,6 +276,12 @@
             </button>
             <a href='#' id='about-btn' class='nav-link'>About</a>
             <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
+            
+            <!-- Login/Signup Buttons -->
+            <div class='auth-buttons'>
+                <button class='auth-button login-button'>Login</button>
+                <button class='auth-button signup-button'>Sign Up</button>
+            </div>
         </nav>
     </header>
 
@@ -220,6 +337,195 @@
                 <div class='service-item'><i class='fa-solid fa-bolt-lightning'></i><div><h4>Blazing Fast</h4><p>Our tools are optimized for speed, so you can get your work done quickly.</p></div></div>
                 <div class='service-item'><i class='fa-solid fa-cloud'></i><div><h4>Cloud-Based</h4><p>No installation needed. Access all tools directly from your web browser.</p></div></div>
                 <div class='service-item'><i class='fa-solid fa-mobile-screen-button'></i><div><h4>Works Everywhere</h4><p>JKM Edit is fully responsive and works on desktop, tablet, and mobile devices.</p></div></div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Function List Section -->
+    <section class='functions-section'>
+        <div class='functions-container'>
+            <!-- PDF Tools Functions -->
+            <div class='function-category'>
+                <h2>PDF Tools Functions</h2>
+                <div class='function-list'>
+                    <div class='function-item'>
+                        <h3>Function 1</h3>
+                        <p>Function 1 is a powerful PDF editing tool that allows you to modify text and images in your PDF files with precision and ease.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 2</h3>
+                        <p>Function 2 enables seamless PDF merging, combining multiple documents into a single file while preserving formatting and quality.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 3</h3>
+                        <p>Function 3 provides advanced PDF compression to reduce file size without compromising on document quality or readability.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 4</h3>
+                        <p>Function 4 offers PDF conversion capabilities, allowing you to transform PDFs into various editable formats like Word, Excel, or PowerPoint.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 5</h3>
+                        <p>Function 5 includes PDF security features, enabling you to add passwords, permissions, and encryption to protect sensitive documents.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 6</h3>
+                        <p>Function 6 allows for precise PDF page extraction, letting you select and save specific pages from larger documents.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 7</h3>
+                        <p>Function 7 provides OCR (Optical Character Recognition) technology to convert scanned PDFs into searchable and editable text.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 8</h3>
+                        <p>Function 8 enables PDF form creation and editing, making it easy to design interactive forms for data collection.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 9</h3>
+                        <p>Function 9 offers PDF annotation tools, including highlights, comments, and drawing capabilities for collaborative review.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 10</h3>
+                        <p>Function 10 includes PDF comparison features, highlighting differences between two versions of a document for easy review.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 11</h3>
+                        <p>Function 11 provides batch processing capabilities, allowing you to apply the same operation to multiple PDF files simultaneously.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 12</h3>
+                        <p>Function 12 enables PDF watermarking, adding text or image watermarks to protect and brand your documents.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 13</h3>
+                        <p>Function 13 offers PDF redaction tools, permanently removing sensitive information from documents for secure sharing.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 14</h3>
+                        <p>Function 14 includes PDF optimization features, improving document performance and reducing loading times.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 15</h3>
+                        <p>Function 15 provides accessibility features, making PDFs compliant with standards for users with disabilities.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video Tools Functions -->
+            <div class='function-category'>
+                <h2>Video Tools Functions</h2>
+                <div class='function-list'>
+                    <div class='function-item'>
+                        <h3>Function 1</h3>
+                        <p>Function 1 offers precise video trimming capabilities, allowing you to cut unwanted sections from your videos with frame accuracy.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 2</h3>
+                        <p>Function 2 provides video merging tools, seamlessly combining multiple clips into a single cohesive video file.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 3</h3>
+                        <p>Function 3 includes advanced video compression algorithms to reduce file size while maintaining optimal visual quality.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 4</h3>
+                        <p>Function 4 enables format conversion, transforming videos between various formats like MP4, AVI, MOV, and more.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 5</h3>
+                        <p>Function 5 offers video enhancement features, improving brightness, contrast, and color balance for better visual quality.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 6</h3>
+                        <p>Function 6 provides subtitle and caption tools, making it easy to add, edit, and synchronize text with your video content.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 7</h3>
+                        <p>Function 7 includes video effects and filters, allowing you to apply creative transformations to your footage.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 8</h3>
+                        <p>Function 8 enables screen recording capabilities, capturing your desktop or application windows for tutorials and presentations.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 9</h3>
+                        <p>Function 9 offers video stabilization features, reducing camera shake and creating smoother, more professional-looking footage.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- File Tools Functions -->
+            <div class='function-category'>
+                <h2>File Tools Functions</h2>
+                <div class='function-list'>
+                    <div class='function-item'>
+                        <h3>Function 1</h3>
+                        <p>Function 1 provides comprehensive file compression, reducing the size of various file types for easier storage and sharing.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 2</h3>
+                        <p>Function 2 offers format conversion capabilities, transforming files between different formats while preserving content integrity.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 3</h3>
+                        <p>Function 3 includes batch processing features, allowing you to apply operations to multiple files simultaneously for efficiency.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 4</h3>
+                        <p>Function 4 enables file encryption, adding security layers to protect sensitive information from unauthorized access.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 5</h3>
+                        <p>Function 5 provides metadata editing tools, allowing you to view and modify file information for better organization.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 6</h3>
+                        <p>Function 6 offers file recovery capabilities, helping to restore accidentally deleted or corrupted files when possible.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Utilities Functions -->
+            <div class='function-category'>
+                <h2>Utilities Functions</h2>
+                <div class='function-list'>
+                    <div class='function-item'>
+                        <h3>Function 1</h3>
+                        <p>Function 1 provides text editing and formatting tools, making it easy to create and modify documents with various styling options.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 2</h3>
+                        <p>Function 2 offers image editing capabilities, including cropping, resizing, and applying filters to enhance your photos.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 3</h3>
+                        <p>Function 3 includes unit conversion features, transforming measurements between different systems and standards.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 4</h3>
+                        <p>Function 4 enables currency conversion, providing up-to-date exchange rates for international financial calculations.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 5</h3>
+                        <p>Function 5 offers calculator functions with advanced mathematical operations for complex computations.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 6</h3>
+                        <p>Function 6 provides note-taking and organization tools, helping you capture and structure your ideas efficiently.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 7</h3>
+                        <p>Function 7 includes password generation features, creating secure and complex passwords for your online accounts.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 8</h3>
+                        <p>Function 8 enables QR code generation, creating scannable codes for URLs, contact information, and other data.</p>
+                    </div>
+                    <div class='function-item'>
+                        <h3>Function 9</h3>
+                        <p>Function 9 offers color palette tools, helping designers create and manage color schemes for various projects.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -295,16 +601,13 @@
             themePicker.value = savedTheme;
         }
 
-        // The dark mode state is already set on the <html> tag, so the CSS for the
-        // sun/moon icon visibility will work automatically. No extra JS is needed here.
+        // Login/Signup button functionality (placeholder)
+        document.querySelectorAll('.auth-button').forEach(button => {
+            button.addEventListener('click', () => {
+                alert('Login/Signup functionality would be implemented here.');
+            });
+        });
     });
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
