@@ -80,7 +80,7 @@
         html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
 
         /* --- Header & Navigation --- */
-        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 100; position: relative; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed), color var(--transition-speed); z-index: 100; position: relative; }
         .logo-container { display: flex; align-items: center; gap: 0.75rem; }
         .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); transition: color var(--transition-speed), text-shadow var(--transition-speed); }
         .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
@@ -142,10 +142,10 @@
             gap: 0.75rem;
             align-items: center;
             padding-bottom: 1rem;
-            border-bottom: 1px solid var(--bg-color); /* Light line below toolbar */
+            border-bottom: 1px solid color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%); /* Light line below toolbar */
         }
         html.dark-mode .notepad-toolbar {
-            border-bottom-color: var(--surface-color);
+            border-bottom-color: color-mix(in srgb, var(--surface-color) 70%, var(--text-color) 30%);
         }
 
         .notepad-toolbar button, .notepad-toolbar select, .notepad-toolbar input[type="color"], .notepad-toolbar input[type="range"] {
@@ -212,7 +212,7 @@
 
         #notepadCanvas {
             border: 1px solid var(--bg-color);
-            background-color: white; /* Canvas background should be white for contrast with lines */
+            background-color: white; /* Canvas background should be white for contrast with lines in light mode */
             cursor: crosshair;
             margin-top: 1rem;
             flex-grow: 1; /* Allows canvas to take available space */
@@ -229,12 +229,14 @@
             overflow: auto;
             border: 1px dashed var(--accent-color);
             background-color: color-mix(in srgb, var(--surface-color) 90%, var(--accent-color) 10%);
-            color: var(--text-color);
+            color: var(--text-color); /* Inherit text color from theme */
             padding: 5px;
             font-family: 'Poppins', sans-serif;
             font-size: 16px;
             display: none; /* Hidden by default */
             z-index: 999; /* Above canvas, below modals */
+            min-width: 100px; /* Ensure it's not too small to type */
+            min-height: 50px;
         }
         html.dark-mode #typingArea {
             background-color: color-mix(in srgb, var(--surface-color) 80%, var(--accent-color) 20%);
@@ -495,6 +497,8 @@
             if (event.persisted) {
                 // Remove the fade-out class to make the page visible again.
                 document.body.classList.remove('fade-out');
+                // Re-initialize notepad on BFCache restore to ensure correct state
+                initializeNotepad();
             }
         });
 
@@ -597,111 +601,120 @@
             let currentDrawColor = drawColorInput.value;
             let currentDrawWidth = drawWidthInput.value;
             let currentTextColor = textColorInput.value;
-            let currentFontSize = fontSizeSelect.value;
+            let currentFontSize = parseFloat(fontSizeSelect.value); // Ensure number
             let currentMode = 'draw'; // 'draw' or 'type'
 
-            let startX, startY; // For typing area positioning
-            
-            // Undo/Redo state management
-            let history = [];
+            let notepadContent = []; // Stores structured drawing strokes and text objects
+            let history = []; // Stores snapshots of notepadContent for undo/redo
             let historyPointer = -1;
 
-            // Resize canvas to its actual display size initially
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
+            const LINE_SPACING = 25; // pixels between lines
+            const TOP_OFFSET = 20; // Margin from top for first line
 
-            // Function to draw lines (lined paper effect)
+            // Debounce for canvas resize
+            let resizeTimeout;
+
+            function initializeNotepad() {
+                // Set initial canvas size
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+
+                // Reset content and history on init
+                notepadContent = [];
+                history = [];
+                historyPointer = -1;
+
+                // Load any saved data
+                loadNotepadContent();
+                
+                // Draw initial state
+                redrawCanvas();
+                updateUndoRedoButtons();
+                updateNotepadTheme(); // Apply initial theme colors
+                setMode('draw'); // Default to draw mode
+            }
+
+            // Function to redraw the entire canvas from notepadContent
+            function redrawCanvas() {
+                const isDarkMode = htmlElement.classList.contains('dark-mode');
+                const canvasBgColor = isDarkMode ? '#2e2e2e' : 'white';
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear everything
+                ctx.fillStyle = canvasBgColor; // Set canvas background
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                drawLinedPaper(); // Draw background lines
+
+                // Draw all drawing strokes
+                notepadContent.filter(item => item.type === 'drawing').forEach(drawing => {
+                    if (drawing.points.length > 1) {
+                        ctx.beginPath();
+                        ctx.moveTo(drawing.points[0].x, drawing.points[0].y);
+                        for (let i = 1; i < drawing.points.length; i++) {
+                            ctx.lineTo(drawing.points[i].x, drawing.points[i].y);
+                        }
+                        ctx.strokeStyle = drawing.color;
+                        ctx.lineWidth = drawing.width;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        ctx.stroke();
+                    }
+                });
+
+                // Draw all text entries
+                notepadContent.filter(item => item.type === 'text').forEach(textItem => {
+                    ctx.fillStyle = textItem.color;
+                    ctx.font = `${textItem.fontSize} Poppins, sans-serif`;
+                    ctx.textBaseline = 'top'; // Important for snapping to lines
+                    
+                    const lines = textItem.text.split('\n');
+                    let currentY = textItem.y;
+                    lines.forEach(line => {
+                        ctx.fillText(line, textItem.x, currentY);
+                        currentY += parseFloat(textItem.fontSize) * 1.2; // Adjusted line height for readability
+                    });
+                });
+                updateUndoRedoButtons();
+            }
+
+            // Draw the lined paper background
             function drawLinedPaper() {
                 const isDarkMode = htmlElement.classList.contains('dark-mode');
-                const lineColor = isDarkMode ? '#444' : '#eee'; // Darker lines for dark mode canvas
-                const lineSpacing = 25; // pixels
-                const startOffset = 20; // Margin from top
-
-                ctx.save(); // Save current context state
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear existing content
+                const lineColor = isDarkMode ? '#444' : '#eee'; 
                 
-                // Redraw base background color for canvas
-                const canvasBgColor = isDarkMode ? '#2e2e2e' : 'white';
-                ctx.fillStyle = canvasBgColor;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
                 ctx.strokeStyle = lineColor;
                 ctx.lineWidth = 1;
 
-                for (let i = startOffset; i < canvas.height; i += lineSpacing) {
+                for (let i = TOP_OFFSET; i < canvas.height; i += LINE_SPACING) {
                     ctx.beginPath();
                     ctx.moveTo(0, i);
                     ctx.lineTo(canvas.width, i);
                     ctx.stroke();
                 }
-                ctx.restore(); // Restore context state
             }
 
-            // Function to redraw all stored states
-            function redrawAll() {
-                drawLinedPaper(); // Start with a fresh lined paper background
-
-                if (history[historyPointer]) {
-                    const currentSnapshot = JSON.parse(history[historyPointer]);
-                    
-                    // Draw previous drawings
-                    if (currentSnapshot.drawings) {
-                        currentSnapshot.drawings.forEach(segment => {
-                            if (segment.length > 1) {
-                                ctx.beginPath();
-                                ctx.moveTo(segment[0].x, segment[0].y);
-                                for (let i = 1; i < segment.length; i++) {
-                                    ctx.lineTo(segment[i].x, segment[i].y);
-                                }
-                                ctx.strokeStyle = segment[0].color;
-                                ctx.lineWidth = segment[0].width;
-                                ctx.lineCap = 'round';
-                                ctx.lineJoin = 'round';
-                                ctx.stroke();
-                            }
-                        });
-                    }
-
-                    // Draw previous text
-                    if (currentSnapshot.texts) {
-                        currentSnapshot.texts.forEach(textObj => {
-                            ctx.fillStyle = textObj.color;
-                            ctx.font = `${textObj.size} Poppins, sans-serif`;
-                            ctx.textBaseline = 'top';
-                            ctx.fillText(textObj.text, textObj.x, textObj.y);
-                        });
-                    }
-                }
-                updateUndoRedoButtons();
-            }
-
-            // Save the current canvas state for undo/redo
+            // Save the current notepadContent to history
             function saveState() {
                 if (historyPointer < history.length - 1) {
-                    history = history.slice(0, historyPointer + 1);
+                    history.length = historyPointer + 1; // Truncate redo history
                 }
-                
-                // Get current canvas content (drawing + text objects)
-                const currentDrawings = getCurrentDrawings(); // Assuming you have a way to extract drawing data
-                const currentTexts = getCurrentTexts(); // Assuming you have a way to extract text data
-
-                history.push(JSON.stringify({
-                    drawings: currentDrawings,
-                    texts: currentTexts,
-                    imageData: canvas.toDataURL() // Also save the full image data for simpler redraw if needed
-                }));
+                history.push(JSON.parse(JSON.stringify(notepadContent))); // Deep copy
                 historyPointer++;
                 updateUndoRedoButtons();
             }
 
-            // Placeholder functions to get/set drawing and text data
-            // In a real application, you'd track drawing strokes and text entries as objects
-            // For simplicity here, saveState will actually save the canvas image data directly for undo/redo
-            // And load/save functions will manage a more structured data format.
+            // Restore notepadContent from history and redraw
+            function restoreState(index) {
+                if (history[index]) {
+                    notepadContent = JSON.parse(JSON.stringify(history[index])); // Deep copy
+                    redrawCanvas();
+                }
+            }
 
-            // Initialize the canvas and draw lines
-            drawLinedPaper();
-            let currentDrawingPath = []; // Stores points for the current stroke
+            function updateUndoRedoButtons() {
+                undoBtn.disabled = historyPointer <= 0;
+                redoBtn.disabled = historyPointer >= history.length - 1;
+            }
 
             // --- Event Listeners for Drawing ---
             function getMousePos(event) {
@@ -712,94 +725,43 @@
                 };
             }
 
-            function startDrawing(e) {
-                if (currentMode !== 'draw') return;
-                isDrawing = true;
-                const { x, y } = getMousePos(e);
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                currentDrawingPath = [{ x, y, color: currentDrawColor, width: currentDrawWidth }];
-            }
-
-            function draw(e) {
-                if (!isDrawing || currentMode !== 'draw') return;
-                const { x, y } = getMousePos(e);
-                ctx.lineTo(x, y);
-                ctx.strokeStyle = currentDrawColor;
-                ctx.lineWidth = currentDrawWidth;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.stroke();
-                currentDrawingPath.push({ x, y });
-            }
-
-            function stopDrawing() {
-                if (isDrawing && currentMode === 'draw') {
-                    isDrawing = false;
-                    // Add currentDrawingPath to a global data structure that tracks all drawings
-                    // For now, let's just save the full canvas state
-                    saveSnapshot();
-                }
-            }
-            
-            // To make undo/redo work, we need to store drawing actions as objects, not just image snapshots.
-            // Let's create a simpler drawing history where each entry is a full canvas image.
-            // This is less efficient but easier to implement for a single file.
-            
-            let canvasStates = [];
-            let currentStateIndex = -1;
-
-            function saveCanvasState() {
-                currentStateIndex++;
-                if (currentStateIndex < canvasStates.length) {
-                    canvasStates.length = currentStateIndex; // Truncate redo history
-                }
-                canvasStates.push(canvas.toDataURL());
-                updateUndoRedoButtons();
-            }
-
-            function restoreCanvasState() {
-                if (currentStateIndex >= 0 && canvasStates[currentStateIndex]) {
-                    const img = new Image();
-                    img.onload = () => {
-                        drawLinedPaper(); // Redraw lines first
-                        ctx.drawImage(img, 0, 0);
-                    };
-                    img.src = canvasStates[currentStateIndex];
-                } else {
-                    drawLinedPaper(); // If no state, just show empty lined paper
-                }
-                updateUndoRedoButtons();
-            }
-
-            function updateUndoRedoButtons() {
-                undoBtn.disabled = currentStateIndex <= 0;
-                redoBtn.disabled = currentStateIndex >= canvasStates.length - 1;
-            }
+            let currentDrawingPoints = []; // For the single active stroke
 
             canvas.addEventListener('mousedown', (e) => {
                 if (currentMode === 'draw') {
                     isDrawing = true;
                     const { x, y } = getMousePos(e);
+                    currentDrawingPoints = [{ x, y }];
                     ctx.beginPath();
                     ctx.moveTo(x, y);
                 } else if (currentMode === 'type') {
-                    // Hide typing area if clicking elsewhere on canvas in type mode
                     if (typingArea.style.display === 'block') {
-                        renderTextToCanvas();
+                        renderTextToCanvas(); // Finalize previous text
                     }
                     const { x, y } = getMousePos(e);
+                    
+                    // Position typing area relative to the viewport
                     typingArea.style.left = `${e.clientX}px`;
                     typingArea.style.top = `${e.clientY}px`;
                     typingArea.style.display = 'block';
+                    typingArea.value = ''; // Clear previous text
                     typingArea.focus();
-                    typingArea.dataset.x = x; // Store canvas coordinates
-                    typingArea.dataset.y = y;
+                    
+                    // Store canvas coordinates for text rendering
+                    typingArea.dataset.canvasX = x;
+                    typingArea.dataset.canvasY = y;
+
+                    // Set typing area's style based on current text settings
+                    typingArea.style.color = currentTextColor;
+                    typingArea.style.fontSize = currentFontSize + 'px';
                 }
             });
+
             canvas.addEventListener('mousemove', (e) => {
                 if (isDrawing && currentMode === 'draw') {
                     const { x, y } = getMousePos(e);
+                    currentDrawingPoints.push({ x, y });
+                    
                     ctx.lineTo(x, y);
                     ctx.strokeStyle = currentDrawColor;
                     ctx.lineWidth = currentDrawWidth;
@@ -808,100 +770,133 @@
                     ctx.stroke();
                 }
             });
+
             canvas.addEventListener('mouseup', () => {
                 if (isDrawing && currentMode === 'draw') {
                     isDrawing = false;
-                    saveCanvasState(); // Save state after a drawing stroke is complete
+                    notepadContent.push({
+                        type: 'drawing',
+                        color: currentDrawColor,
+                        width: currentDrawWidth,
+                        points: [...currentDrawingPoints] // Deep copy points
+                    });
+                    currentDrawingPoints = []; // Reset for next stroke
+                    saveState();
+                    redrawCanvas(); // Redraw to ensure proper layer order (text on top)
                 }
             });
+
             canvas.addEventListener('mouseout', () => {
                 if (isDrawing && currentMode === 'draw') {
                     isDrawing = false;
-                    saveCanvasState(); // Save state if mouse leaves canvas while drawing
+                    if (currentDrawingPoints.length > 1) { // Only save if a significant stroke was made
+                        notepadContent.push({
+                            type: 'drawing',
+                            color: currentDrawColor,
+                            width: currentDrawWidth,
+                            points: [...currentDrawingPoints]
+                        });
+                        saveState();
+                        redrawCanvas();
+                    }
+                    currentDrawingPoints = [];
                 }
             });
 
-            // --- Event Listeners for Controls ---
-            drawModeBtn.addEventListener('click', () => {
-                currentMode = 'draw';
-                drawModeBtn.classList.add('active');
-                typeModeBtn.classList.remove('active');
-                renderTextToCanvas(); // Render any pending text
-                canvas.style.cursor = 'crosshair';
-            });
-
-            typeModeBtn.addEventListener('click', () => {
-                currentMode = 'type';
-                typeModeBtn.classList.add('active');
+            // --- Helper to set drawing/typing mode ---
+            function setMode(mode) {
+                currentMode = mode;
                 drawModeBtn.classList.remove('active');
-                canvas.style.cursor = 'text';
-            });
+                typeModeBtn.classList.remove('active');
+                if (mode === 'draw') {
+                    drawModeBtn.classList.add('active');
+                    canvas.style.cursor = 'crosshair';
+                    if (typingArea.style.display === 'block') {
+                        renderTextToCanvas(); // Render text when switching from type to draw
+                    }
+                } else if (mode === 'type') {
+                    typeModeBtn.classList.add('active');
+                    canvas.style.cursor = 'text';
+                }
+                // Reset eraser color if switching to a normal draw mode
+                if (mode === 'draw' && drawColorInput.value === getCanvasBackgroundColor()) {
+                    currentDrawColor = '#000000';
+                    drawColorInput.value = currentDrawColor;
+                }
+            }
+
+            // --- Event Listeners for Controls ---
+            drawModeBtn.addEventListener('click', () => setMode('draw'));
+            typeModeBtn.addEventListener('click', () => setMode('type'));
 
             drawColorInput.addEventListener('change', (e) => {
                 currentDrawColor = e.target.value;
             });
 
             drawWidthInput.addEventListener('change', (e) => {
-                currentDrawWidth = e.target.value;
+                currentDrawWidth = parseFloat(e.target.value);
             });
 
+            function getCanvasBackgroundColor() {
+                return htmlElement.classList.contains('dark-mode') ? '#2e2e2e' : 'white';
+            }
+
             eraserBtn.addEventListener('click', () => {
-                currentMode = 'draw'; // Eraser is a drawing tool
-                drawModeBtn.classList.add('active');
-                typeModeBtn.classList.remove('active');
-                renderTextToCanvas();
-                currentDrawColor = htmlElement.classList.contains('dark-mode') ? '#2e2e2e' : 'white'; // Eraser color matches canvas background
-                drawColorInput.value = currentDrawColor; // Update color picker to show eraser color
+                setMode('draw'); // Eraser is a draw mode
+                currentDrawColor = getCanvasBackgroundColor(); // Eraser color matches canvas background
+                drawColorInput.value = '#000000'; // Visually keep color picker black, but draw color is background
                 canvas.style.cursor = 'cell'; // Eraser cursor
+                // Optional: Visually highlight eraser button more distinctly if needed
             });
+            
+            // Re-apply correct draw color if switching from eraser back to regular drawing
+            drawColorInput.addEventListener('click', () => {
+                currentDrawColor = drawColorInput.value; // Get the chosen color
+                setMode('draw'); // Ensure draw mode is active
+            });
+
 
             textColorInput.addEventListener('change', (e) => {
                 currentTextColor = e.target.value;
-                typingArea.style.color = currentTextColor;
+                if (typingArea.style.display === 'block') {
+                    typingArea.style.color = currentTextColor;
+                }
             });
 
             fontSizeSelect.addEventListener('change', (e) => {
-                currentFontSize = e.target.value;
-                typingArea.style.fontSize = currentFontSize;
+                currentFontSize = parseFloat(e.target.value);
+                if (typingArea.style.display === 'block') {
+                    typingArea.style.fontSize = currentFontSize + 'px';
+                }
             });
 
             clearBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to clear the entire note?')) {
-                    drawLinedPaper();
-                    canvasStates = [];
-                    currentStateIndex = -1;
+                if (confirm('Are you sure you want to clear the entire note? This cannot be undone past this point.')) {
+                    notepadContent = [];
+                    history = [];
+                    historyPointer = -1;
                     typingArea.value = '';
                     typingArea.style.display = 'none';
-                    saveCanvasState(); // Save an empty state
+                    saveState(); // Save an empty state
+                    redrawCanvas();
                 }
             });
 
             saveBtn.addEventListener('click', () => {
-                renderTextToCanvas(); // Ensure any active text is rendered
-                const data = JSON.stringify({
-                    imageData: canvas.toDataURL(),
-                    // In a more advanced version, you'd save structured data, not just image.
-                    // For this example, we save the last image and will load that.
-                    // This is simpler for full canvas restoration.
-                });
-                localStorage.setItem('jkm-notepad-data', data);
+                renderTextToCanvas(); // Ensure any active text is rendered first
+                const data = JSON.stringify(notepadContent); // Save the structured content
+                localStorage.setItem('jkm-notepad-content', data);
                 alert('Note saved!');
             });
 
             loadBtn.addEventListener('click', () => {
-                const savedData = localStorage.getItem('jkm-notepad-data');
+                const savedData = localStorage.getItem('jkm-notepad-content');
                 if (savedData) {
-                    const data = JSON.parse(savedData);
-                    const img = new Image();
-                    img.onload = () => {
-                        drawLinedPaper(); // Start with fresh lines
-                        ctx.drawImage(img, 0, 0);
-                        // After loading, clear history and save this loaded state
-                        canvasStates = [];
-                        currentStateIndex = -1;
-                        saveCanvasState();
-                    };
-                    img.src = data.imageData;
+                    notepadContent = JSON.parse(savedData);
+                    history = []; // Clear history on load
+                    historyPointer = -1;
+                    saveState(); // Save the loaded state as the first history entry
+                    redrawCanvas();
                     alert('Note loaded!');
                 } else {
                     alert('No saved note found!');
@@ -909,16 +904,16 @@
             });
 
             undoBtn.addEventListener('click', () => {
-                if (currentStateIndex > 0) {
-                    currentStateIndex--;
-                    restoreCanvasState();
+                if (historyPointer > 0) {
+                    historyPointer--;
+                    restoreState(historyPointer);
                 }
             });
 
             redoBtn.addEventListener('click', () => {
-                if (currentStateIndex < canvasStates.length - 1) {
-                    currentStateIndex++;
-                    restoreCanvasState();
+                if (historyPointer < history.length - 1) {
+                    historyPointer++;
+                    restoreState(historyPointer);
                 }
             });
 
@@ -926,23 +921,23 @@
             function renderTextToCanvas() {
                 if (typingArea.style.display === 'block' && typingArea.value.trim() !== '') {
                     const text = typingArea.value;
-                    const x = parseFloat(typingArea.dataset.x);
-                    const y = parseFloat(typingArea.dataset.y);
-                    const color = typingArea.style.color || currentTextColor;
-                    const fontSize = typingArea.style.fontSize || currentFontSize;
+                    const canvasX = parseFloat(typingArea.dataset.canvasX);
+                    let canvasY = parseFloat(typingArea.dataset.canvasY);
+
+                    // Snap text to the nearest line
+                    canvasY = Math.round((canvasY - TOP_OFFSET) / LINE_SPACING) * LINE_SPACING + TOP_OFFSET;
                     
-                    ctx.fillStyle = color;
-                    ctx.font = `${fontSize} Poppins, sans-serif`;
-                    ctx.textBaseline = 'top'; // Align text with the top of the line
-                    
-                    const lines = text.split('\n');
-                    let currentY = y;
-                    for (let i = 0; i < lines.length; i++) {
-                        ctx.fillText(lines[i], x, currentY);
-                        currentY += parseFloat(fontSize); // Move down for next line
-                    }
+                    notepadContent.push({
+                        type: 'text',
+                        text: text,
+                        x: canvasX,
+                        y: canvasY,
+                        color: currentTextColor,
+                        fontSize: currentFontSize
+                    });
                     typingArea.value = '';
-                    saveCanvasState(); // Save state after text is rendered
+                    saveState();
+                    redrawCanvas(); // Redraw with new text
                 }
                 typingArea.style.display = 'none';
             }
@@ -953,45 +948,53 @@
                 const isClickInsideTypingArea = typingArea.contains(e.target);
                 const isClickInsideToolbar = document.querySelector('.notepad-toolbar').contains(e.target);
 
+                // If in type mode, typing area is visible, and click is outside text area & toolbar, but still on canvas area
                 if (currentMode === 'type' && typingArea.style.display === 'block' && 
-                    !isClickInsideTypingArea && !isClickInsideToolbar && isClickInsideCanvas) {
+                    !isClickInsideTypingArea && !isClickInsideToolbar) {
                     renderTextToCanvas();
                 }
             });
 
-            // Initial save of empty state
-            saveCanvasState();
+            // Adjust canvas size and redraw when window resizes
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    const oldWidth = canvas.width;
+                    const oldHeight = canvas.height;
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                    // If content exists, redraw it with new dimensions if scaling is desired
+                    // For now, simple redraw is sufficient; complex scaling is harder
+                    redrawCanvas(); 
+                }, 200); // Debounce
+            });
+
 
             // Function to update notepad elements for theme changes
             function updateNotepadTheme() {
-                // Redraw lined paper based on current theme/mode
-                redrawAll(); 
-                // Adjust typing area colors if needed
-                const isDarkMode = htmlElement.classList.contains('dark-mode');
-                typingArea.style.backgroundColor = isDarkMode ? colorMixer(getComputedStyle(htmlElement).getPropertyValue('--surface-color').trim(), getComputedStyle(htmlElement).getPropertyValue('--accent-color').trim(), 80) : colorMixer('white', getComputedStyle(htmlElement).getPropertyValue('--accent-color').trim(), 90);
-                typingArea.style.color = getComputedStyle(htmlElement).getPropertyValue('--text-color').trim();
-            }
-
-            // Simple color mixer (for dynamic background colors in typingArea)
-            function colorMixer(color1, color2, percentage) {
-                const p = percentage / 100;
-                const f = p < 0 ? p * -1 : p;
-                const c = (c1, c2) => Math.round(c1 * (1 - f) + c2 * f);
+                redrawCanvas(); // Redraw everything to apply new background/line colors
                 
-                const hexToRgb = hex => {
-                    const bigint = parseInt(hex.slice(1), 16);
-                    return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
-                };
-                const rgbToHex = (r, g, b) => '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                const isDarkMode = htmlElement.classList.contains('dark-mode');
+                
+                // Update typing area background color based on current theme/mode
+                const surfaceColor = getComputedStyle(document.documentElement).getPropertyValue('--surface-color').trim();
+                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+                
+                // A simple way to get a color-mix effect for textarea border/background
+                typingArea.style.backgroundColor = isDarkMode 
+                    ? `color-mix(in srgb, ${surfaceColor} 80%, ${accentColor} 20%)`
+                    : `color-mix(in srgb, ${surfaceColor} 90%, ${accentColor} 10%)`;
+                
+                typingArea.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
 
-                const rgb1 = hexToRgb(color1);
-                const rgb2 = hexToRgb(color2);
-
-                return rgbToHex(c(rgb1.r, rgb2.r), c(rgb1.g, rgb2.g), c(rgb1.b, rgb2.b));
+                // If eraser is active, ensure its draw color matches current canvas background
+                if (drawModeBtn.classList.contains('active') && currentDrawColor === 'white' || currentDrawColor === '#2e2e2e') {
+                     currentDrawColor = getCanvasBackgroundColor();
+                }
             }
 
-            // Initial update for notepad colors based on current theme
-            updateNotepadTheme();
+            // Initial setup call
+            initializeNotepad();
         });
     </script>
     <!-- [END] --- DEFINITIVE FIX --- -->
