@@ -7,9 +7,9 @@
     <!-- =================================================================== -->
     <!-- SEO & META TAGS - FOR PROFESSIONAL ONLINE NOTE PAD PAGE -->
     <!-- =================================================================== -->
-    <title>JKM Edit - Professional Online Note Pad | Draw & Type, Save, Export PDF</title>
-    <meta name="description" content="JKM Edit offers a free, professional online note pad to draw, type, and manage your thoughts. Features lined paper, multiple colors, drawing tools, keyboard input, save/load notes, undo/redo, and PDF export. Perfect for digital journaling, sketching, and quick notes. No installation needed."/>
-    <meta name="keywords" content="online notepad, digital notebook, drawing pad, typing pad, free drawing tool, lined paper, sketchpad, online journaling, note-taking app, jkm edit, creative tool, productivity tool, web notepad, save notes, load notes, undo redo drawing, export PDF, download notes"/>
+    <title>JKM Edit - Professional Online Note Pad | Draw, Type, Images, Multi-Page, PDF Export</title>
+    <meta name="description" content="JKM Edit offers a free, professional online note pad to draw, type, import images, and manage multi-page notes. Features lined paper, multiple colors, drawing tools, keyboard input, save/load notes, undo/redo, and multi-page PDF export. Perfect for digital journaling, sketching, and organized note-taking. No installation needed."/>
+    <meta name="keywords" content="online notepad, digital notebook, drawing pad, typing pad, free drawing tool, lined paper, sketchpad, online journaling, note-taking app, jkm edit, creative tool, productivity tool, web notepad, save notes, load notes, undo redo drawing, export PDF, download notes, image import, drag drop image, resize image, multi-page notes"/>
     <meta name="author" content="JKM Edit"/>
     <meta name="robots" content="index, follow"/>
 	<meta name="google-site-verification" content="Ro_iz55zO9NB6h6tSokRnkEdbj5Z8MQN1Ig6Yrmmh88" />
@@ -19,7 +19,7 @@
 
     <!-- Open Graph Meta Tags (for Facebook, LinkedIn, etc.) -->
     <meta property="og:title" content="JKM Edit - Professional Online Note Pad"/>
-    <meta property="og:description" content="A free, feature-rich online note pad allowing users to draw and type on lined paper, save/load notes, undo/redo, and export to PDF. Secure, fast, and easy to use."/>
+    <meta property="og:description" content="A free, feature-rich online note pad allowing users to draw, type, import images, save/load multi-page notes, undo/redo, and export to PDF. Secure, fast, and easy to use."/>
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/Utilities/notepad.html"/>
     <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
@@ -28,7 +28,7 @@
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="JKM Edit - Professional Online Note Pad"/>
-    <meta name="twitter:description" content="A free, feature-rich online note pad allowing users to draw and type on lined paper, save/load notes, undo/redo, and export to PDF. Secure, fast, and easy to use."/>
+    <meta name="twitter:description" content="A free, feature-rich online note pad allowing users to draw, type, import images, save/load multi-page notes, undo/redo, and export to PDF. Secure, fast, and easy to use."/>
     <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
     <meta name="twitter:creator" content="@JKM_Edit" /> <!-- Optional: Replace with your Twitter handle if applicable -->
     <!-- =================================================================== -->
@@ -126,18 +126,23 @@
         html.dark-mode .dashboard-header p { color: #a0a0a0; }
         
         /* --- Notepad Specific Styles --- */
+        .notepad-wrapper {
+            display: flex;
+            gap: 1rem;
+            max-width: 1000px; /* Increased max-width to accommodate side controls */
+            margin: 2rem auto;
+            align-items: flex-start; /* Align items to the top */
+        }
+
         .notepad-container {
             background-color: var(--surface-color);
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             padding: 1.5rem;
-            margin-top: 2rem;
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
+            flex-grow: 1; /* Allows it to take available space */
         }
 
         .notepad-toolbar {
@@ -146,7 +151,7 @@
             gap: 0.75rem;
             align-items: center;
             padding-bottom: 1rem;
-            border-bottom: 1px solid color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%); /* Light line below toolbar */
+            border-bottom: 1px solid color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%);
         }
         html.dark-mode .notepad-toolbar {
             border-bottom-color: color-mix(in srgb, var(--surface-color) 70%, var(--text-color) 30%);
@@ -162,6 +167,7 @@
             transition: all var(--transition-speed);
             font-family: 'Poppins', sans-serif;
             font-size: 0.9rem;
+            white-space: nowrap; /* Prevent buttons from wrapping text */
         }
 
         .notepad-toolbar button:hover, .notepad-toolbar select:hover, .notepad-toolbar input[type="color"]:hover, .notepad-toolbar input[type="range"]:hover {
@@ -221,6 +227,9 @@
             margin-top: 1rem;
             flex-grow: 1; /* Allows canvas to take available space */
             touch-action: none; /* Prevent browser touch gestures on canvas */
+            position: relative; /* Needed for absolute positioning of textarea */
+            width: 100%; /* Ensure canvas fills container width */
+            min-height: 400px; /* Give it a default height */
         }
         html.dark-mode #notepadCanvas {
             border-color: #333;
@@ -242,9 +251,69 @@
             min-width: 100px; /* Ensure it's not too small to type */
             min-height: 50px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            outline: none; /* Remove default focus outline */
         }
         html.dark-mode #typingArea {
             background-color: color-mix(in srgb, var(--surface-color) 80%, var(--accent-color) 20%);
+        }
+
+        .notepad-sidebar {
+            background-color: var(--surface-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 1rem;
+            width: 180px; /* Fixed width for sidebar */
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+        .page-navigation, .image-tools {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .page-navigation div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        .page-navigation button, .image-tools button {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .page-navigation button:hover, .image-tools button:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 10%, transparent);
+            color: var(--primary-color);
+        }
+        .page-navigation button:disabled, .image-tools button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .notepad-sidebar h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            text-align: center;
+            border-bottom: 1px solid color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%);
+            padding-bottom: 0.5rem;
+        }
+        html.dark-mode .notepad-sidebar h3 {
+            border-bottom-color: color-mix(in srgb, var(--surface-color) 70%, var(--text-color) 30%);
         }
 
         .back-to-dashboard-btn { display: inline-block; margin-top: 3rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -323,6 +392,8 @@
             .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
             .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
             .dashboard-container { padding: 2rem 1.5rem; }
+            .notepad-wrapper { flex-direction: column; align-items: center; }
+            .notepad-sidebar { width: 100%; max-width: 900px; }
         }
         @media (max-width: 768px) {
             .main-nav { flex-wrap: wrap; justify-content: center; }
@@ -450,39 +521,61 @@
             <p>Draw, type, and organize your thoughts on a digital lined board.</p>
         </div>
 
-        <div class="notepad-container">
-            <div class="notepad-toolbar">
-                <button id="drawModeBtn" class="active"><i class="fa-solid fa-pencil"></i> Draw</button>
-                <button id="typeModeBtn"><i class="fa-solid fa-keyboard"></i> Type</button>
-                
-                <label for="drawColor">Draw Color:</label>
-                <input type="color" id="drawColor" value="#000000">
-                <label for="drawWidth">Size:</label>
-                <input type="range" id="drawWidth" min="1" max="10" value="2">
-                
-                <button id="eraserBtn"><i class="fa-solid fa-eraser"></i> Eraser</button>
-                
-                <label for="textColor">Text Color:</label>
-                <input type="color" id="textColor" value="#000000">
-                <label for="fontSize">Font Size:</label>
-                <select id="fontSize">
-                    <option value="12">12px</option>
-                    <option value="14">14px</option>
-                    <option value="16" selected>16px</option>
-                    <option value="18">18px</option>
-                    <option value="24">24px</option>
-                </select>
+        <div class="notepad-wrapper">
+            <div class="notepad-container">
+                <div class="notepad-toolbar">
+                    <button id="drawModeBtn" class="active"><i class="fa-solid fa-pencil"></i> Draw</button>
+                    <button id="typeModeBtn"><i class="fa-solid fa-keyboard"></i> Type</button>
+                    
+                    <label for="drawColor">Draw Color:</label>
+                    <input type="color" id="drawColor" value="#000000">
+                    <label for="drawWidth">Size:</label>
+                    <input type="range" id="drawWidth" min="1" max="10" value="2">
+                    
+                    <button id="eraserBtn"><i class="fa-solid fa-eraser"></i> Eraser</button>
+                    
+                    <label for="textColor">Text Color:</label>
+                    <input type="color" id="textColor" value="#000000">
+                    <label for="fontSize">Font Size:</label>
+                    <select id="fontSize">
+                        <option value="12">12px</option>
+                        <option value="14">14px</option>
+                        <option value="16" selected>16px</option>
+                        <option value="18">18px</option>
+                        <option value="24">24px</option>
+                    </select>
 
-                <button id="undoBtn"><i class="fa-solid fa-rotate-left"></i> Undo</button>
-                <button id="redoBtn"><i class="fa-solid fa-rotate-right"></i> Redo</button>
-                <button id="clearBtn"><i class="fa-solid fa-trash-can"></i> Clear</button>
-                <button id="saveBtn"><i class="fa-solid fa-save"></i> Save Note</button>
-                <button id="loadBtn"><i class="fa-solid fa-folder-open"></i> Load Note</button>
-                <button id="downloadPdfBtn"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+                    <button id="undoBtn"><i class="fa-solid fa-rotate-left"></i> Undo</button>
+                    <button id="redoBtn"><i class="fa-solid fa-rotate-right"></i> Redo</button>
+                    <button id="clearBtn"><i class="fa-solid fa-trash-can"></i> Clear Page</button>
+                    <button id="saveBtn"><i class="fa-solid fa-save"></i> Save All</button>
+                    <button id="loadBtn"><i class="fa-solid fa-folder-open"></i> Load All</button>
+                    <button id="downloadPdfBtn"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+                </div>
+
+                <canvas id="notepadCanvas" width="800" height="600" tabindex="0"></canvas> <!-- Added tabindex for keyboard focus -->
+                <textarea id="typingArea" rows="4" cols="50"></textarea>
             </div>
 
-            <canvas id="notepadCanvas" width="800" height="600"></canvas>
-            <textarea id="typingArea" rows="4" cols="50"></textarea>
+            <div class="notepad-sidebar">
+                <h3>Page Management</h3>
+                <div class="page-navigation">
+                    <button id="addPageBtn"><i class="fa-solid fa-plus"></i> Add Page</button>
+                    <button id="deletePageBtn"><i class="fa-solid fa-trash"></i> Delete Page</button>
+                    <div>
+                        <button id="prevPageBtn"><i class="fa-solid fa-chevron-left"></i></button>
+                        <span id="pageNumberDisplay">Page 1 of 1</span>
+                        <button id="nextPageBtn"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 1rem;">Image Tools</h3>
+                <div class="image-tools">
+                    <button id="importImageBtn"><i class="fa-solid fa-image"></i> Import Image</button>
+                    <input type="file" id="imageInput" accept="image/*" hidden>
+                    <button id="deselectImageBtn" disabled><i class="fa-solid fa-hand-pointer"></i> Deselect Image</button>
+                </div>
+            </div>
         </div>
 
         <div style='text-align: center; margin-top: 3rem;'>
@@ -501,10 +594,8 @@
         window.addEventListener('pageshow', function (event) {
             // event.persisted is true if the page was restored from the back-forward cache.
             if (event.persisted) {
-                // Remove the fade-out class to make the page visible again.
                 document.body.classList.remove('fade-out');
-                // Re-initialize notepad on BFCache restore to ensure correct state
-                initializeNotepad();
+                initializeNotepad(); // Re-initialize on BFCache restore
             }
         });
 
@@ -602,7 +693,16 @@
             const loadBtn = document.getElementById('loadBtn');
             const undoBtn = document.getElementById('undoBtn');
             const redoBtn = document.getElementById('redoBtn');
-            const downloadPdfBtn = document.getElementById('downloadPdfBtn'); // New PDF button
+            const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+            const addPageBtn = document.getElementById('addPageBtn');
+            const deletePageBtn = document.getElementById('deletePageBtn');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            const pageNumberDisplay = document.getElementById('pageNumberDisplay');
+            const importImageBtn = document.getElementById('importImageBtn');
+            const imageInput = document.getElementById('imageInput');
+            const deselectImageBtn = document.getElementById('deselectImageBtn');
+
 
             let isDrawing = false;
             let currentDrawColor = drawColorInput.value;
@@ -611,37 +711,48 @@
             let currentFontSize = parseFloat(fontSizeSelect.value);
             let currentMode = 'draw'; // 'draw' or 'type'
 
-            let notepadContent = []; // Stores structured drawing strokes and text objects
-            let history = []; // Stores snapshots of notepadContent for undo/redo
-            let historyPointer = -1;
+            // --- Multi-Page State ---
+            let allPagesContent = []; // Array of notepadContent arrays
+            let currentPageIndex = 0;
 
-            const LINE_SPACING = 25; // pixels between lines
-            const TOP_OFFSET = 20; // Margin from top for first line
+            // --- Per-Page History for Undo/Redo ---
+            // Each element in allPagesContent will have its own history property
+            // allPagesContent[i].history = []
+            // allPagesContent[i].historyPointer = -1
 
-            // Debounce for canvas resize
+            // --- Image Interaction State ---
+            let selectedImage = null; // Stores the image object being moved/resized
+            let isResizing = false;
+            let isDraggingImage = false;
+            let resizeHandle = null; // 'nw', 'ne', 'se', 'sw'
+            let lastMouseX, lastMouseY; // For drag/resize calculations
+
+            const LINE_SPACING = 25;
+            const TOP_OFFSET = 20;
+
+            // --- Canvas Resizing Debounce ---
             let resizeTimeout;
+            let lastCanvasWidth = canvas.offsetWidth;
+            let lastCanvasHeight = canvas.offsetHeight;
+
 
             function initializeNotepad() {
                 // Set initial canvas size
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
 
-                // Reset content and history on init
-                notepadContent = [];
-                history = [];
-                historyPointer = -1;
-
-                // Load any saved data
-                loadNotepadContent();
+                // Load all saved pages or start with a new one
+                loadAllNotepadContent();
                 
                 // Draw initial state
                 redrawCanvas();
-                updateUndoRedoButtons();
+                updateUndoRedoButtons(); // for current page
+                updatePageControls();
                 updateNotepadTheme(); // Apply initial theme colors
                 setMode('draw'); // Default to draw mode
             }
 
-            // Function to redraw the entire canvas from notepadContent
+            // Function to redraw the entire canvas from current page's content
             function redrawCanvas() {
                 const isDarkMode = htmlElement.classList.contains('dark-mode');
                 const canvasBgColor = isDarkMode ? '#2e2e2e' : 'white';
@@ -652,9 +763,11 @@
                 
                 drawLinedPaper(); // Draw background lines
 
-                // Draw all drawing strokes
-                notepadContent.filter(item => item.type === 'drawing').forEach(drawing => {
-                    if (drawing.points.length > 1) {
+                const currentPageContent = allPagesContent[currentPageIndex] ? allPagesContent[currentPageIndex].content : [];
+
+                // 1. Draw all drawing strokes
+                currentPageContent.filter(item => item.type === 'drawing').forEach(drawing => {
+                    if (drawing.points && drawing.points.length > 1) {
                         ctx.beginPath();
                         ctx.moveTo(drawing.points[0].x, drawing.points[0].y);
                         for (let i = 1; i < drawing.points.length; i++) {
@@ -668,8 +781,24 @@
                     }
                 });
 
-                // Draw all text entries
-                notepadContent.filter(item => item.type === 'text').forEach(textItem => {
+                // 2. Draw all images
+                currentPageContent.filter(item => item.type === 'image').forEach(imageItem => {
+                    if (imageItem.imgObj && imageItem.imgObj.complete) {
+                        ctx.drawImage(imageItem.imgObj, imageItem.x, imageItem.y, imageItem.width, imageItem.height);
+                        if (selectedImage === imageItem) {
+                            drawResizeHandles(imageItem); // Draw handles if image is selected
+                        }
+                    } else if (imageItem.src) {
+                        // Load image if not already loaded (e.g., from localStorage)
+                        imageItem.imgObj = new Image();
+                        imageItem.imgObj.onload = () => redrawCanvas(); // Redraw once image is loaded
+                        imageItem.imgObj.src = imageItem.src;
+                    }
+                });
+
+
+                // 3. Draw all text entries (on top of everything else)
+                currentPageContent.filter(item => item.type === 'text').forEach(textItem => {
                     ctx.fillStyle = textItem.color;
                     ctx.font = `${textItem.fontSize}px Poppins, sans-serif`; // Ensure 'px' unit
                     ctx.textBaseline = 'top'; // Important for snapping to lines
@@ -700,76 +829,256 @@
                 }
             }
 
-            // Save the current notepadContent to history
+            // Save the current page's content to its history stack
             function saveState() {
-                if (historyPointer < history.length - 1) {
-                    history.length = historyPointer + 1; // Truncate redo history
+                const page = allPagesContent[currentPageIndex];
+                if (!page) return; // Should not happen if page exists
+
+                if (page.historyPointer < page.history.length - 1) {
+                    page.history.length = page.historyPointer + 1; // Truncate redo history
                 }
-                history.push(JSON.parse(JSON.stringify(notepadContent))); // Deep copy
-                historyPointer++;
+                page.history.push(JSON.parse(JSON.stringify(page.content))); // Deep copy
+                page.historyPointer++;
                 updateUndoRedoButtons();
             }
 
-            // Restore notepadContent from history and redraw
+            // Restore a specific state for the current page
             function restoreState(index) {
-                if (history[index]) {
-                    notepadContent = JSON.parse(JSON.stringify(history[index])); // Deep copy
-                    redrawCanvas();
-                }
+                const page = allPagesContent[currentPageIndex];
+                if (!page || !page.history[index]) return;
+
+                page.content = JSON.parse(JSON.stringify(page.history[index])); // Deep copy
+                page.historyPointer = index;
+                redrawCanvas();
+                updateUndoRedoButtons();
             }
 
             function updateUndoRedoButtons() {
-                undoBtn.disabled = historyPointer <= 0;
-                redoBtn.disabled = historyPointer >= history.length - 1;
+                const page = allPagesContent[currentPageIndex];
+                if (!page) { // If no page exists
+                    undoBtn.disabled = true;
+                    redoBtn.disabled = true;
+                    return;
+                }
+                undoBtn.disabled = page.historyPointer <= 0;
+                redoBtn.disabled = page.historyPointer >= page.history.length - 1;
             }
 
-            // --- Event Listeners for Drawing ---
+            // --- Multi-Page Functions ---
+            function addNewPage() {
+                saveCurrentPageContent(); // Save current page's state
+                allPagesContent.push({ content: [], history: [], historyPointer: -1 });
+                currentPageIndex = allPagesContent.length - 1;
+                initPageHistory(); // Initialize history for the new page
+                redrawCanvas();
+                updatePageControls();
+                saveAllNotepadContentToLocalStorage();
+                deselectImage(); // Deselect image on page change
+            }
+
+            function deleteCurrentPage() {
+                if (allPagesContent.length <= 1) {
+                    alert('Cannot delete the last page!');
+                    return;
+                }
+                if (!confirm('Are you sure you want to delete this page? This cannot be undone.')) {
+                    return;
+                }
+                allPagesContent.splice(currentPageIndex, 1);
+                if (currentPageIndex >= allPagesContent.length) {
+                    currentPageIndex = allPagesContent.length - 1;
+                }
+                redrawCanvas();
+                updatePageControls();
+                saveAllNotepadContentToLocalStorage();
+                deselectImage();
+            }
+
+            function nextPage() {
+                if (currentPageIndex < allPagesContent.length - 1) {
+                    saveCurrentPageContent(); // Save current page's state
+                    currentPageIndex++;
+                    redrawCanvas();
+                    updatePageControls();
+                    deselectImage();
+                }
+            }
+
+            function prevPage() {
+                if (currentPageIndex > 0) {
+                    saveCurrentPageContent(); // Save current page's state
+                    currentPageIndex--;
+                    redrawCanvas();
+                    updatePageControls();
+                    deselectImage();
+                }
+            }
+
+            function updatePageControls() {
+                pageNumberDisplay.textContent = `Page ${currentPageIndex + 1} of ${allPagesContent.length}`;
+                prevPageBtn.disabled = currentPageIndex === 0;
+                nextPageBtn.disabled = currentPageIndex === allPagesContent.length - 1;
+                deletePageBtn.disabled = allPagesContent.length === 1;
+            }
+
+            // Save current page's `notepadContent` into its `history` stack
+            function saveCurrentPageContent() {
+                 const page = allPagesContent[currentPageIndex];
+                 if (page) {
+                     // Ensure the content is up-to-date in the page object before saving
+                     // (This assumes notepadContent directly reflects the current page's content)
+                     // Deep copy to prevent reference issues
+                     page.content = JSON.parse(JSON.stringify(notepadContent)); 
+                     saveState(); // Now saves this current state to page.history
+                 }
+            }
+
+            function initPageHistory() {
+                const page = allPagesContent[currentPageIndex];
+                if (page && (!page.history || page.history.length === 0)) {
+                    page.history = [];
+                    page.historyPointer = -1;
+                    notepadContent = JSON.parse(JSON.stringify(page.content)); // Set global notepadContent to this page's content
+                    saveState(); // Save the current (potentially empty) content as the first history entry
+                } else if (page) {
+                     notepadContent = JSON.parse(JSON.stringify(page.history[page.historyPointer])); // Load current history state
+                }
+            }
+
+            // --- LocalStorage Management ---
+            const LOCAL_STORAGE_KEY = 'jkm-notepad-all-pages-content';
+
+            function saveAllNotepadContentToLocalStorage() {
+                renderTextToCanvas(); // Ensure current text is on canvas
+                saveCurrentPageContent(); // Save state of active page before saving all
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(allPagesContent));
+                alert('All notes saved!');
+            }
+
+            function loadAllNotepadContent() {
+                const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (savedData) {
+                    allPagesContent = JSON.parse(savedData);
+                    // Re-instantiate Image objects from src
+                    allPagesContent.forEach(page => {
+                        page.content.filter(item => item.type === 'image' && item.src).forEach(imgItem => {
+                            imgItem.imgObj = new Image();
+                            imgItem.imgObj.src = imgItem.src;
+                        });
+                    });
+                    
+                    if (allPagesContent.length > 0) {
+                        currentPageIndex = 0; // Always start on the first page
+                        initPageHistory(); // Load current page's content and history
+                    } else {
+                        // If savedData was empty or invalid, start fresh
+                        allPagesContent = [{ content: [], history: [], historyPointer: -1 }];
+                        currentPageIndex = 0;
+                        initPageHistory();
+                    }
+                } else {
+                    // Start with one empty page if no saved data
+                    allPagesContent = [{ content: [], history: [], historyPointer: -1 }];
+                    currentPageIndex = 0;
+                    initPageHistory();
+                }
+            }
+
+            // --- Event Listeners for Canvas Interaction ---
             function getMousePos(event) {
                 const rect = canvas.getBoundingClientRect();
                 return {
                     x: (event.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
-                    y: (event.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+                    y: (event.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height,
+                    clientX: event.clientX, // Keep clientX/Y for textarea positioning
+                    clientY: event.clientY
                 };
             }
 
             let currentDrawingPoints = []; // For the single active stroke
 
             canvas.addEventListener('mousedown', (e) => {
+                const { x, y, clientX, clientY } = getMousePos(e);
+                lastMouseX = x;
+                lastMouseY = y;
+
+                renderTextToCanvas(); // Always finalize text on new interaction
+
+                // Image interaction
+                if (selectedImage) {
+                    resizeHandle = getResizeHandle(x, y, selectedImage);
+                    if (resizeHandle) {
+                        isResizing = true;
+                        canvas.style.cursor = `${resizeHandle}-resize`;
+                        return; // Don't start drawing or typing
+                    } else if (isPointInImage(x, y, selectedImage)) {
+                        isDraggingImage = true;
+                        canvas.style.cursor = 'grabbing';
+                        return; // Don't start drawing or typing
+                    }
+                }
+                deselectImage(); // Deselect image if clicking outside it (or starting new drawing/typing)
+                
                 if (currentMode === 'draw') {
                     isDrawing = true;
-                    const { x, y } = getMousePos(e);
                     currentDrawingPoints = [{ x, y }];
                     ctx.beginPath();
                     ctx.moveTo(x, y);
                 } else if (currentMode === 'type') {
-                    // Always finalize previous text before starting a new one
-                    if (typingArea.style.display === 'block' && typingArea.value.trim() !== '') {
-                        renderTextToCanvas();
-                    }
-                    const { x, y } = getMousePos(e);
-                    
-                    // Position typing area relative to the viewport
-                    typingArea.style.left = `${e.clientX}px`;
-                    typingArea.style.top = `${e.clientY}px`;
-                    typingArea.style.width = '200px'; // Initial size for textarea
+                    typingArea.style.left = `${clientX}px`;
+                    typingArea.style.top = `${clientY}px`;
+                    typingArea.style.width = '200px';
                     typingArea.style.height = '100px';
                     typingArea.style.display = 'block';
-                    typingArea.value = ''; // Clear previous text
+                    typingArea.value = '';
                     typingArea.focus();
-                    
-                    // Store canvas coordinates for text rendering
                     typingArea.dataset.canvasX = x;
                     typingArea.dataset.canvasY = y;
-
-                    // Set typing area's style based on current text settings
                     typingArea.style.color = currentTextColor;
                     typingArea.style.fontSize = currentFontSize + 'px';
                 }
             });
 
             canvas.addEventListener('mousemove', (e) => {
-                if (isDrawing && currentMode === 'draw') {
-                    const { x, y } = getMousePos(e);
+                const { x, y } = getMousePos(e);
+
+                if (isResizing && selectedImage) {
+                    const dx = x - lastMouseX;
+                    const dy = y - lastMouseY;
+                    
+                    const aspectRatio = selectedImage.imgObj.width / selectedImage.imgObj.height;
+
+                    switch (resizeHandle) {
+                        case 'nw':
+                            selectedImage.x += dx;
+                            selectedImage.y += dy;
+                            selectedImage.width -= dx;
+                            selectedImage.height -= (dx / aspectRatio); // Maintain aspect ratio
+                            break;
+                        case 'ne':
+                            selectedImage.y += dy;
+                            selectedImage.width += dx;
+                            selectedImage.height += (dx / aspectRatio);
+                            break;
+                        case 'sw':
+                            selectedImage.x += dx;
+                            selectedImage.width -= dx;
+                            selectedImage.height -= (dx / aspectRatio);
+                            break;
+                        case 'se':
+                            selectedImage.width += dx;
+                            selectedImage.height += (dx / aspectRatio);
+                            break;
+                    }
+                    // Prevent negative width/height
+                    selectedImage.width = Math.max(10, selectedImage.width);
+                    selectedImage.height = Math.max(10, selectedImage.height);
+                    redrawCanvas();
+                } else if (isDraggingImage && selectedImage) {
+                    selectedImage.x += (x - lastMouseX);
+                    selectedImage.y += (y - lastMouseY);
+                    redrawCanvas();
+                } else if (isDrawing && currentMode === 'draw') {
                     currentDrawingPoints.push({ x, y });
                     
                     ctx.lineTo(x, y);
@@ -779,30 +1088,15 @@
                     ctx.lineJoin = 'round';
                     ctx.stroke();
                 }
+
+                lastMouseX = x;
+                lastMouseY = y;
             });
 
             canvas.addEventListener('mouseup', () => {
                 if (isDrawing && currentMode === 'draw') {
                     isDrawing = false;
-                    // Only save a drawing stroke if it has enough points to be meaningful
                     if (currentDrawingPoints.length > 1) {
-                        notepadContent.push({
-                            type: 'drawing',
-                            color: currentDrawColor,
-                            width: currentDrawWidth,
-                            points: [...currentDrawingPoints] // Deep copy points
-                        });
-                        saveState();
-                        redrawCanvas(); // Redraw to ensure proper layer order (text on top)
-                    }
-                    currentDrawingPoints = []; // Reset for next stroke
-                }
-            });
-
-            canvas.addEventListener('mouseout', () => {
-                if (isDrawing && currentMode === 'draw') {
-                    isDrawing = false;
-                    if (currentDrawingPoints.length > 1) { // Only save if a significant stroke was made
                         notepadContent.push({
                             type: 'drawing',
                             color: currentDrawColor,
@@ -810,34 +1104,141 @@
                             points: [...currentDrawingPoints]
                         });
                         saveState();
-                        redrawCanvas();
                     }
                     currentDrawingPoints = [];
+                    redrawCanvas();
+                } else if (isResizing || isDraggingImage) {
+                    isResizing = false;
+                    isDraggingImage = false;
+                    canvas.style.cursor = 'default';
+                    if (selectedImage) {
+                        saveState(); // Save state after image manipulation
+                    }
                 }
             });
 
-            // --- Helper to set drawing/typing mode ---
-            function setMode(mode) {
-                currentMode = mode;
-                drawModeBtn.classList.remove('active');
-                typeModeBtn.classList.remove('active');
-                if (mode === 'draw') {
-                    drawModeBtn.classList.add('active');
-                    canvas.style.cursor = 'crosshair';
-                    if (typingArea.style.display === 'block') {
-                        renderTextToCanvas(); // Render text when switching from type to draw
+            canvas.addEventListener('mouseout', () => {
+                if (isDrawing && currentMode === 'draw') {
+                    isDrawing = false;
+                    if (currentDrawingPoints.length > 1) {
+                        notepadContent.push({
+                            type: 'drawing',
+                            color: currentDrawColor,
+                            width: currentDrawWidth,
+                            points: [...currentDrawingPoints]
+                        });
+                        saveState();
                     }
-                } else if (mode === 'type') {
-                    typeModeBtn.classList.add('active');
-                    canvas.style.cursor = 'text';
+                    currentDrawingPoints = [];
+                    redrawCanvas();
                 }
-                // Reset eraser color if switching to a normal draw mode
-                if (mode === 'draw' && (drawColorInput.value === getCanvasBackgroundColor() || currentDrawColor === getCanvasBackgroundColor())) {
-                    currentDrawColor = '#000000'; // Default black for drawing
-                    drawColorInput.value = currentDrawColor;
+                // Reset cursor if image was being dragged/resized but mouse left canvas
+                if (!isResizing && !isDraggingImage && selectedImage) {
+                    canvas.style.cursor = 'default';
+                }
+            });
+
+            // Double-click to select image
+            canvas.addEventListener('dblclick', (e) => {
+                const { x, y } = getMousePos(e);
+                renderTextToCanvas(); // Commit any active text first
+                deselectImage(); // Deselect any previously selected image
+
+                const currentPageContent = allPagesContent[currentPageIndex].content;
+                // Find image clicked on (reverse order to select topmost)
+                for (let i = currentPageContent.length - 1; i >= 0; i--) {
+                    const item = currentPageContent[i];
+                    if (item.type === 'image' && isPointInImage(x, y, item)) {
+                        selectedImage = item;
+                        deselectImageBtn.disabled = false;
+                        redrawCanvas();
+                        return;
+                    }
+                }
+            });
+
+            // --- Image Helper Functions ---
+            function isPointInImage(px, py, image) {
+                return px > image.x && px < image.x + image.width &&
+                       py > image.y && py < image.y + image.height;
+            }
+
+            function drawResizeHandles(image) {
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(image.x, image.y, image.width, image.height);
+
+                const handleSize = 8;
+                const handles = {
+                    nw: { x: image.x, y: image.y },
+                    ne: { x: image.x + image.width, y: image.y },
+                    sw: { x: image.x, y: image.y + image.height },
+                    se: { x: image.x + image.width, y: image.y + image.height }
+                };
+
+                for (const key in handles) {
+                    ctx.fillStyle = 'red';
+                    ctx.fillRect(handles[key].x - handleSize / 2, handles[key].y - handleSize / 2, handleSize, handleSize);
                 }
             }
 
+            function getResizeHandle(px, py, image) {
+                const handleSize = 8; // Same as drawResizeHandles
+                const tolerance = handleSize / 2; // Radius around handle center
+
+                const handles = {
+                    nw: { x: image.x, y: image.y },
+                    ne: { x: image.x + image.width, y: image.y },
+                    sw: { x: image.x, y: image.y + image.height },
+                    se: { x: image.x + image.width, y: image.y + image.height }
+                };
+
+                for (const key in handles) {
+                    if (px > handles[key].x - tolerance && px < handles[key].x + tolerance &&
+                        py > handles[key].y - tolerance && py < handles[key].y + tolerance) {
+                        return key;
+                    }
+                }
+                return null;
+            }
+
+            function deselectImage() {
+                if (selectedImage) {
+                    selectedImage = null;
+                    deselectImageBtn.disabled = true;
+                    redrawCanvas();
+                }
+            }
+            deselectImageBtn.addEventListener('click', deselectImage);
+            canvas.addEventListener('click', (e) => {
+                const { x, y } = getMousePos(e);
+                // If clicked outside selected image or not on an image at all
+                if (selectedImage && !isPointInImage(x, y, selectedImage) && !getResizeHandle(x,y,selectedImage)) {
+                    deselectImage();
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (typingArea.style.display === 'block') {
+                        renderTextToCanvas(); // Commit and hide text area
+                    }
+                    deselectImage(); // Deselect image
+                    canvas.style.cursor = currentMode === 'draw' ? 'crosshair' : 'text'; // Reset cursor
+                } else if (selectedImage && (e.key === 'Delete' || e.key === 'Backspace')) {
+                    e.preventDefault(); // Prevent browser back navigation
+                    if (confirm('Delete selected image?')) {
+                        const currentPageContent = allPagesContent[currentPageIndex].content;
+                        const index = currentPageContent.indexOf(selectedImage);
+                        if (index > -1) {
+                            currentPageContent.splice(index, 1);
+                            deselectImage();
+                            saveState();
+                            redrawCanvas();
+                        }
+                    }
+                }
+            });
+            
             // --- Event Listeners for Controls ---
             drawModeBtn.addEventListener('click', () => setMode('draw'));
             typeModeBtn.addEventListener('click', () => setMode('type'));
@@ -857,11 +1258,9 @@
             eraserBtn.addEventListener('click', () => {
                 setMode('draw'); // Eraser is a draw mode
                 currentDrawColor = getCanvasBackgroundColor(); // Eraser color matches canvas background
-                // Don't change drawColorInput.value, keep it showing the last selected color or black
                 canvas.style.cursor = 'cell'; // Eraser cursor
             });
             
-            // Re-apply correct draw color if switching from eraser back to regular drawing
             drawColorInput.addEventListener('click', () => {
                 currentDrawColor = drawColorInput.value; // Get the chosen color
                 setMode('draw'); // Ensure draw mode is active
@@ -883,86 +1282,143 @@
             });
 
             clearBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to clear the entire note? This cannot be undone past this point.')) {
-                    notepadContent = [];
-                    history = [];
-                    historyPointer = -1;
+                if (confirm('Are you sure you want to clear the content of the current page? This cannot be undone past this point.')) {
+                    allPagesContent[currentPageIndex].content = [];
+                    allPagesContent[currentPageIndex].history = [];
+                    allPagesContent[currentPageIndex].historyPointer = -1;
                     typingArea.value = '';
                     typingArea.style.display = 'none';
-                    saveState(); // Save an empty state
+                    saveState(); // Save an empty state for the page
                     redrawCanvas();
+                    deselectImage();
                 }
             });
 
-            saveBtn.addEventListener('click', () => {
-                renderTextToCanvas(); // Ensure any active text is rendered first
-                const data = JSON.stringify(notepadContent); // Save the structured content
-                localStorage.setItem('jkm-notepad-content', data);
-                alert('Note saved!');
-            });
-
+            saveBtn.addEventListener('click', saveAllNotepadContentToLocalStorage);
             loadBtn.addEventListener('click', () => {
-                const savedData = localStorage.getItem('jkm-notepad-content');
-                if (savedData) {
-                    notepadContent = JSON.parse(savedData);
-                    history = []; // Clear history on load
-                    historyPointer = -1;
-                    saveState(); // Save the loaded state as the first history entry
+                if (confirm('Loading will overwrite any unsaved changes on all pages. Continue?')) {
+                    loadAllNotepadContent();
                     redrawCanvas();
-                    alert('Note loaded!');
-                } else {
-                    alert('No saved note found!');
+                    updatePageControls();
+                    alert('All notes loaded!');
+                    deselectImage();
                 }
             });
 
             undoBtn.addEventListener('click', () => {
                 renderTextToCanvas(); // Commit any active text before undo
-                if (historyPointer > 0) {
-                    historyPointer--;
-                    restoreState(historyPointer);
+                const page = allPagesContent[currentPageIndex];
+                if (page.historyPointer > 0) {
+                    page.historyPointer--;
+                    restoreState(page.historyPointer);
                 }
             });
 
             redoBtn.addEventListener('click', () => {
                 renderTextToCanvas(); // Commit any active text before redo
-                if (historyPointer < history.length - 1) {
-                    historyPointer++;
-                    restoreState(historyPointer);
+                const page = allPagesContent[currentPageIndex];
+                if (page.historyPointer < page.history.length - 1) {
+                    page.historyPointer++;
+                    restoreState(page.historyPointer);
                 }
             });
 
             // New: Download as PDF button functionality
-            downloadPdfBtn.addEventListener('click', () => {
-                renderTextToCanvas(); // Ensure all content is on the canvas
+            downloadPdfBtn.addEventListener('click', async () => {
+                renderTextToCanvas(); // Ensure all active text is rendered
+                saveCurrentPageContent(); // Save current page's final state
 
-                // Use html2canvas to capture the canvas
-                html2canvas(canvas, {
-                    // preserveDrawingBuffer: true, // Might help with quality/rendering issues on some browsers
-                    backgroundColor: null, // Let the canvas background be captured as is
-                }).then(canvasImage => {
-                    const { jsPDF } = window.jspdf; // Get jsPDF from window object
-                    const imgData = canvasImage.toDataURL('image/png');
-                    const pdf = new jsPDF('p', 'mm', 'a4'); // 'p' for portrait, 'mm' for units, 'a4' for size
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 297; // A4 height in mm
 
-                    const imgWidth = 210; // A4 width in mm
-                    const pageHeight = 297; // A4 height in mm
-                    const imgHeight = canvasImage.height * imgWidth / canvasImage.width;
-                    let heightLeft = imgHeight;
-                    let position = 0;
+                for (let i = 0; i < allPagesContent.length; i++) {
+                    const pageContent = allPagesContent[i].content;
 
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-
-                    // If content overflows one page
-                    while (heightLeft >= 0) {
-                        position = heightLeft - imgHeight;
-                        pdf.addPage();
-                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                        heightLeft -= pageHeight;
+                    // Create a temporary off-screen canvas to render each page
+                    const tempCanvas = document.createElement('canvas');
+                    const tempCtx = tempCanvas.getContext('2d');
+                    tempCanvas.width = canvas.width; // Use current canvas dimensions
+                    tempCanvas.height = canvas.height;
+                    
+                    const isDarkMode = htmlElement.classList.contains('dark-mode');
+                    const canvasBgColor = isDarkMode ? '#2e2e2e' : 'white';
+                    tempCtx.fillStyle = canvasBgColor;
+                    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                    
+                    // Draw lines on temp canvas
+                    tempCtx.strokeStyle = isDarkMode ? '#444' : '#eee';
+                    tempCtx.lineWidth = 1;
+                    for (let j = TOP_OFFSET; j < tempCanvas.height; j += LINE_SPACING) {
+                        tempCtx.beginPath();
+                        tempCtx.moveTo(0, j);
+                        tempCtx.lineTo(tempCanvas.width, j);
+                        tempCtx.stroke();
                     }
 
-                    pdf.save('jkm_notepad_note.pdf');
-                });
+                    // Draw drawings on temp canvas
+                    pageContent.filter(item => item.type === 'drawing').forEach(drawing => {
+                        if (drawing.points && drawing.points.length > 1) {
+                            tempCtx.beginPath();
+                            tempCtx.moveTo(drawing.points[0].x, drawing.points[0].y);
+                            for (let k = 1; k < drawing.points.length; k++) {
+                                tempCtx.lineTo(drawing.points[k].x, drawing.points[k].y);
+                            }
+                            tempCtx.strokeStyle = drawing.color;
+                            tempCtx.lineWidth = drawing.width;
+                            tempCtx.lineCap = 'round';
+                            tempCtx.lineJoin = 'round';
+                            tempCtx.stroke();
+                        }
+                    });
+
+                    // Draw images on temp canvas
+                    // Need to ensure images are loaded before rendering to PDF
+                    const imagePromises = pageContent.filter(item => item.type === 'image' && item.src)
+                        .map(imgItem => new Promise(resolve => {
+                            if (imgItem.imgObj && imgItem.imgObj.complete) {
+                                resolve();
+                                return;
+                            }
+                            imgItem.imgObj = new Image();
+                            imgItem.imgObj.onload = resolve;
+                            imgItem.imgObj.src = imgItem.src;
+                        }));
+
+                    await Promise.all(imagePromises); // Wait for all images on the page to load
+
+                    pageContent.filter(item => item.type === 'image').forEach(imageItem => {
+                        if (imageItem.imgObj && imageItem.imgObj.complete) {
+                            tempCtx.drawImage(imageItem.imgObj, imageItem.x, imageItem.y, imageItem.width, imageItem.height);
+                        }
+                    });
+
+                    // Draw text on temp canvas
+                    pageContent.filter(item => item.type === 'text').forEach(textItem => {
+                        tempCtx.fillStyle = textItem.color;
+                        tempCtx.font = `${textItem.fontSize}px Poppins, sans-serif`;
+                        tempCtx.textBaseline = 'top';
+                        
+                        const lines = textItem.text.split('\n');
+                        let currentY = textItem.y;
+                        lines.forEach(line => {
+                            tempCtx.fillText(line, textItem.x, currentY);
+                            currentY += parseFloat(textItem.fontSize) * 1.2;
+                        });
+                    });
+
+                    const imgData = tempCanvas.toDataURL('image/png');
+                    const imgHeight = tempCanvas.height * imgWidth / tempCanvas.width;
+
+                    if (i > 0) { // Add a new page for all but the first page
+                        pdf.addPage();
+                    }
+                    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                }
+
+                pdf.save('jkm_notepad_notebook.pdf');
+                alert('Notes exported to PDF!');
             });
 
 
@@ -974,14 +1430,13 @@
                     let canvasY = parseFloat(typingArea.dataset.canvasY);
 
                     // Snap text to the nearest line's top, considering font size
-                    const baselineOffset = 0; // Adjust if text baseline is not exactly 'top'
-                    canvasY = Math.round((canvasY - TOP_OFFSET) / LINE_SPACING) * LINE_SPACING + TOP_OFFSET + baselineOffset;
+                    const snappedY = Math.round((canvasY - TOP_OFFSET) / LINE_SPACING) * LINE_SPACING + TOP_OFFSET;
                     
                     notepadContent.push({
                         type: 'text',
                         text: text,
                         x: canvasX,
-                        y: canvasY,
+                        y: snappedY, // Use snapped Y
                         color: currentTextColor,
                         fontSize: currentFontSize
                     });
@@ -992,13 +1447,10 @@
                 typingArea.style.display = 'none';
             }
 
-            // Commit text on blur
             typingArea.addEventListener('blur', renderTextToCanvas);
-
-            // Commit text on Enter key press (unless Shift is held for newline)
             typingArea.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault(); // Prevent default new line in textarea
+                    e.preventDefault();
                     renderTextToCanvas();
                 }
             });
@@ -1008,29 +1460,165 @@
                 const isClickInsideCanvas = canvas.contains(e.target);
                 const isClickInsideTypingArea = typingArea.contains(e.target);
                 const isClickInsideToolbar = document.querySelector('.notepad-toolbar').contains(e.target);
+                const isClickInsideSidebar = document.querySelector('.notepad-sidebar').contains(e.target);
 
                 if (currentMode === 'type' && typingArea.style.display === 'block' && 
-                    !isClickInsideTypingArea && !isClickInsideToolbar && !isClickInsideCanvas) {
-                    renderTextToCanvas(); // Finalize text if clicking outside relevant areas
+                    !isClickInsideTypingArea && !isClickInsideToolbar && !isClickInsideSidebar) {
+                    renderTextToCanvas();
                 }
             });
+
+            // --- Page Navigation Event Listeners ---
+            addPageBtn.addEventListener('click', addNewPage);
+            deletePageBtn.addEventListener('click', deleteCurrentPage);
+            prevPageBtn.addEventListener('click', prevPage);
+            nextPageBtn.addEventListener('click', nextPage);
+
+            // --- Image Import Event Listeners ---
+            importImageBtn.addEventListener('click', () => {
+                imageInput.click(); // Trigger file input
+            });
+
+            imageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        addImageToCanvas(event.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+                e.target.value = ''; // Clear input for re-selection
+            });
+
+            // Drag and drop image import
+            canvas.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Allow drop
+                e.stopPropagation();
+                canvas.classList.add('drag-over'); // Optional visual feedback
+            });
+
+            canvas.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                canvas.classList.remove('drag-over');
+            });
+
+            canvas.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                canvas.classList.remove('drag-over');
+
+                const { x, y } = getMousePos(e); // Get drop position on canvas
+
+                const files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    const file = files[0];
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            addImageToCanvas(event.target.result, x, y);
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        alert('Only image files can be dropped here.');
+                    }
+                }
+            });
+
+            // Paste image functionality
+            canvas.addEventListener('paste', (e) => {
+                e.preventDefault();
+                renderTextToCanvas(); // Finalize any active text before paste
+
+                const items = e.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.startsWith('image/')) {
+                        const file = items[i].getAsFile();
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            // Default paste position to center of canvas or where last clicked if in type mode
+                            const pasteX = parseFloat(typingArea.dataset.canvasX) || canvas.width / 2;
+                            const pasteY = parseFloat(typingArea.dataset.canvasY) || canvas.height / 2;
+                            addImageToCanvas(event.target.result, pasteX, pasteY);
+                        };
+                        reader.readAsDataURL(file);
+                        return;
+                    }
+                }
+                // Optional: If no image data, paste as text into textarea if in type mode
+                if (currentMode === 'type' && e.clipboardData.getData('text/plain')) {
+                    if (typingArea.style.display === 'none') {
+                        // Activate typing area if not already
+                        const clickX = parseFloat(typingArea.dataset.canvasX) || canvas.width / 2;
+                        const clickY = parseFloat(typingArea.dataset.canvasY) || canvas.height / 2;
+                        typingArea.style.left = `${clickX}px`;
+                        typingArea.style.top = `${clickY}px`;
+                        typingArea.style.display = 'block';
+                        typingArea.focus();
+                        typingArea.dataset.canvasX = clickX;
+                        typingArea.dataset.canvasY = clickY;
+                        typingArea.style.color = currentTextColor;
+                        typingArea.style.fontSize = currentFontSize + 'px';
+                    }
+                    const start = typingArea.selectionStart;
+                    const end = typingArea.selectionEnd;
+                    typingArea.value = typingArea.value.substring(0, start) + e.clipboardData.getData('text/plain') + typingArea.value.substring(end);
+                    typingArea.selectionStart = typingArea.selectionEnd = start + e.clipboardData.getData('text/plain').length;
+                }
+            });
+
+
+            function addImageToCanvas(imageData, x = 50, y = 50) { // Default position
+                const img = new Image();
+                img.onload = () => {
+                    // Set a default size, e.g., max 200px width, maintaining aspect ratio
+                    let width = img.width;
+                    let height = img.height;
+                    const maxWidth = 200;
+                    if (width > maxWidth) {
+                        height = (maxWidth / width) * height;
+                        width = maxWidth;
+                    }
+
+                    const newImage = {
+                        type: 'image',
+                        src: imageData, // Base64
+                        imgObj: img,   // Image object for drawing
+                        x: x,
+                        y: y,
+                        width: width,
+                        height: height
+                    };
+                    notepadContent.push(newImage);
+                    saveState();
+                    redrawCanvas();
+                    // Automatically select new image for manipulation
+                    selectedImage = newImage;
+                    deselectImageBtn.disabled = false;
+                    redrawCanvas(); // Redraw with handles
+                };
+                img.src = imageData;
+            }
 
             // Adjust canvas size and redraw when window resizes
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
-                    const oldWidth = canvas.width;
-                    const oldHeight = canvas.height;
-                    
-                    canvas.width = canvas.offsetWidth;
-                    canvas.height = canvas.offsetHeight;
-                    
-                    // When resizing, we lose the context state, so simply redraw from structured data
-                    // This is sufficient for simple applications; complex scaling would involve recalculating coordinates
-                    redrawCanvas(); 
+                    const currentWrapperWidth = canvas.parentElement.offsetWidth;
+                    const currentWrapperHeight = canvas.parentElement.offsetHeight;
+
+                    // Only resize canvas if its container size actually changed significantly
+                    if (Math.abs(currentWrapperWidth - lastCanvasWidth) > 5 || Math.abs(currentWrapperHeight - lastCanvasHeight) > 5) {
+                        canvas.width = currentWrapperWidth;
+                        canvas.height = currentWrapperHeight;
+                        lastCanvasWidth = currentWrapperWidth;
+                        lastCanvasHeight = currentWrapperHeight;
+                        
+                        redrawCanvas(); 
+                    }
                 }, 200); // Debounce
             });
-
 
             // Function to update notepad elements for theme changes
             function updateNotepadTheme() {
@@ -1042,7 +1630,6 @@
                 const surfaceColor = getComputedStyle(document.documentElement).getPropertyValue('--surface-color').trim();
                 const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
                 
-                // A simple way to get a color-mix effect for textarea border/background
                 typingArea.style.backgroundColor = isDarkMode 
                     ? `color-mix(in srgb, ${surfaceColor} 80%, ${accentColor} 20%)`
                     : `color-mix(in srgb, ${surfaceColor} 90%, ${accentColor} 10%)`;
@@ -1053,15 +1640,6 @@
                 if (drawModeBtn.classList.contains('active') && (currentDrawColor === 'white' || currentDrawColor === '#2e2e2e')) {
                      currentDrawColor = getCanvasBackgroundColor();
                 }
-            }
-
-            // Load notepad content from localStorage on initial load
-            function loadNotepadContent() {
-                const savedContent = localStorage.getItem('jkm-notepad-content');
-                if (savedContent) {
-                    notepadContent = JSON.parse(savedContent);
-                }
-                saveState(); // Save the initial (loaded or empty) state to history
             }
 
             // Initial setup call
