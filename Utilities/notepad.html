@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    
+    <!-- =================================================================== -->
+    <!-- SEO & META TAGS - FOR PROFESSIONAL ONLINE NOTE PAD PAGE -->
+    <!-- =================================================================== -->
+    <title>JKM Edit - Professional Online Note Pad | Draw & Type, Save Notes</title>
+    <meta name="description" content="JKM Edit offers a free, professional online note pad to draw, type, and manage your thoughts. Features lined paper, multiple colors, drawing tools, keyboard input, save/load notes, and undo/redo. Perfect for digital journaling, sketching, and quick notes. No installation needed."/>
+    <meta name="keywords" content="online notepad, digital notebook, drawing pad, typing pad, free drawing tool, lined paper, sketchpad, online journaling, note-taking app, jkm edit, creative tool, productivity tool, web notepad, save notes, load notes, undo redo drawing"/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="robots" content="index, follow"/>
+	<meta name="google-site-verification" content="Ro_iz55zO9NB6h6tSokRnkEdbj5Z8MQN1Ig6Yrmmh88" />
+    <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/Utilities/notepad.html"/>
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Open Graph Meta Tags (for Facebook, LinkedIn, etc.) -->
+    <meta property="og:title" content="JKM Edit - Professional Online Note Pad"/>
+    <meta property="og:description" content="A free, feature-rich online note pad allowing users to draw and type on lined paper, save/load notes, and easily manage their digital thoughts. Secure, fast, and easy to use."/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/Utilities/notepad.html"/>
+    <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <meta property="og:site_name" content="JKM Edit"/>
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="JKM Edit - Professional Online Note Pad"/>
+    <meta name="twitter:description" content="A free, feature-rich online note pad allowing users to draw and type on lined paper, save/load notes, and easily manage their digital thoughts. Secure, fast, and easy to use."/>
+    <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <meta name="twitter:creator" content="@JKM_Edit" /> <!-- Optional: Replace with your Twitter handle if applicable -->
+    <!-- =================================================================== -->
+
+    <!-- SCRIPT TO PREVENT THEME FLICKERING - MUST BE IN <HEAD> -->
+    <script>
+        (function() {
+            // This script runs before the DOM is painted.
+            try {
+                // 1. Get theme from localStorage or use the default
+                const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
+                document.documentElement.setAttribute('data-theme', theme);
+
+                // 2. Get mode from localStorage and apply 'dark-mode' class to <html> if needed
+                const mode = localStorage.getItem('jkm-edit-mode');
+                if (mode === 'dark') {
+                    document.documentElement.classList.add('dark-mode');
+                }
+            } catch (e) {
+                console.error("Error applying initial theme:", e);
+            }
+        })();
+    </script>
+    
+    <!-- Link to Google Fonts and Font Awesome -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+    <!-- All CSS styles are placed here for a single-file structure -->
+    <style>
+        /* --- Basic Setup & Variables --- */
+        :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
+        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- THEME DEFINITIONS --- */
+        [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
+        [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
+        [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
+        [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-gradient(45deg, #4a00e0, #8e2de2); }
+        [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
+        [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
+        [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
+        [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
+
+        /* --- DARK MODE (Applied to <html> tag now) --- */
+        html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
+        html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
+        html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
+
+        /* --- Header & Navigation --- */
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 100; position: relative; }
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); transition: color var(--transition-speed), text-shadow var(--transition-speed); }
+        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+        .main-nav { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; transition: color var(--transition-speed); }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width var(--transition-speed); }
+        .nav-link:hover { color: var(--primary-color); }
+        .nav-link:hover::after { width: 100%; }
+        .theme-selector { display: flex; align-items: center; gap: 0.5rem; }
+        #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
+        #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
+        #dark-mode-toggle .fa-sun { display: none; }
+        html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
+        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+        /* --- Tool Navigation Dropdown --- */
+        .tool-nav { display: flex; gap: 1rem; margin-left: 2rem; }
+        .tool-nav-item { position: relative; }
+        .tool-nav-button { background: none; border: none; color: var(--text-color); font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; padding: 0.5rem 0.75rem; border-radius: 4px; transition: all var(--transition-speed); }
+        .tool-nav-button:hover { color: var(--primary-color); background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+        .tool-dropdown { position: absolute; top: 100%; left: 0; background-color: var(--surface-color); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; min-width: 200px; display: none; z-index: 1000; padding: 0.5rem 0; border-top: 2px solid var(--primary-color); }
+        .tool-nav-item:hover .tool-dropdown { display: block; }
+        .tool-dropdown a { display: block; padding: 0.5rem 1rem; color: var(--text-color); text-decoration: none; transition: background-color var(--transition-speed); }
+        .tool-dropdown a:hover { background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+
+        /* --- Login/Signup Button --- */
+        .auth-buttons { display: flex; gap: 0.5rem; }
+        .auth-button { padding: 0.5rem 1rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all var(--transition-speed); }
+        .login-button { background: none; border: 1px solid var(--primary-color); color: var(--primary-color); }
+        .login-button:hover { background-color: var(--primary-color); color: white; }
+        .signup-button { background-color: var(--primary-color); border: 1px solid var(--primary-color); color: white; }
+        .signup-button:hover { background-color: var(--secondary-color); border-color: var(--secondary-color); }
+
+        /* --- Main Dashboard & Content Area --- */
+        .dashboard-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
+        .dashboard-header { text-align: center; margin-bottom: 3rem; }
+        .dashboard-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .dashboard-header p { font-size: 1.1rem; color: #6c757d; }
+        html.dark-mode .dashboard-header p { color: #a0a0a0; }
+        
+        /* --- Notepad Specific Styles --- */
+        .notepad-container {
+            background-color: var(--surface-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .notepad-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--bg-color); /* Light line below toolbar */
+        }
+        html.dark-mode .notepad-toolbar {
+            border-bottom-color: var(--surface-color);
+        }
+
+        .notepad-toolbar button, .notepad-toolbar select, .notepad-toolbar input[type="color"], .notepad-toolbar input[type="range"] {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .notepad-toolbar button:hover, .notepad-toolbar select:hover, .notepad-toolbar input[type="color"]:hover, .notepad-toolbar input[type="range"]:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 10%, transparent);
+            color: var(--primary-color);
+        }
+
+        .notepad-toolbar button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .notepad-toolbar label {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+            white-space: nowrap;
+        }
+        .notepad-toolbar input[type="color"] {
+            width: 40px;
+            height: 30px;
+            padding: 0;
+            border: none;
+            cursor: pointer;
+            background: none;
+        }
+        .notepad-toolbar input[type="range"] {
+            width: 80px;
+            vertical-align: middle;
+            -webkit-appearance: none;
+            height: 4px;
+            background: var(--primary-color);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+        .notepad-toolbar input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            cursor: pointer;
+        }
+        .notepad-toolbar input[type="range"]::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        #notepadCanvas {
+            border: 1px solid var(--bg-color);
+            background-color: white; /* Canvas background should be white for contrast with lines */
+            cursor: crosshair;
+            margin-top: 1rem;
+            flex-grow: 1; /* Allows canvas to take available space */
+            touch-action: none; /* Prevent browser touch gestures on canvas */
+        }
+        html.dark-mode #notepadCanvas {
+            border-color: #333;
+            background-color: #2e2e2e; /* Darker background for dark mode canvas */
+        }
+
+        #typingArea {
+            position: absolute;
+            resize: both; /* Allow resizing the textarea */
+            overflow: auto;
+            border: 1px dashed var(--accent-color);
+            background-color: color-mix(in srgb, var(--surface-color) 90%, var(--accent-color) 10%);
+            color: var(--text-color);
+            padding: 5px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            display: none; /* Hidden by default */
+            z-index: 999; /* Above canvas, below modals */
+        }
+        html.dark-mode #typingArea {
+            background-color: color-mix(in srgb, var(--surface-color) 80%, var(--accent-color) 20%);
+        }
+
+        .back-to-dashboard-btn { display: inline-block; margin-top: 3rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+
+        /* Modal specific styles - ensuring they are hidden by default */
+        .modal { 
+            display: none; /* Crucial: Hides the modal by default */
+            position: fixed; 
+            z-index: 1001; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.6); 
+            backdrop-filter: blur(5px); 
+            animation: fadeInModal 0.3s; 
+        }
+        .modal.show-modal { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .modal-content { 
+            background-color: var(--surface-color); 
+            margin: auto; 
+            padding: 30px; 
+            border-top: 5px solid var(--primary-color); 
+            border-radius: 8px; 
+            width: 90%; 
+            max-width: 500px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2); 
+            position: relative; 
+            animation: slideIn 0.4s ease-out; 
+        }
+        .close-btn { 
+            color: #aaa; 
+            position: absolute; 
+            top: 10px; 
+            right: 20px; 
+            font-size: 28px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        .close-btn:hover,.close-btn:focus { 
+            color: var(--text-color); 
+        }
+        .modal-content h2 { 
+            color: var(--primary-color); 
+            margin-top: 0; 
+        }
+        .contact-email { 
+            display: inline-block; 
+            margin-top: 1rem; 
+            padding: 0.75rem 1.5rem; 
+            background: var(--gradient); 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-weight: 600; 
+            transition: transform 0.2s; 
+        }
+        .contact-email:hover { 
+            transform: scale(1.05); 
+        }
+
+        /* Page transition animations */
+        body { animation: fadeInPage 0.5s ease-in-out; }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+            .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
+            .dashboard-container { padding: 2rem 1.5rem; }
+        }
+        @media (max-width: 768px) {
+            .main-nav { flex-wrap: wrap; justify-content: center; }
+            .tool-nav { gap: 0.5rem; }
+            .tool-nav-button { font-size: 0.9rem; padding: 0.4rem 0.6rem; }
+            .auth-buttons { margin-top: 0.5rem; }
+            .notepad-toolbar { justify-content: center; }
+        }
+        @media (max-width: 480px) {
+            .notepad-toolbar button, .notepad-toolbar select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class='main-header'>
+        <div style="display: flex; align-items: center;">
+            <div class='logo-container'>
+                <a href='https://jkmpdf.github.io/JKMEDIT/#' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
+                    <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
+                    <h1>JKM Edit - By M&M</h1>
+                </a>
+            </div>
+            
+            <!-- Tool Navigation -->
+            <nav class='tool-nav'>
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>PDF Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='Pdf-tools/merge-pdf.html'>Merge PDF</a>
+                        <a href='Pdf-tools/split-pdf.html'>Split PDF</a>
+                        <a href='Pdf-tools/compress-pdf.html'>Compress PDF</a>
+                        <a href='Pdf-tools/pdf-to-ocr-word.html'>PDF to Word</a>
+                        <a href='Pdf-tools/pdf-to-powerpoint.html'>PDF to Power Point</a>
+                        <a href='Pdf-tools/pdf-to-excel.html'>PDF to Excel</a>
+                        <a href='Pdf-tools/pdf-to-image.html'>PDF to JPG/PNG</a>
+                        <a href='Pdf-tools/word-to-pdf.html'>Word to PDF</a>
+                        <a href='pdf-tools.html#function9'>Powerpoint to PDF</a>
+                        <a href='Pdf-tools/excel-to-pdf.html'>Excel to PDF</a>
+                        <a href='Pdf-tools/image-to-pdf.html'>JPG/PNG to PDF</a>
+                        <a href='Pdf-tools/sign-pdf.html'>Sign PDF</a>
+                        <a href='Pdf-tools/add-page-numbers.html'>Add Page Numbers</a>
+                        <a href='Pdf-tools/rotate-pdf.html'>Rotate PDF</a>
+                        <a href='Pdf-tools/protect-pdf.html'>Protect PDF</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Video Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='Video-Tools.html#function1'>Trim/Cut Video</a>
+                        <a href='Video-Tools.html#function2'>Merge Video</a>
+                        <a href='Video-Tools.html#function3'>Video to MP3</a>
+                        <a href='Video-Tools.html#function4'>Video Compressor</a>
+                        <a href='Video-Tools.html#function5'>Video to GIF Convertor</a>
+                        <a href='Video-Tools.html#function6'>Add Subtitles to Video</a>
+                        <a href='Video-Tools.html#function7'>Change Video Speed</a>
+                        <a href='Video-Tools.html#function8'>Video to Image Frames</a>
+                        <a href='Video-Tools.html#function9'>Other Tools</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Files Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='File-Tools.html#function1'>File Convertor</a>
+                        <a href='File-Tools.html#function2'>ZIP/RAR Creator & Extrator</a>
+                        <a href='File-Tools.html#function3'>File Splitter & Joiner</a>
+                        <a href='File-Tools.html#function4'>Batch Rename File</a>
+                        <a href='File-Tools.html#function5'>File Size Reducer</a>
+                        <a href='File-Tools.html#function6'>Secure File Share</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Utilities</button>
+                    <div class='tool-dropdown'>
+                        <a href='Utilities/Text-Case-Converter.html'>Text Case Converter</a>
+                        <a href='Utilities/Income-Expenses-Tracker.html'>Income & Expenses Tracker</a>
+                        <a href='Utilities/Calculator.html'>Calculator</a>
+                        <a href='Utilities/qr-code-generator.html'>QR Code Generator & Extrater</a>
+                        <a href='Utilities.html#function5'>Barcode Generator</a>
+                        <a href='Utilities/currency-converter.html'>Currency Converter</a>
+                        <a href='Utilities/notepad.html'>Online Notepad/Clipboard</a> <!-- Link to THIS new page -->
+                        <a href='Utilities.html#function8'>Screen Recoder</a>
+                        <a href='Utilities.html#function9'>Unit Converter</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        
+        <nav class='main-nav'>
+            <div class='theme-selector'>
+                <label for='theme-picker'>Theme:</label>
+                <select id='theme-picker'>
+                    <option value='corporate-blue' selected='selected'>Corporate Blue</option>
+                    <option value='forest-green'>Forest Green</option>
+                    <option value='sunset-gradient'>Sunset Gradient</option>
+                    <option value='tech-noir'>Tech Noir</option>
+                    <option value='minty-fresh'>Minty Fresh</option>
+                    <option value='royal-purple'>Royal Purple</option>
+                    <option value='graphite-gray'>Graphite Gray</option>
+                    <option value='crimson-red'>Crimson Red</option>
+                </select>
+            </div>
+            <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'>
+                <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
+            </button>
+            <a href='#' id='about-btn' class='nav-link'>About</a>
+            <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
+            
+            <!-- Login/Signup Buttons -->
+            <div class='auth-buttons'>
+                <button class='auth-button login-button'>Login</button>
+                <button class='auth-button signup-button'>Sign Up</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class='dashboard-container'>
+        <div class='dashboard-header'>
+            <h2>Professional Online Note Pad</h2>
+            <p>Draw, type, and organize your thoughts on a digital lined board.</p>
+        </div>
+
+        <div class="notepad-container">
+            <div class="notepad-toolbar">
+                <button id="drawModeBtn" class="active"><i class="fa-solid fa-pencil"></i> Draw</button>
+                <button id="typeModeBtn"><i class="fa-solid fa-keyboard"></i> Type</button>
+                
+                <label for="drawColor">Draw Color:</label>
+                <input type="color" id="drawColor" value="#000000">
+                <label for="drawWidth">Size:</label>
+                <input type="range" id="drawWidth" min="1" max="10" value="2">
+                
+                <button id="eraserBtn"><i class="fa-solid fa-eraser"></i> Eraser</button>
+                
+                <label for="textColor">Text Color:</label>
+                <input type="color" id="textColor" value="#000000">
+                <label for="fontSize">Font Size:</label>
+                <select id="fontSize">
+                    <option value="12px">12px</option>
+                    <option value="14px">14px</option>
+                    <option value="16px" selected>16px</option>
+                    <option value="18px">18px</option>
+                    <option value="24px">24px</option>
+                </select>
+
+                <button id="undoBtn"><i class="fa-solid fa-rotate-left"></i> Undo</button>
+                <button id="redoBtn"><i class="fa-solid fa-rotate-right"></i> Redo</button>
+                <button id="clearBtn"><i class="fa-solid fa-trash-can"></i> Clear</button>
+                <button id="saveBtn"><i class="fa-solid fa-save"></i> Save Note</button>
+                <button id="loadBtn"><i class="fa-solid fa-folder-open"></i> Load Note</button>
+            </div>
+
+            <canvas id="notepadCanvas" width="800" height="600"></canvas>
+            <textarea id="typingArea" rows="4" cols="50"></textarea>
+        </div>
+
+        <div style='text-align: center; margin-top: 3rem;'>
+            <a href='https://jkmpdf.github.io/JKMEDIT/' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+        </div>
+    </main>
+    
+    <!-- Modals: These HTML structures must exist on the page for the header buttons to open them. -->
+    <!-- They are hidden by default via CSS (.modal { display: none; }) and only shown when triggered. -->
+    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation, offering a secure, fast, and free suite of tools for PDF, video, file management, and various utilities. Our platform is designed to be accessible from any device, anywhere, without requiring any software installation.</p></div></div>
+    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>If you have any questions, feedback, or require support, please don't hesitate to reach out to us. We value your input and are here to assist you.</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
+
+    <!-- [START] --- DEFINITIVE FIX FOR PAGE TRANSITIONS --- -->
+    <script>
+        // FIX FOR BFCACHE: This ensures the page is visible when navigating back.
+        window.addEventListener('pageshow', function (event) {
+            // event.persisted is true if the page was restored from the back-forward cache.
+            if (event.persisted) {
+                // Remove the fade-out class to make the page visible again.
+                document.body.classList.remove('fade-out');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- General UI Logic (from main page) ---
+            const aboutModal = document.getElementById('about-modal');
+            const contactModal = document.getElementById('contact-modal');
+            const aboutBtn = document.getElementById('about-btn');
+            const contactBtn = document.getElementById('contact-btn');
+            const closeBtns = document.querySelectorAll('.close-btn');
+
+            const openModal = (modal) => { modal.classList.add('show-modal'); };
+            const closeModal = (modal) => { modal.classList.remove('show-modal'); };
+
+            if (aboutBtn) aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+            if (contactBtn) contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+            
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    closeModal(aboutModal);
+                    closeModal(contactModal);
+                });
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === aboutModal) closeModal(aboutModal);
+                if (e.target === contactModal) closeModal(contactModal);
+            });
+
+            const themePicker = document.getElementById('theme-picker');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const htmlElement = document.documentElement;
+
+            const setTheme = (theme) => {
+                htmlElement.dataset.theme = theme;
+                localStorage.setItem('jkm-edit-theme', theme);
+                updateNotepadTheme(); // Update notepad elements based on new theme
+            };
+
+            const enableDarkMode = () => {
+                htmlElement.classList.add('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'dark');
+                updateNotepadTheme(); // Update notepad elements for dark mode
+            };
+
+            const disableDarkMode = () => {
+                htmlElement.classList.remove('dark-mode');
+                localStorage.setItem('jkm-edit-mode', 'light');
+                updateNotepadTheme(); // Update notepad elements for light mode
+            };
+
+            themePicker.addEventListener('change', () => setTheme(themePicker.value));
+            darkModeToggle.addEventListener('click', () => {
+                htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+            });
+
+            const savedTheme = localStorage.getItem('jkm-edit-theme');
+            if (savedTheme) {
+                themePicker.value = savedTheme;
+            }
+
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('http') && !linkUrl.startsWith('mailto:') && link.id !== 'about-btn' && link.id !== 'contact-btn') {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault(); 
+                        document.body.classList.add('fade-out');
+                        setTimeout(() => {
+                            window.location.href = this.href;
+                        }, 400); 
+                    });
+                }
+            });
+
+            // Login/Signup button functionality (placeholder)
+            document.querySelectorAll('.auth-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    alert('Login/Signup functionality would be implemented here.');
+                });
+            });
+
+            // --- Notepad Specific Logic ---
+            const canvas = document.getElementById('notepadCanvas');
+            const ctx = canvas.getContext('2d');
+            const typingArea = document.getElementById('typingArea');
+            const drawModeBtn = document.getElementById('drawModeBtn');
+            const typeModeBtn = document.getElementById('typeModeBtn');
+            const drawColorInput = document.getElementById('drawColor');
+            const drawWidthInput = document.getElementById('drawWidth');
+            const eraserBtn = document.getElementById('eraserBtn');
+            const textColorInput = document.getElementById('textColor');
+            const fontSizeSelect = document.getElementById('fontSize');
+            const clearBtn = document.getElementById('clearBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const loadBtn = document.getElementById('loadBtn');
+            const undoBtn = document.getElementById('undoBtn');
+            const redoBtn = document.getElementById('redoBtn');
+
+            let isDrawing = false;
+            let currentDrawColor = drawColorInput.value;
+            let currentDrawWidth = drawWidthInput.value;
+            let currentTextColor = textColorInput.value;
+            let currentFontSize = fontSizeSelect.value;
+            let currentMode = 'draw'; // 'draw' or 'type'
+
+            let startX, startY; // For typing area positioning
+            
+            // Undo/Redo state management
+            let history = [];
+            let historyPointer = -1;
+
+            // Resize canvas to its actual display size initially
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            // Function to draw lines (lined paper effect)
+            function drawLinedPaper() {
+                const isDarkMode = htmlElement.classList.contains('dark-mode');
+                const lineColor = isDarkMode ? '#444' : '#eee'; // Darker lines for dark mode canvas
+                const lineSpacing = 25; // pixels
+                const startOffset = 20; // Margin from top
+
+                ctx.save(); // Save current context state
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear existing content
+                
+                // Redraw base background color for canvas
+                const canvasBgColor = isDarkMode ? '#2e2e2e' : 'white';
+                ctx.fillStyle = canvasBgColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.strokeStyle = lineColor;
+                ctx.lineWidth = 1;
+
+                for (let i = startOffset; i < canvas.height; i += lineSpacing) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, i);
+                    ctx.lineTo(canvas.width, i);
+                    ctx.stroke();
+                }
+                ctx.restore(); // Restore context state
+            }
+
+            // Function to redraw all stored states
+            function redrawAll() {
+                drawLinedPaper(); // Start with a fresh lined paper background
+
+                if (history[historyPointer]) {
+                    const currentSnapshot = JSON.parse(history[historyPointer]);
+                    
+                    // Draw previous drawings
+                    if (currentSnapshot.drawings) {
+                        currentSnapshot.drawings.forEach(segment => {
+                            if (segment.length > 1) {
+                                ctx.beginPath();
+                                ctx.moveTo(segment[0].x, segment[0].y);
+                                for (let i = 1; i < segment.length; i++) {
+                                    ctx.lineTo(segment[i].x, segment[i].y);
+                                }
+                                ctx.strokeStyle = segment[0].color;
+                                ctx.lineWidth = segment[0].width;
+                                ctx.lineCap = 'round';
+                                ctx.lineJoin = 'round';
+                                ctx.stroke();
+                            }
+                        });
+                    }
+
+                    // Draw previous text
+                    if (currentSnapshot.texts) {
+                        currentSnapshot.texts.forEach(textObj => {
+                            ctx.fillStyle = textObj.color;
+                            ctx.font = `${textObj.size} Poppins, sans-serif`;
+                            ctx.textBaseline = 'top';
+                            ctx.fillText(textObj.text, textObj.x, textObj.y);
+                        });
+                    }
+                }
+                updateUndoRedoButtons();
+            }
+
+            // Save the current canvas state for undo/redo
+            function saveState() {
+                if (historyPointer < history.length - 1) {
+                    history = history.slice(0, historyPointer + 1);
+                }
+                
+                // Get current canvas content (drawing + text objects)
+                const currentDrawings = getCurrentDrawings(); // Assuming you have a way to extract drawing data
+                const currentTexts = getCurrentTexts(); // Assuming you have a way to extract text data
+
+                history.push(JSON.stringify({
+                    drawings: currentDrawings,
+                    texts: currentTexts,
+                    imageData: canvas.toDataURL() // Also save the full image data for simpler redraw if needed
+                }));
+                historyPointer++;
+                updateUndoRedoButtons();
+            }
+
+            // Placeholder functions to get/set drawing and text data
+            // In a real application, you'd track drawing strokes and text entries as objects
+            // For simplicity here, saveState will actually save the canvas image data directly for undo/redo
+            // And load/save functions will manage a more structured data format.
+
+            // Initialize the canvas and draw lines
+            drawLinedPaper();
+            let currentDrawingPath = []; // Stores points for the current stroke
+
+            // --- Event Listeners for Drawing ---
+            function getMousePos(event) {
+                const rect = canvas.getBoundingClientRect();
+                return {
+                    x: (event.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+                    y: (event.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+                };
+            }
+
+            function startDrawing(e) {
+                if (currentMode !== 'draw') return;
+                isDrawing = true;
+                const { x, y } = getMousePos(e);
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                currentDrawingPath = [{ x, y, color: currentDrawColor, width: currentDrawWidth }];
+            }
+
+            function draw(e) {
+                if (!isDrawing || currentMode !== 'draw') return;
+                const { x, y } = getMousePos(e);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = currentDrawColor;
+                ctx.lineWidth = currentDrawWidth;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+                currentDrawingPath.push({ x, y });
+            }
+
+            function stopDrawing() {
+                if (isDrawing && currentMode === 'draw') {
+                    isDrawing = false;
+                    // Add currentDrawingPath to a global data structure that tracks all drawings
+                    // For now, let's just save the full canvas state
+                    saveSnapshot();
+                }
+            }
+            
+            // To make undo/redo work, we need to store drawing actions as objects, not just image snapshots.
+            // Let's create a simpler drawing history where each entry is a full canvas image.
+            // This is less efficient but easier to implement for a single file.
+            
+            let canvasStates = [];
+            let currentStateIndex = -1;
+
+            function saveCanvasState() {
+                currentStateIndex++;
+                if (currentStateIndex < canvasStates.length) {
+                    canvasStates.length = currentStateIndex; // Truncate redo history
+                }
+                canvasStates.push(canvas.toDataURL());
+                updateUndoRedoButtons();
+            }
+
+            function restoreCanvasState() {
+                if (currentStateIndex >= 0 && canvasStates[currentStateIndex]) {
+                    const img = new Image();
+                    img.onload = () => {
+                        drawLinedPaper(); // Redraw lines first
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = canvasStates[currentStateIndex];
+                } else {
+                    drawLinedPaper(); // If no state, just show empty lined paper
+                }
+                updateUndoRedoButtons();
+            }
+
+            function updateUndoRedoButtons() {
+                undoBtn.disabled = currentStateIndex <= 0;
+                redoBtn.disabled = currentStateIndex >= canvasStates.length - 1;
+            }
+
+            canvas.addEventListener('mousedown', (e) => {
+                if (currentMode === 'draw') {
+                    isDrawing = true;
+                    const { x, y } = getMousePos(e);
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                } else if (currentMode === 'type') {
+                    // Hide typing area if clicking elsewhere on canvas in type mode
+                    if (typingArea.style.display === 'block') {
+                        renderTextToCanvas();
+                    }
+                    const { x, y } = getMousePos(e);
+                    typingArea.style.left = `${e.clientX}px`;
+                    typingArea.style.top = `${e.clientY}px`;
+                    typingArea.style.display = 'block';
+                    typingArea.focus();
+                    typingArea.dataset.x = x; // Store canvas coordinates
+                    typingArea.dataset.y = y;
+                }
+            });
+            canvas.addEventListener('mousemove', (e) => {
+                if (isDrawing && currentMode === 'draw') {
+                    const { x, y } = getMousePos(e);
+                    ctx.lineTo(x, y);
+                    ctx.strokeStyle = currentDrawColor;
+                    ctx.lineWidth = currentDrawWidth;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.stroke();
+                }
+            });
+            canvas.addEventListener('mouseup', () => {
+                if (isDrawing && currentMode === 'draw') {
+                    isDrawing = false;
+                    saveCanvasState(); // Save state after a drawing stroke is complete
+                }
+            });
+            canvas.addEventListener('mouseout', () => {
+                if (isDrawing && currentMode === 'draw') {
+                    isDrawing = false;
+                    saveCanvasState(); // Save state if mouse leaves canvas while drawing
+                }
+            });
+
+            // --- Event Listeners for Controls ---
+            drawModeBtn.addEventListener('click', () => {
+                currentMode = 'draw';
+                drawModeBtn.classList.add('active');
+                typeModeBtn.classList.remove('active');
+                renderTextToCanvas(); // Render any pending text
+                canvas.style.cursor = 'crosshair';
+            });
+
+            typeModeBtn.addEventListener('click', () => {
+                currentMode = 'type';
+                typeModeBtn.classList.add('active');
+                drawModeBtn.classList.remove('active');
+                canvas.style.cursor = 'text';
+            });
+
+            drawColorInput.addEventListener('change', (e) => {
+                currentDrawColor = e.target.value;
+            });
+
+            drawWidthInput.addEventListener('change', (e) => {
+                currentDrawWidth = e.target.value;
+            });
+
+            eraserBtn.addEventListener('click', () => {
+                currentMode = 'draw'; // Eraser is a drawing tool
+                drawModeBtn.classList.add('active');
+                typeModeBtn.classList.remove('active');
+                renderTextToCanvas();
+                currentDrawColor = htmlElement.classList.contains('dark-mode') ? '#2e2e2e' : 'white'; // Eraser color matches canvas background
+                drawColorInput.value = currentDrawColor; // Update color picker to show eraser color
+                canvas.style.cursor = 'cell'; // Eraser cursor
+            });
+
+            textColorInput.addEventListener('change', (e) => {
+                currentTextColor = e.target.value;
+                typingArea.style.color = currentTextColor;
+            });
+
+            fontSizeSelect.addEventListener('change', (e) => {
+                currentFontSize = e.target.value;
+                typingArea.style.fontSize = currentFontSize;
+            });
+
+            clearBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear the entire note?')) {
+                    drawLinedPaper();
+                    canvasStates = [];
+                    currentStateIndex = -1;
+                    typingArea.value = '';
+                    typingArea.style.display = 'none';
+                    saveCanvasState(); // Save an empty state
+                }
+            });
+
+            saveBtn.addEventListener('click', () => {
+                renderTextToCanvas(); // Ensure any active text is rendered
+                const data = JSON.stringify({
+                    imageData: canvas.toDataURL(),
+                    // In a more advanced version, you'd save structured data, not just image.
+                    // For this example, we save the last image and will load that.
+                    // This is simpler for full canvas restoration.
+                });
+                localStorage.setItem('jkm-notepad-data', data);
+                alert('Note saved!');
+            });
+
+            loadBtn.addEventListener('click', () => {
+                const savedData = localStorage.getItem('jkm-notepad-data');
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    const img = new Image();
+                    img.onload = () => {
+                        drawLinedPaper(); // Start with fresh lines
+                        ctx.drawImage(img, 0, 0);
+                        // After loading, clear history and save this loaded state
+                        canvasStates = [];
+                        currentStateIndex = -1;
+                        saveCanvasState();
+                    };
+                    img.src = data.imageData;
+                    alert('Note loaded!');
+                } else {
+                    alert('No saved note found!');
+                }
+            });
+
+            undoBtn.addEventListener('click', () => {
+                if (currentStateIndex > 0) {
+                    currentStateIndex--;
+                    restoreCanvasState();
+                }
+            });
+
+            redoBtn.addEventListener('click', () => {
+                if (currentStateIndex < canvasStates.length - 1) {
+                    currentStateIndex++;
+                    restoreCanvasState();
+                }
+            });
+
+            // --- Typing Area Logic ---
+            function renderTextToCanvas() {
+                if (typingArea.style.display === 'block' && typingArea.value.trim() !== '') {
+                    const text = typingArea.value;
+                    const x = parseFloat(typingArea.dataset.x);
+                    const y = parseFloat(typingArea.dataset.y);
+                    const color = typingArea.style.color || currentTextColor;
+                    const fontSize = typingArea.style.fontSize || currentFontSize;
+                    
+                    ctx.fillStyle = color;
+                    ctx.font = `${fontSize} Poppins, sans-serif`;
+                    ctx.textBaseline = 'top'; // Align text with the top of the line
+                    
+                    const lines = text.split('\n');
+                    let currentY = y;
+                    for (let i = 0; i < lines.length; i++) {
+                        ctx.fillText(lines[i], x, currentY);
+                        currentY += parseFloat(fontSize); // Move down for next line
+                    }
+                    typingArea.value = '';
+                    saveCanvasState(); // Save state after text is rendered
+                }
+                typingArea.style.display = 'none';
+            }
+
+            // Hide typing area if clicking outside it (on the main document, but not on toolbar or other interactive elements)
+            document.addEventListener('click', (e) => {
+                const isClickInsideCanvas = canvas.contains(e.target);
+                const isClickInsideTypingArea = typingArea.contains(e.target);
+                const isClickInsideToolbar = document.querySelector('.notepad-toolbar').contains(e.target);
+
+                if (currentMode === 'type' && typingArea.style.display === 'block' && 
+                    !isClickInsideTypingArea && !isClickInsideToolbar && isClickInsideCanvas) {
+                    renderTextToCanvas();
+                }
+            });
+
+            // Initial save of empty state
+            saveCanvasState();
+
+            // Function to update notepad elements for theme changes
+            function updateNotepadTheme() {
+                // Redraw lined paper based on current theme/mode
+                redrawAll(); 
+                // Adjust typing area colors if needed
+                const isDarkMode = htmlElement.classList.contains('dark-mode');
+                typingArea.style.backgroundColor = isDarkMode ? colorMixer(getComputedStyle(htmlElement).getPropertyValue('--surface-color').trim(), getComputedStyle(htmlElement).getPropertyValue('--accent-color').trim(), 80) : colorMixer('white', getComputedStyle(htmlElement).getPropertyValue('--accent-color').trim(), 90);
+                typingArea.style.color = getComputedStyle(htmlElement).getPropertyValue('--text-color').trim();
+            }
+
+            // Simple color mixer (for dynamic background colors in typingArea)
+            function colorMixer(color1, color2, percentage) {
+                const p = percentage / 100;
+                const f = p < 0 ? p * -1 : p;
+                const c = (c1, c2) => Math.round(c1 * (1 - f) + c2 * f);
+                
+                const hexToRgb = hex => {
+                    const bigint = parseInt(hex.slice(1), 16);
+                    return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+                };
+                const rgbToHex = (r, g, b) => '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+
+                const rgb1 = hexToRgb(color1);
+                const rgb2 = hexToRgb(color2);
+
+                return rgbToHex(c(rgb1.r, rgb2.r), c(rgb1.g, rgb2.g), c(rgb1.b, rgb2.b));
+            }
+
+            // Initial update for notepad colors based on current theme
+            updateNotepadTheme();
+        });
+    </script>
+    <!-- [END] --- DEFINITIVE FIX --- -->
+</body>
+</html>
