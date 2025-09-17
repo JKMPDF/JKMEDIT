@@ -7,50 +7,64 @@
     <!-- =================================================================== -->
     <!-- SEO & META TAGS - FOR VIDEO TOOLS PAGE -->
     <!-- =================================================================== -->
-    <title>Free Online Video Tools - Trim, Merge, Convert & More | JKM Edit</title>
-    <meta name="description" content="A complete suite of free online video tools by JKM Edit. Trim, cut, merge, compress, convert video to MP3 or GIF, add subtitles, and change video speed. Fast, free, and no installation required."/>
-    <meta name="keywords" content="video tools, trim video, merge video, video to mp3, compress video, video to gif, add subtitles, change video speed, video editor, online tools, jkm edit"/>
+    <title>JKM Edit - Free Online Video Tools | Trim, Merge, Convert & More</title>
+    <meta name="description" content="JKM Edit offers a free suite of powerful online video tools. Easily trim, cut, merge, compress, convert video to MP3 or GIF, add subtitles, and change video speed. Secure, fast, and no installation needed."/>
+    <meta name="keywords" content="online video editor, video trimmer, video merger, video converter, video to MP3, video compressor, video to GIF, add subtitles, change video speed, free video tools, JKM Edit, secure video editing"/>
     <meta name="author" content="JKM Edit"/>
     <meta name="robots" content="index, follow"/>
+    <meta name="google-site-verification" content="Ro_iz55zO9NB6h6tSokRnkEdbj5Z8MQN1Ig6Yrmmh88" />
     <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/video-tools.html"/>
-    <meta property="og:title" content="Free Online Video Tools - Trim, Merge, Convert & More | JKM Edit"/>
-    <meta property="og:description" content="A complete suite of free online video tools. Trim, merge, convert video to MP3, compress video files, and much more."/>
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Open Graph Meta Tags (for Facebook, LinkedIn, etc.) -->
+    <meta property="og:title" content="JKM Edit - Free Online Video Tools"/>
+    <meta property="og:description" content="The ultimate suite of free online video tools for trimming, merging, converting, compressing, and more. Secure, fast, and easy to use."/>
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/video-tools.html"/>
     <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <meta property="og:site_name" content="JKM Edit"/>
+
+    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="Free Online Video Tools - Trim, Merge, Convert & More | JKM Edit"/>
-    <meta name="twitter:description" content="A complete suite of free online video tools. Trim, merge, convert video to MP3, compress video files, and much more."/>
+    <meta name="twitter:title" content="JKM Edit - Free Online Video Tools"/>
+    <meta name="twitter:description" content="The ultimate suite of free online video tools for trimming, merging, converting, compressing, and more. Secure, fast, and easy to use."/>
     <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+    <meta name="twitter:creator" content="@JKM_Edit" /> <!-- Optional: Replace with your Twitter handle if applicable -->
     <!-- =================================================================== -->
 
-    <!-- SCRIPT TO PREVENT THEME AND BACKGROUND FLICKERING (KEEP THIS) -->
+    <!-- SCRIPT TO PREVENT THEME FLICKERING - MUST BE IN <HEAD> -->
     <script>
         (function() {
+            // This script runs before the DOM is painted.
             try {
-                const themeBgColors = {
-                    'corporate-blue': { light: '#f4f5f7', dark: '#121212' },'forest-green':   { light: '#f0f3f2', dark: '#121212' },'sunset-gradient':{ light: '#fff8f2', dark: '#121212' },'tech-noir':      { light: '#1a1a2e', dark: '#0f0f1e' },'minty-fresh':    { light: '#f1fefb', dark: '#121212' },'royal-purple':   { light: '#f8f7fa', dark: '#121212' },'graphite-gray':  { light: '#e9ecef', dark: '#121212' },'crimson-red':    { light: '#fdf5f6', dark: '#121212' }
-                };
+                // 1. Get theme from localStorage or use the default
                 const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
-                const mode = localStorage.getItem('jkm-edit-mode') || 'light';
                 document.documentElement.setAttribute('data-theme', theme);
-                if (mode === 'dark') { document.documentElement.classList.add('dark-mode'); }
-                const bgColor = (themeBgColors[theme] && themeBgColors[theme][mode]) || '#f4f5f7';
-                const style = document.createElement('style');
-                style.innerHTML = `html { background-color: ${bgColor} !important; }`;
-                document.head.appendChild(style);
-            } catch (e) { console.error("Error applying initial theme:", e); }
+
+                // 2. Get mode from localStorage and apply 'dark-mode' class to <html> if needed
+                const mode = localStorage.getItem('jkm-edit-mode');
+                if (mode === 'dark') {
+                    document.documentElement.classList.add('dark-mode');
+                }
+            } catch (e) {
+                console.error("Error applying initial theme:", e);
+            }
         })();
     </script>
     
+    <!-- Link to Google Fonts and Font Awesome -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
+    <!-- All CSS styles are placed here for a single-file structure -->
     <style>
+        /* --- Basic Setup & Variables --- */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
-        html { background-color: var(--bg-color); transition: background-color var(--transition-speed); }
-        body { margin: 0; color: var(--text-color); transition: color var(--transition-speed); }
+        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
         *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- THEME DEFINITIONS --- */
         [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
         [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
         [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
@@ -59,9 +73,13 @@
         [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
         [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
         [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
+
+        /* --- DARK MODE (Applied to <html> tag now) --- */
         html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
         html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
         html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
+
+        /* --- Header & Navigation --- */
         .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 100; position: relative; }
         .logo-container { display: flex; align-items: center; gap: 0.75rem; }
         .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); transition: color var(--transition-speed), text-shadow var(--transition-speed); }
@@ -77,6 +95,26 @@
         #dark-mode-toggle .fa-sun { display: none; }
         html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
         html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+        /* --- Tool Navigation Dropdown --- */
+        .tool-nav { display: flex; gap: 1rem; margin-left: 2rem; }
+        .tool-nav-item { position: relative; }
+        .tool-nav-button { background: none; border: none; color: var(--text-color); font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; padding: 0.5rem 0.75rem; border-radius: 4px; transition: all var(--transition-speed); }
+        .tool-nav-button:hover { color: var(--primary-color); background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+        .tool-dropdown { position: absolute; top: 100%; left: 0; background-color: var(--surface-color); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; min-width: 200px; display: none; z-index: 1000; padding: 0.5rem 0; border-top: 2px solid var(--primary-color); }
+        .tool-nav-item:hover .tool-dropdown { display: block; }
+        .tool-dropdown a { display: block; padding: 0.5rem 1rem; color: var(--text-color); text-decoration: none; transition: background-color var(--transition-speed); }
+        .tool-dropdown a:hover { background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+
+        /* --- Login/Signup Button --- */
+        .auth-buttons { display: flex; gap: 0.5rem; }
+        .auth-button { padding: 0.5rem 1rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all var(--transition-speed); }
+        .login-button { background: none; border: 1px solid var(--primary-color); color: var(--primary-color); }
+        .login-button:hover { background-color: var(--primary-color); color: white; }
+        .signup-button { background-color: var(--primary-color); border: 1px solid var(--primary-color); color: white; }
+        .signup-button:hover { background-color: var(--secondary-color); border-color: var(--secondary-color); }
+
+        /* --- Main Dashboard & Content Area --- */
         .dashboard-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
         .dashboard-header { text-align: center; margin-bottom: 3rem; }
         .dashboard-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -89,16 +127,24 @@
         .tool-card h3 { margin: 0.5rem 0; font-size: 1.5rem; }
         .tool-card p { font-size: 0.9rem; line-height: 1.5; color: #6c757d; }
         html.dark-mode .tool-card p { color: #a0a0a0; }
-        .function-grid { grid-template-columns: repeat(3, 1fr); }
-        @media (max-width: 992px) { .function-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 576px) { .function-grid { grid-template-columns: 1fr; } }
-        .back-to-dashboard-btn { display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        
+        /* --- Ad Box Style --- */
         .ad-card { border: 2px dashed var(--accent-color); background-color: color-mix(in srgb, var(--surface-color) 95%, var(--accent-color) 5%); justify-content: center; align-items: center; min-height: 230px; }
         html.dark-mode .ad-card { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--accent-color) 10%); }
         .ad-card h3, .ad-card p, .ad-card i { display: none; }
         .ad-card:empty::before { content: "Advertisement"; font-size: 1.2rem; font-weight: 600; color: var(--accent-color); opacity: 0.7; }
-        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeInModal 0.3s; }
+        
+        /* --- Services & Modal Styles --- */
+        .services-section { padding: 4rem 2rem; background-color: var(--surface-color); margin-top: 4rem; border-top: 1px solid color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%); }
+        .services-container { max-width: 1100px; margin: auto; text-align: center; }
+        .services-container h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--primary-color); }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; margin-top: 3rem; text-align: left; }
+        .service-item { display: flex; align-items: flex-start; gap: 1rem; }
+        .service-item i { font-size: 1.5rem; color: var(--primary-color); margin-top: 5px; min-width: 25px; }
+        .service-item h4 { margin: 0 0 0.25rem 0; font-size: 1.1rem; }
+        .service-item p { margin: 0; font-size: 0.9rem; color: #6c757d; }
+        html.dark-mode .service-item p { color: #a0a0a0; }
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
         .modal.show-modal { display: flex; align-items: center; justify-content: center; }
         .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
         .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
@@ -106,23 +152,114 @@
         .modal-content h2 { color: var(--primary-color); margin-top: 0; }
         .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
         .contact-email:hover { transform: scale(1.05); }
+        
+        /* --- Function List Styles (for sub-pages like video-tools.html) --- */
+        .function-grid { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 992px) { .function-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .function-grid { grid-template-columns: 1fr; } }
+
+        .back-to-dashboard-btn { display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         body { animation: fadeInPage 0.5s ease-in-out; }
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
-        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @media (max-width: 768px) { .main-header { flex-direction: column; gap: 1rem; } .dashboard-container { padding: 2rem 1.5rem; } }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+            .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
+            .dashboard-container { padding: 2rem 1.5rem; }
+        }
+        @media (max-width: 768px) {
+            .main-nav { flex-wrap: wrap; justify-content: center; }
+            .tool-nav { gap: 0.5rem; }
+            .tool-nav-button { font-size: 0.9rem; padding: 0.4rem 0.6rem; }
+            .auth-buttons { margin-top: 0.5rem; }
+        }
     </style>
 </head>
 <body>
+    <!-- Header Section -->
     <header class='main-header'>
-        <div class='logo-container'>
-            <a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
-                <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
-                <h1>JKM Edit</h1>
-            </a>
+        <div style="display: flex; align-items: center;">
+            <div class='logo-container'>
+                <a href='https://jkmpdf.github.io/JKMEDIT/#' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
+                    <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
+                    <h1>JKM Edit - By M&M</h1>
+                </a>
+            </div>
+            
+            <!-- Tool Navigation -->
+            <nav class='tool-nav'>
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>PDF Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='Pdf-tools/merge-pdf.html'>Merge PDF</a>
+                        <a href='Pdf-tools/split-pdf.html'>Split PDF</a>
+                        <a href='Pdf-tools/compress-pdf.html'>Compress PDF</a>
+                        <a href='Pdf-tools/pdf-to-ocr-word.html'>PDF to Word</a>
+                        <a href='Pdf-tools/pdf-to-powerpoint.html'>PDF to Power Point</a>
+                        <a href='Pdf-tools/pdf-to-excel.html'>PDF to Excel</a>
+                        <a href='Pdf-tools/pdf-to-image.html'>PDF to JPG/PNG</a>
+                        <a href='Pdf-tools/word-to-pdf.html'>Word to PDF</a>
+                        <a href='pdf-tools.html#function9'>Powerpoint to PDF</a>
+                        <a href='Pdf-tools/excel-to-pdf.html'>Excel to PDF</a>
+                        <a href='Pdf-tools/image-to-pdf.html'>JPG/PNG to PDF</a>
+                        <a href='Pdf-tools/sign-pdf.html'>Sign PDF</a>
+                        <a href='Pdf-tools/add-page-numbers.html'>Add Page Numbers</a>
+                        <a href='Pdf-tools/rotate-pdf.html'>Rotate PDF</a>
+                        <a href='Pdf-tools/protect-pdf.html'>Protect PDF</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Video Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='Video-Tools.html#function1'>Trim/Cut Video</a>
+                        <a href='Video-Tools.html#function2'>Merge Video</a>
+                        <a href='Video-Tools.html#function3'>Video to MP3</a>
+                        <a href='Video-Tools.html#function4'>Video Compressor</a>
+                        <a href='Video-Tools.html#function5'>Video to GIF Convertor</a>
+                        <a href='Video-Tools.html#function6'>Add Subtitles to Video</a>
+                        <a href='Video-Tools.html#function7'>Change Video Speed</a>
+                        <a href='Video-Tools.html#function8'>Video to Image Frames</a>
+                        <a href='Video-Tools.html#function9'>Other Tools</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Files Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='File-Tools.html#function1'>File Convertor</a>
+                        <a href='File-Tools.html#function2'>ZIP/RAR Creator & Extrator</a>
+                        <a href='File-Tools.html#function3'>File Splitter & Joiner</a>
+                        <a href='File-Tools.html#function4'>Batch Rename File</a>
+                        <a href='File-Tools.html#function5'>File Size Reducer</a>
+                        <a href='File-Tools.html#function6'>Secure File Share</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Utilities</button>
+                    <div class='tool-dropdown'>
+                        <a href='Utilities/Text-Case-Converter.html'>Text Case Converter</a>
+                        <a href='Utilities/Income-Expenses-Tracker.html'>Income & Expenses Tracker</a>
+                        <a href='Utilities/Calculator.html'>Calculator</a>
+                        <a href='Utilities/qr-code-generator.html'>QR Code Generator & Extrater</a>
+                        <a href='Utilities.html#function5'>Barcode Generator</a>
+                        <a href='Utilities/currency-converter.html'>Currency Converter</a>
+                        <a href='Utilities.html#function7'>Online Notepad/Clipboard</a>
+                        <a href='Utilities.html#function8'>Screen Recoder</a>
+                        <a href='Utilities.html#function9'>Unit Converter</a>
+                    </div>
+                </div>
+            </nav>
         </div>
+        
         <nav class='main-nav'>
             <div class='theme-selector'>
                 <label for='theme-picker'>Theme:</label>
@@ -142,6 +279,12 @@
             </button>
             <a href='#' id='about-btn' class='nav-link'>About</a>
             <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
+            
+            <!-- Login/Signup Buttons -->
+            <div class='auth-buttons'>
+                <button class='auth-button login-button'>Login</button>
+                <button class='auth-button signup-button'>Sign Up</button>
+            </div>
         </nav>
     </header>
 
@@ -274,6 +417,13 @@
             if (savedTheme) {
                 themePicker.value = savedTheme;
             }
+
+            // Login/Signup button functionality (placeholder)
+            document.querySelectorAll('.auth-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    alert('Login/Signup functionality would be implemented here.');
+                });
+            });
 
             document.querySelectorAll('a').forEach(link => {
                 const linkUrl = link.getAttribute('href');
