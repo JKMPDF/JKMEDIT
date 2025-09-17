@@ -7,9 +7,9 @@
     <!-- =================================================================== -->
     <!-- SEO & META TAGS - FOR PROFESSIONAL ONLINE NOTE PAD PAGE -->
     <!-- =================================================================== -->
-    <title>JKM Edit - Professional Online Note Pad | Draw & Type, Save Notes</title>
-    <meta name="description" content="JKM Edit offers a free, professional online note pad to draw, type, and manage your thoughts. Features lined paper, multiple colors, drawing tools, keyboard input, save/load notes, and undo/redo. Perfect for digital journaling, sketching, and quick notes. No installation needed."/>
-    <meta name="keywords" content="online notepad, digital notebook, drawing pad, typing pad, free drawing tool, lined paper, sketchpad, online journaling, note-taking app, jkm edit, creative tool, productivity tool, web notepad, save notes, load notes, undo redo drawing"/>
+    <title>JKM Edit - Professional Online Note Pad | Draw & Type, Save, Export PDF</title>
+    <meta name="description" content="JKM Edit offers a free, professional online note pad to draw, type, and manage your thoughts. Features lined paper, multiple colors, drawing tools, keyboard input, save/load notes, undo/redo, and PDF export. Perfect for digital journaling, sketching, and quick notes. No installation needed."/>
+    <meta name="keywords" content="online notepad, digital notebook, drawing pad, typing pad, free drawing tool, lined paper, sketchpad, online journaling, note-taking app, jkm edit, creative tool, productivity tool, web notepad, save notes, load notes, undo redo drawing, export PDF, download notes"/>
     <meta name="author" content="JKM Edit"/>
     <meta name="robots" content="index, follow"/>
 	<meta name="google-site-verification" content="Ro_iz55zO9NB6h6tSokRnkEdbj5Z8MQN1Ig6Yrmmh88" />
@@ -19,7 +19,7 @@
 
     <!-- Open Graph Meta Tags (for Facebook, LinkedIn, etc.) -->
     <meta property="og:title" content="JKM Edit - Professional Online Note Pad"/>
-    <meta property="og:description" content="A free, feature-rich online note pad allowing users to draw and type on lined paper, save/load notes, and easily manage their digital thoughts. Secure, fast, and easy to use."/>
+    <meta property="og:description" content="A free, feature-rich online note pad allowing users to draw and type on lined paper, save/load notes, undo/redo, and export to PDF. Secure, fast, and easy to use."/>
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/Utilities/notepad.html"/>
     <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
@@ -28,7 +28,7 @@
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="JKM Edit - Professional Online Note Pad"/>
-    <meta name="twitter:description" content="A free, feature-rich online note pad allowing users to draw and type on lined paper, save/load notes, and easily manage their digital thoughts. Secure, fast, and easy to use."/>
+    <meta name="twitter:description" content="A free, feature-rich online note pad allowing users to draw and type on lined paper, save/load notes, undo/redo, and export to PDF. Secure, fast, and easy to use."/>
     <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
     <meta name="twitter:creator" content="@JKM_Edit" /> <!-- Optional: Replace with your Twitter handle if applicable -->
     <!-- =================================================================== -->
@@ -56,6 +56,10 @@
     <!-- Link to Google Fonts and Font Awesome -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+    <!-- jsPDF and html2canvas CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <!-- All CSS styles are placed here for a single-file structure -->
     <style>
@@ -237,6 +241,7 @@
             z-index: 999; /* Above canvas, below modals */
             min-width: 100px; /* Ensure it's not too small to type */
             min-height: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         html.dark-mode #typingArea {
             background-color: color-mix(in srgb, var(--surface-color) 80%, var(--accent-color) 20%);
@@ -461,11 +466,11 @@
                 <input type="color" id="textColor" value="#000000">
                 <label for="fontSize">Font Size:</label>
                 <select id="fontSize">
-                    <option value="12px">12px</option>
-                    <option value="14px">14px</option>
-                    <option value="16px" selected>16px</option>
-                    <option value="18px">18px</option>
-                    <option value="24px">24px</option>
+                    <option value="12">12px</option>
+                    <option value="14">14px</option>
+                    <option value="16" selected>16px</option>
+                    <option value="18">18px</option>
+                    <option value="24">24px</option>
                 </select>
 
                 <button id="undoBtn"><i class="fa-solid fa-rotate-left"></i> Undo</button>
@@ -473,6 +478,7 @@
                 <button id="clearBtn"><i class="fa-solid fa-trash-can"></i> Clear</button>
                 <button id="saveBtn"><i class="fa-solid fa-save"></i> Save Note</button>
                 <button id="loadBtn"><i class="fa-solid fa-folder-open"></i> Load Note</button>
+                <button id="downloadPdfBtn"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
             </div>
 
             <canvas id="notepadCanvas" width="800" height="600"></canvas>
@@ -596,12 +602,13 @@
             const loadBtn = document.getElementById('loadBtn');
             const undoBtn = document.getElementById('undoBtn');
             const redoBtn = document.getElementById('redoBtn');
+            const downloadPdfBtn = document.getElementById('downloadPdfBtn'); // New PDF button
 
             let isDrawing = false;
             let currentDrawColor = drawColorInput.value;
-            let currentDrawWidth = drawWidthInput.value;
+            let currentDrawWidth = parseFloat(drawWidthInput.value);
             let currentTextColor = textColorInput.value;
-            let currentFontSize = parseFloat(fontSizeSelect.value); // Ensure number
+            let currentFontSize = parseFloat(fontSizeSelect.value);
             let currentMode = 'draw'; // 'draw' or 'type'
 
             let notepadContent = []; // Stores structured drawing strokes and text objects
@@ -664,7 +671,7 @@
                 // Draw all text entries
                 notepadContent.filter(item => item.type === 'text').forEach(textItem => {
                     ctx.fillStyle = textItem.color;
-                    ctx.font = `${textItem.fontSize} Poppins, sans-serif`;
+                    ctx.font = `${textItem.fontSize}px Poppins, sans-serif`; // Ensure 'px' unit
                     ctx.textBaseline = 'top'; // Important for snapping to lines
                     
                     const lines = textItem.text.split('\n');
@@ -735,14 +742,17 @@
                     ctx.beginPath();
                     ctx.moveTo(x, y);
                 } else if (currentMode === 'type') {
-                    if (typingArea.style.display === 'block') {
-                        renderTextToCanvas(); // Finalize previous text
+                    // Always finalize previous text before starting a new one
+                    if (typingArea.style.display === 'block' && typingArea.value.trim() !== '') {
+                        renderTextToCanvas();
                     }
                     const { x, y } = getMousePos(e);
                     
                     // Position typing area relative to the viewport
                     typingArea.style.left = `${e.clientX}px`;
                     typingArea.style.top = `${e.clientY}px`;
+                    typingArea.style.width = '200px'; // Initial size for textarea
+                    typingArea.style.height = '100px';
                     typingArea.style.display = 'block';
                     typingArea.value = ''; // Clear previous text
                     typingArea.focus();
@@ -774,15 +784,18 @@
             canvas.addEventListener('mouseup', () => {
                 if (isDrawing && currentMode === 'draw') {
                     isDrawing = false;
-                    notepadContent.push({
-                        type: 'drawing',
-                        color: currentDrawColor,
-                        width: currentDrawWidth,
-                        points: [...currentDrawingPoints] // Deep copy points
-                    });
+                    // Only save a drawing stroke if it has enough points to be meaningful
+                    if (currentDrawingPoints.length > 1) {
+                        notepadContent.push({
+                            type: 'drawing',
+                            color: currentDrawColor,
+                            width: currentDrawWidth,
+                            points: [...currentDrawingPoints] // Deep copy points
+                        });
+                        saveState();
+                        redrawCanvas(); // Redraw to ensure proper layer order (text on top)
+                    }
                     currentDrawingPoints = []; // Reset for next stroke
-                    saveState();
-                    redrawCanvas(); // Redraw to ensure proper layer order (text on top)
                 }
             });
 
@@ -819,8 +832,8 @@
                     canvas.style.cursor = 'text';
                 }
                 // Reset eraser color if switching to a normal draw mode
-                if (mode === 'draw' && drawColorInput.value === getCanvasBackgroundColor()) {
-                    currentDrawColor = '#000000';
+                if (mode === 'draw' && (drawColorInput.value === getCanvasBackgroundColor() || currentDrawColor === getCanvasBackgroundColor())) {
+                    currentDrawColor = '#000000'; // Default black for drawing
                     drawColorInput.value = currentDrawColor;
                 }
             }
@@ -844,9 +857,8 @@
             eraserBtn.addEventListener('click', () => {
                 setMode('draw'); // Eraser is a draw mode
                 currentDrawColor = getCanvasBackgroundColor(); // Eraser color matches canvas background
-                drawColorInput.value = '#000000'; // Visually keep color picker black, but draw color is background
+                // Don't change drawColorInput.value, keep it showing the last selected color or black
                 canvas.style.cursor = 'cell'; // Eraser cursor
-                // Optional: Visually highlight eraser button more distinctly if needed
             });
             
             // Re-apply correct draw color if switching from eraser back to regular drawing
@@ -904,6 +916,7 @@
             });
 
             undoBtn.addEventListener('click', () => {
+                renderTextToCanvas(); // Commit any active text before undo
                 if (historyPointer > 0) {
                     historyPointer--;
                     restoreState(historyPointer);
@@ -911,11 +924,47 @@
             });
 
             redoBtn.addEventListener('click', () => {
+                renderTextToCanvas(); // Commit any active text before redo
                 if (historyPointer < history.length - 1) {
                     historyPointer++;
                     restoreState(historyPointer);
                 }
             });
+
+            // New: Download as PDF button functionality
+            downloadPdfBtn.addEventListener('click', () => {
+                renderTextToCanvas(); // Ensure all content is on the canvas
+
+                // Use html2canvas to capture the canvas
+                html2canvas(canvas, {
+                    // preserveDrawingBuffer: true, // Might help with quality/rendering issues on some browsers
+                    backgroundColor: null, // Let the canvas background be captured as is
+                }).then(canvasImage => {
+                    const { jsPDF } = window.jspdf; // Get jsPDF from window object
+                    const imgData = canvasImage.toDataURL('image/png');
+                    const pdf = new jsPDF('p', 'mm', 'a4'); // 'p' for portrait, 'mm' for units, 'a4' for size
+
+                    const imgWidth = 210; // A4 width in mm
+                    const pageHeight = 297; // A4 height in mm
+                    const imgHeight = canvasImage.height * imgWidth / canvasImage.width;
+                    let heightLeft = imgHeight;
+                    let position = 0;
+
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+
+                    // If content overflows one page
+                    while (heightLeft >= 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+
+                    pdf.save('jkm_notepad_note.pdf');
+                });
+            });
+
 
             // --- Typing Area Logic ---
             function renderTextToCanvas() {
@@ -924,8 +973,9 @@
                     const canvasX = parseFloat(typingArea.dataset.canvasX);
                     let canvasY = parseFloat(typingArea.dataset.canvasY);
 
-                    // Snap text to the nearest line
-                    canvasY = Math.round((canvasY - TOP_OFFSET) / LINE_SPACING) * LINE_SPACING + TOP_OFFSET;
+                    // Snap text to the nearest line's top, considering font size
+                    const baselineOffset = 0; // Adjust if text baseline is not exactly 'top'
+                    canvasY = Math.round((canvasY - TOP_OFFSET) / LINE_SPACING) * LINE_SPACING + TOP_OFFSET + baselineOffset;
                     
                     notepadContent.push({
                         type: 'text',
@@ -942,16 +992,26 @@
                 typingArea.style.display = 'none';
             }
 
-            // Hide typing area if clicking outside it (on the main document, but not on toolbar or other interactive elements)
+            // Commit text on blur
+            typingArea.addEventListener('blur', renderTextToCanvas);
+
+            // Commit text on Enter key press (unless Shift is held for newline)
+            typingArea.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault(); // Prevent default new line in textarea
+                    renderTextToCanvas();
+                }
+            });
+
+            // Hide typing area if clicking outside it (on the main document, but not on toolbar)
             document.addEventListener('click', (e) => {
                 const isClickInsideCanvas = canvas.contains(e.target);
                 const isClickInsideTypingArea = typingArea.contains(e.target);
                 const isClickInsideToolbar = document.querySelector('.notepad-toolbar').contains(e.target);
 
-                // If in type mode, typing area is visible, and click is outside text area & toolbar, but still on canvas area
                 if (currentMode === 'type' && typingArea.style.display === 'block' && 
-                    !isClickInsideTypingArea && !isClickInsideToolbar) {
-                    renderTextToCanvas();
+                    !isClickInsideTypingArea && !isClickInsideToolbar && !isClickInsideCanvas) {
+                    renderTextToCanvas(); // Finalize text if clicking outside relevant areas
                 }
             });
 
@@ -961,10 +1021,12 @@
                 resizeTimeout = setTimeout(() => {
                     const oldWidth = canvas.width;
                     const oldHeight = canvas.height;
+                    
                     canvas.width = canvas.offsetWidth;
                     canvas.height = canvas.offsetHeight;
-                    // If content exists, redraw it with new dimensions if scaling is desired
-                    // For now, simple redraw is sufficient; complex scaling is harder
+                    
+                    // When resizing, we lose the context state, so simply redraw from structured data
+                    // This is sufficient for simple applications; complex scaling would involve recalculating coordinates
                     redrawCanvas(); 
                 }, 200); // Debounce
             });
@@ -988,9 +1050,18 @@
                 typingArea.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
 
                 // If eraser is active, ensure its draw color matches current canvas background
-                if (drawModeBtn.classList.contains('active') && currentDrawColor === 'white' || currentDrawColor === '#2e2e2e') {
+                if (drawModeBtn.classList.contains('active') && (currentDrawColor === 'white' || currentDrawColor === '#2e2e2e')) {
                      currentDrawColor = getCanvasBackgroundColor();
                 }
+            }
+
+            // Load notepad content from localStorage on initial load
+            function loadNotepadContent() {
+                const savedContent = localStorage.getItem('jkm-notepad-content');
+                if (savedContent) {
+                    notepadContent = JSON.parse(savedContent);
+                }
+                saveState(); // Save the initial (loaded or empty) state to history
             }
 
             // Initial setup call
