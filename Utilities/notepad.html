@@ -143,6 +143,7 @@
             flex-direction: column;
             gap: 1rem;
             flex-grow: 1; /* Allows it to take available space */
+            position: relative; /* Crucial for positioning #typingArea correctly relative to canvas */
         }
 
         .notepad-toolbar {
@@ -227,9 +228,10 @@
             margin-top: 1rem;
             flex-grow: 1; /* Allows canvas to take available space */
             touch-action: none; /* Prevent browser touch gestures on canvas */
-            position: relative; /* Needed for absolute positioning of textarea */
+            position: relative; /* Needed for positioning elements INSIDE the canvas like resizing handles */
             width: 100%; /* Ensure canvas fills container width */
             min-height: 400px; /* Give it a default height */
+            display: block; /* Ensures it behaves like a block element */
         }
         html.dark-mode #notepadCanvas {
             border-color: #333;
@@ -554,7 +556,7 @@
                 </div>
 
                 <canvas id="notepadCanvas" width="800" height="600" tabindex="0"></canvas> <!-- Added tabindex for keyboard focus -->
-                <textarea id="typingArea" rows="4" cols="50"></textarea>
+                <textarea id="typingArea" rows="4" cols="50"></textarea> <!-- Moved inside notepad-container -->
             </div>
 
             <div class="notepad-sidebar">
@@ -712,13 +714,8 @@
             let currentMode = 'draw'; // 'draw' or 'type'
 
             // --- Multi-Page State ---
-            let allPagesContent = []; // Array of notepadContent arrays
+            let allPagesContent = []; // Array of { content: [], history: [], historyPointer: -1 }
             let currentPageIndex = 0;
-
-            // --- Per-Page History for Undo/Redo ---
-            // Each element in allPagesContent will have its own history property
-            // allPagesContent[i].history = []
-            // allPagesContent[i].historyPointer = -1
 
             // --- Image Interaction State ---
             let selectedImage = null; // Stores the image object being moved/resized
@@ -737,7 +734,8 @@
 
 
             function initializeNotepad() {
-                // Set initial canvas size
+                // Set initial canvas size based on its current offset dimensions
+                // This ensures it fills its flex container properly
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
 
@@ -763,7 +761,9 @@
                 
                 drawLinedPaper(); // Draw background lines
 
-                const currentPageContent = allPagesContent[currentPageIndex] ? allPagesContent[currentPageIndex].content : [];
+                const currentPageObj = allPagesContent[currentPageIndex];
+                if (!currentPageObj) return; // Should not happen if at least one page exists
+                const currentPageContent = currentPageObj.content;
 
                 // 1. Draw all drawing strokes
                 currentPageContent.filter(item => item.type === 'drawing').forEach(drawing => {
@@ -832,7 +832,7 @@
             // Save the current page's content to its history stack
             function saveState() {
                 const page = allPagesContent[currentPageIndex];
-                if (!page) return; // Should not happen if page exists
+                if (!page) return;
 
                 if (page.historyPointer < page.history.length - 1) {
                     page.history.length = page.historyPointer + 1; // Truncate redo history
@@ -848,6 +848,12 @@
                 if (!page || !page.history[index]) return;
 
                 page.content = JSON.parse(JSON.stringify(page.history[index])); // Deep copy
+                // Re-instantiate Image objects from src after deep copy
+                page.content.filter(item => item.type === 'image' && item.src).forEach(imgItem => {
+                    imgItem.imgObj = new Image();
+                    imgItem.imgObj.src = imgItem.src;
+                });
+
                 page.historyPointer = index;
                 redrawCanvas();
                 updateUndoRedoButtons();
@@ -866,13 +872,15 @@
 
             // --- Multi-Page Functions ---
             function addNewPage() {
-                saveCurrentPageContent(); // Save current page's state
+                renderTextToCanvas(); // Commit any active text
+                saveCurrentPageContent(); // Save current page's state to its history
+
                 allPagesContent.push({ content: [], history: [], historyPointer: -1 });
                 currentPageIndex = allPagesContent.length - 1;
-                initPageHistory(); // Initialize history for the new page
+                initPageHistory(); // Initialize history for the new page (which is currently empty)
                 redrawCanvas();
                 updatePageControls();
-                saveAllNotepadContentToLocalStorage();
+                saveAllNotepadContentToLocalStorage(); // Save all pages to localStorage
                 deselectImage(); // Deselect image on page change
             }
 
@@ -888,6 +896,7 @@
                 if (currentPageIndex >= allPagesContent.length) {
                     currentPageIndex = allPagesContent.length - 1;
                 }
+                initPageHistory(); // Load content and history for the new current page
                 redrawCanvas();
                 updatePageControls();
                 saveAllNotepadContentToLocalStorage();
@@ -896,8 +905,10 @@
 
             function nextPage() {
                 if (currentPageIndex < allPagesContent.length - 1) {
+                    renderTextToCanvas(); // Commit any active text
                     saveCurrentPageContent(); // Save current page's state
                     currentPageIndex++;
+                    initPageHistory(); // Load content and history for the new current page
                     redrawCanvas();
                     updatePageControls();
                     deselectImage();
@@ -906,8 +917,10 @@
 
             function prevPage() {
                 if (currentPageIndex > 0) {
+                    renderTextToCanvas(); // Commit any active text
                     saveCurrentPageContent(); // Save current page's state
                     currentPageIndex--;
+                    initPageHistory(); // Load content and history for the new current page
                     redrawCanvas();
                     updatePageControls();
                     deselectImage();
@@ -922,26 +935,43 @@
             }
 
             // Save current page's `notepadContent` into its `history` stack
+            // Note: This function now updates the `notepadContent` array of the current page object
+            //       and then calls `saveState` which pushes this content to the page's history.
             function saveCurrentPageContent() {
                  const page = allPagesContent[currentPageIndex];
                  if (page) {
-                     // Ensure the content is up-to-date in the page object before saving
-                     // (This assumes notepadContent directly reflects the current page's content)
-                     // Deep copy to prevent reference issues
-                     page.content = JSON.parse(JSON.stringify(notepadContent)); 
-                     saveState(); // Now saves this current state to page.history
+                     page.content = JSON.parse(JSON.stringify(notepadContent)); // Deep copy the current global notepadContent to the page object
+                     saveState(); // Now save this page object's content to its history
                  }
             }
 
+            // Initializes `notepadContent` (the global array currently being edited)
+            // with the content from the current page in `allPagesContent`.
+            // Also sets up its history.
             function initPageHistory() {
                 const page = allPagesContent[currentPageIndex];
-                if (page && (!page.history || page.history.length === 0)) {
+                if (!page) { // Should not happen if allPagesContent always has at least one page
+                    notepadContent = [];
+                    history = [];
+                    historyPointer = -1;
+                    return;
+                }
+
+                // If page has no history or content, start fresh for this page
+                if (!page.history || page.history.length === 0) {
                     page.history = [];
                     page.historyPointer = -1;
-                    notepadContent = JSON.parse(JSON.stringify(page.content)); // Set global notepadContent to this page's content
-                    saveState(); // Save the current (potentially empty) content as the first history entry
-                } else if (page) {
-                     notepadContent = JSON.parse(JSON.stringify(page.history[page.historyPointer])); // Load current history state
+                    page.content = []; // Ensure page.content is an array
+                    notepadContent = []; // Global notepadContent is also empty
+                    saveState(); // Save this initial (empty) state
+                } else {
+                    // Load the current content from the page's history into global notepadContent
+                    notepadContent = JSON.parse(JSON.stringify(page.history[page.historyPointer]));
+                    // Re-instantiate Image objects from src when loading from history
+                    notepadContent.filter(item => item.type === 'image' && item.src).forEach(imgItem => {
+                        imgItem.imgObj = new Image();
+                        imgItem.imgObj.src = imgItem.src;
+                    });
                 }
             }
 
@@ -950,7 +980,7 @@
 
             function saveAllNotepadContentToLocalStorage() {
                 renderTextToCanvas(); // Ensure current text is on canvas
-                saveCurrentPageContent(); // Save state of active page before saving all
+                saveCurrentPageContent(); // Save state of active page to its history stack
                 localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(allPagesContent));
                 alert('All notes saved!');
             }
@@ -959,25 +989,29 @@
                 const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
                 if (savedData) {
                     allPagesContent = JSON.parse(savedData);
-                    // Re-instantiate Image objects from src
-                    allPagesContent.forEach(page => {
-                        page.content.filter(item => item.type === 'image' && item.src).forEach(imgItem => {
-                            imgItem.imgObj = new Image();
-                            imgItem.imgObj.src = imgItem.src;
-                        });
-                    });
                     
                     if (allPagesContent.length > 0) {
                         currentPageIndex = 0; // Always start on the first page
+                        // For each page, ensure images have imgObj and history is correctly setup
+                        allPagesContent.forEach(page => {
+                            page.content = page.content || []; // Ensure content array exists
+                            page.history = page.history || []; // Ensure history array exists
+                            page.historyPointer = page.historyPointer === undefined ? -1 : page.historyPointer;
+
+                            page.content.filter(item => item.type === 'image' && item.src).forEach(imgItem => {
+                                imgItem.imgObj = new Image();
+                                imgItem.imgObj.src = imgItem.src;
+                            });
+                        });
                         initPageHistory(); // Load current page's content and history
                     } else {
-                        // If savedData was empty or invalid, start fresh
+                        // If savedData was empty array [], start fresh
                         allPagesContent = [{ content: [], history: [], historyPointer: -1 }];
                         currentPageIndex = 0;
                         initPageHistory();
                     }
                 } else {
-                    // Start with one empty page if no saved data
+                    // Start with one empty page if no saved data at all
                     allPagesContent = [{ content: [], history: [], historyPointer: -1 }];
                     currentPageIndex = 0;
                     initPageHistory();
@@ -990,7 +1024,7 @@
                 return {
                     x: (event.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
                     y: (event.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height,
-                    clientX: event.clientX, // Keep clientX/Y for textarea positioning
+                    clientX: event.clientX, // Keep clientX/Y for textarea positioning relative to viewport
                     clientY: event.clientY
                 };
             }
@@ -1017,25 +1051,53 @@
                         return; // Don't start drawing or typing
                     }
                 }
-                deselectImage(); // Deselect image if clicking outside it (or starting new drawing/typing)
                 
-                if (currentMode === 'draw') {
-                    isDrawing = true;
-                    currentDrawingPoints = [{ x, y }];
-                    ctx.beginPath();
-                    ctx.moveTo(x, y);
-                } else if (currentMode === 'type') {
-                    typingArea.style.left = `${clientX}px`;
-                    typingArea.style.top = `${clientY}px`;
-                    typingArea.style.width = '200px';
-                    typingArea.style.height = '100px';
-                    typingArea.style.display = 'block';
-                    typingArea.value = '';
-                    typingArea.focus();
-                    typingArea.dataset.canvasX = x;
-                    typingArea.dataset.canvasY = y;
-                    typingArea.style.color = currentTextColor;
-                    typingArea.style.fontSize = currentFontSize + 'px';
+                // If not interacting with a selected image, try to select one
+                let imageClicked = false;
+                const currentPageContent = allPagesContent[currentPageIndex].content;
+                for (let i = currentPageContent.length - 1; i >= 0; i--) { // Reverse order to select topmost
+                    const item = currentPageContent[i];
+                    if (item.type === 'image' && isPointInImage(x, y, item)) {
+                        selectedImage = item;
+                        deselectImageBtn.disabled = false;
+                        redrawCanvas();
+                        isDraggingImage = true; // Start dragging if clicked on image
+                        canvas.style.cursor = 'grabbing';
+                        imageClicked = true;
+                        return;
+                    }
+                }
+
+                if (!imageClicked) { // If no image was selected/interacted with
+                    deselectImage(); // Deselect image if clicking outside it
+                
+                    if (currentMode === 'draw') {
+                        isDrawing = true;
+                        currentDrawingPoints = [{ x, y }];
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                    } else if (currentMode === 'type') {
+                        // Position typing area relative to the canvas's parent container
+                        const canvasRect = canvas.getBoundingClientRect();
+                        const containerRect = canvas.parentElement.getBoundingClientRect();
+
+                        typingArea.style.left = `${canvasRect.left - containerRect.left + (x * canvasRect.width / canvas.width)}px`;
+                        typingArea.style.top = `${canvasRect.top - containerRect.top + (y * canvasRect.height / canvas.height)}px`;
+                        
+                        typingArea.style.width = '200px';
+                        typingArea.style.height = '100px';
+                        typingArea.style.display = 'block';
+                        typingArea.value = ''; // Clear previous text
+                        typingArea.focus();
+                        
+                        // Store canvas coordinates for text rendering
+                        typingArea.dataset.canvasX = x;
+                        typingArea.dataset.canvasY = y;
+
+                        // Set typing area's style based on current text settings
+                        typingArea.style.color = currentTextColor;
+                        typingArea.style.fontSize = currentFontSize + 'px';
+                    }
                 }
             });
 
@@ -1087,6 +1149,19 @@
                     ctx.lineCap = 'round';
                     ctx.lineJoin = 'round';
                     ctx.stroke();
+                } else { // Update cursor for visual feedback when hovering over images/handles
+                    if (selectedImage) {
+                        const handle = getResizeHandle(x, y, selectedImage);
+                        if (handle) {
+                            canvas.style.cursor = `${handle}-resize`;
+                        } else if (isPointInImage(x, y, selectedImage)) {
+                            canvas.style.cursor = 'grab';
+                        } else {
+                            canvas.style.cursor = currentMode === 'draw' ? 'crosshair' : 'text';
+                        }
+                    } else {
+                        canvas.style.cursor = currentMode === 'draw' ? 'crosshair' : 'text';
+                    }
                 }
 
                 lastMouseX = x;
@@ -1096,17 +1171,18 @@
             canvas.addEventListener('mouseup', () => {
                 if (isDrawing && currentMode === 'draw') {
                     isDrawing = false;
+                    // Only save a drawing stroke if it has enough points to be meaningful
                     if (currentDrawingPoints.length > 1) {
-                        notepadContent.push({
+                        allPagesContent[currentPageIndex].content.push({
                             type: 'drawing',
                             color: currentDrawColor,
                             width: currentDrawWidth,
-                            points: [...currentDrawingPoints]
+                            points: [...currentDrawingPoints] // Deep copy points
                         });
                         saveState();
                     }
-                    currentDrawingPoints = [];
-                    redrawCanvas();
+                    currentDrawingPoints = []; // Reset for next stroke
+                    redrawCanvas(); // Redraw to ensure proper layer order (text/images on top)
                 } else if (isResizing || isDraggingImage) {
                     isResizing = false;
                     isDraggingImage = false;
@@ -1114,14 +1190,15 @@
                     if (selectedImage) {
                         saveState(); // Save state after image manipulation
                     }
+                    redrawCanvas(); // Ensure handles are removed if deselected and redrawing
                 }
             });
 
             canvas.addEventListener('mouseout', () => {
                 if (isDrawing && currentMode === 'draw') {
                     isDrawing = false;
-                    if (currentDrawingPoints.length > 1) {
-                        notepadContent.push({
+                    if (currentDrawingPoints.length > 1) { // Only save if a significant stroke was made
+                        allPagesContent[currentPageIndex].content.push({
                             type: 'drawing',
                             color: currentDrawColor,
                             width: currentDrawWidth,
@@ -1208,22 +1285,17 @@
                     deselectImageBtn.disabled = true;
                     redrawCanvas();
                 }
+                canvas.style.cursor = currentMode === 'draw' ? 'crosshair' : 'text'; // Reset canvas cursor
             }
             deselectImageBtn.addEventListener('click', deselectImage);
-            canvas.addEventListener('click', (e) => {
-                const { x, y } = getMousePos(e);
-                // If clicked outside selected image or not on an image at all
-                if (selectedImage && !isPointInImage(x, y, selectedImage) && !getResizeHandle(x,y,selectedImage)) {
-                    deselectImage();
-                }
-            });
+            
+            // Handle keyboard events globally for deselect/delete
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     if (typingArea.style.display === 'block') {
                         renderTextToCanvas(); // Commit and hide text area
                     }
                     deselectImage(); // Deselect image
-                    canvas.style.cursor = currentMode === 'draw' ? 'crosshair' : 'text'; // Reset cursor
                 } else if (selectedImage && (e.key === 'Delete' || e.key === 'Backspace')) {
                     e.preventDefault(); // Prevent browser back navigation
                     if (confirm('Delete selected image?')) {
@@ -1258,12 +1330,13 @@
             eraserBtn.addEventListener('click', () => {
                 setMode('draw'); // Eraser is a draw mode
                 currentDrawColor = getCanvasBackgroundColor(); // Eraser color matches canvas background
+                drawColorInput.value = '#000000'; // Keep color picker black, but draw color is background
                 canvas.style.cursor = 'cell'; // Eraser cursor
             });
             
-            drawColorInput.addEventListener('click', () => {
+            drawColorInput.addEventListener('input', () => { // Use 'input' for live update
                 currentDrawColor = drawColorInput.value; // Get the chosen color
-                setMode('draw'); // Ensure draw mode is active
+                setMode('draw'); // Ensure draw mode is active, in case it was eraser mode
             });
 
 
@@ -1377,13 +1450,16 @@
                     // Need to ensure images are loaded before rendering to PDF
                     const imagePromises = pageContent.filter(item => item.type === 'image' && item.src)
                         .map(imgItem => new Promise(resolve => {
-                            if (imgItem.imgObj && imgItem.imgObj.complete) {
+                            const img = new Image();
+                            img.onload = () => {
+                                imgItem.imgObj = img; // Attach loaded image object
                                 resolve();
-                                return;
-                            }
-                            imgItem.imgObj = new Image();
-                            imgItem.imgObj.onload = resolve;
-                            imgItem.imgObj.src = imgItem.src;
+                            };
+                            img.onerror = () => {
+                                console.error('Failed to load image for PDF export:', imgItem.src);
+                                resolve(); // Resolve even if error to not block PDF generation
+                            };
+                            img.src = imgItem.src;
                         }));
 
                     await Promise.all(imagePromises); // Wait for all images on the page to load
@@ -1432,7 +1508,7 @@
                     // Snap text to the nearest line's top, considering font size
                     const snappedY = Math.round((canvasY - TOP_OFFSET) / LINE_SPACING) * LINE_SPACING + TOP_OFFSET;
                     
-                    notepadContent.push({
+                    allPagesContent[currentPageIndex].content.push({
                         type: 'text',
                         text: text,
                         x: canvasX,
@@ -1481,12 +1557,19 @@
 
             imageInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
-                if (file) {
+                if (file && file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = (event) => {
-                        addImageToCanvas(event.target.result);
+                        // Position new image roughly in center of view
+                        addImageToCanvas(event.target.result, canvas.width / 4, canvas.height / 4);
+                    };
+                    reader.onerror = (error) => {
+                        console.error('FileReader error:', error);
+                        alert('Error reading image file.');
                     };
                     reader.readAsDataURL(file);
+                } else {
+                    if (file) alert('Please select an image file (JPG, PNG, GIF, etc.).');
                 }
                 e.target.value = ''; // Clear input for re-selection
             });
@@ -1519,6 +1602,10 @@
                         reader.onload = (event) => {
                             addImageToCanvas(event.target.result, x, y);
                         };
+                        reader.onerror = (error) => {
+                            console.error('FileReader error during drag/drop:', error);
+                            alert('Error reading dropped image file.');
+                        };
                         reader.readAsDataURL(file);
                     } else {
                         alert('Only image files can be dropped here.');
@@ -1537,30 +1624,21 @@
                         const file = items[i].getAsFile();
                         const reader = new FileReader();
                         reader.onload = (event) => {
-                            // Default paste position to center of canvas or where last clicked if in type mode
-                            const pasteX = parseFloat(typingArea.dataset.canvasX) || canvas.width / 2;
-                            const pasteY = parseFloat(typingArea.dataset.canvasY) || canvas.height / 2;
+                            // Default paste position to where canvas was last focused or center
+                            const pasteX = parseFloat(typingArea.dataset.canvasX) || canvas.width / 4;
+                            const pasteY = parseFloat(typingArea.dataset.canvasY) || canvas.height / 4;
                             addImageToCanvas(event.target.result, pasteX, pasteY);
+                        };
+                        reader.onerror = (error) => {
+                            console.error('FileReader error during paste:', error);
+                            alert('Error reading pasted image data.');
                         };
                         reader.readAsDataURL(file);
                         return;
                     }
                 }
-                // Optional: If no image data, paste as text into textarea if in type mode
-                if (currentMode === 'type' && e.clipboardData.getData('text/plain')) {
-                    if (typingArea.style.display === 'none') {
-                        // Activate typing area if not already
-                        const clickX = parseFloat(typingArea.dataset.canvasX) || canvas.width / 2;
-                        const clickY = parseFloat(typingArea.dataset.canvasY) || canvas.height / 2;
-                        typingArea.style.left = `${clickX}px`;
-                        typingArea.style.top = `${clickY}px`;
-                        typingArea.style.display = 'block';
-                        typingArea.focus();
-                        typingArea.dataset.canvasX = clickX;
-                        typingArea.dataset.canvasY = clickY;
-                        typingArea.style.color = currentTextColor;
-                        typingArea.style.fontSize = currentFontSize + 'px';
-                    }
+                // If no image data, paste as text into textarea if in type mode and textarea is active
+                if (currentMode === 'type' && typingArea.style.display === 'block' && e.clipboardData.getData('text/plain')) {
                     const start = typingArea.selectionStart;
                     const end = typingArea.selectionEnd;
                     typingArea.value = typingArea.value.substring(0, start) + e.clipboardData.getData('text/plain') + typingArea.value.substring(end);
@@ -1584,19 +1662,23 @@
                     const newImage = {
                         type: 'image',
                         src: imageData, // Base64
-                        imgObj: img,   // Image object for drawing
+                        imgObj: img,   // Image object for drawing (will be re-created on load from storage)
                         x: x,
                         y: y,
                         width: width,
                         height: height
                     };
-                    notepadContent.push(newImage);
+                    allPagesContent[currentPageIndex].content.push(newImage);
                     saveState();
                     redrawCanvas();
                     // Automatically select new image for manipulation
                     selectedImage = newImage;
                     deselectImageBtn.disabled = false;
                     redrawCanvas(); // Redraw with handles
+                };
+                img.onerror = (error) => {
+                    console.error('Image failed to load:', error, imageData.substring(0, 50) + '...');
+                    alert('Could not load image. It might be corrupted or too large.');
                 };
                 img.src = imageData;
             }
@@ -1609,11 +1691,15 @@
                     const currentWrapperHeight = canvas.parentElement.offsetHeight;
 
                     // Only resize canvas if its container size actually changed significantly
-                    if (Math.abs(currentWrapperWidth - lastCanvasWidth) > 5 || Math.abs(currentWrapperHeight - lastCanvasHeight) > 5) {
-                        canvas.width = currentWrapperWidth;
-                        canvas.height = currentWrapperHeight;
-                        lastCanvasWidth = currentWrapperWidth;
-                        lastCanvasHeight = currentWrapperHeight;
+                    // and ensure minimum dimensions
+                    const newWidth = Math.max(300, currentWrapperWidth); // Min width
+                    const newHeight = Math.max(300, currentWrapperHeight); // Min height
+
+                    if (Math.abs(newWidth - lastCanvasWidth) > 5 || Math.abs(newHeight - lastCanvasHeight) > 5) {
+                        canvas.width = newWidth;
+                        canvas.height = newHeight;
+                        lastCanvasWidth = newWidth;
+                        lastCanvasHeight = newHeight;
                         
                         redrawCanvas(); 
                     }
