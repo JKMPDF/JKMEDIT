@@ -142,8 +142,69 @@
         .back-to-dashboard-btn { display: inline-block; margin-top: 3rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        /* Modal specific styles - ensuring they are hidden by default */
+        .modal { 
+            display: none; /* Crucial: Hides the modal by default */
+            position: fixed; 
+            z-index: 1001; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.6); 
+            backdrop-filter: blur(5px); 
+            animation: fadeInModal 0.3s; 
+        }
+        .modal.show-modal { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .modal-content { 
+            background-color: var(--surface-color); 
+            margin: auto; 
+            padding: 30px; 
+            border-top: 5px solid var(--primary-color); 
+            border-radius: 8px; 
+            width: 90%; 
+            max-width: 500px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2); 
+            position: relative; 
+            animation: slideIn 0.4s ease-out; 
+        }
+        .close-btn { 
+            color: #aaa; 
+            position: absolute; 
+            top: 10px; 
+            right: 20px; 
+            font-size: 28px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        .close-btn:hover,.close-btn:focus { 
+            color: var(--text-color); 
+        }
+        .modal-content h2 { 
+            color: var(--primary-color); 
+            margin-top: 0; 
+        }
+        .contact-email { 
+            display: inline-block; 
+            margin-top: 1rem; 
+            padding: 0.75rem 1.5rem; 
+            background: var(--gradient); 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-weight: 600; 
+            transition: transform 0.2s; 
+        }
+        .contact-email:hover { 
+            transform: scale(1.05); 
+        }
+
+        /* Page transition animations */
         body { animation: fadeInPage 0.5s ease-in-out; }
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -313,6 +374,8 @@
         </div>
     </main>
     
+    <!-- Modals: These HTML structures must exist on the page for the header buttons to open them. -->
+    <!-- They are hidden by default via CSS (.modal { display: none; }) and only shown when triggered. -->
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
@@ -336,11 +399,9 @@
             const closeBtns = document.querySelectorAll('.close-btn');
 
             const openModal = (modal) => { 
-                console.log('Opening modal:', modal.id); // Diagnostic
                 modal.classList.add('show-modal'); 
             };
             const closeModal = (modal) => { 
-                console.log('Closing modal:', modal.id); // Diagnostic
                 modal.classList.remove('show-modal'); 
             };
 
@@ -348,27 +409,20 @@
             if (aboutBtn) {
                 aboutBtn.addEventListener('click', (e) => { 
                     e.preventDefault(); 
-                    console.log('About button clicked'); // Diagnostic
                     openModal(aboutModal); 
                 });
-            } else {
-                console.error('About button not found!'); // Diagnostic
             }
 
             if (contactBtn) {
                 contactBtn.addEventListener('click', (e) => { 
                     e.preventDefault(); 
-                    console.log('Contact button clicked'); // Diagnostic
                     openModal(contactModal); 
                 });
-            } else {
-                console.error('Contact button not found!'); // Diagnostic
             }
             
             // Attach event listeners for close buttons within the modals
             closeBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    console.log('Close button clicked'); // Diagnostic
                     closeModal(aboutModal);
                     closeModal(contactModal);
                 });
@@ -377,11 +431,9 @@
             // Close modals when clicking outside them
             window.addEventListener('click', (e) => {
                 if (e.target === aboutModal) { 
-                    console.log('Clicked outside about modal'); // Diagnostic
                     closeModal(aboutModal); 
                 }
                 if (e.target === contactModal) { 
-                    console.log('Clicked outside contact modal'); // Diagnostic
                     closeModal(contactModal); 
                 }
             });
