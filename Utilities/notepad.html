@@ -125,113 +125,106 @@
         .dashboard-header p { font-size: 1.1rem; color: #6c757d; }
         html.dark-mode .dashboard-header p { color: #a0a0a0; }
         
-        /* --- Notepad Specific Styles --- */
+        /* --- Notepad Specific Styles - NEW LAYOUT --- */
         .notepad-wrapper {
-            display: flex;
-            gap: 1rem;
-            max-width: 1000px; /* Increased max-width to accommodate side controls */
+            display: grid;
+            grid-template-columns: 180px 1fr 180px; /* Left sidebar, main content, right sidebar */
+            gap: 1.5rem; /* Increased gap for better spacing */
+            max-width: 1200px; 
             margin: 2rem auto;
             align-items: flex-start; /* Align items to the top */
         }
 
-        .notepad-container {
+        /* Base style for all sidebars and toolbars */
+        .notepad-sidebar,
+        .drawing-tools-sidebar,
+        .text-toolbar {
+            background-color: var(--surface-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column; /* Default for sidebars */
+            gap: 1rem;
+            flex-shrink: 0;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+        
+        /* Left Sidebar for Drawing Tools */
+        .drawing-tools-sidebar {
+            width: 180px;
+            height: fit-content; /* Adjust height to content */
+        }
+
+        /* Right Sidebar for Page/Image Tools (renamed notepad-sidebar) */
+        .notepad-sidebar { /* Existing style, just ensuring it fits the grid */
+            width: 180px;
+            height: fit-content; /* Adjust height to content */
+        }
+
+        /* Header for sidebar/toolbar sections */
+        .drawing-tools-sidebar h3,
+        .notepad-sidebar h3,
+        .text-toolbar h3 {
+            margin: 0 0 0.75rem 0; /* Adjusted margin for better look */
+            color: var(--primary-color);
+            font-size: 1.15rem; /* Slightly larger heading */
+            text-align: center;
+            border-bottom: 1px solid color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%);
+            padding-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        html.dark-mode .drawing-tools-sidebar h3,
+        html.dark-mode .notepad-sidebar h3,
+        html.dark-mode .text-toolbar h3 {
+            border-bottom-color: color-mix(in srgb, var(--surface-color) 70%, var(--text-color) 30%);
+        }
+
+        /* Main Content Area (Text Toolbar + Canvas) */
+        .notepad-main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; /* Space between text toolbar and canvas */
+        }
+
+        /* Top Toolbar for Text Tools */
+        .text-toolbar {
+            flex-direction: row; /* Horizontal layout for text tools */
+            flex-wrap: wrap;
+            justify-content: center; /* Center items horizontally */
+            align-items: center;
+            gap: 1rem; /* Spacing between text controls */
+            padding: 1rem 1.5rem; /* More horizontal padding */
+        }
+        .text-toolbar label {
+            white-space: nowrap;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* Canvas Container */
+        .canvas-container {
+            position: relative; /* For absolute positioning of typingArea */
             background-color: var(--surface-color);
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             padding: 1.5rem;
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            flex-direction: column; /* Allows canvas to take height */
             flex-grow: 1; /* Allows it to take available space */
-            position: relative; /* Crucial for positioning #typingArea correctly relative to canvas */
-        }
-
-        .notepad-toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            align-items: center;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%);
-        }
-        html.dark-mode .notepad-toolbar {
-            border-bottom-color: color-mix(in srgb, var(--surface-color) 70%, var(--text-color) 30%);
-        }
-
-        .notepad-toolbar button, .notepad-toolbar select, .notepad-toolbar input[type="color"], .notepad-toolbar input[type="range"] {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--primary-color);
-            border-radius: 5px;
-            background-color: var(--surface-color);
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all var(--transition-speed);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
-            white-space: nowrap; /* Prevent buttons from wrapping text */
-        }
-
-        .notepad-toolbar button:hover, .notepad-toolbar select:hover, .notepad-toolbar input[type="color"]:hover, .notepad-toolbar input[type="range"]:hover {
-            background-color: color-mix(in srgb, var(--primary-color) 10%, transparent);
-            color: var(--primary-color);
-        }
-
-        .notepad-toolbar button.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        .notepad-toolbar label {
-            color: var(--text-color);
-            font-size: 0.9rem;
-            margin-left: 0.5rem;
-            white-space: nowrap;
-        }
-        .notepad-toolbar input[type="color"] {
-            width: 40px;
-            height: 30px;
-            padding: 0;
-            border: none;
-            cursor: pointer;
-            background: none;
-        }
-        .notepad-toolbar input[type="range"] {
-            width: 80px;
-            vertical-align: middle;
-            -webkit-appearance: none;
-            height: 4px;
-            background: var(--primary-color);
-            outline: none;
-            opacity: 0.7;
-            transition: opacity .2s;
-        }
-        .notepad-toolbar input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: var(--secondary-color);
-            cursor: pointer;
-        }
-        .notepad-toolbar input[type="range"]::-moz-range-thumb {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: var(--secondary-color);
-            cursor: pointer;
         }
 
         #notepadCanvas {
             border: 1px solid var(--bg-color);
             background-color: white; /* Canvas background should be white for contrast with lines in light mode */
             cursor: crosshair;
-            margin-top: 1rem;
             flex-grow: 1; /* Allows canvas to take available space */
             touch-action: none; /* Prevent browser touch gestures on canvas */
             position: relative; /* Needed for positioning elements INSIDE the canvas like resizing handles */
             width: 100%; /* Ensure canvas fills container width */
             min-height: 400px; /* Give it a default height */
             display: block; /* Ensures it behaves like a block element */
+            border-radius: 5px; /* So it matches rounded corners of its container */
         }
         html.dark-mode #notepadCanvas {
             border-color: #333;
@@ -254,27 +247,126 @@
             min-height: 50px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             outline: none; /* Remove default focus outline */
+            line-height: 1.2; /* Consistent with canvas text rendering */
         }
         html.dark-mode #typingArea {
             background-color: color-mix(in srgb, var(--surface-color) 80%, var(--accent-color) 20%);
         }
 
-        .notepad-sidebar {
+        /* Common button/select styling for toolbars */
+        .drawing-tools-sidebar button, .drawing-tools-sidebar select, 
+        .text-toolbar button, .text-toolbar select, 
+        .notepad-sidebar button, .notepad-sidebar select,
+        .notepad-toolbar button, .notepad-toolbar select, 
+        .notepad-toolbar input[type="color"], .notepad-toolbar input[type="range"] {
+            padding: 0.6rem 1rem; /* Slightly more padding for better touch targets */
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
             background-color: var(--surface-color);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            padding: 1rem;
-            width: 180px; /* Fixed width for sidebar */
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all var(--transition-speed) ease; /* Smooth transitions */
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem; /* Slightly larger font */
+            white-space: nowrap;
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            flex-shrink: 0; /* Prevent shrinking */
-        }
-        .page-navigation, .image-tools {
-            display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow */
         }
+
+        /* Specific styles for input[type="color"] and [type="range"] */
+        .drawing-tools-sidebar input[type="color"],
+        .text-toolbar input[type="color"] {
+            width: 40px;
+            height: 30px;
+            min-width: unset; /* Override default button width */
+            padding: 0;
+            border: none;
+            cursor: pointer;
+            background: var(--surface-color); /* Ensures color picker background matches */
+            border: 1px solid var(--primary-color);
+        }
+
+        .drawing-tools-sidebar input[type="range"] {
+            width: 80px;
+            vertical-align: middle;
+            -webkit-appearance: none;
+            appearance: none; /* Standardize */
+            height: 4px;
+            background: var(--primary-color);
+            outline: none;
+            opacity: 0.8;
+            transition: opacity .2s;
+        }
+        .drawing-tools-sidebar input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            cursor: grab; /* More indicative cursor */
+            box-shadow: 0 0 0 3px var(--primary-color); /* Ring effect */
+        }
+        .drawing-tools-sidebar input[type="range"]::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            cursor: grab;
+            box-shadow: 0 0 0 3px var(--primary-color);
+        }
+        .drawing-tools-sidebar input[type="range"]:hover::-webkit-slider-thumb,
+        .drawing-tools-sidebar input[type="range"]:active::-webkit-slider-thumb {
+            background: var(--accent-color); /* Highlight on hover/active */
+        }
+
+
+        .drawing-tools-sidebar button:hover, .drawing-tools-sidebar select:hover, 
+        .text-toolbar button:hover, .text-toolbar select:hover, 
+        .notepad-sidebar button:hover, .notepad-sidebar select:hover,
+        .notepad-toolbar button:hover, .notepad-toolbar select:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 15%, transparent); /* Stronger hover effect */
+            color: var(--primary-color);
+            transform: translateY(-2px); /* Lift effect */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .drawing-tools-sidebar button.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transform: translateY(0);
+        }
+        .drawing-tools-sidebar button:disabled, 
+        .notepad-sidebar button:disabled, 
+        .notepad-toolbar button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Additional toolbar for common actions like save/load/undo/redo/pdf */
+        .notepad-toolbar { /* This will be the main shared toolbar, kept for undo/redo etc. */
+            flex-direction: row; /* Horizontal */
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%); /* Separator for top */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Soft shadow */
+        }
+        html.dark-mode .notepad-toolbar {
+            border-bottom-color: color-mix(in srgb, var(--surface-color) 70%, var(--text-color) 30%);
+        }
+
         .page-navigation div {
             display: flex;
             align-items: center;
@@ -284,40 +376,10 @@
             color: var(--text-color);
         }
         .page-navigation button, .image-tools button {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--primary-color);
-            border-radius: 5px;
-            background-color: var(--surface-color);
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all var(--transition-speed);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+            /* Styles inherited from general button/select styling */
+            min-width: unset; /* Allow buttons to size to content */
         }
-        .page-navigation button:hover, .image-tools button:hover {
-            background-color: color-mix(in srgb, var(--primary-color) 10%, transparent);
-            color: var(--primary-color);
-        }
-        .page-navigation button:disabled, .image-tools button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .notepad-sidebar h3 {
-            margin: 0 0 0.5rem 0;
-            color: var(--primary-color);
-            font-size: 1.1rem;
-            text-align: center;
-            border-bottom: 1px solid color-mix(in srgb, var(--bg-color) 80%, var(--text-color) 20%);
-            padding-bottom: 0.5rem;
-        }
-        html.dark-mode .notepad-sidebar h3 {
-            border-bottom-color: color-mix(in srgb, var(--surface-color) 70%, var(--text-color) 30%);
-        }
-
+        
         .back-to-dashboard-btn { display: inline-block; margin-top: 3rem; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
 
@@ -394,19 +456,74 @@
             .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
             .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
             .dashboard-container { padding: 2rem 1.5rem; }
-            .notepad-wrapper { flex-direction: column; align-items: center; }
-            .notepad-sidebar { width: 100%; max-width: 900px; }
+            .notepad-wrapper { 
+                grid-template-columns: 1fr; /* Stack columns */
+                gap: 1rem;
+            }
+            .drawing-tools-sidebar,
+            .notepad-sidebar {
+                width: 100%; /* Full width when stacked */
+                max-width: 900px; /* Limit width even when stacked */
+                margin: 0 auto;
+                flex-direction: row; /* Horizontal layout for tools when stacked */
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .drawing-tools-sidebar h3,
+            .notepad-sidebar h3 {
+                width: 100%; /* Make header full width */
+                margin-bottom: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+            .notepad-main-content {
+                width: 100%;
+                max-width: 900px;
+                margin: 0 auto;
+            }
+            .notepad-toolbar {
+                 width: 100%; /* Ensure this toolbar spans full width too */
+                 max-width: 900px;
+                 margin: 0 auto;
+            }
+            .notepad-toolbar button, .notepad-toolbar select, .notepad-toolbar input[type="color"], .notepad-toolbar input[type="range"],
+            .drawing-tools-sidebar button, .drawing-tools-sidebar select, .drawing-tools-sidebar input[type="color"], .drawing-tools-sidebar input[type="range"],
+            .text-toolbar button, .text-toolbar select,
+            .notepad-sidebar button, .notepad-sidebar select {
+                flex-grow: 1; /* Allow buttons to grow in size */
+                min-width: unset; /* Reset min-width for smaller screens */
+            }
         }
         @media (max-width: 768px) {
             .main-nav { flex-wrap: wrap; justify-content: center; }
             .tool-nav { gap: 0.5rem; }
             .tool-nav-button { font-size: 0.9rem; padding: 0.4rem 0.6rem; }
             .auth-buttons { margin-top: 0.5rem; }
-            .notepad-toolbar { justify-content: center; }
+            /* Further adjustments for toolbars on smaller screens */
+            .drawing-tools-sidebar,
+            .text-toolbar,
+            .notepad-toolbar,
+            .notepad-sidebar {
+                padding: 0.75rem;
+                gap: 0.75rem;
+            }
+            .drawing-tools-sidebar h3,
+            .notepad-sidebar h3,
+            .text-toolbar h3 {
+                font-size: 1.05rem;
+            }
         }
         @media (max-width: 480px) {
-            .notepad-toolbar button, .notepad-toolbar select {
+            .notepad-toolbar button, .notepad-toolbar select,
+            .drawing-tools-sidebar button, .drawing-tools-sidebar select, 
+            .text-toolbar button, .text-toolbar select,
+            .notepad-sidebar button, .notepad-sidebar select {
+                width: 100%; /* Full width buttons for very small screens */
+                flex-grow: 1;
+            }
+            .drawing-tools-sidebar label, .text-toolbar label {
                 width: 100%;
+                text-align: center;
+                margin: 0;
             }
         }
     </style>
@@ -524,18 +641,22 @@
         </div>
 
         <div class="notepad-wrapper">
-            <div class="notepad-container">
-                <div class="notepad-toolbar">
-                    <button id="drawModeBtn" class="active"><i class="fa-solid fa-pencil"></i> Draw</button>
+            <!-- Left Sidebar for Drawing Tools -->
+            <div class="drawing-tools-sidebar">
+                <h3>Draw Tools</h3>
+                <button id="drawModeBtn" class="active"><i class="fa-solid fa-pencil"></i> Draw</button>
+                <label for="drawColor">Draw Color:</label>
+                <input type="color" id="drawColor" value="#000000">
+                <label for="drawWidth">Size:</label>
+                <input type="range" id="drawWidth" min="1" max="10" value="2">
+                <button id="eraserBtn"><i class="fa-solid fa-eraser"></i> Eraser</button>
+            </div>
+
+            <div class="notepad-main-content">
+                <!-- Top Toolbar for Text Tools -->
+                <div class="text-toolbar">
+                    <h3>Text Tools</h3>
                     <button id="typeModeBtn"><i class="fa-solid fa-keyboard"></i> Type</button>
-                    
-                    <label for="drawColor">Draw Color:</label>
-                    <input type="color" id="drawColor" value="#000000">
-                    <label for="drawWidth">Size:</label>
-                    <input type="range" id="drawWidth" min="1" max="10" value="2">
-                    
-                    <button id="eraserBtn"><i class="fa-solid fa-eraser"></i> Eraser</button>
-                    
                     <label for="textColor">Text Color:</label>
                     <input type="color" id="textColor" value="#000000">
                     <label for="fontSize">Font Size:</label>
@@ -546,7 +667,10 @@
                         <option value="18">18px</option>
                         <option value="24">24px</option>
                     </select>
+                </div>
 
+                <!-- Main Toolbar (Undo/Redo, Save/Load, PDF) -->
+                <div class="notepad-toolbar">
                     <button id="undoBtn"><i class="fa-solid fa-rotate-left"></i> Undo</button>
                     <button id="redoBtn"><i class="fa-solid fa-rotate-right"></i> Redo</button>
                     <button id="clearBtn"><i class="fa-solid fa-trash-can"></i> Clear Page</button>
@@ -555,10 +679,14 @@
                     <button id="downloadPdfBtn"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
                 </div>
 
-                <canvas id="notepadCanvas" width="800" height="600" tabindex="0"></canvas> <!-- Added tabindex for keyboard focus -->
-                <textarea id="typingArea" rows="4" cols="50"></textarea> <!-- Moved inside notepad-container -->
+                <!-- Canvas Area -->
+                <div class="canvas-container">
+                    <canvas id="notepadCanvas" width="800" height="600" tabindex="0"></canvas>
+                    <textarea id="typingArea" rows="4" cols="50"></textarea>
+                </div>
             </div>
 
+            <!-- Right Sidebar for Page Management and Image Tools -->
             <div class="notepad-sidebar">
                 <h3>Page Management</h3>
                 <div class="page-navigation">
@@ -705,6 +833,8 @@
             const imageInput = document.getElementById('imageInput');
             const deselectImageBtn = document.getElementById('deselectImageBtn');
 
+            // Store references to all tool mode buttons to manage 'active' state
+            const toolModeButtons = [drawModeBtn, typeModeBtn];
 
             let isDrawing = false;
             let currentDrawColor = drawColorInput.value;
@@ -736,8 +866,17 @@
             function initializeNotepad() {
                 // Set initial canvas size based on its current offset dimensions
                 // This ensures it fills its flex container properly
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
+                const canvasContainer = canvas.parentElement;
+                canvas.width = canvasContainer.offsetWidth - (1.5 * 2 * 16); // Account for padding
+                canvas.height = canvasContainer.offsetHeight - (1.5 * 2 * 16); // Account for padding
+
+                // Ensure a minimum size in case container is too small initially
+                if (canvas.width <= 0) canvas.width = 800; 
+                if (canvas.height <= 0) canvas.height = 600;
+
+                lastCanvasWidth = canvas.width;
+                lastCanvasHeight = canvas.height;
+
 
                 // Load all saved pages or start with a new one
                 loadAllNotepadContent();
@@ -851,6 +990,7 @@
                 // Re-instantiate Image objects from src after deep copy
                 page.content.filter(item => item.type === 'image' && item.src).forEach(imgItem => {
                     imgItem.imgObj = new Image();
+                    imgItem.imgObj.onload = () => redrawCanvas(); // Redraw once image is loaded after state restore
                     imgItem.imgObj.src = imgItem.src;
                 });
 
@@ -940,20 +1080,24 @@
             function saveCurrentPageContent() {
                  const page = allPagesContent[currentPageIndex];
                  if (page) {
-                     page.content = JSON.parse(JSON.stringify(notepadContent)); // Deep copy the current global notepadContent to the page object
-                     saveState(); // Now save this page object's content to its history
+                     // The global `notepadContent` array is NOT used anymore for the current page's items
+                     // Instead, content is added directly to `allPagesContent[currentPageIndex].content`
+                     // However, for consistency with undo/redo, we still use `saveState`
+                     // So, ensure `page.content` is the most up-to-date representation
+                     // before calling `saveState`.
+                     // No need for `notepadContent` global variable anymore.
+                     // The `saveState` function already works directly with `page.content`.
+                     saveState(); // Saves the current `page.content`
                  }
             }
 
-            // Initializes `notepadContent` (the global array currently being edited)
-            // with the content from the current page in `allPagesContent`.
+            // Initializes `allPagesContent[currentPageIndex].content` (the array currently being edited)
+            // with the content from the current page's history.
             // Also sets up its history.
             function initPageHistory() {
                 const page = allPagesContent[currentPageIndex];
-                if (!page) { // Should not happen if allPagesContent always has at least one page
-                    notepadContent = [];
-                    history = [];
-                    historyPointer = -1;
+                if (!page) { 
+                    allPagesContent[currentPageIndex] = { content: [], history: [], historyPointer: -1 };
                     return;
                 }
 
@@ -962,18 +1106,19 @@
                     page.history = [];
                     page.historyPointer = -1;
                     page.content = []; // Ensure page.content is an array
-                    notepadContent = []; // Global notepadContent is also empty
                     saveState(); // Save this initial (empty) state
                 } else {
-                    // Load the current content from the page's history into global notepadContent
-                    notepadContent = JSON.parse(JSON.stringify(page.history[page.historyPointer]));
+                    // Load the current content from the page's history into page.content
+                    page.content = JSON.parse(JSON.stringify(page.history[page.historyPointer]));
                     // Re-instantiate Image objects from src when loading from history
-                    notepadContent.filter(item => item.type === 'image' && item.src).forEach(imgItem => {
+                    page.content.filter(item => item.type === 'image' && item.src).forEach(imgItem => {
                         imgItem.imgObj = new Image();
+                        imgItem.imgObj.onload = () => redrawCanvas(); // Redraw once image is loaded
                         imgItem.imgObj.src = imgItem.src;
                     });
                 }
             }
+
 
             // --- LocalStorage Management ---
             const LOCAL_STORAGE_KEY = 'jkm-notepad-all-pages-content';
@@ -1000,6 +1145,7 @@
 
                             page.content.filter(item => item.type === 'image' && item.src).forEach(imgItem => {
                                 imgItem.imgObj = new Image();
+                                imgItem.imgObj.onload = () => redrawCanvas(); // Redraw after image loads
                                 imgItem.imgObj.src = imgItem.src;
                             });
                         });
@@ -1032,7 +1178,7 @@
             let currentDrawingPoints = []; // For the single active stroke
 
             canvas.addEventListener('mousedown', (e) => {
-                const { x, y, clientX, clientY } = getMousePos(e);
+                const { x, y } = getMousePos(e);
                 lastMouseX = x;
                 lastMouseY = y;
 
@@ -1077,12 +1223,9 @@
                         ctx.beginPath();
                         ctx.moveTo(x, y);
                     } else if (currentMode === 'type') {
-                        // Position typing area relative to the canvas's parent container
-                        const canvasRect = canvas.getBoundingClientRect();
-                        const containerRect = canvas.parentElement.getBoundingClientRect();
-
-                        typingArea.style.left = `${canvasRect.left - containerRect.left + (x * canvasRect.width / canvas.width)}px`;
-                        typingArea.style.top = `${canvasRect.top - containerRect.top + (y * canvasRect.height / canvas.height)}px`;
+                        // Position typing area relative to the canvas-container
+                        typingArea.style.left = `${x}px`; // x is already scaled canvas coordinate
+                        typingArea.style.top = `${y}px`;  // y is already scaled canvas coordinate
                         
                         typingArea.style.width = '200px';
                         typingArea.style.height = '100px';
@@ -1115,21 +1258,23 @@
                             selectedImage.x += dx;
                             selectedImage.y += dy;
                             selectedImage.width -= dx;
-                            selectedImage.height -= (dx / aspectRatio); // Maintain aspect ratio
+                            selectedImage.height = selectedImage.width / aspectRatio; // Maintain aspect ratio
+                            selectedImage.y -= (selectedImage.height - (selectedImage.width / aspectRatio)); // Correct y to keep top-left fixed
                             break;
                         case 'ne':
                             selectedImage.y += dy;
                             selectedImage.width += dx;
-                            selectedImage.height += (dx / aspectRatio);
+                            selectedImage.height = selectedImage.width / aspectRatio;
+                            selectedImage.y -= (selectedImage.height - (selectedImage.width / aspectRatio));
                             break;
                         case 'sw':
                             selectedImage.x += dx;
                             selectedImage.width -= dx;
-                            selectedImage.height -= (dx / aspectRatio);
+                            selectedImage.height = selectedImage.width / aspectRatio;
                             break;
                         case 'se':
                             selectedImage.width += dx;
-                            selectedImage.height += (dx / aspectRatio);
+                            selectedImage.height = selectedImage.width / aspectRatio;
                             break;
                     }
                     // Prevent negative width/height
@@ -1211,7 +1356,7 @@
                 }
                 // Reset cursor if image was being dragged/resized but mouse left canvas
                 if (!isResizing && !isDraggingImage && selectedImage) {
-                    canvas.style.cursor = 'default';
+                    canvas.style.cursor = currentMode === 'draw' ? 'crosshair' : 'text'; // Restore appropriate cursor
                 }
             });
 
@@ -1311,13 +1456,43 @@
                 }
             });
             
+            // --- Set Mode Function ---
+            function setMode(mode) {
+                currentMode = mode;
+                renderTextToCanvas(); // Always commit text when switching mode
+
+                // Update active button states
+                toolModeButtons.forEach(btn => btn.classList.remove('active'));
+                if (mode === 'draw') {
+                    drawModeBtn.classList.add('active');
+                    canvas.style.cursor = 'crosshair';
+                } else if (mode === 'type') {
+                    typeModeBtn.classList.add('active');
+                    canvas.style.cursor = 'text';
+                }
+                // Reset eraser effect if not in eraser mode
+                if (mode !== 'draw' || drawColorInput.value !== currentDrawColor) { // If draw mode but color changed or switching away from draw
+                    // If current drawColor is a background color, reset it to black
+                    if (currentDrawColor === getCanvasBackgroundColor()) {
+                         currentDrawColor = '#000000';
+                         drawColorInput.value = '#000000';
+                    }
+                }
+            }
+
+
             // --- Event Listeners for Controls ---
             drawModeBtn.addEventListener('click', () => setMode('draw'));
             typeModeBtn.addEventListener('click', () => setMode('type'));
 
             drawColorInput.addEventListener('change', (e) => {
                 currentDrawColor = e.target.value;
+                setMode('draw'); // Activate draw mode and set color
             });
+            drawColorInput.addEventListener('input', (e) => { // For live update of color
+                currentDrawColor = e.target.value;
+            });
+
 
             drawWidthInput.addEventListener('change', (e) => {
                 currentDrawWidth = parseFloat(e.target.value);
@@ -1330,15 +1505,11 @@
             eraserBtn.addEventListener('click', () => {
                 setMode('draw'); // Eraser is a draw mode
                 currentDrawColor = getCanvasBackgroundColor(); // Eraser color matches canvas background
-                drawColorInput.value = '#000000'; // Keep color picker black, but draw color is background
                 canvas.style.cursor = 'cell'; // Eraser cursor
+                // Note: drawColorInput.value is not changed visually for eraser, but currentDrawColor is.
+                // Re-selecting draw mode or picking new color will reset actual draw color.
             });
             
-            drawColorInput.addEventListener('input', () => { // Use 'input' for live update
-                currentDrawColor = drawColorInput.value; // Get the chosen color
-                setMode('draw'); // Ensure draw mode is active, in case it was eraser mode
-            });
-
 
             textColorInput.addEventListener('change', (e) => {
                 currentTextColor = e.target.value;
@@ -1351,6 +1522,7 @@
                 currentFontSize = parseFloat(e.target.value);
                 if (typingArea.style.display === 'block') {
                     typingArea.style.fontSize = currentFontSize + 'px';
+                    typingArea.style.lineHeight = currentFontSize * 1.2 + 'px'; // Update line height as well
                 }
             });
 
@@ -1404,7 +1576,7 @@
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 const imgWidth = 210; // A4 width in mm
-                const pageHeight = 297; // A4 height in mm
+                // const pageHeight = 297; // A4 height in mm (not directly used for imgHeight calculation here)
 
                 for (let i = 0; i < allPagesContent.length; i++) {
                     const pageContent = allPagesContent[i].content;
@@ -1536,10 +1708,14 @@
                 const isClickInsideCanvas = canvas.contains(e.target);
                 const isClickInsideTypingArea = typingArea.contains(e.target);
                 const isClickInsideToolbar = document.querySelector('.notepad-toolbar').contains(e.target);
-                const isClickInsideSidebar = document.querySelector('.notepad-sidebar').contains(e.target);
+                const isClickInsideDrawingSidebar = document.querySelector('.drawing-tools-sidebar').contains(e.target);
+                const isClickInsideTextToolbar = document.querySelector('.text-toolbar').contains(e.target);
+                const isClickInsideRightSidebar = document.querySelector('.notepad-sidebar').contains(e.target);
+
 
                 if (currentMode === 'type' && typingArea.style.display === 'block' && 
-                    !isClickInsideTypingArea && !isClickInsideToolbar && !isClickInsideSidebar) {
+                    !isClickInsideTypingArea && !isClickInsideToolbar && !isClickInsideDrawingSidebar && 
+                    !isClickInsideTextToolbar && !isClickInsideRightSidebar && !isClickInsideCanvas) {
                     renderTextToCanvas();
                 }
             });
@@ -1560,7 +1736,7 @@
                 if (file && file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = (event) => {
-                        // Position new image roughly in center of view
+                        // Position new image roughly in center of canvas view
                         addImageToCanvas(event.target.result, canvas.width / 4, canvas.height / 4);
                     };
                     reader.onerror = (error) => {
@@ -1629,109 +1805,4 @@
                             const pasteY = parseFloat(typingArea.dataset.canvasY) || canvas.height / 4;
                             addImageToCanvas(event.target.result, pasteX, pasteY);
                         };
-                        reader.onerror = (error) => {
-                            console.error('FileReader error during paste:', error);
-                            alert('Error reading pasted image data.');
-                        };
-                        reader.readAsDataURL(file);
-                        return;
-                    }
-                }
-                // If no image data, paste as text into textarea if in type mode and textarea is active
-                if (currentMode === 'type' && typingArea.style.display === 'block' && e.clipboardData.getData('text/plain')) {
-                    const start = typingArea.selectionStart;
-                    const end = typingArea.selectionEnd;
-                    typingArea.value = typingArea.value.substring(0, start) + e.clipboardData.getData('text/plain') + typingArea.value.substring(end);
-                    typingArea.selectionStart = typingArea.selectionEnd = start + e.clipboardData.getData('text/plain').length;
-                }
-            });
-
-
-            function addImageToCanvas(imageData, x = 50, y = 50) { // Default position
-                const img = new Image();
-                img.onload = () => {
-                    // Set a default size, e.g., max 200px width, maintaining aspect ratio
-                    let width = img.width;
-                    let height = img.height;
-                    const maxWidth = 200;
-                    if (width > maxWidth) {
-                        height = (maxWidth / width) * height;
-                        width = maxWidth;
-                    }
-
-                    const newImage = {
-                        type: 'image',
-                        src: imageData, // Base64
-                        imgObj: img,   // Image object for drawing (will be re-created on load from storage)
-                        x: x,
-                        y: y,
-                        width: width,
-                        height: height
-                    };
-                    allPagesContent[currentPageIndex].content.push(newImage);
-                    saveState();
-                    redrawCanvas();
-                    // Automatically select new image for manipulation
-                    selectedImage = newImage;
-                    deselectImageBtn.disabled = false;
-                    redrawCanvas(); // Redraw with handles
-                };
-                img.onerror = (error) => {
-                    console.error('Image failed to load:', error, imageData.substring(0, 50) + '...');
-                    alert('Could not load image. It might be corrupted or too large.');
-                };
-                img.src = imageData;
-            }
-
-            // Adjust canvas size and redraw when window resizes
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    const currentWrapperWidth = canvas.parentElement.offsetWidth;
-                    const currentWrapperHeight = canvas.parentElement.offsetHeight;
-
-                    // Only resize canvas if its container size actually changed significantly
-                    // and ensure minimum dimensions
-                    const newWidth = Math.max(300, currentWrapperWidth); // Min width
-                    const newHeight = Math.max(300, currentWrapperHeight); // Min height
-
-                    if (Math.abs(newWidth - lastCanvasWidth) > 5 || Math.abs(newHeight - lastCanvasHeight) > 5) {
-                        canvas.width = newWidth;
-                        canvas.height = newHeight;
-                        lastCanvasWidth = newWidth;
-                        lastCanvasHeight = newHeight;
-                        
-                        redrawCanvas(); 
-                    }
-                }, 200); // Debounce
-            });
-
-            // Function to update notepad elements for theme changes
-            function updateNotepadTheme() {
-                redrawCanvas(); // Redraw everything to apply new background/line colors
-                
-                const isDarkMode = htmlElement.classList.contains('dark-mode');
-                
-                // Update typing area background color based on current theme/mode
-                const surfaceColor = getComputedStyle(document.documentElement).getPropertyValue('--surface-color').trim();
-                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
-                
-                typingArea.style.backgroundColor = isDarkMode 
-                    ? `color-mix(in srgb, ${surfaceColor} 80%, ${accentColor} 20%)`
-                    : `color-mix(in srgb, ${surfaceColor} 90%, ${accentColor} 10%)`;
-                
-                typingArea.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
-
-                // If eraser is active, ensure its draw color matches current canvas background
-                if (drawModeBtn.classList.contains('active') && (currentDrawColor === 'white' || currentDrawColor === '#2e2e2e')) {
-                     currentDrawColor = getCanvasBackgroundColor();
-                }
-            }
-
-            // Initial setup call
-            initializeNotepad();
-        });
-    </script>
-    <!-- [END] --- DEFINITIVE FIX --- -->
-</body>
-</html>
+                       
