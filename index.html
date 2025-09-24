@@ -215,7 +215,8 @@
             background-color: var(--surface-color);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border-radius: 8px;
-            min-width: 200px;
+            min-width: 180px; /* Slightly smaller default */
+            max-width: 250px; /* Cap its max width */
             z-index: 1000;
             padding: 0.5rem 0;
             border-top: 2px solid var(--primary-color);
@@ -289,11 +290,6 @@
         /* --- Responsive Design --- */
         @media (max-width: 1024px) {
             .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
-            /* Adjust positioning of user dropdown for smaller screens if needed */
-            #user-dropdown {
-                right: 0; /* Keep it right aligned */
-                left: auto; /* Ensure it doesn't try to auto-center if there's no space */
-            }
             .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
             .dashboard-container { padding: 2rem 1.5rem; }
         }
@@ -302,6 +298,12 @@
             .tool-nav { gap: 0.5rem; }
             .tool-nav-button { font-size: 0.9rem; padding: 0.4rem 0.6rem; }
             .auth-buttons { margin-top: 0.5rem; }
+            /* Adjust dropdown position for very narrow screens */
+            #user-dropdown {
+                right: 10px; /* Keep 10px from the right edge */
+                left: auto; /* Ensure it doesn't align left by default */
+                max-width: calc(100vw - 20px); /* Max width of viewport minus padding */
+            }
         }
     </style>
 </head>
@@ -753,7 +755,7 @@
                 closeModal(contactModal);
                 closeModal(loginModal);
                 closeModal(signupModal);
-                // closeModal(authPromptOverlay); // The authPromptOverlay is created dynamically, handle its close separately
+                // The authPromptOverlay is created dynamically, handle its close separately
             });
         });
 
@@ -787,6 +789,13 @@
             openModal(loginModal);
         });
 
+        // --- Email Validation Function ---
+        const isValidEmail = (email) => {
+            // A common regex for email validation (basic format check)
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        };
+
         // --- Firebase Authentication Logic ---
         // Function to clear error messages
         const clearErrorMessages = () => {
@@ -798,8 +807,14 @@
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             clearErrorMessages();
-            const email = loginEmailInput.value;
+            const email = loginEmailInput.value.trim(); // Trim whitespace
             const password = loginPasswordInput.value;
+
+            if (!isValidEmail(email)) {
+                loginErrorMessage.textContent = 'Please enter a valid email address format.';
+                loginErrorMessage.style.display = 'block';
+                return; // Stop execution if email is invalid
+            }
 
             try {
                 await auth.signInWithEmailAndPassword(email, password);
@@ -817,13 +832,21 @@
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             clearErrorMessages();
-            const email = signupEmailInput.value;
+            const email = signupEmailInput.value.trim(); // Trim whitespace
             const password = signupPasswordInput.value;
 
+            if (!isValidEmail(email)) {
+                signupErrorMessage.textContent = 'Please enter a valid email address format.';
+                signupErrorMessage.style.display = 'block';
+                return; // Stop execution if email is invalid
+            }
+            if (password.length < 6) {
+                signupErrorMessage.textContent = 'Password should be at least 6 characters.';
+                signupErrorMessage.style.display = 'block';
+                return; // Stop execution if password is too short
+            }
+
             try {
-                if (password.length < 6) {
-                    throw new Error('Password should be at least 6 characters.');
-                }
                 await auth.createUserWithEmailAndPassword(email, password);
                 closeModal(signupModal);
                 closeModal(authPromptOverlay); // Close auth prompt after successful signup
@@ -904,33 +927,36 @@
 
         const showAuthPrompt = () => {
             openModal(authPromptOverlay);
-            // Optionally prevent scrolling on the main content
-            document.body.style.overflow = 'hidden';
-            // Also, consider disabling interactions with the main content
-            document.body.classList.add('no-scroll'); // Add a class to body for better control
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
         };
 
         const hideAuthPrompt = () => {
             closeModal(authPromptOverlay);
             document.body.style.overflow = ''; // Restore scrolling
-            document.body.classList.remove('no-scroll'); // Remove class
             localStorage.removeItem(AUTH_PROMPT_KEY); // Clear timestamp once user is auth'd or prompt hidden
         };
 
-        const startInactivityTimer = () => {
-            // Clear any existing timer
+        const resetInactivityTimer = () => {
             if (inactivityTimer) {
                 clearTimeout(inactivityTimer);
             }
-            
-            // Set a new timer
-            inactivityTimer = setTimeout(() => {
-                // If user is NOT logged in after the timer, show prompt
-                if (!auth.currentUser) {
-                    showAuthPrompt();
-                }
-            }, INACTIVITY_THRESHOLD_MS);
+            if (!auth.currentUser) { // Only start timer if user is not logged in
+                inactivityTimer = setTimeout(() => {
+                    if (!auth.currentUser) { // Double check right before showing
+                        showAuthPrompt();
+                    }
+                }, INACTIVITY_THRESHOLD_MS);
+            }
+            // Update timestamp in localStorage on activity
+            localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
         };
+
+        // Track user activity to reset timer
+        const activityEvents = ['mousemove', 'keydown', 'scroll', 'click'];
+        activityEvents.forEach(event => {
+            window.addEventListener(event, resetInactivityTimer);
+        });
+
 
         // Listen for authentication state changes
         auth.onAuthStateChanged((user) => {
@@ -943,8 +969,10 @@
                 hideAuthPrompt(); // Ensure prompt is hidden if user logs in
                 localStorage.removeItem(AUTH_PROMPT_KEY); // Clear any pending prompt timer info
                 
-                // If you want to track activity for *authenticated* users for re-authentication later,
-                // you'd start a separate timer here. For this request, we only care about unauthenticated.
+                // Clear the inactivity timer if logged in
+                if (inactivityTimer) {
+                    clearTimeout(inactivityTimer);
+                }
             } else {
                 // User is signed out
                 userProfileWrapper.style.display = 'none'; // Hide user icon and dropdown
@@ -956,13 +984,14 @@
                 if (!authPromptTime) {
                     // First time seeing an unauthenticated user, set timestamp and start timer
                     localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
-                    startInactivityTimer();
+                    resetInactivityTimer(); // Start the timer
                 } else {
                     const elapsedTime = Date.now() - parseInt(authPromptTime);
                     if (elapsedTime >= INACTIVITY_THRESHOLD_MS) {
                         showAuthPrompt(); // Show immediately if threshold already passed
                     } else {
                         // Restart timer with remaining time
+                        if (inactivityTimer) clearTimeout(inactivityTimer);
                         inactivityTimer = setTimeout(() => {
                             if (!auth.currentUser) { // Double check in case user logs in right before timer fires
                                 showAuthPrompt();
