@@ -45,6 +45,8 @@
     <!-- Firebase SDK - Updated with your configuration -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <!-- Add Firebase Google Auth Provider SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script> 
     <script>
         // Your web app's Firebase configuration - THIS IS YOURS!
         const firebaseConfig = {
@@ -60,6 +62,8 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(); // Get a reference to the Auth service
+        // Initialize Google Auth Provider
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
     </script>
     <!-- END Firebase SDK -->
 
@@ -72,8 +76,11 @@
     <style>
         /* --- Basic Setup & Variables --- */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
-        html { background-color: var(--bg-color); transition: background-color var(--transition-speed); }
-        body { margin: 0; color: var(--text-color); transition: color var(--transition-speed); }
+        html, body {
+            margin: 0;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+        }
+        body { color: var(--text-color); background-color: var(--bg-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
         *, *::before, *::after { box-sizing: border-box; }
         .hidden { display: none !important; } /* Added for general utility */
 
@@ -230,7 +237,7 @@
             background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
             backdrop-filter: blur(5px); /* Blur effect */
             z-index: 2000; /* Ensure it's above everything else */
-            display: flex;
+            display: flex; /* IMPORTANT: Hide by default */
             align-items: center;
             justify-content: center;
             opacity: 0;
@@ -299,6 +306,66 @@
             text-decoration: underline;
         }
 
+        /* --- Social Login Buttons --- */
+        .social-login-buttons {
+            display: flex;
+            flex-direction: column; /* Stack vertically */
+            gap: 10px;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            border: 1px solid #ccc; /* Default border */
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            text-decoration: none; /* For the link element */
+        }
+
+        .social-button i {
+            margin-right: 0.75rem;
+            font-size: 1.2em;
+        }
+
+        .google-button {
+            background-color: #DB4437; /* Google red */
+            color: white;
+            border-color: #DB4437;
+        }
+        .google-button:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+
+        /* --- Separator Style --- */
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #888;
+            margin: 1.5rem 0 1rem 0; /* Adjust spacing */
+        }
+        .separator::before,
+        .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        .separator:not(:empty)::before {
+            margin-right: .75em;
+        }
+        .separator:not(:empty)::after {
+            margin-left: .75em;
+        }
+
         /* --- Prevent scrolling when overlay is active --- */
         body.body-no-scroll {
             overflow: hidden !important;
@@ -329,9 +396,11 @@
     </style>
 </head>
 <body>
+    <!-- Header Section -->
     <header class='main-header'>
         <div style="display: flex; align-items: center;">
             <div class='logo-container'>
+                <!-- IMPORTANT: Adjusted href to point to the root of the site -->
                 <a href='../../' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
                     <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
                     <h1>JKM Edit - By M&M</h1>
@@ -351,7 +420,7 @@
                         <a href='pdf-to-excel.html'>PDF to Excel</a>
                         <a href='pdf-to-image.html'>PDF to JPG/PNG</a>
                         <a href='word-to-pdf.html'>Word to PDF</a>
-                        <a href='../pdf-tools.html#function9'>Powerpoint to PDF</a> <!-- Adjusted path -->
+                        <a href='powerpoint-to-pdf.html'>Powerpoint to PDF</a> <!-- Corrected relative path -->
                         <a href='excel-to-pdf.html'>Excel to PDF</a>
                         <a href='image-to-pdf.html'>JPG/PNG to PDF</a>
                         <a href='sign-pdf.html'>Sign PDF</a>
@@ -501,6 +570,12 @@
         <div class='modal-content'>
             <span class='close-btn login-close-btn'>×</span>
             <h2>Login to JKM Edit</h2>
+            <div class="social-login-buttons">
+                <button type="button" id="google-login-btn" class="social-button google-button">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </button>
+            </div>
+            <div class="separator">OR</div>
             <form id='login-form'>
                 <div style='margin-bottom: 1rem;'>
                     <label for='login-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
@@ -527,6 +602,12 @@
         <div class='modal-content'>
             <span class='close-btn signup-close-btn'>×</span>
             <h2>Create an Account</h2>
+            <div class="social-login-buttons">
+                <button type="button" id="google-signup-btn" class="social-button google-button">
+                    <i class="fab fa-google"></i> Sign up with Google
+                </button>
+            </div>
+            <div class="separator">OR</div>
             <form id='signup-form'>
                 <div style='margin-bottom: 1rem;'>
                     <label for='signup-name' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Name:</label>
@@ -572,7 +653,7 @@
         const contactModal = document.getElementById('contact-modal');
         const aboutBtn = document.getElementById('about-btn');
         const contactBtn = document.getElementById('contact-btn');
-        const allCloseBtns = document.querySelectorAll('.close-btn'); // Renamed for clarity
+        const allCloseBtns = document.querySelectorAll('.close-btn');
 
         // Elements for auth modals
         const loginModal = document.getElementById('login-modal');
@@ -594,6 +675,11 @@
         const signupErrorMessage = document.getElementById('signup-error-message');
 
         const forgotPasswordLink = document.getElementById('forgot-password-link');
+        
+        // New Google Sign-in Buttons
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        const googleSignupBtn = document.getElementById('google-signup-btn');
+
 
         // Helper function to open/close modals
         const openModal = (modal) => { modal.classList.add('show-modal'); };
@@ -628,11 +714,13 @@
         const clearFormErrors = (formType) => {
             if (formType === 'login') {
                 if (loginErrorMessage) {
+                    loginErrorMessage.textContent = ''; // Clear text content
                     loginErrorMessage.style.display = 'none';
                     loginErrorMessage.style.color = 'red'; // Reset color in case it was green from a successful reset email
                 }
             } else if (formType === 'signup') {
                 if (signupErrorMessage) {
+                    signupErrorMessage.textContent = ''; // Clear text content
                     signupErrorMessage.style.display = 'none';
                 }
             }
@@ -701,7 +789,7 @@
                 try {
                     await auth.signInWithEmailAndPassword(email, password);
                     closeModal(loginModal);
-                    hideAuthPrompt(); // Close auth prompt after successful login
+                    // hideAuthPrompt() is called by onAuthStateChanged after successful login
                 } catch (error) {
                     console.error('Login Error:', error.message);
                     loginErrorMessage.textContent = `Login failed: ${error.message}`;
@@ -743,11 +831,11 @@
 
                 try {
                     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                    await userCredential.user.updateProfile({
+                    await userCredential.user.updateProfile({ // Save display name
                         displayName: name
                     });
                     closeModal(signupModal);
-                    hideAuthPrompt(); // Close auth prompt after successful signup
+                    // hideAuthPrompt() is called by onAuthStateChanged after successful signup
                 } catch (error) {
                     console.error('Signup Error:', error.message);
                     signupErrorMessage.textContent = `Signup failed: ${error.message}`;
@@ -755,6 +843,39 @@
                 }
             });
         }
+
+        // Handle Google Login
+        if(googleLoginBtn) {
+            googleLoginBtn.addEventListener('click', async () => {
+                clearFormErrors('login');
+                try {
+                    await auth.signInWithPopup(googleProvider);
+                    closeModal(loginModal);
+                    // hideAuthPrompt() is called by onAuthStateChanged after successful Google login
+                } catch (error) {
+                    console.error('Google Login Error:', error.message);
+                    loginErrorMessage.textContent = `Google login failed: ${error.message}`;
+                    loginErrorMessage.style.display = 'block';
+                }
+            });
+        }
+
+        // Handle Google Signup (can use the same signInWithPopup logic)
+        if(googleSignupBtn) {
+            googleSignupBtn.addEventListener('click', async () => {
+                clearFormErrors('signup');
+                try {
+                    await auth.signInWithPopup(googleProvider);
+                    closeModal(signupModal);
+                    // hideAuthPrompt() is called by onAuthStateChanged after successful Google signup
+                } catch (error) {
+                    console.error('Google Signup Error:', error.message);
+                    signupErrorMessage.textContent = `Google signup failed: ${error.message}`;
+                    signupErrorMessage.style.display = 'block';
+                }
+            });
+        }
+
 
         // Handle Logout
         const userDropdown = document.getElementById('user-dropdown');
@@ -801,11 +922,11 @@
         const userProfileWrapper = document.querySelector('.user-profile-wrapper');
         const userIconButton = document.getElementById('user-icon-button');
         const userDisplayDropdown = document.getElementById('user-display-dropdown');
-        const authButtonsDiv = document.querySelector('.auth-buttons');
+        const authButtonsDiv = document.querySelector('.auth-buttons'); // Already exists
 
         if(userIconButton) {
             userIconButton.addEventListener('click', (e) => {
-                e.stopPropagation();
+                e.stopPropagation(); // Prevent click from bubbling to window and closing immediately
                 if (userDropdown) userDropdown.classList.toggle('show-dropdown');
             });
         }
@@ -816,12 +937,12 @@
             }
         });
         
-        // --- Protected Content Logic (2-minute timer to block access) ---
-        const INACTIVITY_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes in milliseconds
-        const AUTH_PROMPT_KEY = 'jkm-edit-auth-prompt-time'; // Key for localStorage
-        let inactivityTimer;
+        // --- Protected Content Logic (Strict 2-minute lockout) ---
+        const LOCKOUT_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes in milliseconds
+        const LOCKOUT_START_TIME_KEY = 'jkm-edit-lockout-start-time'; // Key for localStorage
+        let lockoutTimer; // Holds the setTimeout ID
 
-        // Create the auth prompt overlay dynamically
+        // Create the auth prompt overlay dynamically (without a close button)
         const authPromptOverlay = document.createElement('div');
         authPromptOverlay.id = 'auth-prompt-overlay';
         authPromptOverlay.classList.add('auth-overlay');
@@ -844,98 +965,110 @@
         // Add event listeners for the dynamically created buttons
         if(promptLoginBtn) {
             promptLoginBtn.addEventListener('click', () => {
-                closeModal(authPromptOverlay); // Temporarily close overlay to show login modal
-                clearFormErrors('login'); // Clear errors
-                openModal(loginModal);
+                // When user clicks "Login" from the lockout prompt, close the prompt and open the login modal
+                authPromptOverlay.classList.remove('show-overlay'); // Directly hide the lockout prompt
+                document.body.classList.remove('body-no-scroll'); // Restore scrolling temporarily
+                clearFormErrors('login'); // Clear errors for login modal
+                openModal(loginModal); // Open the login modal
             });
         }
         if(promptSignupBtn) {
             promptSignupBtn.addEventListener('click', () => {
-                closeModal(authPromptOverlay); // Temporarily close overlay to show signup modal
-                clearFormErrors('signup'); // Clear errors
-                openModal(signupModal);
+                // When user clicks "Sign Up" from the lockout prompt, close the prompt and open the signup modal
+                authPromptOverlay.classList.remove('show-overlay'); // Directly hide the lockout prompt
+                document.body.classList.remove('body-no-scroll'); // Restore scrolling temporarily
+                clearFormErrors('signup'); // Clear errors for signup modal
+                openModal(signupModal); // Open the signup modal
             });
         }
 
         const showAuthPrompt = () => {
-            openModal(authPromptOverlay);
+            console.log("Showing authentication prompt."); // Debugging line
+            authPromptOverlay.classList.add('show-overlay'); // Directly add 'show-overlay' to display it
             document.body.classList.add('body-no-scroll'); // Prevent scrolling
-            authPromptOverlay.style.pointerEvents = 'auto'; // Ensure it captures clicks
         };
 
         const hideAuthPrompt = () => {
-            closeModal(authPromptOverlay);
+            authPromptOverlay.classList.remove('show-overlay'); // Directly remove 'show-overlay' to hide it
             document.body.classList.remove('body-no-scroll'); // Restore scrolling
-            localStorage.removeItem(AUTH_PROMPT_KEY); // Clear timestamp once user is auth'd or prompt hidden
-            authPromptOverlay.style.pointerEvents = 'none'; // Make it non-interactive when hidden
+            localStorage.removeItem(LOCKOUT_START_TIME_KEY); // Clear timestamp
+            if (lockoutTimer) { // Stop any pending lockout timer
+                clearTimeout(lockoutTimer);
+            }
         };
 
-        const resetInactivityTimer = () => {
-            if (inactivityTimer) {
-                clearTimeout(inactivityTimer);
+        const startLockoutTimer = (delay) => {
+            if (lockoutTimer) {
+                clearTimeout(lockoutTimer);
             }
-            if (!auth.currentUser) { // Only start timer if user is not logged in
-                inactivityTimer = setTimeout(() => {
-                    if (!auth.currentUser) { // Double check right before showing
-                        showAuthPrompt();
-                    }
-                }, INACTIVITY_THRESHOLD_MS);
-            }
-            // Update timestamp in localStorage on activity
-            localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
+            lockoutTimer = setTimeout(() => {
+                // Double check if user is still not logged in before showing prompt
+                if (!auth.currentUser) { 
+                    showAuthPrompt();
+                }
+            }, delay);
         };
 
-        // Track user activity to reset timer
-        const activityEvents = ['mousemove', 'keydown', 'scroll', 'click'];
-        activityEvents.forEach(event => {
-            window.addEventListener(event, resetInactivityTimer);
-        });
+        // This function will initialize or resume the lockout timer
+        const initializeOrResumeLockout = () => {
+            if (auth.currentUser) {
+                hideAuthPrompt(); // User is logged in, ensure no lockout
+                return;
+            }
 
+            let lockoutStartTime = localStorage.getItem(LOCKOUT_START_TIME_KEY);
+            if (!lockoutStartTime) {
+                // First time unauthenticated user on this page, set start time
+                lockoutStartTime = Date.now().toString();
+                localStorage.setItem(LOCKOUT_START_TIME_KEY, lockoutStartTime);
+                startLockoutTimer(LOCKOUT_THRESHOLD_MS);
+            } else {
+                // User has been unauthenticated before, calculate elapsed time
+                const elapsed = Date.now() - parseInt(lockoutStartTime);
+                if (elapsed >= LOCKOUT_THRESHOLD_MS) {
+                    showAuthPrompt(); // Immediately show if threshold passed
+                } else {
+                    // Resume timer with remaining time
+                    startLockoutTimer(LOCKOUT_THRESHOLD_MS - elapsed);
+                }
+            }
+        };
 
         // Listen for authentication state changes (this is key for persistent login across pages)
         auth.onAuthStateChanged((user) => {
             if (user) {
                 // User is signed in
-                if (userDisplayDropdown) userDisplayDropdown.textContent = user.email; // Shows email in dropdown
+                if (userDisplayDropdown) userDisplayDropdown.textContent = user.displayName || user.email; // Shows name or email
                 if (userProfileWrapper) userProfileWrapper.style.display = 'flex'; // Show user icon and dropdown
                 if (authButtonsDiv) authButtonsDiv.style.display = 'none';    // Hide login/signup buttons
-
                 hideAuthPrompt(); // Ensure prompt is hidden if user logs in
-                localStorage.removeItem(AUTH_PROMPT_KEY); // Clear any pending prompt timer info
-                
-                // Clear the inactivity timer if logged in
-                if (inactivityTimer) {
-                    clearTimeout(inactivityTimer);
-                }
             } else {
                 // User is signed out
                 if (userProfileWrapper) userProfileWrapper.style.display = 'none'; // Hide user icon and dropdown
                 if (userDropdown) userDropdown.classList.remove('show-dropdown'); // Ensure dropdown is closed
                 if (authButtonsDiv) authButtonsDiv.style.display = 'flex';       // Show login/signup buttons
-
-                // Logic for 2-minute prompt for unauthenticated users
-                const authPromptTime = localStorage.getItem(AUTH_PROMPT_KEY);
-                if (!authPromptTime) {
-                    // First time seeing an unauthenticated user, set timestamp and start timer
-                    localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
-                    resetInactivityTimer(); // Start the timer
-                } else {
-                    const elapsedTime = Date.now() - parseInt(authPromptTime);
-                    if (elapsedTime >= INACTIVITY_THRESHOLD_MS) {
-                        showAuthPrompt(); // Show immediately if threshold already passed
-                    } else {
-                        // Restart timer with remaining time
-                        if (inactivityTimer) clearTimeout(inactivityTimer);
-                        inactivityTimer = setTimeout(() => {
-                            if (!auth.currentUser) { // Double check in case user logs in right before timer fires
-                                showAuthPrompt();
-                            }
-                        }, INACTIVITY_THRESHOLD_MS - elapsedTime);
-                    }
-                }
+                initializeOrResumeLockout(); // Start or resume lockout timer
             }
         });
 
+        // Handle visibility change (tab switching) to account for time spent in other tabs
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Tab is hidden, if user is not logged in, pause the timer and save current time
+                if (!auth.currentUser) {
+                    if (lockoutTimer) clearTimeout(lockoutTimer);
+                    // Update the start time to now, so when they come back, it calculates from this point.
+                    // This makes the 2 minutes continuous across hidden state.
+                    localStorage.setItem(LOCKOUT_START_TIME_KEY, Date.now().toString()); 
+                }
+            } else {
+                // Tab is visible again
+                initializeOrResumeLockout(); // Re-evaluate lockout state
+            }
+        });
+
+        // Initial check on page load
+        initializeOrResumeLockout();
 
         // --- Theme and Dark Mode Event Listeners ---
         const themePicker = document.getElementById('theme-picker');
@@ -974,11 +1107,11 @@
         // When a modal closes, clear form fields and errors messages
         if(loginModal) {
             loginModal.addEventListener('transitionend', () => {
-                if (!loginModal.classList.contains('show-modal')) {
+                if (!loginModal.classList.contains('show-modal')) { // When modal finishes closing
                     if (loginEmailInput) loginEmailInput.value = '';
                     if (loginPasswordInput) loginPasswordInput.value = '';
                     if (loginPasswordInput) loginPasswordInput.type = 'password';
-                    clearFormErrors('login');
+                    clearFormErrors('login'); // Clear errors and reset color
                     if (!auth.currentUser) { // If user is still not logged in, show auth prompt again
                         showAuthPrompt();
                     }
@@ -987,14 +1120,14 @@
         }
         if(signupModal) {
             signupModal.addEventListener('transitionend', () => {
-                if (!signupModal.classList.contains('show-modal')) {
+                if (!signupModal.classList.contains('show-modal')) { // When modal finishes closing
                     if (signupNameInput) signupNameInput.value = '';
                     if (signupEmailInput) signupEmailInput.value = '';
                     if (signupPasswordInput) signupPasswordInput.value = '';
                     if (signupConfirmPasswordInput) signupConfirmPasswordInput.value = '';
                     if (signupPasswordInput) signupPasswordInput.type = 'password';
                     if (signupConfirmPasswordInput) signupConfirmPasswordInput.type = 'password';
-                    clearFormErrors('signup');
+                    clearFormErrors('signup'); // Clear errors
                     if (!auth.currentUser) { // If user is still not logged in, show auth prompt again
                         showAuthPrompt();
                     }
@@ -1002,7 +1135,7 @@
             });
         }
 
-        // --- Page Transition Logic (Existing from pdf-tools.html, adapted for relative paths) ---
+        // --- Page Transition Logic ---
         document.querySelectorAll('a').forEach(link => {
             const linkUrl = link.getAttribute('href');
             // Only apply fade-out to internal HTML links or directory links, not external or JavaScript links
@@ -1148,7 +1281,7 @@
         }
         
         function resetApp() {
-            allPages = []; fileCounter = 0; fileDataStore = {};
+            allPages = [], fileCounter = 0, fileDataStore = {};
             if (mergedOnlyBlobUrl) URL.revokeObjectURL(mergedOnlyBlobUrl);
             mergedOnlyBytes = null; mergedOnlyBlobUrl = null;
             if (fileInput) fileInput.value = ''; 
