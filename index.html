@@ -51,7 +51,7 @@
         })();
     </script>
     
-    <!-- Firebase SDK - ADD THESE LINES -->
+    <!-- Firebase SDK - Updated with your configuration -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script>
@@ -186,9 +186,114 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
+        /* --- New CSS for User Profile Dropdown and Auth Overlay --- */
+        .user-profile-wrapper {
+            position: relative;
+            display: none; /* Controlled by JS */
+            align-items: center;
+        }
+
+        #user-icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            padding: 0.5rem;
+            border-radius: 50%; /* Make it round */
+            transition: background-color var(--transition-speed);
+        }
+        #user-icon-button:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 15%, transparent);
+        }
+
+        #user-dropdown {
+            display: none; /* Hidden by default, shown on click */
+            position: absolute;
+            right: 0; /* Align to the right of the icon */
+            top: calc(100% + 10px); /* Position below the header */
+            background-color: var(--surface-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            min-width: 200px;
+            z-index: 1000;
+            padding: 0.5rem 0;
+            border-top: 2px solid var(--primary-color);
+        }
+        #user-dropdown.show-dropdown {
+            display: block;
+        }
+        #user-display-dropdown {
+            font-weight: 600;
+            white-space: nowrap; /* Prevent email from wrapping */
+            overflow: hidden; /* Hide overflow */
+            text-overflow: ellipsis; /* Add ellipsis for long emails */
+            padding: 0.5rem 1rem;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--bg-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- Overlay for Protected Content --- */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            backdrop-filter: blur(8px); /* Blur effect */
+            z-index: 2000; /* Ensure it's above everything else */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .auth-overlay.show-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+        .auth-prompt-modal {
+            background-color: var(--surface-color);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 90%;
+            border-top: 5px solid var(--primary-color);
+            animation: slideIn 0.4s ease-out; /* Reuse existing animation */
+        }
+        .auth-prompt-modal h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        .auth-prompt-modal p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+        }
+        .auth-prompt-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .auth-prompt-buttons .auth-button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        
         /* --- Responsive Design --- */
         @media (max-width: 1024px) {
             .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            /* Adjust positioning of user dropdown for smaller screens if needed */
+            #user-dropdown {
+                right: 0; /* Keep it right aligned */
+                left: auto; /* Ensure it doesn't try to auto-center if there's no space */
+            }
             .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
             .dashboard-container { padding: 2rem 1.5rem; }
         }
@@ -298,11 +403,17 @@
             <a href='#' id='about-btn' class='nav-link'>About</a>
             <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
             
-            <!-- Authentication/User Status - UPDATED FOR FIREBASE -->
-            <div class='user-status' style="display: none; align-items: center; gap: 1rem;">
-                <span id="user-display" style="font-weight: 600; color: var(--primary-color);"></span>
-                <button id='logout-button' class='auth-button login-button' style="margin-left: 0.5rem;">Logout</button>
+            <!-- User Profile and Logout Dropdown - NEW UI -->
+            <div class='user-profile-wrapper'>
+                <button id='user-icon-button' class='nav-button' aria-label='User Account'>
+                    <i class='fa-solid fa-user'></i>
+                </button>
+                <div id='user-dropdown' class='tool-dropdown'>
+                    <span id="user-display-dropdown"></span>
+                    <button id='logout-button' class='auth-button signup-button' style='width: calc(100% - 2rem); margin: 0 1rem;'>Logout</button>
+                </div>
             </div>
+            <!-- Login/Signup Buttons (visible when not logged in) -->
             <div class='auth-buttons'>
                 <button id='header-login-btn' class='auth-button login-button'>Login</button>
                 <button id='header-signup-btn' class='auth-button signup-button'>Sign Up</button>
@@ -614,15 +725,12 @@
         const aboutBtn = document.getElementById('about-btn');
         const contactBtn = document.getElementById('contact-btn');
 
-        // New elements for auth modals
+        // Elements for auth modals
         const loginModal = document.getElementById('login-modal');
         const signupModal = document.getElementById('signup-modal');
         const headerLoginBtn = document.getElementById('header-login-btn');
         const headerSignupBtn = document.getElementById('header-signup-btn');
         const logoutButton = document.getElementById('logout-button');
-        const userDisplay = document.getElementById('user-display');
-        const authButtonsDiv = document.querySelector('.auth-buttons');
-        const userStatusDiv = document.querySelector('.user-status');
 
         const loginForm = document.getElementById('login-form');
         const loginEmailInput = document.getElementById('login-email');
@@ -638,21 +746,14 @@
         const openModal = (modal) => { modal.classList.add('show-modal'); };
         const closeModal = (modal) => { modal.classList.remove('show-modal'); };
 
-        // Existing event listeners for About & Contact
-        aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
-        contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
-
-        // New event listeners for header Login/Signup buttons
-        headerLoginBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(loginModal); });
-        headerSignupBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(signupModal); });
-
-        // Close button functionality for all modals
+        // Close button functionality for all modals (using event delegation for simplicity)
         document.querySelectorAll('.close-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 closeModal(aboutModal);
                 closeModal(contactModal);
                 closeModal(loginModal);
                 closeModal(signupModal);
+                // closeModal(authPromptOverlay); // The authPromptOverlay is created dynamically, handle its close separately
             });
         });
 
@@ -662,7 +763,16 @@
             if (e.target === contactModal) closeModal(contactModal);
             if (e.target === loginModal) closeModal(loginModal);
             if (e.target === signupModal) closeModal(signupModal);
+            if (e.target === authPromptOverlay) closeModal(authPromptOverlay); // For the new auth prompt
         });
+
+        // Existing event listeners for About & Contact
+        aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+        contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+
+        // New event listeners for header Login/Signup buttons
+        headerLoginBtn.addEventListener('click', (e) => { e.preventDefault(); closeModal(signupModal); openModal(loginModal); });
+        headerSignupBtn.addEventListener('click', (e) => { e.preventDefault(); closeModal(loginModal); openModal(signupModal); });
 
         // Switch between login/signup modals
         document.getElementById('open-signup-from-login').addEventListener('click', (e) => {
@@ -676,7 +786,6 @@
             closeModal(signupModal);
             openModal(loginModal);
         });
-
 
         // --- Firebase Authentication Logic ---
         // Function to clear error messages
@@ -695,7 +804,8 @@
             try {
                 await auth.signInWithEmailAndPassword(email, password);
                 closeModal(loginModal);
-                alert('Logged in successfully!'); // Consider a more elegant notification
+                closeModal(authPromptOverlay); // Close auth prompt after successful login
+                // alert('Logged in successfully!'); // Suppress alert for smoother UX
             } catch (error) {
                 console.error('Login Error:', error.message);
                 loginErrorMessage.textContent = `Login failed: ${error.message}`;
@@ -711,13 +821,13 @@
             const password = signupPasswordInput.value;
 
             try {
-                // Firebase requires password to be at least 6 characters
                 if (password.length < 6) {
                     throw new Error('Password should be at least 6 characters.');
                 }
                 await auth.createUserWithEmailAndPassword(email, password);
                 closeModal(signupModal);
-                alert('Account created successfully! You are now logged in.'); // Consider a more elegant notification
+                closeModal(authPromptOverlay); // Close auth prompt after successful signup
+                // alert('Account created successfully! You are now logged in.'); // Suppress alert for smoother UX
             } catch (error) {
                 console.error('Signup Error:', error.message);
                 signupErrorMessage.textContent = `Signup failed: ${error.message}`;
@@ -729,24 +839,137 @@
         logoutButton.addEventListener('click', async () => {
             try {
                 await auth.signOut();
-                alert('Logged out successfully!'); // Consider a more elegant notification
+                // alert('Logged out successfully!'); // Suppress alert for smoother UX
             } catch (error) {
                 console.error('Logout Error:', error.message);
-                alert(`Logout failed: ${error.message}`);
+                // alert(`Logout failed: ${error.message}`); // Suppress alert for smoother UX
+            }
+            userDropdown.classList.remove('show-dropdown'); // Hide dropdown on logout
+        });
+
+
+        // --- Header UI: User Logo and Dropdown ---
+        const userProfileWrapper = document.querySelector('.user-profile-wrapper');
+        const userIconButton = document.getElementById('user-icon-button');
+        const userDropdown = document.getElementById('user-dropdown');
+        const userDisplayDropdown = document.getElementById('user-display-dropdown');
+        const authButtonsDiv = document.querySelector('.auth-buttons'); // Already exists
+
+        userIconButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent click from bubbling to window and closing immediately
+            userDropdown.classList.toggle('show-dropdown');
+        });
+
+        // Close dropdown if clicked outside
+        window.addEventListener('click', (e) => {
+            if (userDropdown.classList.contains('show-dropdown') && !userIconButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.remove('show-dropdown');
             }
         });
+
+        // --- Protected Content Logic (2-minute timer) ---
+        const INACTIVITY_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes in milliseconds
+        const AUTH_PROMPT_KEY = 'jkm-edit-auth-prompt-time'; // Key for localStorage
+        let inactivityTimer;
+
+        // Create the auth prompt overlay dynamically
+        const authPromptOverlay = document.createElement('div');
+        authPromptOverlay.id = 'auth-prompt-overlay';
+        authPromptOverlay.classList.add('auth-overlay');
+        authPromptOverlay.innerHTML = `
+            <div class='auth-prompt-modal'>
+                <h2>Login Required</h2>
+                <p>Please log in or sign up to continue using JKM Edit and access all our tools.</p>
+                <div class='auth-prompt-buttons'>
+                    <button id='prompt-login-btn' class='auth-button login-button'>Login</button>
+                    <button id='prompt-signup-btn' class='auth-button signup-button'>Sign Up</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(authPromptOverlay); // Append it to the body
+
+        // Get references to buttons inside the dynamically created overlay
+        const promptLoginBtn = authPromptOverlay.querySelector('#prompt-login-btn');
+        const promptSignupBtn = authPromptOverlay.querySelector('#prompt-signup-btn');
+        
+        // Add event listeners for the dynamically created buttons
+        promptLoginBtn.addEventListener('click', () => {
+            closeModal(authPromptOverlay);
+            openModal(loginModal);
+        });
+        promptSignupBtn.addEventListener('click', () => {
+            closeModal(authPromptOverlay);
+            openModal(signupModal);
+        });
+
+        const showAuthPrompt = () => {
+            openModal(authPromptOverlay);
+            // Optionally prevent scrolling on the main content
+            document.body.style.overflow = 'hidden';
+            // Also, consider disabling interactions with the main content
+            document.body.classList.add('no-scroll'); // Add a class to body for better control
+        };
+
+        const hideAuthPrompt = () => {
+            closeModal(authPromptOverlay);
+            document.body.style.overflow = ''; // Restore scrolling
+            document.body.classList.remove('no-scroll'); // Remove class
+            localStorage.removeItem(AUTH_PROMPT_KEY); // Clear timestamp once user is auth'd or prompt hidden
+        };
+
+        const startInactivityTimer = () => {
+            // Clear any existing timer
+            if (inactivityTimer) {
+                clearTimeout(inactivityTimer);
+            }
+            
+            // Set a new timer
+            inactivityTimer = setTimeout(() => {
+                // If user is NOT logged in after the timer, show prompt
+                if (!auth.currentUser) {
+                    showAuthPrompt();
+                }
+            }, INACTIVITY_THRESHOLD_MS);
+        };
 
         // Listen for authentication state changes
         auth.onAuthStateChanged((user) => {
             if (user) {
                 // User is signed in
-                userDisplay.textContent = `Welcome, ${user.email}`;
-                userStatusDiv.style.display = 'flex'; // Show user info and logout
-                authButtonsDiv.style.display = 'none'; // Hide login/signup buttons
+                userDisplayDropdown.textContent = user.email;
+                userProfileWrapper.style.display = 'flex'; // Show user icon and dropdown
+                authButtonsDiv.style.display = 'none';    // Hide login/signup buttons
+
+                hideAuthPrompt(); // Ensure prompt is hidden if user logs in
+                localStorage.removeItem(AUTH_PROMPT_KEY); // Clear any pending prompt timer info
+                
+                // If you want to track activity for *authenticated* users for re-authentication later,
+                // you'd start a separate timer here. For this request, we only care about unauthenticated.
             } else {
                 // User is signed out
-                userStatusDiv.style.display = 'none'; // Hide user info and logout
-                authButtonsDiv.style.display = 'flex'; // Show login/signup buttons
+                userProfileWrapper.style.display = 'none'; // Hide user icon and dropdown
+                userDropdown.classList.remove('show-dropdown'); // Ensure dropdown is closed
+                authButtonsDiv.style.display = 'flex';       // Show login/signup buttons
+
+                // Logic for 2-minute prompt for unauthenticated users
+                const authPromptTime = localStorage.getItem(AUTH_PROMPT_KEY);
+                if (!authPromptTime) {
+                    // First time seeing an unauthenticated user, set timestamp and start timer
+                    localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
+                    startInactivityTimer();
+                } else {
+                    const elapsedTime = Date.now() - parseInt(authPromptTime);
+                    if (elapsedTime >= INACTIVITY_THRESHOLD_MS) {
+                        showAuthPrompt(); // Show immediately if threshold already passed
+                    } else {
+                        // Restart timer with remaining time
+                        inactivityTimer = setTimeout(() => {
+                            if (!auth.currentUser) { // Double check in case user logs in right before timer fires
+                                showAuthPrompt();
+                            }
+                        }, INACTIVITY_THRESHOLD_MS - elapsedTime);
+                    }
+                }
             }
         });
 
@@ -754,34 +977,29 @@
         // --- Theme and Dark Mode Event Listeners (Logic unchanged) ---
         const themePicker = document.getElementById('theme-picker');
         const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const htmlElement = document.documentElement; // Target the <html> element
+        const htmlElement = document.documentElement;
 
-        // Function to set theme and save it
         const setTheme = (theme) => {
             htmlElement.dataset.theme = theme;
             localStorage.setItem('jkm-edit-theme', theme);
         };
 
-        // Function to enable dark mode
         const enableDarkMode = () => {
             htmlElement.classList.add('dark-mode');
             localStorage.setItem('jkm-edit-mode', 'dark');
         };
 
-        // Function to disable dark mode
         const disableDarkMode = () => {
             htmlElement.classList.remove('dark-mode');
             localStorage.setItem('jkm-edit-mode', 'light');
         };
 
-        // Add event listeners for the controls
         themePicker.addEventListener('change', () => setTheme(themePicker.value));
 
         darkModeToggle.addEventListener('click', () => {
             htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
         });
 
-        // --- Initialize UI Controls to match loaded state ---
         const savedTheme = localStorage.getItem('jkm-edit-theme');
         if (savedTheme) {
             themePicker.value = savedTheme;
