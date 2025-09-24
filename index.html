@@ -188,9 +188,10 @@
         
         /* --- New CSS for User Profile Dropdown and Auth Overlay --- */
         .user-profile-wrapper {
-            position: relative; /* IMPORTANT: Ensures dropdown positions relative to this wrapper */
+            /* Remove 'position: relative' here, as the dropdown will position relative to .main-header */
             display: none; /* Controlled by JS */
             align-items: center;
+            margin-left: 1.5rem; /* Added for consistent spacing within main-nav */
         }
 
         #user-icon-button {
@@ -210,7 +211,8 @@
         #user-dropdown {
             display: none; /* Hidden by default, shown on click */
             position: absolute;
-            right: 0; /* Changed from 10px to 0 to align its right edge with the parent's right edge */
+            /* Align the right edge of the dropdown with the right edge of the header's content area */
+            right: 2rem; /* Matches the padding of .main-header */
             top: calc(100% + 10px); /* Position below the header */
             background-color: var(--surface-color);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -221,13 +223,13 @@
             padding: 0.5rem 0;
             border-top: 2px solid var(--primary-color);
             word-wrap: break-word; /* Allows long emails to wrap within the dropdown */
+            left: auto; /* Allows it to expand left naturally */
         }
         #user-dropdown.show-dropdown {
             display: block;
         }
         #user-display-dropdown {
             font-weight: 600;
-            /* Removed white-space: nowrap and text-overflow: ellipsis */
             padding: 0.75rem 1rem; /* Consistent padding */
             color: var(--text-color);
             border-bottom: 1px solid var(--bg-color);
@@ -298,13 +300,15 @@
         }
         /* Style the actual input field inside the wrapper */
         .password-input-wrapper input {
-            padding-right: 3.5rem !important; /* Make space for the icon. Adjust if base input padding changes. */
+            /* Ensure enough space for the button, factoring in its width (2.5rem) + right padding (10px) */
+            padding-right: calc(2.5rem + 15px) !important; 
         }
         .toggle-password-visibility {
             position: absolute;
-            right: 10px; /* Distance from right edge of the input box */
+            right: 5px; /* Distance from right edge of the input box */
             top: 50%; /* Vertically center the button */
             transform: translateY(-50%); /* Adjust for button's own height */
+            height: calc(100% - 2px); /* Make button height visually match input field height (minus borders) */
             /* Using flexbox for perfect vertical and horizontal centering within the button's bounds */
             display: flex; 
             align-items: center; /* Vertically center icon */
@@ -327,6 +331,9 @@
             .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
             .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
             .dashboard-container { padding: 2rem 1.5rem; }
+            #user-dropdown { /* Adjust for smaller header padding when header stacks */
+                right: 1rem; 
+            }
         }
         @media (max-width: 768px) {
             .main-nav { flex-wrap: wrap; justify-content: center; }
@@ -335,9 +342,9 @@
             .auth-buttons { margin-top: 0.5rem; }
             /* Adjust dropdown position for very narrow screens */
             #user-dropdown {
-                right: 5px; /* A bit closer to the edge on small screens */
-                left: auto;
-                max-width: calc(100vw - 10px); /* Max width of viewport minus small padding */
+                right: 1rem; /* A bit closer to the edge on small screens, relative to header padding */
+                left: auto; /* Ensure it floats right */
+                max-width: calc(100vw - 2rem); /* Max width of viewport minus small padding on each side */
                 min-width: 150px; /* Ensure it doesn't get too small */
             }
         }
