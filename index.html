@@ -51,6 +51,27 @@
         })();
     </script>
     
+    <!-- Firebase SDK - ADD THESE LINES -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script>
+        // Your web app's Firebase configuration - THIS IS YOURS!
+        const firebaseConfig = {
+          apiKey: "AIzaSyBYbL6YBhutQLfJWWlAq6NZmBJT7C0jh-U", // YOUR API KEY
+          authDomain: "jkm-edit.firebaseapp.com",
+          projectId: "jkm-edit",
+          storageBucket: "jkm-edit.firebasestorage.app",
+          messagingSenderId: "912363496301",
+          appId: "1:912363496301:web:963e8c116d615edcad3064",
+          measurementId: "G-34GXEPX7KZ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(); // Get a reference to the Auth service
+    </script>
+    <!-- END Firebase SDK -->
+
     <!-- Link to Google Fonts and Font Awesome -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
@@ -277,10 +298,14 @@
             <a href='#' id='about-btn' class='nav-link'>About</a>
             <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
             
-            <!-- Login/Signup Buttons -->
+            <!-- Authentication/User Status - UPDATED FOR FIREBASE -->
+            <div class='user-status' style="display: none; align-items: center; gap: 1rem;">
+                <span id="user-display" style="font-weight: 600; color: var(--primary-color);"></span>
+                <button id='logout-button' class='auth-button login-button' style="margin-left: 0.5rem;">Logout</button>
+            </div>
             <div class='auth-buttons'>
-                <button class='auth-button login-button'>Login</button>
-                <button class='auth-button signup-button'>Sign Up</button>
+                <button id='header-login-btn' class='auth-button login-button'>Login</button>
+                <button id='header-signup-btn' class='auth-button signup-button'>Sign Up</button>
             </div>
         </nav>
     </header>
@@ -534,35 +559,199 @@
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
-    <!-- JavaScript -->
+    <!-- Login Modal - NEW -->
+    <div id='login-modal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-btn login-close-btn'>×</span>
+            <h2>Login to JKM Edit</h2>
+            <form id='login-form'>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='login-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
+                    <input type='email' id='login-email' placeholder='Enter your email' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='login-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
+                    <input type='password' id='login-password' placeholder='Enter your password' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <button type='submit' class='contact-email' style='width: 100%; border: none;'>Login</button>
+                <p id="login-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
+            </form>
+            <p style="margin-top: 1rem; text-align: center;">Don't have an account? <a href="#" id="open-signup-from-login" style="color: var(--primary-color);">Sign Up</a></p>
+        </div>
+    </div>
+
+    <!-- Signup Modal - NEW -->
+    <div id='signup-modal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-btn signup-close-btn'>×</span>
+            <h2>Create an Account</h2>
+            <form id='signup-form'>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='signup-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
+                    <input type='email' id='signup-email' placeholder='Enter your email' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='signup-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
+                    <input type='password' id='signup-password' placeholder='Create a password (min 6 characters)' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <button type='submit' class='contact-email' style='width: 100%; border: none;'>Sign Up</button>
+                <p id="signup-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
+            </form>
+            <p style="margin-top: 1rem; text-align: center;">Already have an account? <a href="#" id="open-login-from-signup" style="color: var(--primary-color);">Login</a></p>
+        </div>
+    </div>
+
+    <!-- JavaScript - UPDATED FOR FIREBASE AUTH -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- Modal Logic (unchanged) ---
+        // --- Existing Modal Logic ---
         const aboutModal = document.getElementById('about-modal');
         const contactModal = document.getElementById('contact-modal');
         const aboutBtn = document.getElementById('about-btn');
         const contactBtn = document.getElementById('contact-btn');
-        const closeBtns = document.querySelectorAll('.close-btn');
 
+        // New elements for auth modals
+        const loginModal = document.getElementById('login-modal');
+        const signupModal = document.getElementById('signup-modal');
+        const headerLoginBtn = document.getElementById('header-login-btn');
+        const headerSignupBtn = document.getElementById('header-signup-btn');
+        const logoutButton = document.getElementById('logout-button');
+        const userDisplay = document.getElementById('user-display');
+        const authButtonsDiv = document.querySelector('.auth-buttons');
+        const userStatusDiv = document.querySelector('.user-status');
+
+        const loginForm = document.getElementById('login-form');
+        const loginEmailInput = document.getElementById('login-email');
+        const loginPasswordInput = document.getElementById('login-password');
+        const loginErrorMessage = document.getElementById('login-error-message');
+
+        const signupForm = document.getElementById('signup-form');
+        const signupEmailInput = document.getElementById('signup-email');
+        const signupPasswordInput = document.getElementById('signup-password');
+        const signupErrorMessage = document.getElementById('signup-error-message');
+
+        // Helper function to open/close modals
         const openModal = (modal) => { modal.classList.add('show-modal'); };
         const closeModal = (modal) => { modal.classList.remove('show-modal'); };
 
+        // Existing event listeners for About & Contact
         aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
         contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
-        
-        closeBtns.forEach(btn => {
+
+        // New event listeners for header Login/Signup buttons
+        headerLoginBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(loginModal); });
+        headerSignupBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(signupModal); });
+
+        // Close button functionality for all modals
+        document.querySelectorAll('.close-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 closeModal(aboutModal);
                 closeModal(contactModal);
+                closeModal(loginModal);
+                closeModal(signupModal);
             });
         });
 
+        // Click outside modal to close
         window.addEventListener('click', (e) => {
             if (e.target === aboutModal) closeModal(aboutModal);
             if (e.target === contactModal) closeModal(contactModal);
+            if (e.target === loginModal) closeModal(loginModal);
+            if (e.target === signupModal) closeModal(signupModal);
         });
 
-        // --- Theme and Dark Mode Event Listeners (Logic updated) ---
+        // Switch between login/signup modals
+        document.getElementById('open-signup-from-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModal(loginModal);
+            openModal(signupModal);
+        });
+
+        document.getElementById('open-login-from-signup').addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModal(signupModal);
+            openModal(loginModal);
+        });
+
+
+        // --- Firebase Authentication Logic ---
+        // Function to clear error messages
+        const clearErrorMessages = () => {
+            loginErrorMessage.style.display = 'none';
+            signupErrorMessage.style.display = 'none';
+        };
+
+        // Handle Login Form Submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearErrorMessages();
+            const email = loginEmailInput.value;
+            const password = loginPasswordInput.value;
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                closeModal(loginModal);
+                alert('Logged in successfully!'); // Consider a more elegant notification
+            } catch (error) {
+                console.error('Login Error:', error.message);
+                loginErrorMessage.textContent = `Login failed: ${error.message}`;
+                loginErrorMessage.style.display = 'block';
+            }
+        });
+
+        // Handle Signup Form Submission
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearErrorMessages();
+            const email = signupEmailInput.value;
+            const password = signupPasswordInput.value;
+
+            try {
+                // Firebase requires password to be at least 6 characters
+                if (password.length < 6) {
+                    throw new Error('Password should be at least 6 characters.');
+                }
+                await auth.createUserWithEmailAndPassword(email, password);
+                closeModal(signupModal);
+                alert('Account created successfully! You are now logged in.'); // Consider a more elegant notification
+            } catch (error) {
+                console.error('Signup Error:', error.message);
+                signupErrorMessage.textContent = `Signup failed: ${error.message}`;
+                signupErrorMessage.style.display = 'block';
+            }
+        });
+
+        // Handle Logout
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+                alert('Logged out successfully!'); // Consider a more elegant notification
+            } catch (error) {
+                console.error('Logout Error:', error.message);
+                alert(`Logout failed: ${error.message}`);
+            }
+        });
+
+        // Listen for authentication state changes
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                userDisplay.textContent = `Welcome, ${user.email}`;
+                userStatusDiv.style.display = 'flex'; // Show user info and logout
+                authButtonsDiv.style.display = 'none'; // Hide login/signup buttons
+            } else {
+                // User is signed out
+                userStatusDiv.style.display = 'none'; // Hide user info and logout
+                authButtonsDiv.style.display = 'flex'; // Show login/signup buttons
+            }
+        });
+
+
+        // --- Theme and Dark Mode Event Listeners (Logic unchanged) ---
         const themePicker = document.getElementById('theme-picker');
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         const htmlElement = document.documentElement; // Target the <html> element
@@ -589,32 +778,15 @@
         themePicker.addEventListener('change', () => setTheme(themePicker.value));
 
         darkModeToggle.addEventListener('click', () => {
-            // Toggle based on the class on the <html> element
             htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
         });
 
         // --- Initialize UI Controls to match loaded state ---
-        // The theme and mode are already applied by the script in <head>.
-        // This part just makes sure the <select> and toggle button reflect the current state.
         const savedTheme = localStorage.getItem('jkm-edit-theme');
         if (savedTheme) {
             themePicker.value = savedTheme;
         }
-
-        // Login/Signup button functionality (placeholder)
-        document.querySelectorAll('.auth-button').forEach(button => {
-            button.addEventListener('click', () => {
-                alert('Login/Signup functionality would be implemented here.');
-            });
-        });
     });
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
