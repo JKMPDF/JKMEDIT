@@ -170,7 +170,6 @@
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
         .modal.show-modal { display: flex; align-items: center; justify-content: center; }
         .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
-        /* Removed close-btn styles for the auth-prompt-modal, keeping them for other modals */
         .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
         .close-btn:hover,.close-btn:focus { color: var(--text-color); }
         .modal-content h2 { color: var(--primary-color); margin-top: 0; }
@@ -255,14 +254,15 @@
             background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
             backdrop-filter: blur(5px); /* Blur effect */
             z-index: 2000; /* Ensure it's above everything else */
-            display: flex;
+            display: none; /* IMPORTANT: Hide by default */
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0; /* Will transition from 0 to 1 */
+            visibility: hidden; /* Will transition from hidden to visible */
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         .auth-overlay.show-overlay {
+            display: flex; /* IMPORTANT: Show as flex when active */
             opacity: 1;
             visibility: visible;
         }
@@ -879,7 +879,7 @@
         const googleSignupBtn = document.getElementById('google-signup-btn');
 
 
-        // Helper function to open/close modals
+        // Helper function to open/close modals for standard modals (not the auth lockout)
         const openModal = (modal) => { modal.classList.add('show-modal'); };
         const closeModal = (modal) => { modal.classList.remove('show-modal'); };
 
@@ -900,9 +900,8 @@
             if (e.target === contactModal) closeModal(contactModal);
             if (e.target === loginModal) closeModal(loginModal);
             if (e.target === signupModal) closeModal(signupModal);
-            // Crucially, authPromptOverlay is *not* dismissed by clicking outside if user is unauthenticated
-            // The logic for this is now implicitly handled because it lacks a close button and
-            // its dismissal is tied only to successful authentication.
+            // The authPromptOverlay is *not* dismissed by clicking outside if user is unauthenticated.
+            // Its dismissal is tied only to successful authentication.
         });
 
         // Existing event listeners for About & Contact
@@ -1139,24 +1138,26 @@
         
         // Add event listeners for the dynamically created buttons
         promptLoginBtn.addEventListener('click', () => {
-            closeModal(authPromptOverlay); // Close the lockout prompt to show login modal
-            clearFormErrors('login'); // Clear errors
-            openModal(loginModal);
+            // When user clicks "Login" from the lockout prompt, close the prompt and open the login modal
+            authPromptOverlay.classList.remove('show-overlay'); // Directly hide the lockout prompt
+            clearFormErrors('login'); // Clear errors for login modal
+            openModal(loginModal); // Open the login modal
         });
         promptSignupBtn.addEventListener('click', () => {
-            closeModal(authPromptOverlay); // Close the lockout prompt to show signup modal
-            clearFormErrors('signup'); // Clear errors
-            openModal(signupModal);
+            // When user clicks "Sign Up" from the lockout prompt, close the prompt and open the signup modal
+            authPromptOverlay.classList.remove('show-overlay'); // Directly hide the lockout prompt
+            clearFormErrors('signup'); // Clear errors for signup modal
+            openModal(signupModal); // Open the signup modal
         });
 
         const showAuthPrompt = () => {
             console.log("Showing authentication prompt."); // Debugging line
-            openModal(authPromptOverlay);
+            authPromptOverlay.classList.add('show-overlay'); // Directly add 'show-overlay' to display it
             document.body.style.overflow = 'hidden'; // Prevent scrolling
         };
 
         const hideAuthPrompt = () => {
-            closeModal(authPromptOverlay);
+            authPromptOverlay.classList.remove('show-overlay'); // Directly remove 'show-overlay' to hide it
             document.body.style.overflow = ''; // Restore scrolling
             localStorage.removeItem(LOCKOUT_START_TIME_KEY); // Clear timestamp
             if (lockoutTimer) { // Stop any pending lockout timer
