@@ -210,13 +210,13 @@
         #user-dropdown {
             display: none; /* Hidden by default, shown on click */
             position: absolute;
-            right: 0; /* Align to the right of the icon */
+            right: 10px; /* Aligned with a small offset from right edge */
             top: calc(100% + 10px); /* Position below the header */
             background-color: var(--surface-color);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border-radius: 8px;
-            min-width: 180px; /* Adjust min-width */
-            max-width: 250px; /* Cap its max width */
+            min-width: 200px; /* Minimum width for readability */
+            max-width: 280px; /* Maximum width to prevent excessive growth */
             z-index: 1000;
             padding: 0.5rem 0;
             border-top: 2px solid var(--primary-color);
@@ -229,11 +229,16 @@
             white-space: nowrap; /* Prevent email from wrapping */
             overflow: hidden; /* Hide overflow */
             text-overflow: ellipsis; /* Add ellipsis for long emails */
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1rem; /* Consistent padding */
             color: var(--text-color);
             border-bottom: 1px solid var(--bg-color);
             margin-bottom: 0.5rem;
         }
+        #user-dropdown #logout-button {
+            width: calc(100% - 2rem); /* Adjusted for dropdown internal padding */
+            margin: 0.5rem 1rem; /* Centered with vertical spacing */
+        }
+
 
         /* --- Overlay for Protected Content --- */
         .auth-overlay {
@@ -287,37 +292,35 @@
             font-size: 1rem;
         }
         
-        /* Add some specific styles for the modal content inputs to give space for the toggle */
+        /* --- Styles for Password Inputs with Toggle --- */
         .password-input-wrapper {
-            position: relative;
+            position: relative; /* Crucial for positioning the toggle button */
             margin-bottom: 1rem;
+        }
+        /* Style the actual input field inside the wrapper */
+        .password-input-wrapper input {
+            padding-right: 3.2rem !important; /* Make space for the icon. Adjust if base input padding changes. */
         }
         .toggle-password-visibility {
             position: absolute;
-            right: 10px; /* Distance from right edge of input */
-            top: 0;
-            bottom: 0;
+            right: 10px; /* Distance from right edge of the input box */
+            top: 50%; /* Vertically center */
+            transform: translateY(-50%); /* Adjust for its own height */
             background: none;
             border: none;
             color: #6c757d; /* Default icon color */
             cursor: pointer;
-            font-size: 1.15rem; /* Standard icon size */
-            padding: 0; /* Remove default padding from button */
-            display: flex; /* Use flexbox for centering */
-            align-items: center; /* Vertically center icon */
-            justify-content: center; /* Horizontally center icon */
+            font-size: 1.15rem; /* Larger icon for better visibility */
+            padding: 0.25rem; /* Increase clickable area */
             transition: color 0.2s;
-            width: 2.5rem; /* Give it a fixed width to ensure spacing */
+            line-height: 1; /* Ensures icon itself is centered if it has default line-height */
+            display: flex; /* Use flex to ensure content within button is centered */
+            align-items: center; /* Vertically center content */
+            justify-content: center; /* Horizontally center content */
         }
         .toggle-password-visibility:hover {
             color: var(--primary-color);
         }
-        /* Adjust input padding to prevent text from going under the icon */
-        .password-input-wrapper input[type="password"],
-        .password-input-wrapper input[type="text"] {
-            padding-right: 3.5rem; /* Enough space for the icon + its padding */
-        }
-
 
         /* --- Responsive Design --- */
         @media (max-width: 1024px) {
@@ -829,8 +832,7 @@
         aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
         contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
 
-        // --- Form Clearing and Opening Logic ---
-        // Function to clear errors (but not user input)
+        // --- Form Clearing (only errors cleared on open, fields cleared on close) ---
         const clearFormErrors = (formType) => {
             if (formType === 'login') {
                 loginErrorMessage.style.display = 'none';
@@ -842,15 +844,13 @@
         // New event listeners for header Login/Signup buttons
         headerLoginBtn.addEventListener('click', (e) => { 
             e.preventDefault(); 
-            // Do not clear input fields on open, only errors
-            clearFormErrors('login'); 
+            clearFormErrors('login'); // Only clear errors on open
             closeModal(signupModal); 
             openModal(loginModal); 
         });
         headerSignupBtn.addEventListener('click', (e) => { 
             e.preventDefault(); 
-            // Do not clear input fields on open, only errors
-            clearFormErrors('signup'); 
+            clearFormErrors('signup'); // Only clear errors on open
             closeModal(loginModal); 
             openModal(signupModal); 
         });
@@ -1069,7 +1069,7 @@
             if (user) {
                 // User is signed in
                 userDisplayDropdown.textContent = user.email; // Shows email in dropdown
-                // You can also display name here: userDisplayDropdown.textContent = user.displayName || user.email;
+                // You can also display name here if preferred: userDisplayDropdown.textContent = user.displayName || user.email;
                 userProfileWrapper.style.display = 'flex'; // Show user icon and dropdown
                 authButtonsDiv.style.display = 'none';    // Hide login/signup buttons
 
