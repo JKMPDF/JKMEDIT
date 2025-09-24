@@ -47,6 +47,27 @@
         })();
     </script>
     
+    <!-- Firebase SDK - Updated with your configuration -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script>
+        // Your web app's Firebase configuration - THIS IS YOURS!
+        const firebaseConfig = {
+          apiKey: "AIzaSyBOXMffkcv4wYubtkFbkpq6w20Ya0t7KMU",
+          authDomain: "jkm-edit-auth.firebaseapp.com",
+          projectId: "jkm-edit-auth",
+          storageBucket: "jkm-edit-auth.firebasestorage.app",
+          messagingSenderId: "445112295101",
+          appId: "1:445112295101:web:c6bba4454c1951642361d4",
+          measurementId: "G-0QKSL4W36S"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(); // Get a reference to the Auth service
+    </script>
+    <!-- END Firebase SDK -->
+
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
@@ -144,17 +165,158 @@
         @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        /* --- Responsive Design (from main page) --- */
+        /* --- User Profile Dropdown and Auth Overlay --- */
+        .user-profile-wrapper {
+            display: none; /* Controlled by JS */
+            align-items: center;
+            margin-left: 1.5rem; /* Added for consistent spacing within main-nav */
+        }
+
+        #user-icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            padding: 0.5rem;
+            border-radius: 50%; /* Make it round */
+            transition: background-color var(--transition-speed);
+        }
+        #user-icon-button:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 15%, transparent);
+        }
+
+        #user-dropdown {
+            display: none; /* Hidden by default, shown on click */
+            position: absolute;
+            right: 2rem; /* Matches the padding of .main-header */
+            top: calc(100% + 10px); /* Position below the header */
+            background-color: var(--surface-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            min-width: 220px; /* Increased min-width for email */
+            max-width: 280px; /* Maximum width to prevent excessive growth */
+            z-index: 1000;
+            padding: 0.5rem 0;
+            border-top: 2px solid var(--primary-color);
+            word-wrap: break-word; /* Allows long emails to wrap within the dropdown */
+            left: auto; /* Allows it to expand left naturally */
+        }
+        #user-dropdown.show-dropdown {
+            display: block;
+        }
+        #user-display-dropdown {
+            font-weight: 600;
+            padding: 0.75rem 1rem; /* Consistent padding */
+            color: var(--text-color);
+            border-bottom: 1px solid var(--bg-color);
+            margin-bottom: 0.5rem;
+        }
+        #user-dropdown #logout-button {
+            width: calc(100% - 2rem); /* Adjusted for dropdown internal padding */
+            margin: 0.5rem 1rem; /* Centered with vertical spacing */
+        }
+
+
+        /* --- Overlay for Protected Content --- */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            backdrop-filter: blur(5px); /* Blur effect */
+            z-index: 2000; /* Ensure it's above everything else */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .auth-overlay.show-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+        .auth-prompt-modal {
+            background-color: var(--surface-color);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 90%;
+            border-top: 5px solid var(--primary-color);
+            animation: slideIn 0.4s ease-out; /* Reuse existing animation */
+        }
+        .auth-prompt-modal h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        .auth-prompt-modal p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+        }
+        .auth-prompt-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .auth-prompt-buttons .auth-button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        /* --- Password Input Wrapper (no toggle button) --- */
+        .password-input-wrapper {
+            position: relative; 
+            margin-bottom: 1rem;
+        }
+        /* Standard padding for input fields when no toggle is present */
+        .password-input-wrapper input {
+            padding-right: 0.75rem !important; /* Default padding */
+        }
+
+        /* --- Styling for Forgot Password Link --- */
+        #forgot-password-link {
+            color: var(--primary-color);
+            font-size: 0.9em;
+            text-decoration: none;
+            display: block; /* Make it a block element to control its alignment easier */
+            text-align: right;
+            margin-top: -0.5rem; /* Pull it up slightly closer to the password field */
+            margin-bottom: 1rem; /* Space between it and the login button */
+            transition: color var(--transition-speed);
+        }
+        #forgot-password-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* --- Responsive Design --- */
         @media (max-width: 1024px) {
             .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
             .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
             .dashboard-container { padding: 2rem 1.5rem; }
+            #user-dropdown { /* Adjust for smaller header padding when header stacks */
+                right: 1rem; 
+            }
         }
         @media (max-width: 768px) {
             .main-nav { flex-wrap: wrap; justify-content: center; }
             .tool-nav { gap: 0.5rem; }
             .tool-nav-button { font-size: 0.9rem; padding: 0.4rem 0.6rem; }
             .auth-buttons { margin-top: 0.5rem; }
+            /* Adjust dropdown position for very narrow screens */
+            #user-dropdown {
+                right: 1rem; /* A bit closer to the edge on small screens, relative to header padding */
+                left: auto; /* Ensure it floats right */
+                max-width: calc(100vw - 2rem); /* Max width of viewport minus small padding on each side */
+                min-width: 150px; /* Ensure it doesn't get too small */
+            }
         }
     </style>
 </head>
@@ -256,10 +418,20 @@
             <a href='#' id='about-btn' class='nav-link'>About</a>
             <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
             
-            <!-- Login/Signup Buttons -->
+            <!-- User Profile and Logout Dropdown -->
+            <div class='user-profile-wrapper'>
+                <button id='user-icon-button' class='nav-button' aria-label='User Account'>
+                    <i class='fa-solid fa-user'></i>
+                </button>
+                <div id='user-dropdown' class='tool-dropdown'>
+                    <span id="user-display-dropdown"></span>
+                    <button id='logout-button' class='auth-button signup-button' style='width: calc(100% - 2rem); margin: 0.5rem 1rem;'>Logout</button>
+                </div>
+            </div>
+            <!-- Login/Signup Buttons (visible when not logged in) -->
             <div class='auth-buttons'>
-                <button class='auth-button login-button'>Login</button>
-                <button class='auth-button signup-button'>Sign Up</button>
+                <button id='header-login-btn' class='auth-button login-button'>Login</button>
+                <button id='header-signup-btn' class='auth-button signup-button'>Sign Up</button>
             </div>
         </nav>
     </header>
@@ -309,109 +481,494 @@
         </div>
     </main>
     
+    <!-- Modals -->
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
-    <!-- [START] --- DEFINITIVE FIX FOR PAGE TRANSITIONS --- -->
+    <!-- Login Modal -->
+    <div id='login-modal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-btn login-close-btn'>×</span>
+            <h2>Login to JKM Edit</h2>
+            <form id='login-form'>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='login-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
+                    <input type='email' id='login-email' placeholder='Enter your email' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div class="password-input-wrapper">
+                    <label for='login-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
+                    <input type='password' id='login-password' placeholder='Enter your password' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <p style="text-align: right; margin-top: -0.5rem; margin-bottom: 1rem;">
+                    <a href="#" id="forgot-password-link" style="color: var(--primary-color); font-size: 0.9em; text-decoration: none;">Forgot password?</a>
+                </p>
+                <button type='submit' class='contact-email' style='width: 100%; border: none;'>Login</button>
+                <p id="login-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
+            </form>
+            <p style="margin-top: 1rem; text-align: center;">Don't have an account? <a href="#" id="open-signup-from-login" style="color: var(--primary-color);">Sign Up</a></p>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id='signup-modal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-btn signup-close-btn'>×</span>
+            <h2>Create an Account</h2>
+            <form id='signup-form'>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='signup-name' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Name:</label>
+                    <input type='text' id='signup-name' placeholder='Enter your name' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='signup-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
+                    <input type='email' id='signup-email' placeholder='Enter your email' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div class="password-input-wrapper">
+                    <label for='signup-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
+                    <input type='password' id='signup-password' placeholder='Create a password (min 6 characters)' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div class="password-input-wrapper">
+                    <label for='signup-confirm-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Confirm Password:</label>
+                    <input type='password' id='signup-confirm-password' placeholder='Confirm your password' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <button type='submit' class='contact-email' style='width: 100%; border: none;'>Sign Up</button>
+                <p id="signup-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
+            </form>
+            <p style="margin-top: 1rem; text-align: center;">Already have an account? <a href="#" id="open-login-from-signup" style="color: var(--primary-color);">Login</a></p>
+        </div>
+    </div>
+
+    <!-- JavaScript - UPDATED FOR FIREBASE AUTH -->
     <script>
-        // FIX FOR BFCACHE: This ensures the page is visible when navigating back.
-        window.addEventListener('pageshow', function (event) {
-            // event.persisted is true if the page was restored from the back-forward cache.
-            if (event.persisted) {
-                // Remove the fade-out class to make the page visible again.
-                document.body.classList.remove('fade-out');
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Existing Modal Logic ---
+        const aboutModal = document.getElementById('about-modal');
+        const contactModal = document.getElementById('contact-modal');
+        const aboutBtn = document.getElementById('about-btn');
+        const contactBtn = document.getElementById('contact-btn');
+
+        // Elements for auth modals
+        const loginModal = document.getElementById('login-modal');
+        const signupModal = document.getElementById('signup-modal');
+        const headerLoginBtn = document.getElementById('header-login-btn');
+        const headerSignupBtn = document.getElementById('header-signup-btn');
+        const logoutButton = document.getElementById('logout-button');
+
+        const loginForm = document.getElementById('login-form');
+        const loginEmailInput = document.getElementById('login-email');
+        const loginPasswordInput = document.getElementById('login-password');
+        const loginErrorMessage = document.getElementById('login-error-message');
+
+        const signupForm = document.getElementById('signup-form');
+        const signupNameInput = document.getElementById('signup-name');
+        const signupEmailInput = document.getElementById('signup-email');
+        const signupPasswordInput = document.getElementById('signup-password');
+        const signupConfirmPasswordInput = document.getElementById('signup-confirm-password');
+        const signupErrorMessage = document.getElementById('signup-error-message');
+
+        const forgotPasswordLink = document.getElementById('forgot-password-link'); // Added for reset password
+
+        // Helper function to open/close modals
+        const openModal = (modal) => { modal.classList.add('show-modal'); };
+        const closeModal = (modal) => { modal.classList.remove('show-modal'); };
+
+        // Close button functionality for all modals (using event delegation for simplicity)
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                closeModal(aboutModal);
+                closeModal(contactModal);
+                closeModal(loginModal);
+                closeModal(signupModal);
+                // The authPromptOverlay is created dynamically, handle its close separately
+            });
+        });
+
+        // Click outside modal to close
+        window.addEventListener('click', (e) => {
+            if (e.target === aboutModal) closeModal(aboutModal);
+            if (e.target === contactModal) closeModal(contactModal);
+            if (e.target === loginModal) closeModal(loginModal);
+            if (e.target === signupModal) closeModal(signupModal);
+            if (e.target === authPromptOverlay) closeModal(authPromptOverlay); // For the new auth prompt
+        });
+
+        // Existing event listeners for About & Contact
+        aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+        contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+
+        // --- Form Clearing (only errors cleared on open, fields cleared on close) ---
+        const clearFormErrors = (formType) => {
+            if (formType === 'login') {
+                loginErrorMessage.style.display = 'none';
+                loginErrorMessage.style.color = 'red'; // Reset color in case it was green from a successful reset email
+            } else if (formType === 'signup') {
+                signupErrorMessage.style.display = 'none';
+            }
+        };
+
+        // New event listeners for header Login/Signup buttons
+        headerLoginBtn.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            clearFormErrors('login'); // Only clear errors on open
+            closeModal(signupModal); 
+            openModal(loginModal); 
+        });
+        headerSignupBtn.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            clearFormErrors('signup'); // Only clear errors on open
+            closeModal(loginModal); 
+            openModal(signupModal); 
+        });
+
+        // Switch between login/signup modals
+        document.getElementById('open-signup-from-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModal(loginModal);
+            clearFormErrors('signup'); // Clear errors
+            openModal(signupModal);
+        });
+
+        document.getElementById('open-login-from-signup').addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModal(signupModal);
+            clearFormErrors('login'); // Clear errors
+            openModal(loginModal);
+        });
+
+        // --- Email Validation Function ---
+        const isValidEmail = (email) => {
+            // A common regex for email validation (basic format check)
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        };
+
+        // --- Firebase Authentication Logic ---
+        // Handle Login Form Submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearFormErrors('login');
+            const email = loginEmailInput.value.trim(); // Trim whitespace
+            const password = loginPasswordInput.value;
+
+            if (!isValidEmail(email)) {
+                loginErrorMessage.textContent = 'Please enter a valid email address format.';
+                loginErrorMessage.style.display = 'block';
+                return; // Stop execution if email is invalid
+            }
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                closeModal(loginModal);
+                closeModal(authPromptOverlay); // Close auth prompt after successful login
+                // alert('Logged in successfully!'); // Suppress alert for smoother UX
+            } catch (error) {
+                console.error('Login Error:', error.message);
+                loginErrorMessage.textContent = `Login failed: ${error.message}`;
+                loginErrorMessage.style.display = 'block';
             }
         });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Modal Logic ---
-            const aboutModal = document.getElementById('about-modal');
-            const contactModal = document.getElementById('contact-modal');
-            const aboutBtn = document.getElementById('about-btn');
-            const contactBtn = document.getElementById('contact-btn');
-            const closeBtns = document.querySelectorAll('.close-btn');
+        // Handle Signup Form Submission
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearFormErrors('signup');
+            const name = signupNameInput.value.trim();
+            const email = signupEmailInput.value.trim(); // Trim whitespace
+            const password = signupPasswordInput.value;
+            const confirmPassword = signupConfirmPasswordInput.value;
 
-            const openModal = (modal) => { modal.classList.add('show-modal'); };
-            const closeModal = (modal) => { modal.classList.remove('show-modal'); };
-
-            aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
-            contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
-            
-            closeBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    closeModal(aboutModal);
-                    closeModal(contactModal);
-                });
-            });
-
-            window.addEventListener('click', (e) => {
-                if (e.target === aboutModal) closeModal(aboutModal);
-                if (e.target === contactModal) closeModal(contactModal);
-            });
-
-            // --- Theme and Dark Mode Event Listeners ---
-            const themePicker = document.getElementById('theme-picker');
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const htmlElement = document.documentElement;
-
-            // Function to set theme and save it
-            const setTheme = (theme) => {
-                htmlElement.dataset.theme = theme;
-                localStorage.setItem('jkm-edit-theme', theme);
-            };
-
-            // Function to enable dark mode
-            const enableDarkMode = () => {
-                htmlElement.classList.add('dark-mode');
-                localStorage.setItem('jkm-edit-mode', 'dark');
-            };
-
-            // Function to disable dark mode
-            const disableDarkMode = () => {
-                htmlElement.classList.remove('dark-mode');
-                localStorage.setItem('jkm-edit-mode', 'light');
-            };
-
-            themePicker.addEventListener('change', () => setTheme(themePicker.value));
-            
-            darkModeToggle.addEventListener('click', () => {
-                htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
-            });
-
-            // Initialize UI Controls to match loaded state
-            const savedTheme = localStorage.getItem('jkm-edit-theme');
-            if (savedTheme) {
-                themePicker.value = savedTheme;
+            if (name.length === 0) {
+                signupErrorMessage.textContent = 'Please enter your name.';
+                signupErrorMessage.style.display = 'block';
+                return;
+            }
+            if (!isValidEmail(email)) {
+                signupErrorMessage.textContent = 'Please enter a valid email address format.';
+                signupErrorMessage.style.display = 'block';
+                return; // Stop execution if email is invalid
+            }
+            if (password.length < 6) {
+                signupErrorMessage.textContent = 'Password should be at least 6 characters.';
+                signupErrorMessage.style.display = 'block';
+                return; // Stop execution if password is too short
+            }
+            if (password !== confirmPassword) {
+                signupErrorMessage.textContent = 'Passwords do not match.';
+                signupErrorMessage.style.display = 'block';
+                return;
             }
 
-            // Login/Signup button functionality (placeholder)
-            document.querySelectorAll('.auth-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    alert('Login/Signup functionality would be implemented here.');
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({ // Save display name
+                    displayName: name
                 });
-            });
+                closeModal(signupModal);
+                closeModal(authPromptOverlay); // Close auth prompt after successful signup
+                // alert('Account created successfully! You are now logged in.'); // Suppress alert for smoother UX
+            } catch (error) {
+                console.error('Signup Error:', error.message);
+                signupErrorMessage.textContent = `Signup failed: ${error.message}`;
+                signupErrorMessage.style.display = 'block';
+            }
+        });
 
-            // --- Page Transition Logic ---
-            document.querySelectorAll('a').forEach(link => {
-                const linkUrl = link.getAttribute('href');
-                // Only apply fade-out to internal HTML links or directory links, not external or JavaScript links
-                if (linkUrl && (linkUrl.startsWith('https://jkmpdf.github.io/JKMEDIT/') || linkUrl.startsWith('/') || (linkUrl.endsWith('.html') && !linkUrl.startsWith('#')))) {
-                     // Exclude links that specifically target anchors on the same page (e.g., #function1) if needed,
-                     // but the current dropdown links are relative paths ending in .html.
-                    link.addEventListener('click', function(e) {
-                        // Prevent default if it's an internal link
-                        if (!this.target && this.hostname === window.location.hostname && this.pathname !== window.location.pathname) {
-                            e.preventDefault(); 
-                            document.body.classList.add('fade-out');
-                            setTimeout(() => {
-                                window.location.href = this.href;
-                            }, 400); 
-                        }
-                    });
+        // Handle Logout
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+                // alert('Logged out successfully!'); // Suppress alert for smoother UX
+            } catch (error) {
+                console.error('Logout Error:', error.message);
+                // alert(`Logout failed: ${error.message}`); // Suppress alert for smoother UX
+            }
+            userDropdown.classList.remove('show-dropdown'); // Hide dropdown on logout
+        });
+
+        // Handle Forgot Password
+        forgotPasswordLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            clearFormErrors('login'); // Clear any existing login errors
+            const email = loginEmailInput.value.trim();
+
+            if (!email || !isValidEmail(email)) {
+                loginErrorMessage.textContent = 'Please enter your email in the login field above to reset your password.';
+                loginErrorMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                loginErrorMessage.style.color = 'green';
+                loginErrorMessage.textContent = `Password reset email sent to ${email}. Please check your inbox.`;
+                loginErrorMessage.style.display = 'block';
+            } catch (error) {
+                console.error('Password Reset Error:', error.message);
+                loginErrorMessage.style.color = 'red';
+                loginErrorMessage.textContent = `Failed to send reset email: ${error.message}`;
+                loginErrorMessage.style.display = 'block';
+            }
+        });
+
+
+        // --- Header UI: User Logo and Dropdown ---
+        const userProfileWrapper = document.querySelector('.user-profile-wrapper');
+        const userIconButton = document.getElementById('user-icon-button');
+        const userDropdown = document.getElementById('user-dropdown');
+        const userDisplayDropdown = document.getElementById('user-display-dropdown');
+        const authButtonsDiv = document.querySelector('.auth-buttons'); // Already exists
+
+        userIconButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent click from bubbling to window and closing immediately
+            userDropdown.classList.toggle('show-dropdown');
+        });
+
+        // Close dropdown if clicked outside
+        window.addEventListener('click', (e) => {
+            if (userDropdown.classList.contains('show-dropdown') && !userIconButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.remove('show-dropdown');
+            }
+        });
+        
+        // --- Password Visibility Toggle Logic (REMOVED) ---
+        // The setupPasswordToggle function and its calls are removed.
+
+
+        // --- Protected Content Logic (2-minute timer) ---
+        const INACTIVITY_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes in milliseconds
+        const AUTH_PROMPT_KEY = 'jkm-edit-auth-prompt-time'; // Key for localStorage
+        let inactivityTimer;
+
+        // Create the auth prompt overlay dynamically
+        const authPromptOverlay = document.createElement('div');
+        authPromptOverlay.id = 'auth-prompt-overlay';
+        authPromptOverlay.classList.add('auth-overlay');
+        authPromptOverlay.innerHTML = `
+            <div class='auth-prompt-modal'>
+                <h2>Login Required</h2>
+                <p>Please log in or sign up to continue using JKM Edit and access all our tools.</p>
+                <div class='auth-prompt-buttons'>
+                    <button id='prompt-login-btn' class='auth-button login-button'>Login</button>
+                    <button id='prompt-signup-btn' class='auth-button signup-button'>Sign Up</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(authPromptOverlay); // Append it to the body
+
+        // Get references to buttons inside the dynamically created overlay
+        const promptLoginBtn = authPromptOverlay.querySelector('#prompt-login-btn');
+        const promptSignupBtn = authPromptOverlay.querySelector('#prompt-signup-btn');
+        
+        // Add event listeners for the dynamically created buttons
+        promptLoginBtn.addEventListener('click', () => {
+            closeModal(authPromptOverlay);
+            clearFormErrors('login'); // Clear errors
+            openModal(loginModal);
+        });
+        promptSignupBtn.addEventListener('click', () => {
+            closeModal(authPromptOverlay);
+            clearFormErrors('signup'); // Clear errors
+            openModal(signupModal);
+        });
+
+        const showAuthPrompt = () => {
+            openModal(authPromptOverlay);
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        };
+
+        const hideAuthPrompt = () => {
+            closeModal(authPromptOverlay);
+            document.body.style.overflow = ''; // Restore scrolling
+            localStorage.removeItem(AUTH_PROMPT_KEY); // Clear timestamp once user is auth'd or prompt hidden
+        };
+
+        const resetInactivityTimer = () => {
+            if (inactivityTimer) {
+                clearTimeout(inactivityTimer);
+            }
+            if (!auth.currentUser) { // Only start timer if user is not logged in
+                inactivityTimer = setTimeout(() => {
+                    if (!auth.currentUser) { // Double check right before showing
+                        showAuthPrompt();
+                    }
+                }, INACTIVITY_THRESHOLD_MS);
+            }
+            // Update timestamp in localStorage on activity
+            localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
+        };
+
+        // Track user activity to reset timer
+        const activityEvents = ['mousemove', 'keydown', 'scroll', 'click'];
+        activityEvents.forEach(event => {
+            window.addEventListener(event, resetInactivityTimer);
+        });
+
+
+        // Listen for authentication state changes (this is key for persistent login across pages)
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                userDisplayDropdown.textContent = user.email; // Shows email in dropdown
+                // You can also display name here if preferred: userDisplayDropdown.textContent = user.displayName || user.email;
+                userProfileWrapper.style.display = 'flex'; // Show user icon and dropdown
+                authButtonsDiv.style.display = 'none';    // Hide login/signup buttons
+
+                hideAuthPrompt(); // Ensure prompt is hidden if user logs in
+                localStorage.removeItem(AUTH_PROMPT_KEY); // Clear any pending prompt timer info
+                
+                // Clear the inactivity timer if logged in
+                if (inactivityTimer) {
+                    clearTimeout(inactivityTimer);
                 }
-            });
+            } else {
+                // User is signed out
+                userProfileWrapper.style.display = 'none'; // Hide user icon and dropdown
+                userDropdown.classList.remove('show-dropdown'); // Ensure dropdown is closed
+                authButtonsDiv.style.display = 'flex';       // Show login/signup buttons
+
+                // Logic for 2-minute prompt for unauthenticated users
+                const authPromptTime = localStorage.getItem(AUTH_PROMPT_KEY);
+                if (!authPromptTime) {
+                    // First time seeing an unauthenticated user, set timestamp and start timer
+                    localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
+                    resetInactivityTimer(); // Start the timer
+                } else {
+                    const elapsedTime = Date.now() - parseInt(authPromptTime);
+                    if (elapsedTime >= INACTIVITY_THRESHOLD_MS) {
+                        showAuthPrompt(); // Show immediately if threshold already passed
+                    } else {
+                        // Restart timer with remaining time
+                        if (inactivityTimer) clearTimeout(inactivityTimer);
+                        inactivityTimer = setTimeout(() => {
+                            if (!auth.currentUser) { // Double check in case user logs in right before timer fires
+                                showAuthPrompt();
+                            }
+                        }, INACTIVITY_THRESHOLD_MS - elapsedTime);
+                    }
+                }
+            }
         });
+
+
+        // --- Theme and Dark Mode Event Listeners (Logic unchanged) ---
+        const themePicker = document.getElementById('theme-picker');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const htmlElement = document.documentElement;
+
+        const setTheme = (theme) => {
+            htmlElement.dataset.theme = theme;
+            localStorage.setItem('jkm-edit-theme', theme);
+        };
+
+        const enableDarkMode = () => {
+            htmlElement.classList.add('dark-mode');
+            localStorage.setItem('jkm-edit-mode', 'dark');
+        };
+
+        const disableDarkMode = () => {
+            htmlElement.classList.remove('dark-mode');
+            localStorage.setItem('jkm-edit-mode', 'light');
+        };
+
+        themePicker.addEventListener('change', () => setTheme(themePicker.value));
+
+        darkModeToggle.addEventListener('click', () => {
+            htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+        });
+
+        const savedTheme = localStorage.getItem('jkm-edit-theme');
+        if (savedTheme) {
+            themePicker.value = savedTheme;
+        }
+
+        // When a modal closes, clear form fields and errors messages
+        loginModal.addEventListener('transitionend', () => {
+            if (!loginModal.classList.contains('show-modal')) { // When modal finishes closing
+                loginEmailInput.value = '';
+                loginPasswordInput.value = '';
+                loginPasswordInput.type = 'password';
+                clearFormErrors('login'); // Clear errors and reset color
+            }
+        });
+        signupModal.addEventListener('transitionend', () => {
+            if (!signupModal.classList.contains('show-modal')) { // When modal finishes closing
+                signupNameInput.value = '';
+                signupEmailInput.value = '';
+                signupPasswordInput.value = '';
+                signupConfirmPasswordInput.value = '';
+                signupPasswordInput.type = 'password';
+                signupConfirmPasswordInput.type = 'password';
+                clearFormErrors('signup'); // Clear errors
+            }
+        });
+
+        // --- Page Transition Logic (Existing from pdf-tools.html) ---
+        document.querySelectorAll('a').forEach(link => {
+            const linkUrl = link.getAttribute('href');
+            // Only apply fade-out to internal HTML links or directory links, not external or JavaScript links
+            if (linkUrl && (linkUrl.startsWith('https://jkmpdf.github.io/JKMEDIT/') || linkUrl.startsWith('/') || (linkUrl.endsWith('.html') && !linkUrl.startsWith('#')))) {
+                 // Exclude links that specifically target anchors on the same page (e.g., #function1) if needed,
+                 // but the current dropdown links are relative paths ending in .html.
+                link.addEventListener('click', function(e) {
+                    // Prevent default if it's an internal link
+                    if (!this.target && this.hostname === window.location.hostname && this.pathname !== window.location.pathname) {
+                        e.preventDefault(); 
+                        document.body.classList.add('fade-out');
+                        setTimeout(() => {
+                            window.location.href = this.href;
+                        }, 400); 
+                    }
+                });
+            }
+        });
+
+    });
     </script>
-    <!-- [END] --- DEFINITIVE FIX --- -->
 </body>
 </html>
