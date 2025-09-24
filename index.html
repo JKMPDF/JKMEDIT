@@ -54,6 +54,8 @@
     <!-- Firebase SDK - Updated with your configuration -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <!-- Add Firebase Google Auth Provider SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script> 
     <script>
         // Your web app's Firebase configuration - THIS IS YOURS!
         const firebaseConfig = {
@@ -69,6 +71,8 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(); // Get a reference to the Auth service
+        // Initialize Google Auth Provider
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
     </script>
     <!-- END Firebase SDK -->
 
@@ -286,6 +290,7 @@
             display: flex;
             justify-content: center;
             gap: 1rem;
+            margin-top: 1rem; /* Space between text and buttons */
         }
         .auth-prompt-buttons .auth-button {
             padding: 0.75rem 1.5rem;
@@ -318,6 +323,65 @@
             text-decoration: underline;
         }
 
+        /* --- Social Login Buttons --- */
+        .social-login-buttons {
+            display: flex;
+            flex-direction: column; /* Stack vertically */
+            gap: 10px;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            border: 1px solid #ccc; /* Default border */
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            text-decoration: none; /* For the link element */
+        }
+
+        .social-button i {
+            margin-right: 0.75rem;
+            font-size: 1.2em;
+        }
+
+        .google-button {
+            background-color: #DB4437; /* Google red */
+            color: white;
+            border-color: #DB4437;
+        }
+        .google-button:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+
+        /* --- Separator Style --- */
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #888;
+            margin: 1.5rem 0 1rem 0; /* Adjust spacing */
+        }
+        .separator::before,
+        .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        .separator:not(:empty)::before {
+            margin-right: .75em;
+        }
+        .separator:not(:empty)::after {
+            margin-left: .75em;
+        }
 
         /* --- Responsive Design --- */
         @media (max-width: 1024px) {
@@ -713,6 +777,12 @@
         <div class='modal-content'>
             <span class='close-btn login-close-btn'>×</span>
             <h2>Login to JKM Edit</h2>
+            <div class="social-login-buttons">
+                <button type="button" id="google-login-btn" class="social-button google-button">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </button>
+            </div>
+            <div class="separator">OR</div>
             <form id='login-form'>
                 <div style='margin-bottom: 1rem;'>
                     <label for='login-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
@@ -739,6 +809,12 @@
         <div class='modal-content'>
             <span class='close-btn signup-close-btn'>×</span>
             <h2>Create an Account</h2>
+            <div class="social-login-buttons">
+                <button type="button" id="google-signup-btn" class="social-button google-button">
+                    <i class="fab fa-google"></i> Sign up with Google
+                </button>
+            </div>
+            <div class="separator">OR</div>
             <form id='signup-form'>
                 <div style='margin-bottom: 1rem;'>
                     <label for='signup-name' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Name:</label>
@@ -787,7 +863,6 @@
         const loginEmailInput = document.getElementById('login-email');
         const loginPasswordInput = document.getElementById('login-password');
         const loginErrorMessage = document.getElementById('login-error-message');
-        // Removed loginTogglePassword as button is removed
 
         const signupForm = document.getElementById('signup-form');
         const signupNameInput = document.getElementById('signup-name');
@@ -795,9 +870,13 @@
         const signupPasswordInput = document.getElementById('signup-password');
         const signupConfirmPasswordInput = document.getElementById('signup-confirm-password');
         const signupErrorMessage = document.getElementById('signup-error-message');
-        // Removed signupTogglePassword and signupConfirmTogglePassword as buttons are removed
 
         const forgotPasswordLink = document.getElementById('forgot-password-link'); // Added for reset password
+
+        // New Google Sign-in Buttons
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        const googleSignupBtn = document.getElementById('google-signup-btn');
+
 
         // Helper function to open/close modals
         const openModal = (modal) => { modal.classList.add('show-modal'); };
@@ -811,6 +890,7 @@
                 closeModal(loginModal);
                 closeModal(signupModal);
                 // The authPromptOverlay is created dynamically, handle its close separately
+                hideAuthPrompt(); // Ensure auth prompt also hides if its close button is clicked.
             });
         });
 
@@ -820,7 +900,10 @@
             if (e.target === contactModal) closeModal(contactModal);
             if (e.target === loginModal) closeModal(loginModal);
             if (e.target === signupModal) closeModal(signupModal);
-            if (e.target === authPromptOverlay) closeModal(authPromptOverlay); // For the new auth prompt
+            // This condition is important: check if the prompt is active and the click is outside its content
+            if (authPromptOverlay.classList.contains('show-overlay') && e.target === authPromptOverlay) {
+                hideAuthPrompt(); 
+            }
         });
 
         // Existing event listeners for About & Contact
@@ -830,9 +913,11 @@
         // --- Form Clearing (only errors cleared on open, fields cleared on close) ---
         const clearFormErrors = (formType) => {
             if (formType === 'login') {
+                loginErrorMessage.textContent = ''; // Clear text content
                 loginErrorMessage.style.display = 'none';
                 loginErrorMessage.style.color = 'red'; // Reset color in case it was green from a successful reset email
             } else if (formType === 'signup') {
+                signupErrorMessage.textContent = ''; // Clear text content
                 signupErrorMessage.style.display = 'none';
             }
         };
@@ -874,7 +959,7 @@
         };
 
         // --- Firebase Authentication Logic ---
-        // Handle Login Form Submission
+        // Handle Login Form Submission (Email/Password)
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             clearFormErrors('login');
@@ -890,7 +975,7 @@
             try {
                 await auth.signInWithEmailAndPassword(email, password);
                 closeModal(loginModal);
-                closeModal(authPromptOverlay); // Close auth prompt after successful login
+                hideAuthPrompt(); // Close auth prompt after successful login
                 // alert('Logged in successfully!'); // Suppress alert for smoother UX
             } catch (error) {
                 console.error('Login Error:', error.message);
@@ -899,7 +984,7 @@
             }
         });
 
-        // Handle Signup Form Submission
+        // Handle Signup Form Submission (Email/Password)
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             clearFormErrors('signup');
@@ -935,7 +1020,7 @@
                     displayName: name
                 });
                 closeModal(signupModal);
-                closeModal(authPromptOverlay); // Close auth prompt after successful signup
+                hideAuthPrompt(); // Close auth prompt after successful signup
                 // alert('Account created successfully! You are now logged in.'); // Suppress alert for smoother UX
             } catch (error) {
                 console.error('Signup Error:', error.message);
@@ -943,6 +1028,35 @@
                 signupErrorMessage.style.display = 'block';
             }
         });
+
+        // Handle Google Login
+        googleLoginBtn.addEventListener('click', async () => {
+            clearFormErrors('login');
+            try {
+                await auth.signInWithPopup(googleProvider);
+                closeModal(loginModal);
+                hideAuthPrompt();
+            } catch (error) {
+                console.error('Google Login Error:', error.message);
+                loginErrorMessage.textContent = `Google login failed: ${error.message}`;
+                loginErrorMessage.style.display = 'block';
+            }
+        });
+
+        // Handle Google Signup (can use the same signInWithPopup logic)
+        googleSignupBtn.addEventListener('click', async () => {
+            clearFormErrors('signup');
+            try {
+                await auth.signInWithPopup(googleProvider);
+                closeModal(signupModal);
+                hideAuthPrompt();
+            } catch (error) {
+                console.error('Google Signup Error:', error.message);
+                signupErrorMessage.textContent = `Google signup failed: ${error.message}`;
+                signupErrorMessage.style.display = 'block';
+            }
+        });
+
 
         // Handle Logout
         logoutButton.addEventListener('click', async () => {
@@ -1001,14 +1115,11 @@
             }
         });
         
-        // --- Password Visibility Toggle Logic (REMOVED) ---
-        // The setupPasswordToggle function and its calls are removed.
-
-
         // --- Protected Content Logic (2-minute timer) ---
         const INACTIVITY_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes in milliseconds
         const AUTH_PROMPT_KEY = 'jkm-edit-auth-prompt-time'; // Key for localStorage
         let inactivityTimer;
+        let lastActivityTime = Date.now(); // Track last activity
 
         // Create the auth prompt overlay dynamically
         const authPromptOverlay = document.createElement('div');
@@ -1051,12 +1162,16 @@
             closeModal(authPromptOverlay);
             document.body.style.overflow = ''; // Restore scrolling
             localStorage.removeItem(AUTH_PROMPT_KEY); // Clear timestamp once user is auth'd or prompt hidden
+            resetInactivityTimer(); // Restart the timer for the now authenticated user, or fresh for unauth'd state.
         };
 
         const resetInactivityTimer = () => {
             if (inactivityTimer) {
                 clearTimeout(inactivityTimer);
             }
+            lastActivityTime = Date.now(); // Update last activity time
+            localStorage.setItem(AUTH_PROMPT_KEY, lastActivityTime.toString());
+
             if (!auth.currentUser) { // Only start timer if user is not logged in
                 inactivityTimer = setTimeout(() => {
                     if (!auth.currentUser) { // Double check right before showing
@@ -1064,8 +1179,6 @@
                     }
                 }, INACTIVITY_THRESHOLD_MS);
             }
-            // Update timestamp in localStorage on activity
-            localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
         };
 
         // Track user activity to reset timer
@@ -1074,13 +1187,41 @@
             window.addEventListener(event, resetInactivityTimer);
         });
 
+        // Handle visibility change (tab switching)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Tab is hidden, save current time
+                localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
+                if (inactivityTimer) {
+                    clearTimeout(inactivityTimer); // Pause timer
+                }
+            } else {
+                // Tab is visible again
+                const storedTime = localStorage.getItem(AUTH_PROMPT_KEY);
+                if (storedTime && !auth.currentUser) {
+                    const elapsedTime = Date.now() - parseInt(storedTime);
+                    if (elapsedTime >= INACTIVITY_THRESHOLD_MS) {
+                        showAuthPrompt(); // Show immediately if threshold passed while hidden
+                    } else {
+                        // Restart timer with remaining time
+                        resetInactivityTimer(); // This will recalculate and set a new timer
+                    }
+                } else if (!auth.currentUser) {
+                    // No stored time, or user is not logged in, just reset normally
+                    resetInactivityTimer();
+                } else {
+                    // User is logged in, ensure prompt is hidden and no timer is running
+                    hideAuthPrompt();
+                }
+            }
+        });
+
 
         // Listen for authentication state changes (this is key for persistent login across pages)
         auth.onAuthStateChanged((user) => {
             if (user) {
                 // User is signed in
-                userDisplayDropdown.textContent = user.email; // Shows email in dropdown
-                // You can also display name here if preferred: userDisplayDropdown.textContent = user.displayName || user.email;
+                userDisplayDropdown.textContent = user.displayName || user.email; // Shows name or email
                 userProfileWrapper.style.display = 'flex'; // Show user icon and dropdown
                 authButtonsDiv.style.display = 'none';    // Hide login/signup buttons
 
@@ -1158,7 +1299,6 @@
                 loginEmailInput.value = '';
                 loginPasswordInput.value = '';
                 loginPasswordInput.type = 'password';
-                // Removed toggle button icon reset
                 clearFormErrors('login'); // Clear errors and reset color
             }
         });
@@ -1169,7 +1309,6 @@
                 signupPasswordInput.value = '';
                 signupConfirmPasswordInput.value = '';
                 signupPasswordInput.type = 'password';
-                // Removed toggle button icon resets
                 signupConfirmPasswordInput.type = 'password';
                 clearFormErrors('signup'); // Clear errors
             }
