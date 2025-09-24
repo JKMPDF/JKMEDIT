@@ -1221,7 +1221,8 @@
         auth.onAuthStateChanged((user) => {
             if (user) {
                 // User is signed in
-                userDisplayDropdown.textContent = user.displayName || user.email; // Shows name or email
+                // MODIFIED: Display displayName, fall back to email if displayName is null or empty
+                userDisplayDropdown.textContent = user.displayName || user.email; 
                 userProfileWrapper.style.display = 'flex'; // Show user icon and dropdown
                 authButtonsDiv.style.display = 'none';    // Hide login/signup buttons
 
