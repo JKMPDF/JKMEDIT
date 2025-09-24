@@ -43,6 +43,31 @@
         })();
     </script>
     
+    <!-- Firebase SDK - Updated with your configuration -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <!-- Add Firebase Google Auth Provider SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script> 
+    <script>
+        // Your web app's Firebase configuration - THIS IS YOURS!
+        const firebaseConfig = {
+          apiKey: "AIzaSyBOXMffkcv4wYubtkFbkpq6w20Ya0t7KMU",
+          authDomain: "jkm-edit-auth.firebaseapp.com",
+          projectId: "jkm-edit-auth",
+          storageBucket: "jkm-edit-auth.firebasestorage.app",
+          messagingSenderId: "445112295101",
+          appId: "1:445112295101:web:c6bba4454c1951642361d4",
+          measurementId: "G-0QKSL4W36S"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(); // Get a reference to the Auth service
+        // Initialize Google Auth Provider
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+    </script>
+    <!-- END Firebase SDK -->
+
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -51,10 +76,17 @@
 
 
     <style>
+        /* --- Basic Setup & Variables --- */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
-        html { background-color: var(--bg-color); transition: background-color var(--transition-speed); }
-        body { margin: 0; color: var(--text-color); transition: color var(--transition-speed); }
+        html, body {
+            margin: 0;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+        }
+        body { color: var(--text-color); background-color: var(--bg-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
         *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; } /* Added for general utility */
+
+        /* --- THEME DEFINITIONS --- */
         [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
         [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
         [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
@@ -63,10 +95,14 @@
         [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
         [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
         [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
+
+        /* --- DARK MODE (Applied to <html> tag now) --- */
         html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
         html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
         html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
-        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed); z-index: 100; position: relative; }
+
+        /* --- Header & Navigation --- */
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed), color var(--transition-speed); z-index: 100; position: relative; }
         .logo-container { display: flex; align-items: center; gap: 0.75rem; }
         .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); transition: color var(--transition-speed), text-shadow var(--transition-speed); }
         .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
@@ -81,14 +117,314 @@
         #dark-mode-toggle .fa-sun { display: none; }
         html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
         html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
-        .dashboard-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
+
+        /* --- Tool Navigation Dropdown --- */
+        .tool-nav { display: flex; gap: 1rem; margin-left: 2rem; }
+        .tool-nav-item { position: relative; }
+        .tool-nav-button { background: none; border: none; color: var(--text-color); font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; padding: 0.5rem 0.75rem; border-radius: 4px; transition: all var(--transition-speed); }
+        .tool-nav-button:hover { color: var(--primary-color); background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+        .tool-dropdown { position: absolute; top: 100%; left: 0; background-color: var(--surface-color); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; min-width: 200px; display: none; z-index: 1000; padding: 0.5rem 0; border-top: 2px solid var(--primary-color); }
+        .tool-nav-item:hover .tool-dropdown { display: block; }
+        .tool-dropdown a { display: block; padding: 0.5rem 1rem; color: var(--text-color); text-decoration: none; transition: background-color var(--transition-speed); }
+        .tool-dropdown a:hover { background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+
+        /* --- Login/Signup Button --- */
+        .auth-buttons { display: flex; gap: 0.5rem; }
+        .auth-button { padding: 0.5rem 1rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all var(--transition-speed); }
+        .login-button { background: none; border: 1px solid var(--primary-color); color: var(--primary-color); }
+        .login-button:hover { background-color: var(--primary-color); color: white; }
+        .signup-button { background-color: var(--primary-color); border: 1px solid var(--primary-color); color: white; }
+        .signup-button:hover { background-color: var(--secondary-color); border-color: var(--secondary-color); }
+        
+        /* --- User Profile Dropdown and Auth Overlay (from main page) --- */
+        .user-profile-wrapper {
+            display: none; /* Controlled by JS */
+            align-items: center;
+            margin-left: 1.5rem; /* Added for consistent spacing within main-nav */
+        }
+
+        #user-icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            padding: 0.5rem;
+            border-radius: 50%; /* Make it round */
+            transition: background-color var(--transition-speed);
+        }
+        #user-icon-button:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 15%, transparent);
+        }
+
+        #user-dropdown {
+            display: none; /* Hidden by default, shown on click */
+            position: absolute;
+            right: 2rem; /* Matches the padding of .main-header */
+            top: calc(100% + 10px); /* Position below the header */
+            background-color: var(--surface-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            min-width: 220px; /* Increased min-width for email */
+            max-width: 280px; /* Maximum width to prevent excessive growth */
+            z-index: 1000;
+            padding: 0.5rem 0;
+            border-top: 2px solid var(--primary-color);
+            word-wrap: break-word; /* Allows long emails to wrap within the dropdown */
+            left: auto; /* Allows it to expand left naturally */
+        }
+        #user-dropdown.show-dropdown {
+            display: block;
+        }
+        #user-display-dropdown {
+            font-weight: 600;
+            padding: 0.75rem 1rem; /* Consistent padding */
+            color: var(--text-color);
+            border-bottom: 1px solid var(--bg-color);
+            margin-bottom: 0.5rem;
+        }
+        #user-dropdown #logout-button {
+            width: calc(100% - 2rem); /* Adjusted for dropdown internal padding */
+            margin: 0.5rem 1rem; /* Centered with vertical spacing */
+        }
+
+
+        /* --- Overlay for Protected Content (BLOCKING FUNCTIONALITY) --- */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            backdrop-filter: blur(5px); /* Blur effect */
+            z-index: 2000; /* Ensure it's above everything else */
+            display: flex; /* IMPORTANT: Hide by default */
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .auth-overlay.show-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+        .auth-prompt-modal {
+            background-color: var(--surface-color);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 90%;
+            border-top: 5px solid var(--primary-color);
+            animation: slideIn 0.4s ease-out; /* Reuse existing animation */
+        }
+        .auth-prompt-modal h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        .auth-prompt-modal p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+        }
+        .auth-prompt-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .auth-prompt-buttons .auth-button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        /* --- Password Input Wrapper (no toggle button) --- */
+        .password-input-wrapper {
+            position: relative; 
+            margin-bottom: 1rem;
+        }
+        /* Standard padding for input fields when no toggle is present */
+        .password-input-wrapper input {
+            padding-right: 0.75rem !important; /* Default padding */
+        }
+
+        /* --- Styling for Forgot Password Link --- */
+        #forgot-password-link {
+            color: var(--primary-color);
+            font-size: 0.9em;
+            text-decoration: none;
+            display: block; 
+            text-align: right;
+            margin-top: -0.5rem; 
+            margin-bottom: 1rem; 
+            transition: color var(--transition-speed);
+        }
+        #forgot-password-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* --- Social Login Buttons --- */
+        .social-login-buttons {
+            display: flex;
+            flex-direction: column; /* Stack vertically */
+            gap: 10px;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            border: 1px solid #ccc; /* Default border */
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            text-decoration: none; /* For the link element */
+        }
+
+        .social-button i {
+            margin-right: 0.75rem;
+            font-size: 1.2em;
+        }
+
+        .google-button {
+            background-color: #DB4437; /* Google red */
+            color: white;
+            border-color: #DB4437;
+        }
+        .google-button:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+
+        /* --- Separator Style --- */
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #888;
+            margin: 1.5rem 0 1rem 0; /* Adjust spacing */
+        }
+        .separator::before,
+        .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        .separator:not(:empty)::before {
+            margin-right: .75em;
+        }
+        .separator:not(:empty)::after {
+            margin-left: .75em;
+        }
+
+        /* --- Prevent scrolling when overlay is active --- */
+        body.body-no-scroll {
+            overflow: hidden !important;
+        }
+
+        /* --- Modals (About, Contact, Login, Signup) - ADDED/CORRECTED STYLES --- */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal.show-modal {
+            display: flex; /* Use flex to center content */
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            margin: auto; /* For browsers that don't support flex centering */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: slideIn 0.4s ease-out; /* Reuse existing animation */
+            border-top: 5px solid var(--primary-color); /* Add a border top for style */
+        }
+        
+        .modal-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        .modal-content p {
+            font-size: 1rem;
+            color: var(--text-color);
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .close-btn {
+            color: var(--text-color);
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .contact-email {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white !important; /* Ensure text is white */
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color var(--transition-speed);
+            max-width: 250px; /* Limit width */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .contact-email:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* --- PDF to Image Tool Specific Styles --- */
+        .dashboard-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; } /* Renamed from tool-container to avoid conflict */
         .dashboard-header { text-align: center; margin-bottom: 3rem; }
         .dashboard-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .dashboard-header p { font-size: 1.1rem; color: #6c757d; }
         html.dark-mode .dashboard-header p { color: #a0a0a0; }
         
-        /* Styles for PDF to Image Tool */
-        .tool-container { background: var(--surface-color); padding: 2.5rem; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
+        .tool-content-wrapper { background: var(--surface-color); padding: 2.5rem; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; } /* Renamed and wrapped the tool's main content */
         .upload-area { border: 3px dashed var(--primary-color); border-radius: 10px; padding: 3rem 1.5rem; margin-bottom: 2rem; cursor: pointer; transition: background-color var(--transition-speed); }
         .upload-area.drag-over { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--primary-color) 10%); }
         .upload-icon { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
@@ -110,33 +446,121 @@
         .download-btn { display: inline-block; width: 100%; padding: 0.6rem 1rem; background-color: var(--primary-color); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: background-color var(--transition-speed); }
         .download-btn:hover { background-color: var(--secondary-color); }
 
-        .back-to-dashboard-btn { display: inline-block; padding: 0.75rem 2rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .back-to-dashboard-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeInModal 0.3s; }
-        .modal.show-modal { display: flex; align-items: center; justify-content: center; }
-        .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
-        .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .close-btn:hover,.close-btn:focus { color: var(--text-color); }
-        .modal-content h2 { color: var(--primary-color); margin-top: 0; }
-        .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s; }
-        .contact-email:hover { transform: scale(1.05); }
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;}
+        .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
+        .primary-nav-btn { background: var(--gradient); color: white !important; }
+        .secondary-nav-btn { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); } /* Using secondary-nav-btn to match main code style */
+        
+        /* --- Page Transition Animations --- */
         body { animation: fadeInPage 0.5s ease-in-out; }
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
         @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @media (max-width: 768px) { .main-header { flex-direction: column; gap: 1rem; } .dashboard-container { padding: 2rem 1.5rem; } }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+            .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
+            .dashboard-container { padding: 2rem 1.5rem; }
+            #user-dropdown { /* Adjust for smaller header padding when header stacks */
+                right: 1rem; 
+            }
+        }
+        @media (max-width: 768px) {
+            .main-nav { flex-wrap: wrap; justify-content: center; }
+            .tool-nav { gap: 0.5rem; }
+            .tool-nav-button { font-size: 0.9rem; padding: 0.4rem 0.6rem; }
+            .auth-buttons { margin-top: 0.5rem; }
+            /* Adjust dropdown position for very narrow screens */
+            #user-dropdown {
+                right: 1rem; /* A bit closer to the edge on small screens, relative to header padding */
+                left: auto; /* Ensure it floats right */
+                max-width: calc(100vw - 2rem); /* Max width of viewport minus small padding on each side */
+                min-width: 150px; /* Ensure it doesn't get too small */
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Header Section -->
     <header class='main-header'>
-        <div class='logo-container'>
-            <a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
-                <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
-                <h1>JKM Edit</h1>
-            </a>
+        <div style="display: flex; align-items: center;">
+            <div class='logo-container'>
+                <a href='../../' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
+                    <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
+                    <h1>JKM Edit - By M&M</h1>
+                </a>
+            </div>
+            
+            <!-- Tool Navigation -->
+            <nav class='tool-nav'>
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>PDF Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='merge-pdf.html'>Merge PDF</a>
+                        <a href='split-pdf.html'>Split PDF</a>
+                        <a href='compress-pdf.html'>Compress PDF</a>
+                        <a href='pdf-to-ocr-word.html'>PDF to Word</a>
+                        <a href='pdf-to-powerpoint.html'>PDF to Power Point</a>
+                        <a href='pdf-to-excel.html'>PDF to Excel</a>
+                        <a href='pdf-to-image.html'>PDF to JPG/PNG</a>
+                        <a href='word-to-pdf.html'>Word to PDF</a>
+                        <a href='powerpoint-to-pdf.html'>Powerpoint to PDF</a>
+                        <a href='excel-to-pdf.html'>Excel to PDF</a>
+                        <a href='image-to-pdf.html'>JPG/PNG to PDF</a>
+                        <a href='sign-pdf.html'>Sign PDF</a>
+                        <a href='add-page-numbers.html'>Add Page Numbers</a>
+                        <a href='rotate-pdf.html'>Rotate PDF</a>
+                        <a href='protect-pdf.html'>Protect PDF</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Video Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='../../Video-Tools.html#function1'>Trim/Cut Video</a>
+                        <a href='../../Video-Tools.html#function2'>Merge Video</a>
+                        <a href='../../Video-Tools.html#function3'>Video to MP3</a>
+                        <a href='../../Video-Tools.html#function4'>Video Compressor</a>
+                        <a href='../../Video-Tools.html#function5'>Video to GIF Convertor</a>
+                        <a href='../../Video-Tools.html#function6'>Add Subtitles to Video</a>
+                        <a href='../../Video-Tools.html#function7'>Change Video Speed</a>
+                        <a href='../../Video-Tools.html#function8'>Video to Image Frames</a>
+                        <a href='../../Video-Tools.html#function9'>Other Tools</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Files Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='../../File-Tools.html#function1'>File Convertor</a>
+                        <a href='../../File-Tools.html#function2'>ZIP/RAR Creator & Extrator</a>
+                        <a href='../../File-Tools.html#function3'>File Splitter & Joiner</a>
+                        <a href='../../File-Tools.html#function4'>Batch Rename File</a>
+                        <a href='../../File-Tools.html#function5'>File Size Reducer</a>
+                        <a href='../../File-Tools.html#function6'>Secure File Share</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Utilities</button>
+                    <div class='tool-dropdown'>
+                        <a href='../../Utilities/Text-Case-Converter.html'>Text Case Converter</a>
+                        <a href='../../Utilities/Income-Expenses-Tracker.html'>Income & Expenses Tracker</a>
+                        <a href='../../Utilities/Calculator.html'>Calculator</a>
+                        <a href='../../Utilities/qr-code-generator.html'>QR Code Generator & Extrater</a>
+                        <a href='../../Utilities.html#function5'>Barcode Generator</a>
+                        <a href='../../Utilities/currency-converter.html'>Currency Converter</a>
+                        <a href='../../Utilities.html#function7'>Online Notepad/Clipboard</a>
+                        <a href='../../Utilities.html#function8'>Screen Recoder</a>
+                        <a href='../../Utilities.html#function9'>Unit Converter</a>
+                    </div>
+                </div>
+            </nav>
         </div>
+        
         <nav class='main-nav'>
             <div class='theme-selector'>
                 <label for='theme-picker'>Theme:</label>
@@ -156,6 +580,22 @@
             </button>
             <a href='#' id='about-btn' class='nav-link'>About</a>
             <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
+            
+            <!-- User Profile and Logout Dropdown -->
+            <div class='user-profile-wrapper'>
+                <button id='user-icon-button' class='nav-button' aria-label='User Account'>
+                    <i class='fa-solid fa-user'></i>
+                </button>
+                <div id='user-dropdown' class='tool-dropdown'>
+                    <span id="user-display-dropdown"></span>
+                    <button id='logout-button' class='auth-button signup-button' style='width: calc(100% - 2rem); margin: 0.5rem 1rem;'>Logout</button>
+                </div>
+            </div>
+            <!-- Login/Signup Buttons (visible when not logged in) -->
+            <div class='auth-buttons'>
+                <button id='header-login-btn' class='auth-button login-button'>Login</button>
+                <button id='header-signup-btn' class='auth-button signup-button'>Sign Up</button>
+            </div>
         </nav>
     </header>
 
@@ -165,7 +605,7 @@
             <p>Convert each page of your PDF into a separate high-quality image.</p>
         </div>
 
-        <div class="tool-container">
+        <div class="tool-content-wrapper"> <!-- Renamed from tool-container -->
             <div class="upload-area" id="upload-area">
                 <input type="file" id="pdf-upload" accept=".pdf">
                 <div class="upload-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
@@ -192,103 +632,629 @@
 
         <div class="results-grid" id="results-grid"></div>
 
-        <!-- ========== MODIFIED BUTTONS AS REQUESTED ========== -->
-        <div style='display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 3rem;'>
-            <a href='#' id='go-back-btn' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Go Back</a>
-            <a href='../pdf-tools.html' class='back-to-dashboard-btn'><i class="fa-solid fa-house"></i> Dashboard</a>
+        <div class="navigation-buttons">
+            <a href='javascript:history.back()' id='go-back-btn' class='nav-btn secondary-nav-btn'><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href='../../' class='nav-btn primary-nav-btn'><i class="fa-solid fa-table-columns"></i> Dashboard</a>
         </div>
     </main>
     
+    <!-- Modals (About, Contact, Login, Signup) -->
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
+    <!-- Login Modal -->
+    <div id='login-modal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-btn login-close-btn'>×</span>
+            <h2>Login to JKM Edit</h2>
+            <div class="social-login-buttons">
+                <button type="button" id="google-login-btn" class="social-button google-button">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </button>
+            </div>
+            <div class="separator">OR</div>
+            <form id='login-form'>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='login-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
+                    <input type='email' id='login-email' placeholder='Enter your email' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div class="password-input-wrapper">
+                    <label for='login-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
+                    <input type='password' id='login-password' placeholder='Enter your password' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <p style="text-align: right; margin-top: -0.5rem; margin-bottom: 1rem;">
+                    <a href="#" id="forgot-password-link" style="color: var(--primary-color); font-size: 0.9em; text-decoration: none;">Forgot password?</a>
+                </p>
+                <button type='submit' class='contact-email' style='width: 100%; border: none;'>Login</button>
+                <p id="login-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
+            </form>
+            <p style="margin-top: 1rem; text-align: center;">Don't have an account? <a href="#" id="open-signup-from-login" style="color: var(--primary-color);">Sign Up</a></p>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id='signup-modal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-btn signup-close-btn'>×</span>
+            <h2>Create an Account</h2>
+            <div class="social-login-buttons">
+                <button type="button" id="google-signup-btn" class="social-button google-button">
+                    <i class="fab fa-google"></i> Sign up with Google
+                </button>
+            </div>
+            <div class="separator">OR</div>
+            <form id='signup-form'>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='signup-name' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Name:</label>
+                    <input type='text' id='signup-name' placeholder='Enter your name' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='signup-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
+                    <input type='email' id='signup-email' placeholder='Enter your email' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div class="password-input-wrapper">
+                    <label for='signup-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
+                    <input type='password' id='signup-password' placeholder='Create a password (min 6 characters)' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div class="password-input-wrapper">
+                    <label for='signup-confirm-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Confirm Password:</label>
+                    <input type='password' id='signup-confirm-password' placeholder='Confirm your password' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <button type='submit' class='contact-email' style='width: 100%; border: none;'>Sign Up</button>
+                <p id="signup-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
+            </form>
+            <p style="margin-top: 1rem; text-align: center;">Already have an account? <a href="#" id="open-login-from-signup" style="color: var(--primary-color);">Login</a></p>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- THEME & MODAL SCRIPT ---
-            const aboutModal = document.getElementById('about-modal');
-            const contactModal = document.getElementById('contact-modal');
-            const aboutBtn = document.getElementById('about-btn');
-            const contactBtn = document.getElementById('contact-btn');
-            const closeBtns = document.querySelectorAll('.close-btn');
+    // FIX FOR BFCACHE: This ensures the page is visible when navigating back.
+    window.addEventListener('pageshow', function (event) {
+        // event.persisted is true if the page was restored from the back-forward cache.
+        if (event.persisted) {
+            // Remove the fade-out class to make the page visible again.
+            document.body.classList.remove('fade-out');
+        }
+    });
 
-            const openModal = (modal) => { modal.classList.add('show-modal'); };
-            const closeModal = (modal) => { modal.classList.remove('show-modal'); };
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Header and General Modal Logic ---
+        const aboutModal = document.getElementById('about-modal');
+        const contactModal = document.getElementById('contact-modal');
+        const aboutBtn = document.getElementById('about-btn');
+        const contactBtn = document.getElementById('contact-btn');
+        const allCloseBtns = document.querySelectorAll('.close-btn');
 
-            if(aboutBtn) aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
-            if(contactBtn) contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
-            
-            closeBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    closeModal(aboutModal);
-                    closeModal(contactModal);
-                });
+        // Elements for auth modals
+        const loginModal = document.getElementById('login-modal');
+        const signupModal = document.getElementById('signup-modal');
+        const headerLoginBtn = document.getElementById('header-login-btn');
+        const headerSignupBtn = document.getElementById('header-signup-btn');
+        const logoutButton = document.getElementById('logout-button');
+
+        const loginForm = document.getElementById('login-form');
+        const loginEmailInput = document.getElementById('login-email');
+        const loginPasswordInput = document.getElementById('login-password');
+        const loginErrorMessage = document.getElementById('login-error-message');
+
+        const signupForm = document.getElementById('signup-form');
+        const signupNameInput = document.getElementById('signup-name');
+        const signupEmailInput = document.getElementById('signup-email');
+        const signupPasswordInput = document.getElementById('signup-password');
+        const signupConfirmPasswordInput = document.getElementById('signup-confirm-password');
+        const signupErrorMessage = document.getElementById('signup-error-message');
+
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+        
+        // New Google Sign-in Buttons
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        const googleSignupBtn = document.getElementById('google-signup-btn');
+
+
+        // Helper function to open/close modals
+        const openModal = (modal) => { 
+            modal.classList.add('show-modal'); 
+            document.body.classList.add('body-no-scroll'); // Prevent background scrolling
+        };
+        const closeModal = (modal) => { 
+            modal.classList.remove('show-modal'); 
+            // Only remove body-no-scroll if no other modal is open
+            if (!document.querySelector('.modal.show-modal')) {
+                document.body.classList.remove('body-no-scroll'); 
+            }
+        };
+
+        // Close button functionality for all modals (using event delegation for simplicity)
+        allCloseBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                closeModal(aboutModal);
+                closeModal(contactModal);
+                closeModal(loginModal);
+                closeModal(signupModal);
+                // The authPromptOverlay is created dynamically and managed separately.
+                // It should NOT be closed by a generic close button if the user is unauthenticated.
             });
+        });
 
-            window.addEventListener('click', (e) => {
-                if (e.target === aboutModal) closeModal(aboutModal);
-                if (e.target === contactModal) closeModal(contactModal);
+        // Click outside modal to close (only for about/contact/login/signup modals)
+        window.addEventListener('click', (e) => {
+            if (e.target === aboutModal) closeModal(aboutModal);
+            if (e.target === contactModal) closeModal(contactModal);
+            if (e.target === loginModal) closeModal(loginModal);
+            if (e.target === signupModal) closeModal(signupModal);
+            // DO NOT close authPromptOverlay here, it's explicitly managed by auth state for blocking.
+        });
+
+        // Event listeners for About & Contact
+        if(aboutBtn) aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+        if(contactBtn) contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+
+        // --- Form Clearing (only errors cleared on open, fields cleared on close) ---
+        const clearFormErrors = (formType) => {
+            if (formType === 'login') {
+                if (loginErrorMessage) {
+                    loginErrorMessage.textContent = ''; // Clear text content
+                    loginErrorMessage.style.display = 'none';
+                    loginErrorMessage.style.color = 'red'; // Reset color in case it was green from a successful reset email
+                }
+            } else if (formType === 'signup') {
+                if (signupErrorMessage) {
+                    signupErrorMessage.textContent = ''; // Clear text content
+                    signupErrorMessage.style.display = 'none';
+                }
+            }
+        };
+
+        // New event listeners for header Login/Signup buttons
+        if(headerLoginBtn) {
+            headerLoginBtn.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                clearFormErrors('login'); // Only clear errors on open
+                closeModal(signupModal); 
+                openModal(loginModal); 
             });
+        }
+        if(headerSignupBtn) {
+            headerSignupBtn.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                clearFormErrors('signup'); // Only clear errors on open
+                closeModal(loginModal); 
+                openModal(signupModal); 
+            });
+        }
 
-            const themePicker = document.getElementById('theme-picker');
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const htmlElement = document.documentElement;
+        // Switch between login/signup modals
+        const openSignupFromLoginLink = document.getElementById('open-signup-from-login');
+        if(openSignupFromLoginLink) {
+            openSignupFromLoginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModal(loginModal);
+                clearFormErrors('signup'); // Clear errors
+                openModal(signupModal);
+            });
+        }
 
-            const setTheme = (theme) => {
-                htmlElement.dataset.theme = theme;
-                localStorage.setItem('jkm-edit-theme', theme);
-            };
+        const openLoginFromSignupLink = document.getElementById('open-login-from-signup');
+        if(openLoginFromSignupLink) {
+            openLoginFromSignupLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModal(signupModal);
+                clearFormErrors('login'); // Clear errors
+                openModal(loginModal);
+            });
+        }
 
-            const enableDarkMode = () => {
-                htmlElement.classList.add('dark-mode');
-                localStorage.setItem('jkm-edit-mode', 'dark');
-            };
+        // --- Email Validation Function ---
+        const isValidEmail = (email) => {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        };
 
-            const disableDarkMode = () => {
-                htmlElement.classList.remove('dark-mode');
-                localStorage.setItem('jkm-edit-mode', 'light');
-            };
+        // --- Firebase Authentication Logic ---
+        // Handle Login Form Submission
+        if(loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearFormErrors('login');
+                const email = loginEmailInput.value.trim();
+                const password = loginPasswordInput.value;
 
+                if (!isValidEmail(email)) {
+                    loginErrorMessage.textContent = 'Please enter a valid email address format.';
+                    loginErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    closeModal(loginModal);
+                    // hideAuthPrompt() is called by onAuthStateChanged after successful login
+                } catch (error) {
+                    console.error('Login Error:', error.message);
+                    loginErrorMessage.textContent = `Login failed: ${error.message}`;
+                    loginErrorMessage.style.display = 'block';
+                }
+            });
+        }
+
+        // Handle Signup Form Submission
+        if(signupForm) {
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearFormErrors('signup');
+                const name = signupNameInput.value.trim();
+                const email = signupEmailInput.value.trim();
+                const password = signupPasswordInput.value;
+                const confirmPassword = signupConfirmPasswordInput.value;
+
+                if (name.length === 0) {
+                    signupErrorMessage.textContent = 'Please enter your name.';
+                    signupErrorMessage.style.display = 'block';
+                    return;
+                }
+                if (!isValidEmail(email)) {
+                    signupErrorMessage.textContent = 'Please enter a valid email address format.';
+                    signupErrorMessage.style.display = 'block';
+                    return;
+                }
+                if (password.length < 6) {
+                    signupErrorMessage.textContent = 'Password should be at least 6 characters.';
+                    signupErrorMessage.style.display = 'block';
+                    return;
+                }
+                if (password !== confirmPassword) {
+                    signupErrorMessage.textContent = 'Passwords do not match.';
+                    signupErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    await userCredential.user.updateProfile({ // Save display name
+                        displayName: name
+                    });
+                    closeModal(signupModal);
+                    // hideAuthPrompt() is called by onAuthStateChanged after successful signup
+                } catch (error) {
+                    console.error('Signup Error:', error.message);
+                    signupErrorMessage.textContent = `Signup failed: ${error.message}`;
+                    signupErrorMessage.style.display = 'block';
+                }
+            });
+        }
+
+        // Handle Google Login
+        if(googleLoginBtn) {
+            googleLoginBtn.addEventListener('click', async () => {
+                clearFormErrors('login');
+                try {
+                    await auth.signInWithPopup(googleProvider);
+                    closeModal(loginModal);
+                    // hideAuthPrompt() is called by onAuthStateChanged after successful Google login
+                } catch (error) {
+                    console.error('Google Login Error:', error.message);
+                    loginErrorMessage.textContent = `Google login failed: ${error.message}`;
+                    loginErrorMessage.style.display = 'block';
+                }
+            });
+        }
+
+        // Handle Google Signup (can use the same signInWithPopup logic)
+        if(googleSignupBtn) {
+            googleSignupBtn.addEventListener('click', async () => {
+                clearFormErrors('signup');
+                try {
+                    await auth.signInWithPopup(googleProvider);
+                    closeModal(signupModal);
+                    // hideAuthPrompt() is called by onAuthStateChanged after successful Google signup
+                } catch (error) {
+                    console.error('Google Signup Error:', error.message);
+                    signupErrorMessage.textContent = `Google signup failed: ${error.message}`;
+                    signupErrorMessage.style.display = 'block';
+                }
+            });
+        }
+
+
+        // Handle Logout
+        const userDropdown = document.getElementById('user-dropdown');
+        if(logoutButton) {
+            logoutButton.addEventListener('click', async () => {
+                try {
+                    await auth.signOut();
+                } catch (error) {
+                    console.error('Logout Error:', error.message);
+                }
+                if (userDropdown) userDropdown.classList.remove('show-dropdown'); // Hide dropdown on logout
+            });
+        }
+
+        // Handle Forgot Password
+        if(forgotPasswordLink) {
+            forgotPasswordLink.addEventListener('click', async (e) => {
+                e.preventDefault();
+                clearFormErrors('login'); // Clear any existing login errors
+                const email = loginEmailInput.value.trim();
+
+                if (!email || !isValidEmail(email)) {
+                    loginErrorMessage.textContent = 'Please enter your email in the login field above to reset your password.';
+                    loginErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    await auth.sendPasswordResetEmail(email);
+                    loginErrorMessage.style.color = 'green';
+                    loginErrorMessage.textContent = `Password reset email sent to ${email}. Please check your inbox.`;
+                    loginErrorMessage.style.display = 'block';
+                } catch (error) {
+                    console.error('Password Reset Error:', error.message);
+                    loginErrorMessage.style.color = 'red';
+                    loginErrorMessage.textContent = `Failed to send reset email: ${error.message}`;
+                    loginErrorMessage.style.display = 'block';
+                }
+            });
+        }
+
+
+        // --- Header UI: User Logo and Dropdown ---
+        const userProfileWrapper = document.querySelector('.user-profile-wrapper');
+        const userIconButton = document.getElementById('user-icon-button');
+        const userDisplayDropdown = document.getElementById('user-display-dropdown');
+        const authButtonsDiv = document.querySelector('.auth-buttons'); // Already exists
+
+        if(userIconButton) {
+            userIconButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent click from bubbling to window and closing immediately
+                if (userDropdown) userDropdown.classList.toggle('show-dropdown');
+            });
+        }
+
+        window.addEventListener('click', (e) => {
+            if (userDropdown && userDropdown.classList.contains('show-dropdown') && !userIconButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.remove('show-dropdown');
+            }
+        });
+        
+        // --- Protected Content Logic (Strict 2-minute lockout) ---
+        const LOCKOUT_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes in milliseconds
+        const LOCKOUT_START_TIME_KEY = 'jkm-edit-lockout-start-time'; // Key for localStorage
+        let lockoutTimer; // Holds the setTimeout ID
+
+        // Create the auth prompt overlay dynamically (without a close button)
+        const authPromptOverlay = document.createElement('div');
+        authPromptOverlay.id = 'auth-prompt-overlay';
+        authPromptOverlay.classList.add('auth-overlay');
+        authPromptOverlay.innerHTML = `
+            <div class='auth-prompt-modal'>
+                <h2>Login Required</h2>
+                <p>Please log in or sign up to continue using JKM Edit and access all our tools.</p>
+                <div class='auth-prompt-buttons'>
+                    <button id='prompt-login-btn' class='auth-button login-button'>Login</button>
+                    <button id='prompt-signup-btn' class='auth-button signup-button'>Sign Up</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(authPromptOverlay); // Append it to the body
+
+        // Get references to buttons inside the dynamically created overlay
+        const promptLoginBtn = authPromptOverlay.querySelector('#prompt-login-btn');
+        const promptSignupBtn = authPromptOverlay.querySelector('#prompt-signup-btn');
+        
+        // Add event listeners for the dynamically created buttons
+        if(promptLoginBtn) {
+            promptLoginBtn.addEventListener('click', () => {
+                // When user clicks "Login" from the lockout prompt, close the prompt and open the login modal
+                authPromptOverlay.classList.remove('show-overlay'); // Directly hide the lockout prompt
+                document.body.classList.remove('body-no-scroll'); // Restore scrolling temporarily
+                clearFormErrors('login'); // Clear errors for login modal
+                openModal(loginModal); // Open the login modal
+            });
+        }
+        if(promptSignupBtn) {
+            promptSignupBtn.addEventListener('click', () => {
+                // When user clicks "Sign Up" from the lockout prompt, close the prompt and open the signup modal
+                authPromptOverlay.classList.remove('show-overlay'); // Directly hide the lockout prompt
+                document.body.classList.remove('body-no-scroll'); // Restore scrolling temporarily
+                clearFormErrors('signup'); // Clear errors for signup modal
+                openModal(signupModal); // Open the signup modal
+            });
+        }
+
+        const showAuthPrompt = () => {
+            console.log("Showing authentication prompt."); // Debugging line
+            authPromptOverlay.classList.add('show-overlay'); // Directly add 'show-overlay' to display it
+            document.body.classList.add('body-no-scroll'); // Prevent scrolling
+        };
+
+        const hideAuthPrompt = () => {
+            authPromptOverlay.classList.remove('show-overlay'); // Directly remove 'show-overlay' to hide it
+            // Only remove body-no-scroll if no other modal or overlay is open
+            if (!document.querySelector('.modal.show-modal') && !document.querySelector('.auth-overlay.show-overlay')) {
+                document.body.classList.remove('body-no-scroll'); 
+            }
+            localStorage.removeItem(LOCKOUT_START_TIME_KEY); // Clear timestamp
+            if (lockoutTimer) { // Stop any pending lockout timer
+                clearTimeout(lockoutTimer);
+            }
+        };
+
+        const startLockoutTimer = (delay) => {
+            if (lockoutTimer) {
+                clearTimeout(lockoutTimer);
+            }
+            lockoutTimer = setTimeout(() => {
+                // Double check if user is still not logged in before showing prompt
+                if (!auth.currentUser) { 
+                    showAuthPrompt();
+                }
+            }, delay);
+        };
+
+        // This function will initialize or resume the lockout timer
+        const initializeOrResumeLockout = () => {
+            if (auth.currentUser) {
+                hideAuthPrompt(); // User is logged in, ensure no lockout
+                return;
+            }
+
+            let lockoutStartTime = localStorage.getItem(LOCKOUT_START_TIME_KEY);
+            if (!lockoutStartTime) {
+                // First time unauthenticated user on this page, set start time
+                lockoutStartTime = Date.now().toString();
+                localStorage.setItem(LOCKOUT_START_TIME_KEY, lockoutStartTime);
+                startLockoutTimer(LOCKOUT_THRESHOLD_MS);
+            } else {
+                // User has been unauthenticated before, calculate elapsed time
+                const elapsed = Date.now() - parseInt(lockoutStartTime);
+                if (elapsed >= LOCKOUT_THRESHOLD_MS) {
+                    showAuthPrompt(); // Immediately show if threshold passed
+                } else {
+                    // Resume timer with remaining time
+                    startLockoutTimer(LOCKOUT_THRESHOLD_MS - elapsed);
+                }
+            }
+        };
+
+        // Listen for authentication state changes (this is key for persistent login across pages)
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                if (userDisplayDropdown) userDisplayDropdown.textContent = user.displayName || user.email; // Shows name or email
+                if (userProfileWrapper) userProfileWrapper.style.display = 'flex'; // Show user icon and dropdown
+                if (authButtonsDiv) authButtonsDiv.style.display = 'none';    // Hide login/signup buttons
+                hideAuthPrompt(); // Ensure prompt is hidden if user logs in
+            } else {
+                // User is signed out
+                if (userProfileWrapper) userProfileWrapper.style.display = 'none'; // Hide user icon and dropdown
+                if (userDropdown) userDropdown.classList.remove('show-dropdown'); // Ensure dropdown is closed
+                if (authButtonsDiv) authButtonsDiv.style.display = 'flex';       // Show login/signup buttons
+                initializeOrResumeLockout(); // Start or resume lockout timer
+            }
+        });
+
+        // Handle visibility change (tab switching) to account for time spent in other tabs
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Tab is hidden, if user is not logged in, pause the timer and save current time
+                if (!auth.currentUser) {
+                    if (lockoutTimer) clearTimeout(lockoutTimer);
+                    // Update the start time to now, so when they come back, it calculates from this point.
+                    // This makes the 2 minutes continuous across hidden state.
+                    localStorage.setItem(LOCKOUT_START_TIME_KEY, Date.now().toString()); 
+                }
+            } else {
+                // Tab is visible again
+                initializeOrResumeLockout(); // Re-evaluate lockout state
+            }
+        });
+
+        // Initial check on page load
+        initializeOrResumeLockout();
+
+        // --- Theme and Dark Mode Event Listeners ---
+        const themePicker = document.getElementById('theme-picker');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const htmlElement = document.documentElement;
+
+        const setTheme = (theme) => {
+            htmlElement.dataset.theme = theme;
+            localStorage.setItem('jkm-edit-theme', theme);
+        };
+
+        const enableDarkMode = () => {
+            htmlElement.classList.add('dark-mode');
+            localStorage.setItem('jkm-edit-mode', 'dark');
+        };
+
+        const disableDarkMode = () => {
+            htmlElement.classList.remove('dark-mode');
+            localStorage.setItem('jkm-edit-mode', 'light');
+        };
+
+        if(themePicker) {
             themePicker.addEventListener('change', () => setTheme(themePicker.value));
-            darkModeToggle.addEventListener('click', () => {
-                htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
-            });
-
             const savedTheme = localStorage.getItem('jkm-edit-theme');
             if (savedTheme) {
                 themePicker.value = savedTheme;
             }
+        }
 
-            // --- PAGE TRANSITION SCRIPT ---
-            window.addEventListener('pageshow', function (event) {
-                if (event.persisted) {
-                    document.body.classList.remove('fade-out');
+        if(darkModeToggle) {
+            darkModeToggle.addEventListener('click', () => {
+                htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+            });
+        }
+
+        // When a modal closes, clear form fields and errors messages
+        if(loginModal) {
+            loginModal.addEventListener('transitionend', () => {
+                if (!loginModal.classList.contains('show-modal')) { // When modal finishes closing
+                    if (loginEmailInput) loginEmailInput.value = '';
+                    if (loginPasswordInput) loginPasswordInput.value = '';
+                    if (loginPasswordInput) loginPasswordInput.type = 'password';
+                    clearFormErrors('login'); // Clear errors and reset color
+                    if (!auth.currentUser && !authPromptOverlay.classList.contains('show-overlay')) { // If user is still not logged in, and prompt not shown, show auth prompt again
+                        initializeOrResumeLockout(); // Re-check lockout state
+                    }
                 }
             });
+        }
+        if(signupModal) {
+            signupModal.addEventListener('transitionend', () => {
+                if (!signupModal.classList.contains('show-modal')) { // When modal finishes closing
+                    if (signupNameInput) signupNameInput.value = '';
+                    if (signupEmailInput) signupEmailInput.value = '';
+                    if (signupPasswordInput) signupPasswordInput.value = '';
+                    if (signupConfirmPasswordInput) signupConfirmPasswordInput.value = '';
+                    if (signupPasswordInput) signupPasswordInput.type = 'password';
+                    if (signupConfirmPasswordInput) signupConfirmPasswordInput.type = 'password';
+                    clearFormErrors('signup'); // Clear errors
+                    if (!auth.currentUser && !authPromptOverlay.classList.contains('show-overlay')) { // If user is still not logged in, and prompt not shown, show auth prompt again
+                        initializeOrResumeLockout(); // Re-check lockout state
+                    }
+                }
+            });
+        }
 
-            document.querySelectorAll('a').forEach(link => {
-                const linkUrl = link.getAttribute('href');
-                // Make sure the link is a page link and not the new 'Go Back' button
-                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:')) {
+        // --- Page Transition Logic ---
+        document.querySelectorAll('a').forEach(link => {
+            const linkUrl = link.getAttribute('href');
+            // Only apply fade-out to internal HTML links or directory links, not external or JavaScript links
+            // Also exclude links within modals themselves (which might use #) or the new 'Go Back' button which has its own handler
+            if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                // Determine if it's an internal link within your domain
+                const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+
+                if (isInternalLink && !link.target && link.id !== 'go-back-btn') { // If it's an internal link and not opening in a new tab
                     link.addEventListener('click', function(e) {
                         e.preventDefault(); 
                         document.body.classList.add('fade-out');
-                        setTimeout(() => { window.location.href = this.href; }, 400); 
+                        setTimeout(() => {
+                            window.location.href = this.href;
+                        }, 400); // Match animation duration
                     });
                 }
-            });
-
-            // --- NEW: GO BACK BUTTON FUNCTIONALITY ---
-            const goBackBtn = document.getElementById('go-back-btn');
-            if (goBackBtn) {
-                goBackBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.body.classList.add('fade-out');
-                    setTimeout(() => {
-                        window.history.back();
-                    }, 400);
-                });
             }
         });
+
+        // --- NEW: GO BACK BUTTON FUNCTIONALITY ---
+        const goBackBtn = document.getElementById('go-back-btn');
+        if (goBackBtn) {
+            goBackBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.body.classList.add('fade-out');
+                setTimeout(() => {
+                    window.history.back();
+                }, 400);
+            });
+        }
 
         // --- PDF TO IMAGE FUNCTIONALITY SCRIPT ---
         const uploadArea = document.getElementById('upload-area');
@@ -298,7 +1264,7 @@
         const resultsGrid = document.getElementById('results-grid');
         let selectedPdfFile = null;
 
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+        // pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js'; // Already defined in head
 
         uploadArea.addEventListener('click', () => pdfUpload.click());
         uploadArea.addEventListener('dragover', (e) => {
@@ -399,6 +1365,7 @@
             card.appendChild(footer);
             resultsGrid.appendChild(card);
         }
+    });
     </script>
 </body>
 </html>
