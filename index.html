@@ -216,7 +216,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border-radius: 8px;
             min-width: 180px; /* Adjust min-width */
-            max-width: 250px; /* Max width to contain longer emails */
+            max-width: 250px; /* Cap its max width */
             z-index: 1000;
             padding: 0.5rem 0;
             border-top: 2px solid var(--primary-color);
@@ -285,43 +285,6 @@
         .auth-prompt-buttons .auth-button {
             padding: 0.75rem 1.5rem;
             font-size: 1rem;
-        }
-
-        /* --- New styles for Emoji Animation in Auth Modals --- */
-        .emoji-container {
-            font-size: 4rem; /* Large emoji */
-            text-align: center;
-            margin-bottom: 1rem;
-            position: relative;
-            height: 4rem; /* Ensure consistent height */
-            line-height: 1; /* Adjust line height for emoji */
-        }
-        .emoji-face {
-            display: inline-block;
-            position: relative;
-            width: 1em; /* Width of the emoji character */
-        }
-        .emoji-eyes {
-            position: absolute;
-            top: 0.3em; /* Adjust to position eyes correctly */
-            left: 0.25em; /* Initial position */
-            width: 0.5em; /* Width of both eyes together */
-            display: flex;
-            justify-content: space-between;
-            overflow: hidden; /* Hide parts of eyes that go outside */
-            transition: left 0.1s ease-out; /* Smooth eye movement */
-        }
-        .emoji-eye-left, .emoji-eye-right {
-            display: inline-block;
-            font-size: 0.25em; /* Size of individual eye */
-            line-height: 1;
-            transition: transform 0.1s ease-out;
-        }
-        .emoji-eye-closed .emoji-eye-left,
-        .emoji-eye-closed .emoji-eye-right {
-            content: '-'; /* Placeholder for closed eye */
-            font-size: 0.4em; /* Make hyphens larger */
-            transform: translateY(0.1em); /* Adjust vertical position */
         }
         
         /* Add some specific styles for the modal content inputs to give space for the toggle */
@@ -731,15 +694,11 @@
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
-    <!-- Login Modal - NEW -->
+    <!-- Login Modal -->
     <div id='login-modal' class='modal'>
         <div class='modal-content'>
             <span class='close-btn login-close-btn'>×</span>
             <h2>Login to JKM Edit</h2>
-            <!-- Emoji Container for Login -->
-            <div class="emoji-container">
-                <span class="emoji-face" id="login-emoji-face">&#128522;</span>
-            </div>
             <form id='login-form'>
                 <div style='margin-bottom: 1rem;'>
                     <label for='login-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
@@ -761,16 +720,17 @@
         </div>
     </div>
 
-    <!-- Signup Modal - NEW -->
+    <!-- Signup Modal - UPDATED -->
     <div id='signup-modal' class='modal'>
         <div class='modal-content'>
             <span class='close-btn signup-close-btn'>×</span>
             <h2>Create an Account</h2>
-            <!-- Emoji Container for Signup -->
-            <div class="emoji-container">
-                <span class="emoji-face" id="signup-emoji-face">&#128522;</span>
-            </div>
             <form id='signup-form'>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='signup-name' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Name:</label>
+                    <input type='text' id='signup-name' placeholder='Enter your name' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
                 <div style='margin-bottom: 1rem;'>
                     <label for='signup-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
                     <input type='email' id='signup-email' placeholder='Enter your email' required
@@ -781,6 +741,14 @@
                     <input type='password' id='signup-password' placeholder='Create a password (min 6 characters)' required
                            style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
                     <button type="button" class="toggle-password-visibility" id="signup-toggle-password">
+                        <i class="fa-solid fa-eye-slash"></i>
+                    </button>
+                </div>
+                <div class="password-input-wrapper">
+                    <label for='signup-confirm-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Confirm Password:</label>
+                    <input type='password' id='signup-confirm-password' placeholder='Confirm your password' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                    <button type="button" class="toggle-password-visibility" id="signup-confirm-toggle-password">
                         <i class="fa-solid fa-eye-slash"></i>
                     </button>
                 </div>
@@ -812,14 +780,15 @@
         const loginPasswordInput = document.getElementById('login-password');
         const loginErrorMessage = document.getElementById('login-error-message');
         const loginTogglePassword = document.getElementById('login-toggle-password');
-        const loginEmojiFace = document.getElementById('login-emoji-face');
 
         const signupForm = document.getElementById('signup-form');
+        const signupNameInput = document.getElementById('signup-name'); // NEW
         const signupEmailInput = document.getElementById('signup-email');
         const signupPasswordInput = document.getElementById('signup-password');
+        const signupConfirmPasswordInput = document.getElementById('signup-confirm-password'); // NEW
         const signupErrorMessage = document.getElementById('signup-error-message');
         const signupTogglePassword = document.getElementById('signup-toggle-password');
-        const signupEmojiFace = document.getElementById('signup-emoji-face');
+        const signupConfirmTogglePassword = document.getElementById('signup-confirm-toggle-password'); // NEW
 
 
         // Helper function to open/close modals
@@ -910,9 +879,16 @@
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             clearErrorMessages();
+            const name = signupNameInput.value.trim(); // NEW
             const email = signupEmailInput.value.trim(); // Trim whitespace
             const password = signupPasswordInput.value;
+            const confirmPassword = signupConfirmPasswordInput.value; // NEW
 
+            if (name.length === 0) { // NEW
+                signupErrorMessage.textContent = 'Please enter your name.';
+                signupErrorMessage.style.display = 'block';
+                return;
+            }
             if (!isValidEmail(email)) {
                 signupErrorMessage.textContent = 'Please enter a valid email address format.';
                 signupErrorMessage.style.display = 'block';
@@ -923,9 +899,17 @@
                 signupErrorMessage.style.display = 'block';
                 return; // Stop execution if password is too short
             }
+            if (password !== confirmPassword) { // NEW
+                signupErrorMessage.textContent = 'Passwords do not match.';
+                signupErrorMessage.style.display = 'block';
+                return;
+            }
 
             try {
-                await auth.createUserWithEmailAndPassword(email, password);
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({ // Save display name
+                    displayName: name
+                });
                 closeModal(signupModal);
                 closeModal(authPromptOverlay); // Close auth prompt after successful signup
                 // alert('Account created successfully! You are now logged in.'); // Suppress alert for smoother UX
@@ -967,6 +951,20 @@
                 userDropdown.classList.remove('show-dropdown');
             }
         });
+        
+        // --- Password Visibility Toggle Logic ---
+        const setupPasswordToggle = (passwordInput, toggleButton) => {
+            toggleButton.addEventListener('click', () => {
+                const isVisible = passwordInput.type === 'password';
+                passwordInput.type = isVisible ? 'text' : 'password';
+                toggleButton.querySelector('i').className = isVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+            });
+        };
+
+        setupPasswordToggle(loginPasswordInput, loginTogglePassword);
+        setupPasswordToggle(signupPasswordInput, signupTogglePassword);
+        setupPasswordToggle(signupConfirmPasswordInput, signupConfirmTogglePassword); // NEW
+
 
         // --- Protected Content Logic (2-minute timer) ---
         const INACTIVITY_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes in milliseconds
@@ -1040,7 +1038,8 @@
         auth.onAuthStateChanged((user) => {
             if (user) {
                 // User is signed in
-                userDisplayDropdown.textContent = user.email;
+                userDisplayDropdown.textContent = user.email; // Displays email in dropdown
+                // If you want to display name: userDisplayDropdown.textContent = user.displayName || user.email;
                 userProfileWrapper.style.display = 'flex'; // Show user icon and dropdown
                 authButtonsDiv.style.display = 'none';    // Hide login/signup buttons
 
@@ -1112,66 +1111,7 @@
             themePicker.value = savedTheme;
         }
 
-
-        // --- Emoji Animation Logic ---
-
-        // Helper function to animate eyes
-        const animateEyes = (emojiFaceElement, inputElement, isPassword = false, passwordVisible = false) => {
-            if (!emojiFaceElement) return;
-
-            // Simple "eyes" representation
-            const openEyes = '&#9679;&#9679;'; // Two dots for open eyes
-            const closedEyes = '--';          // Hyphens for closed eyes
-
-            // If it's a password field and not visible, close eyes
-            if (isPassword && !passwordVisible) {
-                emojiFaceElement.innerHTML = closedEyes;
-                emojiFaceElement.style.paddingLeft = '0'; // Reset padding for closed eyes
-                return;
-            } else {
-                 emojiFaceElement.innerHTML = openEyes;
-            }
-
-            // For email field or visible password field, make eyes follow
-            const textLength = inputElement.value.length;
-            const maxChars = 30; // Approximate max characters before eyes stop moving or hit edge
-            
-            // Calculate a proportional shift for the eyes
-            // Scale movement from 0% to 100% of a small range
-            const eyeMovementRange = 10; // pixels or a small percentage
-            const proportionalShift = Math.min(textLength, maxChars) / maxChars; // 0 to 1
-            const finalShift = proportionalShift * eyeMovementRange; // Shift in pixels
-            
-            // Apply shift (adjust as needed for aesthetic)
-            // This is a simple approximation. For actual cursor following, it's more complex.
-            emojiFaceElement.style.paddingLeft = `${finalShift * 2}px`; // Adjust multiplier for visual effect
-        };
-
-        // Attach event listeners for emoji animation
-        loginEmailInput.addEventListener('input', () => animateEyes(loginEmojiFace, loginEmailInput));
-        loginPasswordInput.addEventListener('input', () => animateEyes(loginEmojiFace, loginPasswordInput, true, loginPasswordInput.type === 'text'));
-        loginTogglePassword.addEventListener('click', () => {
-            const isVisible = loginPasswordInput.type === 'password';
-            loginPasswordInput.type = isVisible ? 'text' : 'password';
-            loginTogglePassword.querySelector('i').className = isVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
-            animateEyes(loginEmojiFace, loginPasswordInput, true, !isVisible); // Pass new visibility state
-        });
-        // Initial state for login password emoji
-        animateEyes(loginEmojiFace, loginPasswordInput, true, false);
-
-        signupEmailInput.addEventListener('input', () => animateEyes(signupEmojiFace, signupEmailInput));
-        signupPasswordInput.addEventListener('input', () => animateEyes(signupEmojiFace, signupPasswordInput, true, signupPasswordInput.type === 'text'));
-        signupTogglePassword.addEventListener('click', () => {
-            const isVisible = signupPasswordInput.type === 'password';
-            signupPasswordInput.type = isVisible ? 'text' : 'password';
-            signupTogglePassword.querySelector('i').className = isVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
-            animateEyes(signupEmojiFace, signupPasswordInput, true, !isVisible); // Pass new visibility state
-        });
-        // Initial state for signup password emoji
-        animateEyes(signupEmojiFace, signupPasswordInput, true, false);
-
-
-        // When a modal opens, reset the emoji to default (open eyes, no movement)
+        // When a modal opens, clear form fields and error messages
         loginModal.addEventListener('transitionend', () => {
             if (loginModal.classList.contains('show-modal')) {
                 loginEmailInput.value = '';
@@ -1179,21 +1119,19 @@
                 loginPasswordInput.type = 'password';
                 loginTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
                 clearErrorMessages();
-                // Reset emoji for login
-                loginEmojiFace.innerHTML = '&#128522;'; // default smiling face
-                loginEmojiFace.style.paddingLeft = '0';
             }
         });
         signupModal.addEventListener('transitionend', () => {
             if (signupModal.classList.contains('show-modal')) {
+                signupNameInput.value = ''; // Clear name field
                 signupEmailInput.value = '';
                 signupPasswordInput.value = '';
+                signupConfirmPasswordInput.value = ''; // Clear confirm password field
                 signupPasswordInput.type = 'password';
                 signupTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
+                signupConfirmPasswordInput.type = 'password';
+                signupConfirmTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
                 clearErrorMessages();
-                // Reset emoji for signup
-                signupEmojiFace.innerHTML = '&#128522;'; // default smiling face
-                signupEmojiFace.style.paddingLeft = '0';
             }
         });
 
