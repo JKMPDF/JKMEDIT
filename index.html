@@ -186,9 +186,8 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        /* --- New CSS for User Profile Dropdown and Auth Overlay --- */
+        /* --- User Profile Dropdown and Auth Overlay --- */
         .user-profile-wrapper {
-            /* Remove 'position: relative' here, as the dropdown will position relative to .main-header */
             display: none; /* Controlled by JS */
             align-items: center;
             margin-left: 1.5rem; /* Added for consistent spacing within main-nav */
@@ -293,39 +292,32 @@
             font-size: 1rem;
         }
         
-        /* --- Styles for Password Inputs with Toggle (FIXED) --- */
+        /* --- Password Input Wrapper (no toggle button) --- */
         .password-input-wrapper {
-            position: relative; /* Crucial for positioning the toggle button */
+            position: relative; 
             margin-bottom: 1rem;
         }
-        /* Style the actual input field inside the wrapper */
+        /* Standard padding for input fields when no toggle is present */
         .password-input-wrapper input {
-            /* Add enough padding-right to prevent text from going under the icon */
-            padding-right: 3rem !important; /* Adjusted: 2.5rem (icon width) + 0.5rem (gap) = 3rem */
+            padding-right: 0.75rem !important; /* Default padding */
         }
-        .toggle-password-visibility {
-            position: absolute;
-            right: 8px; /* Slightly adjusted to be closer to the right edge but with a small visual margin */
-            top: 50%;
-            transform: translateY(-50%);
-            /* Ensure the button itself is vertically centered relative to the input */
-            height: auto; /* Let content define height, then center */
-            width: 2.5rem; /* Maintain width for consistent clickable area */
-            line-height: 1; /* Reset line-height to prevent extra spacing issues */
-            display: flex; /* Use flex to perfectly center the icon within the button's area */
-            align-items: center;
-            justify-content: center;
-            background: none;
-            border: none;
-            color: #6c757d;
-            cursor: pointer;
-            font-size: 1.15rem;
-            padding: 0; /* Remove default button padding */
-            transition: color 0.2s;
-        }
-        .toggle-password-visibility:hover {
+
+        /* --- Styling for Forgot Password Link --- */
+        #forgot-password-link {
             color: var(--primary-color);
+            font-size: 0.9em;
+            text-decoration: none;
+            display: block; /* Make it a block element to control its alignment easier */
+            text-align: right;
+            margin-top: -0.5rem; /* Pull it up slightly closer to the password field */
+            margin-bottom: 1rem; /* Space between it and the login button */
+            transition: color var(--transition-speed);
         }
+        #forgot-password-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
 
         /* --- Responsive Design --- */
         @media (max-width: 1024px) {
@@ -731,9 +723,6 @@
                     <label for='login-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
                     <input type='password' id='login-password' placeholder='Enter your password' required
                            style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
-                    <button type="button" class="toggle-password-visibility" id="login-toggle-password">
-                        <i class="fa-solid fa-eye-slash"></i>
-                    </button>
                 </div>
                 <p style="text-align: right; margin-top: -0.5rem; margin-bottom: 1rem;">
                     <a href="#" id="forgot-password-link" style="color: var(--primary-color); font-size: 0.9em; text-decoration: none;">Forgot password?</a>
@@ -765,17 +754,11 @@
                     <label for='signup-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
                     <input type='password' id='signup-password' placeholder='Create a password (min 6 characters)' required
                            style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
-                    <button type="button" class="toggle-password-visibility" id="signup-toggle-password">
-                        <i class="fa-solid fa-eye-slash"></i>
-                    </button>
                 </div>
                 <div class="password-input-wrapper">
                     <label for='signup-confirm-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Confirm Password:</label>
                     <input type='password' id='signup-confirm-password' placeholder='Confirm your password' required
                            style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
-                    <button type="button" class="toggle-password-visibility" id="signup-confirm-toggle-password">
-                        <i class="fa-solid fa-eye-slash"></i>
-                    </button>
                 </div>
                 <button type='submit' class='contact-email' style='width: 100%; border: none;'>Sign Up</button>
                 <p id="signup-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
@@ -804,7 +787,7 @@
         const loginEmailInput = document.getElementById('login-email');
         const loginPasswordInput = document.getElementById('login-password');
         const loginErrorMessage = document.getElementById('login-error-message');
-        const loginTogglePassword = document.getElementById('login-toggle-password');
+        // Removed loginTogglePassword as button is removed
 
         const signupForm = document.getElementById('signup-form');
         const signupNameInput = document.getElementById('signup-name');
@@ -812,8 +795,7 @@
         const signupPasswordInput = document.getElementById('signup-password');
         const signupConfirmPasswordInput = document.getElementById('signup-confirm-password');
         const signupErrorMessage = document.getElementById('signup-error-message');
-        const signupTogglePassword = document.getElementById('signup-toggle-password');
-        const signupConfirmTogglePassword = document.getElementById('signup-confirm-toggle-password');
+        // Removed signupTogglePassword and signupConfirmTogglePassword as buttons are removed
 
         const forgotPasswordLink = document.getElementById('forgot-password-link'); // Added for reset password
 
@@ -1019,18 +1001,8 @@
             }
         });
         
-        // --- Password Visibility Toggle Logic ---
-        const setupPasswordToggle = (passwordInput, toggleButton) => {
-            toggleButton.addEventListener('click', () => {
-                const isVisible = passwordInput.type === 'password';
-                passwordInput.type = isVisible ? 'text' : 'password';
-                toggleButton.querySelector('i').className = isVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
-            });
-        };
-
-        setupPasswordToggle(loginPasswordInput, loginTogglePassword);
-        setupPasswordToggle(signupPasswordInput, signupTogglePassword);
-        setupPasswordToggle(signupConfirmPasswordInput, signupConfirmTogglePassword);
+        // --- Password Visibility Toggle Logic (REMOVED) ---
+        // The setupPasswordToggle function and its calls are removed.
 
 
         // --- Protected Content Logic (2-minute timer) ---
@@ -1186,7 +1158,7 @@
                 loginEmailInput.value = '';
                 loginPasswordInput.value = '';
                 loginPasswordInput.type = 'password';
-                loginTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
+                // Removed toggle button icon reset
                 clearFormErrors('login'); // Clear errors and reset color
             }
         });
@@ -1197,9 +1169,8 @@
                 signupPasswordInput.value = '';
                 signupConfirmPasswordInput.value = '';
                 signupPasswordInput.type = 'password';
-                signupTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
+                // Removed toggle button icon resets
                 signupConfirmPasswordInput.type = 'password';
-                signupConfirmTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
                 clearFormErrors('signup'); // Clear errors
             }
         });
