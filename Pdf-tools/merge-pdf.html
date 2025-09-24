@@ -12,23 +12,19 @@
     <meta name="keywords" content="organize pdf, merge pdf, combine pdf, reorder pdf pages, remove pages from pdf, compress pdf, pdf tool, free pdf editor, online pdf organizer, jkm edit"/>
     <meta name="author" content="JKM Edit"/>
     <meta name="robots" content="index, follow"/>
-    <!-- CHANGED: The official URL for this page is now inside the pdf-tools folder -->
     <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/pdf-tools/merge-pdf.html"/>
 
     <!-- Open Graph Meta Tags (for Facebook, LinkedIn, etc.) -->
     <meta property="og:title" content="Free PDF Organizer - Merge, Remove Pages & Compress | JKM Edit"/>
     <meta property="og:description" content="Easily reorder, delete, and combine pages from multiple PDFs into one file, then compress it—all online and for free."/>
     <meta property="og:type" content="website"/>
-    <!-- CHANGED: The sharing URL must also be updated to the new path -->
     <meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/pdf-tools/merge-pdf.html"/>
-    <!-- NO CHANGE NEEDED: This is an absolute URL, it's already correct -->
     <meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Free PDF Organizer - Merge, Remove Pages & Compress | JKM Edit"/>
     <meta name="twitter:description" content="Easily reorder, delete, and combine pages from multiple PDFs into one file, then compress it—all online and for free."/>
-    <!-- NO CHANGE NEEDED: This is an absolute URL, it's already correct -->
     <meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
     <!-- =================================================================== -->
 
@@ -46,6 +42,27 @@
         })();
     </script>
 
+    <!-- Firebase SDK - Updated with your configuration -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script>
+        // Your web app's Firebase configuration - THIS IS YOURS!
+        const firebaseConfig = {
+          apiKey: "AIzaSyBOXMffkcv4wYubtkFbkpq6w20Ya0t7KMU",
+          authDomain: "jkm-edit-auth.firebaseapp.com",
+          projectId: "jkm-edit-auth",
+          storageBucket: "jkm-edit-auth.firebasestorage.app",
+          messagingSenderId: "445112295101",
+          appId: "1:445112295101:web:c6bba4454c1951642361d4",
+          measurementId: "G-0QKSL4W36S"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(); // Get a reference to the Auth service
+    </script>
+    <!-- END Firebase SDK -->
+
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -53,11 +70,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
     <style>
-        /* All CSS remains unchanged */
+        /* --- Basic Setup & Variables --- */
         :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
-        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
+        html { background-color: var(--bg-color); transition: background-color var(--transition-speed); }
+        body { margin: 0; color: var(--text-color); transition: color var(--transition-speed); }
         *, *::before, *::after { box-sizing: border-box; }
-        .hidden { display: none !important; }
+        .hidden { display: none !important; } /* Added for general utility */
+
+        /* --- THEME DEFINITIONS --- */
         [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
         [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
         [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
@@ -66,14 +86,48 @@
         [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
         [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
         [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
+
+        /* --- DARK MODE (Applied to <html> tag now) --- */
         html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
-        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); z-index: 100; position: sticky; top: 0; }
+        html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
+        html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
+
+        /* --- Header & Navigation --- */
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed), color var(--transition-speed); z-index: 100; position: relative; }
         .logo-container { display: flex; align-items: center; gap: 0.75rem; }
-        .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); }
+        .logo-icon-3d { font-size: 2rem; color: var(--primary-color); text-shadow: 1px 1px 0px var(--secondary-color), 2px 2px 0px rgba(0,0,0,0.1); transform: rotateY(10deg) rotateX(-5deg); transition: color var(--transition-speed), text-shadow var(--transition-speed); }
         .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
         .main-nav { display: flex; align-items: center; gap: 1.5rem; }
-        .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; } .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width .3s; } .nav-link:hover::after { width: 100%; } #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); } #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; } #dark-mode-toggle .fa-sun { display: none; } html.dark-mode #dark-mode-toggle .fa-sun { display: inline; } html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
-        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; } .modal.show-modal { display: flex; align-items: center; justify-content: center; } .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; } .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; } .contact-email { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; transition: color var(--transition-speed); }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width var(--transition-speed); }
+        .nav-link:hover { color: var(--primary-color); }
+        .nav-link:hover::after { width: 100%; }
+        .theme-selector { display: flex; align-items: center; gap: 0.5rem; }
+        #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
+        #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
+        #dark-mode-toggle .fa-sun { display: none; }
+        html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
+        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+        /* --- Tool Navigation Dropdown --- */
+        .tool-nav { display: flex; gap: 1rem; margin-left: 2rem; }
+        .tool-nav-item { position: relative; }
+        .tool-nav-button { background: none; border: none; color: var(--text-color); font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; padding: 0.5rem 0.75rem; border-radius: 4px; transition: all var(--transition-speed); }
+        .tool-nav-button:hover { color: var(--primary-color); background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+        .tool-dropdown { position: absolute; top: 100%; left: 0; background-color: var(--surface-color); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; min-width: 200px; display: none; z-index: 1000; padding: 0.5rem 0; border-top: 2px solid var(--primary-color); }
+        .tool-nav-item:hover .tool-dropdown { display: block; }
+        .tool-dropdown a { display: block; padding: 0.5rem 1rem; color: var(--text-color); text-decoration: none; transition: background-color var(--transition-speed); }
+        .tool-dropdown a:hover { background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+
+        /* --- Login/Signup Button --- */
+        .auth-buttons { display: flex; gap: 0.5rem; }
+        .auth-button { padding: 0.5rem 1rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all var(--transition-speed); }
+        .login-button { background: none; border: 1px solid var(--primary-color); color: var(--primary-color); }
+        .login-button:hover { background-color: var(--primary-color); color: white; }
+        .signup-button { background-color: var(--primary-color); border: 1px solid var(--primary-color); color: white; }
+        .signup-button:hover { background-color: var(--secondary-color); border-color: var(--secondary-color); }
+
+        /* --- Tool Specific Styles --- */
         .tool-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
         .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 0 auto 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
         html.dark-mode .ad-placeholder { background-color: #2a2a38; border-color: #444; color: #777; }
@@ -104,17 +158,289 @@
         .navigation-buttons { text-align: center; margin-top: 3rem; }
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; margin: 0 0.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
         .primary-nav-btn { background: var(--gradient); color: white !important; }
-        body { animation: fadeInAnimation 0.5s ease-in-out; }
-        .fade-out { animation: fadeOutAnimation 0.4s ease-in-out forwards; }
-        @keyframes fadeInAnimation { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOutAnimation { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+        
+        /* --- Page Transition Animations --- */
+        body { animation: fadeInPage 0.5s ease-in-out; }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* --- User Profile Dropdown and Auth Overlay (from main page) --- */
+        .user-profile-wrapper {
+            display: none; /* Controlled by JS */
+            align-items: center;
+            margin-left: 1.5rem; /* Added for consistent spacing within main-nav */
+        }
+
+        #user-icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            padding: 0.5rem;
+            border-radius: 50%; /* Make it round */
+            transition: background-color var(--transition-speed);
+        }
+        #user-icon-button:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 15%, transparent);
+        }
+
+        #user-dropdown {
+            display: none; /* Hidden by default, shown on click */
+            position: absolute;
+            right: 2rem; /* Matches the padding of .main-header */
+            top: calc(100% + 10px); /* Position below the header */
+            background-color: var(--surface-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            min-width: 220px; /* Increased min-width for email */
+            max-width: 280px; /* Maximum width to prevent excessive growth */
+            z-index: 1000;
+            padding: 0.5rem 0;
+            border-top: 2px solid var(--primary-color);
+            word-wrap: break-word; /* Allows long emails to wrap within the dropdown */
+            left: auto; /* Allows it to expand left naturally */
+        }
+        #user-dropdown.show-dropdown {
+            display: block;
+        }
+        #user-display-dropdown {
+            font-weight: 600;
+            padding: 0.75rem 1rem; /* Consistent padding */
+            color: var(--text-color);
+            border-bottom: 1px solid var(--bg-color);
+            margin-bottom: 0.5rem;
+        }
+        #user-dropdown #logout-button {
+            width: calc(100% - 2rem); /* Adjusted for dropdown internal padding */
+            margin: 0.5rem 1rem; /* Centered with vertical spacing */
+        }
+
+
+        /* --- Overlay for Protected Content (BLOCKING FUNCTIONALITY) --- */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            backdrop-filter: blur(5px); /* Blur effect */
+            z-index: 2000; /* Ensure it's above everything else */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .auth-overlay.show-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+        .auth-prompt-modal {
+            background-color: var(--surface-color);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 90%;
+            border-top: 5px solid var(--primary-color);
+            animation: slideIn 0.4s ease-out; /* Reuse existing animation */
+            /* REMOVED close-btn from HTML for this modal, as it shouldn't be dismissible */
+        }
+        .auth-prompt-modal h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        .auth-prompt-modal p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+        }
+        .auth-prompt-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .auth-prompt-buttons .auth-button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        /* --- Password Input Wrapper (no toggle button) --- */
+        .password-input-wrapper {
+            position: relative; 
+            margin-bottom: 1rem;
+        }
+        /* Standard padding for input fields when no toggle is present */
+        .password-input-wrapper input {
+            padding-right: 0.75rem !important; /* Default padding */
+        }
+
+        /* --- Styling for Forgot Password Link --- */
+        #forgot-password-link {
+            color: var(--primary-color);
+            font-size: 0.9em;
+            text-decoration: none;
+            display: block; 
+            text-align: right;
+            margin-top: -0.5rem; 
+            margin-bottom: 1rem; 
+            transition: color var(--transition-speed);
+        }
+        #forgot-password-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* --- Prevent scrolling when overlay is active --- */
+        body.body-no-scroll {
+            overflow: hidden !important;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+            .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
+            .tool-container { padding: 2rem 1.5rem; }
+            #user-dropdown { /* Adjust for smaller header padding when header stacks */
+                right: 1rem; 
+            }
+        }
+        @media (max-width: 768px) {
+            .main-nav { flex-wrap: wrap; justify-content: center; }
+            .tool-nav { gap: 0.5rem; }
+            .tool-nav-button { font-size: 0.9rem; padding: 0.4rem 0.6rem; }
+            .auth-buttons { margin-top: 0.5rem; }
+            /* Adjust dropdown position for very narrow screens */
+            #user-dropdown {
+                right: 1rem; /* A bit closer to the edge on small screens, relative to header padding */
+                left: auto; /* Ensure it floats right */
+                max-width: calc(100vw - 2rem); /* Max width of viewport minus small padding on each side */
+                min-width: 150px; /* Ensure it doesn't get too small */
+            }
+        }
     </style>
 </head>
 <body>
     <header class='main-header'>
-        <!-- CHANGED: All relative links must go up one directory using ../ -->
-        <div class='logo-container'><a href='../' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'><div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div><h1>JKM Edit</h1></a></div>
-        <nav class='main-nav'><div class='theme-selector'><label for='theme-picker'>Theme:</label><select id='theme-picker'><option value='corporate-blue'>Corporate Blue</option><option value='forest-green'>Forest Green</option><option value='sunset-gradient'>Sunset Gradient</option><option value='tech-noir'>Tech Noir</option><option value='minty-fresh'>Minty Fresh</option><option value='royal-purple'>Royal Purple</option><option value='graphite-gray'>Graphite Gray</option><option value='crimson-red'>Crimson Red</option></select></div><button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'><i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i></button><a href='#' id='about-btn' class='nav-link'>About</a><a href='#' id='contact-btn' class='nav-link'>Contact Us</a></nav>
+        <div style="display: flex; align-items: center;">
+            <div class='logo-container'>
+                <a href='../../' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
+                    <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
+                    <h1>JKM Edit - By M&M</h1>
+                </a>
+            </div>
+            
+            <!-- Tool Navigation -->
+            <nav class='tool-nav'>
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>PDF Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='merge-pdf.html'>Merge PDF</a>
+                        <a href='split-pdf.html'>Split PDF</a>
+                        <a href='compress-pdf.html'>Compress PDF</a>
+                        <a href='pdf-to-ocr-word.html'>PDF to Word</a>
+                        <a href='pdf-to-powerpoint.html'>PDF to Power Point</a>
+                        <a href='pdf-to-excel.html'>PDF to Excel</a>
+                        <a href='pdf-to-image.html'>PDF to JPG/PNG</a>
+                        <a href='word-to-pdf.html'>Word to PDF</a>
+                        <a href='../pdf-tools.html#function9'>Powerpoint to PDF</a> <!-- Adjusted path -->
+                        <a href='excel-to-pdf.html'>Excel to PDF</a>
+                        <a href='image-to-pdf.html'>JPG/PNG to PDF</a>
+                        <a href='sign-pdf.html'>Sign PDF</a>
+                        <a href='add-page-numbers.html'>Add Page Numbers</a>
+                        <a href='rotate-pdf.html'>Rotate PDF</a>
+                        <a href='protect-pdf.html'>Protect PDF</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Video Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='../../Video-Tools.html#function1'>Trim/Cut Video</a>
+                        <a href='../../Video-Tools.html#function2'>Merge Video</a>
+                        <a href='../../Video-Tools.html#function3'>Video to MP3</a>
+                        <a href='../../Video-Tools.html#function4'>Video Compressor</a>
+                        <a href='../../Video-Tools.html#function5'>Video to GIF Convertor</a>
+                        <a href='../../Video-Tools.html#function6'>Add Subtitles to Video</a>
+                        <a href='../../Video-Tools.html#function7'>Change Video Speed</a>
+                        <a href='../../Video-Tools.html#function8'>Video to Image Frames</a>
+                        <a href='../../Video-Tools.html#function9'>Other Tools</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Files Tools</button>
+                    <div class='tool-dropdown'>
+                        <a href='../../File-Tools.html#function1'>File Convertor</a>
+                        <a href='../../File-Tools.html#function2'>ZIP/RAR Creator & Extrator</a>
+                        <a href='../../File-Tools.html#function3'>File Splitter & Joiner</a>
+                        <a href='../../File-Tools.html#function4'>Batch Rename File</a>
+                        <a href='../../File-Tools.html#function5'>File Size Reducer</a>
+                        <a href='../../File-Tools.html#function6'>Secure File Share</a>
+                    </div>
+                </div>
+                
+                <div class='tool-nav-item'>
+                    <button class='tool-nav-button'>Utilities</button>
+                    <div class='tool-dropdown'>
+                        <a href='../../Utilities/Text-Case-Converter.html'>Text Case Converter</a>
+                        <a href='../../Utilities/Income-Expenses-Tracker.html'>Income & Expenses Tracker</a>
+                        <a href='../../Utilities/Calculator.html'>Calculator</a>
+                        <a href='../../Utilities/qr-code-generator.html'>QR Code Generator & Extrater</a>
+                        <a href='../../Utilities.html#function5'>Barcode Generator</a>
+                        <a href='../../Utilities/currency-converter.html'>Currency Converter</a>
+                        <a href='../../Utilities.html#function7'>Online Notepad/Clipboard</a>
+                        <a href='../../Utilities.html#function8'>Screen Recoder</a>
+                        <a href='../../Utilities.html#function9'>Unit Converter</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        
+        <nav class='main-nav'>
+            <div class='theme-selector'>
+                <label for='theme-picker'>Theme:</label>
+                <select id='theme-picker'>
+                    <option value='corporate-blue' selected='selected'>Corporate Blue</option>
+                    <option value='forest-green'>Forest Green</option>
+                    <option value='sunset-gradient'>Sunset Gradient</option>
+                    <option value='tech-noir'>Tech Noir</option>
+                    <option value='minty-fresh'>Minty Fresh</option>
+                    <option value='royal-purple'>Royal Purple</option>
+                    <option value='graphite-gray'>Graphite Gray</option>
+                    <option value='crimson-red'>Crimson Red</option>
+                </select>
+            </div>
+            <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'>
+                <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
+            </button>
+            <a href='#' id='about-btn' class='nav-link'>About</a>
+            <a href='#' id='contact-btn' class='nav-link'>Contact Us</a>
+            
+            <!-- User Profile and Logout Dropdown -->
+            <div class='user-profile-wrapper'>
+                <button id='user-icon-button' class='nav-button' aria-label='User Account'>
+                    <i class='fa-solid fa-user'></i>
+                </button>
+                <div id='user-dropdown' class='tool-dropdown'>
+                    <span id="user-display-dropdown"></span>
+                    <button id='logout-button' class='auth-button signup-button' style='width: calc(100% - 2rem); margin: 0.5rem 1rem;'>Logout</button>
+                </div>
+            </div>
+            <!-- Login/Signup Buttons (visible when not logged in) -->
+            <div class='auth-buttons'>
+                <button id='header-login-btn' class='auth-button login-button'>Login</button>
+                <button id='header-signup-btn' class='auth-button signup-button'>Sign Up</button>
+            </div>
+        </nav>
     </header>
 
     <main class='tool-container'>
@@ -162,298 +488,870 @@
         
         <div class="navigation-buttons">
             <a href="javascript:history.back()" class="nav-btn secondary-button"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
-            <!-- CHANGED: Go to the main dashboard, which is up one level -->
-            <a href="../" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="../../" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a> <!-- Adjusted path -->
         </div>
     </main>
     
+    <!-- Modals (About, Contact, Login, Signup) -->
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
+    <!-- Login Modal -->
+    <div id='login-modal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-btn login-close-btn'>×</span>
+            <h2>Login to JKM Edit</h2>
+            <form id='login-form'>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='login-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
+                    <input type='email' id='login-email' placeholder='Enter your email' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div class="password-input-wrapper">
+                    <label for='login-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
+                    <input type='password' id='login-password' placeholder='Enter your password' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <p style="text-align: right; margin-top: -0.5rem; margin-bottom: 1rem;">
+                    <a href="#" id="forgot-password-link" style="color: var(--primary-color); font-size: 0.9em; text-decoration: none;">Forgot password?</a>
+                </p>
+                <button type='submit' class='contact-email' style='width: 100%; border: none;'>Login</button>
+                <p id="login-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
+            </form>
+            <p style="margin-top: 1rem; text-align: center;">Don't have an account? <a href="#" id="open-signup-from-login" style="color: var(--primary-color);">Sign Up</a></p>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id='signup-modal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-btn signup-close-btn'>×</span>
+            <h2>Create an Account</h2>
+            <form id='signup-form'>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='signup-name' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Name:</label>
+                    <input type='text' id='signup-name' placeholder='Enter your name' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div style='margin-bottom: 1rem;'>
+                    <label for='signup-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
+                    <input type='email' id='signup-email' placeholder='Enter your email' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div class="password-input-wrapper">
+                    <label for='signup-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
+                    <input type='password' id='signup-password' placeholder='Create a password (min 6 characters)' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <div class="password-input-wrapper">
+                    <label for='signup-confirm-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Confirm Password:</label>
+                    <input type='password' id='signup-confirm-password' placeholder='Confirm your password' required
+                           style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+                </div>
+                <button type='submit' class='contact-email' style='width: 100%; border: none;'>Sign Up</button>
+                <p id="signup-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
+            </form>
+            <p style="margin-top: 1rem; text-align: center;">Already have an account? <a href="#" id="open-login-from-signup" style="color: var(--primary-color);">Login</a></p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
     <script>
-    // All JavaScript remains unchanged
+    // FIX FOR BFCACHE: This ensures the page is visible when navigating back.
+    window.addEventListener('pageshow', function (event) {
+        // event.persisted is true if the page was restored from the back-forward cache.
+        if (event.persisted) {
+            // Remove the fade-out class to make the page visible again.
+            document.body.classList.remove('fade-out');
+        }
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
+        // --- Header and General Modal Logic ---
+        const aboutModal = document.getElementById('about-modal');
+        const contactModal = document.getElementById('contact-modal');
+        const aboutBtn = document.getElementById('about-btn');
+        const contactBtn = document.getElementById('contact-btn');
+        const allCloseBtns = document.querySelectorAll('.close-btn'); // Renamed for clarity
+
+        // Elements for auth modals
+        const loginModal = document.getElementById('login-modal');
+        const signupModal = document.getElementById('signup-modal');
+        const headerLoginBtn = document.getElementById('header-login-btn');
+        const headerSignupBtn = document.getElementById('header-signup-btn');
+        const logoutButton = document.getElementById('logout-button');
+
+        const loginForm = document.getElementById('login-form');
+        const loginEmailInput = document.getElementById('login-email');
+        const loginPasswordInput = document.getElementById('login-password');
+        const loginErrorMessage = document.getElementById('login-error-message');
+
+        const signupForm = document.getElementById('signup-form');
+        const signupNameInput = document.getElementById('signup-name');
+        const signupEmailInput = document.getElementById('signup-email');
+        const signupPasswordInput = document.getElementById('signup-password');
+        const signupConfirmPasswordInput = document.getElementById('signup-confirm-password');
+        const signupErrorMessage = document.getElementById('signup-error-message');
+
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+
+        // Helper function to open/close modals
+        const openModal = (modal) => { modal.classList.add('show-modal'); };
+        const closeModal = (modal) => { modal.classList.remove('show-modal'); };
+
+        // Close button functionality for all modals (using event delegation for simplicity)
+        allCloseBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                closeModal(aboutModal);
+                closeModal(contactModal);
+                closeModal(loginModal);
+                closeModal(signupModal);
+                // The authPromptOverlay is created dynamically and managed separately.
+                // It should NOT be closed by a generic close button if the user is unauthenticated.
+            });
+        });
+
+        // Click outside modal to close (only for about/contact/login/signup modals)
+        window.addEventListener('click', (e) => {
+            if (e.target === aboutModal) closeModal(aboutModal);
+            if (e.target === contactModal) closeModal(contactModal);
+            if (e.target === loginModal) closeModal(loginModal);
+            if (e.target === signupModal) closeModal(signupModal);
+            // DO NOT close authPromptOverlay here, it's explicitly managed by auth state for blocking.
+        });
+
+        // Event listeners for About & Contact
+        if(aboutBtn) aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+        if(contactBtn) contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+
+        // --- Form Clearing (only errors cleared on open, fields cleared on close) ---
+        const clearFormErrors = (formType) => {
+            if (formType === 'login') {
+                if (loginErrorMessage) {
+                    loginErrorMessage.style.display = 'none';
+                    loginErrorMessage.style.color = 'red'; // Reset color in case it was green from a successful reset email
+                }
+            } else if (formType === 'signup') {
+                if (signupErrorMessage) {
+                    signupErrorMessage.style.display = 'none';
+                }
+            }
+        };
+
+        // New event listeners for header Login/Signup buttons
+        if(headerLoginBtn) {
+            headerLoginBtn.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                clearFormErrors('login'); // Only clear errors on open
+                closeModal(signupModal); 
+                openModal(loginModal); 
+            });
+        }
+        if(headerSignupBtn) {
+            headerSignupBtn.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                clearFormErrors('signup'); // Only clear errors on open
+                closeModal(loginModal); 
+                openModal(signupModal); 
+            });
+        }
+
+        // Switch between login/signup modals
+        const openSignupFromLoginLink = document.getElementById('open-signup-from-login');
+        if(openSignupFromLoginLink) {
+            openSignupFromLoginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModal(loginModal);
+                clearFormErrors('signup'); // Clear errors
+                openModal(signupModal);
+            });
+        }
+
+        const openLoginFromSignupLink = document.getElementById('open-login-from-signup');
+        if(openLoginFromSignupLink) {
+            openLoginFromSignupLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModal(signupModal);
+                clearFormErrors('login'); // Clear errors
+                openModal(loginModal);
+            });
+        }
+
+        // --- Email Validation Function ---
+        const isValidEmail = (email) => {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        };
+
+        // --- Firebase Authentication Logic ---
+        // Handle Login Form Submission
+        if(loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearFormErrors('login');
+                const email = loginEmailInput.value.trim();
+                const password = loginPasswordInput.value;
+
+                if (!isValidEmail(email)) {
+                    loginErrorMessage.textContent = 'Please enter a valid email address format.';
+                    loginErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    closeModal(loginModal);
+                    hideAuthPrompt(); // Close auth prompt after successful login
+                } catch (error) {
+                    console.error('Login Error:', error.message);
+                    loginErrorMessage.textContent = `Login failed: ${error.message}`;
+                    loginErrorMessage.style.display = 'block';
+                }
+            });
+        }
+
+        // Handle Signup Form Submission
+        if(signupForm) {
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearFormErrors('signup');
+                const name = signupNameInput.value.trim();
+                const email = signupEmailInput.value.trim();
+                const password = signupPasswordInput.value;
+                const confirmPassword = signupConfirmPasswordInput.value;
+
+                if (name.length === 0) {
+                    signupErrorMessage.textContent = 'Please enter your name.';
+                    signupErrorMessage.style.display = 'block';
+                    return;
+                }
+                if (!isValidEmail(email)) {
+                    signupErrorMessage.textContent = 'Please enter a valid email address format.';
+                    signupErrorMessage.style.display = 'block';
+                    return;
+                }
+                if (password.length < 6) {
+                    signupErrorMessage.textContent = 'Password should be at least 6 characters.';
+                    signupErrorMessage.style.display = 'block';
+                    return;
+                }
+                if (password !== confirmPassword) {
+                    signupErrorMessage.textContent = 'Passwords do not match.';
+                    signupErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    await userCredential.user.updateProfile({
+                        displayName: name
+                    });
+                    closeModal(signupModal);
+                    hideAuthPrompt(); // Close auth prompt after successful signup
+                } catch (error) {
+                    console.error('Signup Error:', error.message);
+                    signupErrorMessage.textContent = `Signup failed: ${error.message}`;
+                    signupErrorMessage.style.display = 'block';
+                }
+            });
+        }
+
+        // Handle Logout
+        const userDropdown = document.getElementById('user-dropdown');
+        if(logoutButton) {
+            logoutButton.addEventListener('click', async () => {
+                try {
+                    await auth.signOut();
+                } catch (error) {
+                    console.error('Logout Error:', error.message);
+                }
+                if (userDropdown) userDropdown.classList.remove('show-dropdown'); // Hide dropdown on logout
+            });
+        }
+
+        // Handle Forgot Password
+        if(forgotPasswordLink) {
+            forgotPasswordLink.addEventListener('click', async (e) => {
+                e.preventDefault();
+                clearFormErrors('login'); // Clear any existing login errors
+                const email = loginEmailInput.value.trim();
+
+                if (!email || !isValidEmail(email)) {
+                    loginErrorMessage.textContent = 'Please enter your email in the login field above to reset your password.';
+                    loginErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    await auth.sendPasswordResetEmail(email);
+                    loginErrorMessage.style.color = 'green';
+                    loginErrorMessage.textContent = `Password reset email sent to ${email}. Please check your inbox.`;
+                    loginErrorMessage.style.display = 'block';
+                } catch (error) {
+                    console.error('Password Reset Error:', error.message);
+                    loginErrorMessage.style.color = 'red';
+                    loginErrorMessage.textContent = `Failed to send reset email: ${error.message}`;
+                    loginErrorMessage.style.display = 'block';
+                }
+            });
+        }
+
+
+        // --- Header UI: User Logo and Dropdown ---
+        const userProfileWrapper = document.querySelector('.user-profile-wrapper');
+        const userIconButton = document.getElementById('user-icon-button');
+        const userDisplayDropdown = document.getElementById('user-display-dropdown');
+        const authButtonsDiv = document.querySelector('.auth-buttons');
+
+        if(userIconButton) {
+            userIconButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (userDropdown) userDropdown.classList.toggle('show-dropdown');
+            });
+        }
+
+        window.addEventListener('click', (e) => {
+            if (userDropdown && userDropdown.classList.contains('show-dropdown') && !userIconButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.remove('show-dropdown');
+            }
+        });
+        
+        // --- Protected Content Logic (2-minute timer to block access) ---
+        const INACTIVITY_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes in milliseconds
+        const AUTH_PROMPT_KEY = 'jkm-edit-auth-prompt-time'; // Key for localStorage
+        let inactivityTimer;
+
+        // Create the auth prompt overlay dynamically
+        const authPromptOverlay = document.createElement('div');
+        authPromptOverlay.id = 'auth-prompt-overlay';
+        authPromptOverlay.classList.add('auth-overlay');
+        authPromptOverlay.innerHTML = `
+            <div class='auth-prompt-modal'>
+                <h2>Login Required</h2>
+                <p>Please log in or sign up to continue using JKM Edit and access all our tools.</p>
+                <div class='auth-prompt-buttons'>
+                    <button id='prompt-login-btn' class='auth-button login-button'>Login</button>
+                    <button id='prompt-signup-btn' class='auth-button signup-button'>Sign Up</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(authPromptOverlay); // Append it to the body
+
+        // Get references to buttons inside the dynamically created overlay
+        const promptLoginBtn = authPromptOverlay.querySelector('#prompt-login-btn');
+        const promptSignupBtn = authPromptOverlay.querySelector('#prompt-signup-btn');
+        
+        // Add event listeners for the dynamically created buttons
+        if(promptLoginBtn) {
+            promptLoginBtn.addEventListener('click', () => {
+                closeModal(authPromptOverlay); // Temporarily close overlay to show login modal
+                clearFormErrors('login'); // Clear errors
+                openModal(loginModal);
+            });
+        }
+        if(promptSignupBtn) {
+            promptSignupBtn.addEventListener('click', () => {
+                closeModal(authPromptOverlay); // Temporarily close overlay to show signup modal
+                clearFormErrors('signup'); // Clear errors
+                openModal(signupModal);
+            });
+        }
+
+        const showAuthPrompt = () => {
+            openModal(authPromptOverlay);
+            document.body.classList.add('body-no-scroll'); // Prevent scrolling
+            authPromptOverlay.style.pointerEvents = 'auto'; // Ensure it captures clicks
+        };
+
+        const hideAuthPrompt = () => {
+            closeModal(authPromptOverlay);
+            document.body.classList.remove('body-no-scroll'); // Restore scrolling
+            localStorage.removeItem(AUTH_PROMPT_KEY); // Clear timestamp once user is auth'd or prompt hidden
+            authPromptOverlay.style.pointerEvents = 'none'; // Make it non-interactive when hidden
+        };
+
+        const resetInactivityTimer = () => {
+            if (inactivityTimer) {
+                clearTimeout(inactivityTimer);
+            }
+            if (!auth.currentUser) { // Only start timer if user is not logged in
+                inactivityTimer = setTimeout(() => {
+                    if (!auth.currentUser) { // Double check right before showing
+                        showAuthPrompt();
+                    }
+                }, INACTIVITY_THRESHOLD_MS);
+            }
+            // Update timestamp in localStorage on activity
+            localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
+        };
+
+        // Track user activity to reset timer
+        const activityEvents = ['mousemove', 'keydown', 'scroll', 'click'];
+        activityEvents.forEach(event => {
+            window.addEventListener(event, resetInactivityTimer);
+        });
+
+
+        // Listen for authentication state changes (this is key for persistent login across pages)
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                if (userDisplayDropdown) userDisplayDropdown.textContent = user.email; // Shows email in dropdown
+                if (userProfileWrapper) userProfileWrapper.style.display = 'flex'; // Show user icon and dropdown
+                if (authButtonsDiv) authButtonsDiv.style.display = 'none';    // Hide login/signup buttons
+
+                hideAuthPrompt(); // Ensure prompt is hidden if user logs in
+                localStorage.removeItem(AUTH_PROMPT_KEY); // Clear any pending prompt timer info
+                
+                // Clear the inactivity timer if logged in
+                if (inactivityTimer) {
+                    clearTimeout(inactivityTimer);
+                }
+            } else {
+                // User is signed out
+                if (userProfileWrapper) userProfileWrapper.style.display = 'none'; // Hide user icon and dropdown
+                if (userDropdown) userDropdown.classList.remove('show-dropdown'); // Ensure dropdown is closed
+                if (authButtonsDiv) authButtonsDiv.style.display = 'flex';       // Show login/signup buttons
+
+                // Logic for 2-minute prompt for unauthenticated users
+                const authPromptTime = localStorage.getItem(AUTH_PROMPT_KEY);
+                if (!authPromptTime) {
+                    // First time seeing an unauthenticated user, set timestamp and start timer
+                    localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
+                    resetInactivityTimer(); // Start the timer
+                } else {
+                    const elapsedTime = Date.now() - parseInt(authPromptTime);
+                    if (elapsedTime >= INACTIVITY_THRESHOLD_MS) {
+                        showAuthPrompt(); // Show immediately if threshold already passed
+                    } else {
+                        // Restart timer with remaining time
+                        if (inactivityTimer) clearTimeout(inactivityTimer);
+                        inactivityTimer = setTimeout(() => {
+                            if (!auth.currentUser) { // Double check in case user logs in right before timer fires
+                                showAuthPrompt();
+                            }
+                        }, INACTIVITY_THRESHOLD_MS - elapsedTime);
+                    }
+                }
+            }
+        });
+
+
+        // --- Theme and Dark Mode Event Listeners ---
         const themePicker = document.getElementById('theme-picker');
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         const htmlElement = document.documentElement;
 
-        const setTheme = (theme) => { htmlElement.dataset.theme = theme; localStorage.setItem('jkm-edit-theme', theme); };
-        const enableDarkMode = () => { htmlElement.classList.add('dark-mode'); localStorage.setItem('jkm-edit-mode', 'dark'); };
-        const disableDarkMode = () => { htmlElement.classList.remove('dark-mode'); localStorage.setItem('jkm-edit-mode', 'light'); };
+        const setTheme = (theme) => {
+            htmlElement.dataset.theme = theme;
+            localStorage.setItem('jkm-edit-theme', theme);
+        };
 
-        if(themePicker) { themePicker.addEventListener('change', () => setTheme(themePicker.value)); const savedTheme = localStorage.getItem('jkm-edit-theme'); if (savedTheme) themePicker.value = savedTheme; }
-        if(darkModeToggle) { darkModeToggle.addEventListener('click', () => { htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode(); }); }
-        
-        const aboutModal = document.getElementById('about-modal'), contactModal = document.getElementById('contact-modal'), aboutBtn = document.getElementById('about-btn'), contactBtn = document.getElementById('contact-btn'), closeBtns = document.querySelectorAll('.close-btn');
-        const openModal = (modal) => modal.classList.add('show-modal');
-        const closeModal = (modal) => modal.classList.remove('show-modal');
-        if(aboutBtn) aboutBtn.addEventListener('click', e => { e.preventDefault(); openModal(aboutModal); });
-        if(contactBtn) contactBtn.addEventListener('click', e => { e.preventDefault(); openModal(contactModal); });
-        closeBtns.forEach(btn => btn.addEventListener('click', () => { closeModal(aboutModal); closeModal(contactModal); }));
-        window.addEventListener('click', e => { if (e.target === aboutModal) closeModal(aboutModal); if (e.target === contactModal) closeModal(contactModal); });
+        const enableDarkMode = () => {
+            htmlElement.classList.add('dark-mode');
+            localStorage.setItem('jkm-edit-mode', 'dark');
+        };
 
-        document.querySelectorAll('a').forEach(link => {
-            const linkUrl = link.getAttribute('href');
-            if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.body.classList.add('fade-out');
-                    setTimeout(() => { window.location.href = this.href; }, 400);
-                });
-            }
-        });
-    });
+        const disableDarkMode = () => {
+            htmlElement.classList.remove('dark-mode');
+            localStorage.setItem('jkm-edit-mode', 'light');
+        };
 
-    const fileInput=document.getElementById('file-input'),dropzone=document.getElementById('dropzone');const addMoreFilesBtn=document.getElementById('add-more-files-btn'),processBtn=document.getElementById('process-btn');
-    const uploadStage=document.getElementById('upload-stage'),editStage=document.getElementById('edit-stage');
-    const configPanel=document.getElementById('config-panel'),resultPanel=document.getElementById('result-panel');
-    const pagePreviewGrid=editStage.querySelector('.page-preview-grid');
-    const sizePreview = document.getElementById('size-preview');
-    const originalSizeDisplay = document.getElementById('original-size-display');
-    
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
-    
-    let allPages = [], fileCounter = 0;
-    let fileDataStore = {};
-    let mergedOnlyBytes = null;
-    let mergedOnlyBlobUrl = null;
-
-    dropzone.addEventListener('click',()=>fileInput.click());addMoreFilesBtn.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',t=>handleFiles(t.target.files));dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
-    processBtn.addEventListener('click', () => handleProcessing(0));
-
-    async function handleFiles(files){
-        for (const file of files){
-            if (file.type !== "application/pdf") continue;
-            fileCounter++;
-            const fileId = fileCounter;
-            const arrayBuffer = await file.arrayBuffer();
-            
-            const pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer.slice(0))}).promise;
-            const numPagesInFile = pdfJsDoc.numPages;
-
-            fileDataStore[fileId] = { buffer: arrayBuffer, size: file.size, pageCount: numPagesInFile };
-            
-            for (let i = 1; i <= numPagesInFile; i++){
-                allPages.push({id: `${fileId}-${i}`, fileId: fileId, originalPageIndex: i - 1, pageLabel: `F${fileId},P${i}`, isSelected: true, pdfDoc: pdfJsDoc});
+        if(themePicker) {
+            themePicker.addEventListener('change', () => setTheme(themePicker.value));
+            const savedTheme = localStorage.getItem('jkm-edit-theme');
+            if (savedTheme) {
+                themePicker.value = savedTheme;
             }
         }
-        
-        if (allPages.length > 0) {
-            uploadStage.classList.add('hidden');
-            editStage.classList.remove('hidden');
-            await renderPagePreviews();
-            updateInterface();
-        }
-    }
 
-    function formatBytes(b,d=2){if(!+b)return'0 Bytes';const k=1024,i=Math.floor(Math.log(b)/Math.log(k));return`${parseFloat((b/Math.pow(k,i)).toFixed(d<0?0:d))} ${['Bytes','KB','MB','GB'][i]}`}
-    
-    async function renderPagePreviews(){pagePreviewGrid.innerHTML='';for(const pageObj of allPages){const pageItem=document.createElement('div');pageItem.className='page-item';if(!pageObj.isSelected)pageItem.classList.add('deselected');pageItem.dataset.id=pageObj.id;pageItem.draggable=true;pageItem.innerHTML=`<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;pagePreviewGrid.appendChild(pageItem);const canvas=pageItem.querySelector('canvas'),page=await pageObj.pdfDoc.getPage(pageObj.originalPageIndex+1),viewport=page.getViewport({scale:0.4});canvas.height=viewport.height;canvas.width=viewport.width;await page.render({canvasContext:canvas.getContext('2d'),viewport:viewport}).promise;}}
-    
-    function updateInterface(){
-        const selectedPages = allPages.filter(p => p.isSelected);
-        const hasSelection = selectedPages.length > 0;
-        
-        processBtn.disabled = !hasSelection;
-        
-        if (hasSelection) {
-            let originalSelectedSize = 0;
-            selectedPages.forEach(p => {
-                const fileInfo = fileDataStore[p.fileId];
-                if (fileInfo && fileInfo.pageCount > 0) {
-                    originalSelectedSize += fileInfo.size / fileInfo.pageCount;
+        if(darkModeToggle) {
+            darkModeToggle.addEventListener('click', () => {
+                htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+            });
+        }
+
+        // When a modal closes, clear form fields and errors messages
+        if(loginModal) {
+            loginModal.addEventListener('transitionend', () => {
+                if (!loginModal.classList.contains('show-modal')) {
+                    if (loginEmailInput) loginEmailInput.value = '';
+                    if (loginPasswordInput) loginPasswordInput.value = '';
+                    if (loginPasswordInput) loginPasswordInput.type = 'password';
+                    clearFormErrors('login');
+                    if (!auth.currentUser) { // If user is still not logged in, show auth prompt again
+                        showAuthPrompt();
+                    }
                 }
             });
-            originalSizeDisplay.textContent = formatBytes(originalSelectedSize);
-            sizePreview.classList.remove('hidden');
-        } else {
-            sizePreview.classList.add('hidden');
         }
-    }
-    
-    pagePreviewGrid.addEventListener('click', (t) => {
-        const e=t.target.closest('.page-item');
-        if(!e || pagePreviewGrid.classList.contains('locked')) return;
-        const o=allPages.find(t=>t.id===e.dataset.id);
-        if(o){
-            o.isSelected=!o.isSelected;
-            e.classList.toggle('deselected');
-            updateInterface();
-        }
-    });
-    
-    let draggedItem=null;pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});pagePreviewGrid.addEventListener('dragend', ()=>{if(draggedItem){draggedItem.classList.remove('dragging');draggedItem=null;const t=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));allPages=t; updateInterface()}});pagePreviewGrid.addEventListener('dragover',t=>{t.preventDefault();if(!draggedItem)return;const e=getDragAfterElement(pagePreviewGrid,t.clientY);if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}});function getDragAfterElement(c,y){const d=[...c.querySelectorAll('.page-item:not(.dragging)')];return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element}
-    
-    function resetApp() {
-        allPages = []; fileCounter = 0; fileDataStore = {};
-        if (mergedOnlyBlobUrl) URL.revokeObjectURL(mergedOnlyBlobUrl);
-        mergedOnlyBytes = null; mergedOnlyBlobUrl = null;
-        if (fileInput) fileInput.value = ''; 
-        pagePreviewGrid.innerHTML = ''; pagePreviewGrid.classList.remove('locked');
-        resultPanel.innerHTML = ''; resultPanel.classList.add('hidden');
-        configPanel.classList.remove('hidden'); sizePreview.classList.add('hidden');
-        editStage.classList.add('hidden'); uploadStage.classList.remove('hidden');
-        updateInterface();
-    }
-
-    async function processPdf(compressionLevel) {
-        const { PDFDocument } = PDFLib;
-        const selectedPages = allPages.filter(p => p.isSelected);
-        if (selectedPages.length === 0) return null;
-        const finalPdfDoc = await PDFDocument.create();
-        
-        if (compressionLevel === 0) {
-            const loadedPdfDocs = new Map();
-            for (const pageObj of selectedPages) {
-                let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
-                if (!sourceDoc) {
-                    sourceDoc = await PDFDocument.load(fileDataStore[pageObj.fileId].buffer);
-                    loadedPdfDocs.set(pageObj.fileId, sourceDoc);
-                }
-                const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
-                finalPdfDoc.addPage(copiedPage);
-            }
-        } else {
-            const quality = 1 - (compressionLevel / 100);
-            for (const pageObj of selectedPages) {
-                const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
-                const viewport = page.getViewport({ scale: 1.0 });
-                const canvas = document.createElement('canvas');
-                canvas.height = viewport.height; canvas.width = viewport.width;
-                const context = canvas.getContext('2d');
-                await page.render({ canvasContext: context, viewport: viewport }).promise;
-                const dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.01, quality));
-                if (!dataUrl || dataUrl === 'data:,') continue;
-                const jpegImage = await finalPdfDoc.embedJpg(dataUrl);
-                const newPage = finalPdfDoc.addPage([jpegImage.width, jpegImage.height]);
-                newPage.drawImage(jpegImage, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
-            }
-        }
-        return await finalPdfDoc.save();
-    }
-    
-    async function handleProcessing(compressionLevel, isRecompress = false) {
-        const button = isRecompress ? resultPanel.querySelector('#apply-compression-btn') : processBtn;
-        const originalText = button.innerHTML;
-        
-        button.disabled = true;
-        button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
-        if (!isRecompress) addMoreFilesBtn.disabled = true;
-
-        try {
-            const finalBytes = await processPdf(compressionLevel);
-            
-            if (!isRecompress) {
-                mergedOnlyBytes = finalBytes;
-                if (mergedOnlyBlobUrl) URL.revokeObjectURL(mergedOnlyBlobUrl);
-                mergedOnlyBlobUrl = URL.createObjectURL(new Blob([mergedOnlyBytes], { type: 'application/pdf' }));
-                
-                let originalSize = 0;
-                allPages.filter(p => p.isSelected).forEach(p => {
-                    const fileInfo = fileDataStore[p.fileId];
-                    if (fileInfo && fileInfo.pageCount > 0) {
-                        originalSize += fileInfo.size / fileInfo.pageCount;
+        if(signupModal) {
+            signupModal.addEventListener('transitionend', () => {
+                if (!signupModal.classList.contains('show-modal')) {
+                    if (signupNameInput) signupNameInput.value = '';
+                    if (signupEmailInput) signupEmailInput.value = '';
+                    if (signupPasswordInput) signupPasswordInput.value = '';
+                    if (signupConfirmPasswordInput) signupConfirmPasswordInput.value = '';
+                    if (signupPasswordInput) signupPasswordInput.type = 'password';
+                    if (signupConfirmPasswordInput) signupConfirmPasswordInput.type = 'password';
+                    clearFormErrors('signup');
+                    if (!auth.currentUser) { // If user is still not logged in, show auth prompt again
+                        showAuthPrompt();
                     }
-                });
-                displayResultPanel(originalSize, finalBytes.length);
-            } else {
-                const finalSizeResultDisplay = document.getElementById('final-size-result');
-                const finalSizeLabel = document.getElementById('final-size-label');
-                const downloadBtn = document.getElementById('download-btn');
-                
-                finalSizeLabel.textContent = 'Compressed Size';
-                finalSizeResultDisplay.textContent = formatBytes(finalBytes.length);
-
-                if (downloadBtn.href && downloadBtn.href !== mergedOnlyBlobUrl) {
-                    URL.revokeObjectURL(downloadBtn.href);
                 }
-                downloadBtn.href = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
-            }
-        } catch (error) {
-            console.error("Error processing PDF:", error);
-            alert("An error occurred. Please try again or check the console for details.");
-        } finally {
-            button.disabled = false;
-            button.innerHTML = originalText;
-            if (!isRecompress) addMoreFilesBtn.disabled = false;
+            });
         }
-    }
 
-    function displayResultPanel(originalSize, finalSize) {
-        configPanel.classList.add('hidden');
-        resultPanel.classList.remove('hidden');
-        pagePreviewGrid.classList.add('locked');
+        // --- Page Transition Logic (Existing from pdf-tools.html, adapted for relative paths) ---
+        document.querySelectorAll('a').forEach(link => {
+            const linkUrl = link.getAttribute('href');
+            // Only apply fade-out to internal HTML links or directory links, not external or JavaScript links
+            if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                // Determine if it's an internal link within your domain
+                const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
 
-        resultPanel.innerHTML = `
-            <div class="size-comparison">
-                <span>Original (Estimated): <strong class="size-info">${formatBytes(originalSize)}</strong></span>
-                <i class="fa-solid fa-arrow-right-long"></i>
-                <span><strong id="final-size-label">Merged Size</strong>: <strong id="final-size-result" class="size-info">${formatBytes(finalSize)}</strong></span>
-            </div>
-            <div class="compression-settings">
-                 <p style="margin:0 0 0.5rem 0;"><strong>Compression Level</strong></p>
-                 <div class="slider-container">
-                    <button id="slider-decrement" class="stepper-btn">-</button>
-                    <input type="range" id="compression-slider-result" min="0" max="99" value="0" step="1" style="width:100%;">
-                    <button id="slider-increment" class="stepper-btn">+</button>
-                 </div>
-                 <strong id="compression-level-text-result">No Compression</strong>
-            </div>
-            <button id="apply-compression-btn" class="action-button" style="max-width: 500px;">Apply Compression</button>
-            <div id="result-buttons-container" class="button-group" style="flex-wrap: wrap; max-width: 500px;"></div>
-        `;
-
-        const sliderResult = resultPanel.querySelector('#compression-slider-result');
-        const levelTextResult = resultPanel.querySelector('#compression-level-text-result');
-        const buttonsContainer = resultPanel.querySelector('#result-buttons-container');
-        const finalSizeResultDisplay = resultPanel.querySelector('#final-size-result');
-        const finalSizeLabel = resultPanel.querySelector('#final-size-label');
-        const applyBtn = resultPanel.querySelector('#apply-compression-btn');
-        const decrementBtn = resultPanel.querySelector('#slider-decrement');
-        const incrementBtn = resultPanel.querySelector('#slider-increment');
-
-        const downloadBtn = document.createElement('a');
-        downloadBtn.id = 'download-btn';
-        downloadBtn.className = 'download-button';
-        downloadBtn.style.flex = '1';
-        downloadBtn.download = 'jkm-edit-final.pdf';
-        downloadBtn.innerHTML = `<i class="fa-solid fa-download"></i> Download PDF`;
-        downloadBtn.href = mergedOnlyBlobUrl;
-
-        const startOverBtn = document.createElement('button');
-        startOverBtn.className = 'download-button secondary-button'; 
-        startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
-        startOverBtn.style.flex = '1'; 
-        startOverBtn.addEventListener('click', resetApp);
-        
-        buttonsContainer.appendChild(downloadBtn);
-        buttonsContainer.appendChild(startOverBtn);
-
-        const updateSliderUI = () => {
-            const level = parseInt(sliderResult.value);
-            levelTextResult.textContent = level === 0 ? "No Compression" : `${level}% Compression`;
-        };
-        
-        sliderResult.addEventListener('input', updateSliderUI);
-        decrementBtn.addEventListener('click', () => { sliderResult.value = Math.max(0, parseInt(sliderResult.value) - 1); sliderResult.dispatchEvent(new Event('input')); });
-        incrementBtn.addEventListener('click', () => { sliderResult.value = Math.min(99, parseInt(sliderResult.value) + 1); sliderResult.dispatchEvent(new Event('input')); });
-        
-        applyBtn.addEventListener('click', () => {
-            const level = parseInt(sliderResult.value);
-            if (level === 0) {
-                if (mergedOnlyBytes && mergedOnlyBlobUrl) {
-                    finalSizeLabel.textContent = 'Merged Size';
-                    finalSizeResultDisplay.textContent = formatBytes(mergedOnlyBytes.length);
-                    if (downloadBtn.href && downloadBtn.href !== mergedOnlyBlobUrl) {
-                        URL.revokeObjectURL(downloadBtn.href);
-                    }
-                    downloadBtn.href = mergedOnlyBlobUrl;
+                if (isInternalLink && !link.target) { // If it's an internal link and not opening in a new tab
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault(); 
+                        document.body.classList.add('fade-out');
+                        setTimeout(() => {
+                            window.location.href = this.href;
+                        }, 400); // Match animation duration
+                    });
                 }
-            } else {
-                handleProcessing(level, true);
             }
         });
-    }
+
+
+        // --- PDF Processing JavaScript (EXISTING FROM ORIGINAL merge-pdf.html) ---
+        const fileInput=document.getElementById('file-input'),dropzone=document.getElementById('dropzone');
+        const addMoreFilesBtn=document.getElementById('add-more-files-btn'),processBtn=document.getElementById('process-btn');
+        const uploadStage=document.getElementById('upload-stage'),editStage=document.getElementById('edit-stage');
+        const configPanel=document.getElementById('config-panel'),resultPanel=document.getElementById('result-panel');
+        const pagePreviewGrid=editStage.querySelector('.page-preview-grid');
+        const sizePreview = document.getElementById('size-preview');
+        const originalSizeDisplay = document.getElementById('original-size-display');
+        
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
+        
+        let allPages = [], fileCounter = 0;
+        let fileDataStore = {};
+        let mergedOnlyBytes = null;
+        let mergedOnlyBlobUrl = null;
+
+        if (dropzone) dropzone.addEventListener('click',()=>fileInput.click());
+        if (addMoreFilesBtn) addMoreFilesBtn.addEventListener('click',()=>fileInput.click());
+        if (fileInput) fileInput.addEventListener('change',t=>handleFiles(t.target.files));
+        if (dropzone) dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});
+        if (dropzone) dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));
+        if (dropzone) dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
+        if (processBtn) processBtn.addEventListener('click', () => handleProcessing(0));
+
+        async function handleFiles(files){
+            for (const file of files){
+                if (file.type !== "application/pdf") continue;
+                fileCounter++;
+                const fileId = fileCounter;
+                const arrayBuffer = await file.arrayBuffer();
+                
+                const pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer.slice(0))}).promise;
+                const numPagesInFile = pdfJsDoc.numPages;
+
+                fileDataStore[fileId] = { buffer: arrayBuffer, size: file.size, pageCount: numPagesInFile };
+                
+                for (let i = 1; i <= numPagesInFile; i++){
+                    allPages.push({id: `${fileId}-${i}`, fileId: fileId, originalPageIndex: i - 1, pageLabel: `F${fileId},P${i}`, isSelected: true, pdfDoc: pdfJsDoc});
+                }
+            }
+            
+            if (allPages.length > 0) {
+                if (uploadStage) uploadStage.classList.add('hidden');
+                if (editStage) editStage.classList.remove('hidden');
+                await renderPagePreviews();
+                updateInterface();
+            }
+        }
+
+        function formatBytes(b,d=2){if(!+b)return'0 Bytes';const k=1024,i=Math.floor(Math.log(b)/Math.log(k));return`${parseFloat((b/Math.pow(k,i)).toFixed(d<0?0:d))} ${['Bytes','KB','MB','GB'][i]}`}
+        
+        async function renderPagePreviews(){
+            if (!pagePreviewGrid) return;
+            pagePreviewGrid.innerHTML='';
+            for(const pageObj of allPages){
+                const pageItem=document.createElement('div');
+                pageItem.className='page-item';
+                if(!pageObj.isSelected)pageItem.classList.add('deselected');
+                pageItem.dataset.id=pageObj.id;
+                pageItem.draggable=true;
+                pageItem.innerHTML=`<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;
+                pagePreviewGrid.appendChild(pageItem);
+                const canvas=pageItem.querySelector('canvas'),page=await pageObj.pdfDoc.getPage(pageObj.originalPageIndex+1),viewport=page.getViewport({scale:0.4});
+                canvas.height=viewport.height;canvas.width=viewport.width;
+                await page.render({canvasContext:canvas.getContext('2d'),viewport:viewport}).promise;
+            }
+        }
+        
+        function updateInterface(){
+            const selectedPages = allPages.filter(p => p.isSelected);
+            const hasSelection = selectedPages.length > 0;
+            
+            if (processBtn) processBtn.disabled = !hasSelection;
+            
+            if (hasSelection) {
+                let originalSelectedSize = 0;
+                selectedPages.forEach(p => {
+                    const fileInfo = fileDataStore[p.fileId];
+                    if (fileInfo && fileInfo.pageCount > 0) {
+                        originalSelectedSize += fileInfo.size / fileInfo.pageCount;
+                    }
+                });
+                if (originalSizeDisplay) originalSizeDisplay.textContent = formatBytes(originalSelectedSize);
+                if (sizePreview) sizePreview.classList.remove('hidden');
+            } else {
+                if (sizePreview) sizePreview.classList.add('hidden');
+            }
+        }
+        
+        if (pagePreviewGrid) {
+            pagePreviewGrid.addEventListener('click', (t) => {
+                const e=t.target.closest('.page-item');
+                if(!e || pagePreviewGrid.classList.contains('locked')) return;
+                const o=allPages.find(t=>t.id===e.dataset.id);
+                if(o){
+                    o.isSelected=!o.isSelected;
+                    e.classList.toggle('deselected');
+                    updateInterface();
+                }
+            });
+            
+            let draggedItem=null;
+            pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});
+            pagePreviewGrid.addEventListener('dragend', ()=>{
+                if(draggedItem){
+                    draggedItem.classList.remove('dragging');
+                    draggedItem=null;
+                    const t=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));
+                    allPages=t; 
+                    updateInterface()
+                }
+            });
+            pagePreviewGrid.addEventListener('dragover',t=>{
+                t.preventDefault();
+                if(!draggedItem)return;
+                const e=getDragAfterElement(pagePreviewGrid,t.clientY);
+                if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}
+            });
+            function getDragAfterElement(c,y){
+                const d=[...c.querySelectorAll('.page-item:not(.dragging)')];
+                return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element
+            }
+        }
+        
+        function resetApp() {
+            allPages = []; fileCounter = 0; fileDataStore = {};
+            if (mergedOnlyBlobUrl) URL.revokeObjectURL(mergedOnlyBlobUrl);
+            mergedOnlyBytes = null; mergedOnlyBlobUrl = null;
+            if (fileInput) fileInput.value = ''; 
+            if (pagePreviewGrid) {
+                pagePreviewGrid.innerHTML = ''; 
+                pagePreviewGrid.classList.remove('locked');
+            }
+            if (resultPanel) {
+                resultPanel.innerHTML = ''; 
+                resultPanel.classList.add('hidden');
+            }
+            if (configPanel) configPanel.classList.remove('hidden'); 
+            if (sizePreview) sizePreview.classList.add('hidden');
+            if (editStage) editStage.classList.add('hidden'); 
+            if (uploadStage) uploadStage.classList.remove('hidden');
+            updateInterface();
+        }
+
+        async function processPdf(compressionLevel) {
+            const { PDFDocument } = PDFLib;
+            const selectedPages = allPages.filter(p => p.isSelected);
+            if (selectedPages.length === 0) return null;
+            const finalPdfDoc = await PDFDocument.create();
+            
+            if (compressionLevel === 0) {
+                const loadedPdfDocs = new Map();
+                for (const pageObj of selectedPages) {
+                    let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
+                    if (!sourceDoc) {
+                        sourceDoc = await PDFDocument.load(fileDataStore[pageObj.fileId].buffer);
+                        loadedPdfDocs.set(pageObj.fileId, sourceDoc);
+                    }
+                    const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
+                    finalPdfDoc.addPage(copiedPage);
+                }
+            } else {
+                const quality = 1 - (compressionLevel / 100);
+                for (const pageObj of selectedPages) {
+                    const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
+                    const viewport = page.getViewport({ scale: 1.0 });
+                    const canvas = document.createElement('canvas');
+                    canvas.height = viewport.height; canvas.width = viewport.width;
+                    const context = canvas.getContext('2d');
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+                    const dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.01, quality));
+                    if (!dataUrl || dataUrl === 'data:,') continue;
+                    const jpegImage = await finalPdfDoc.embedJpg(dataUrl);
+                    const newPage = finalPdfDoc.addPage([jpegImage.width, jpegImage.height]);
+                    newPage.drawImage(jpegImage, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
+                }
+            }
+            return await finalPdfDoc.save();
+        }
+        
+        async function handleProcessing(compressionLevel, isRecompress = false) {
+            let button = null;
+            let originalText = '';
+
+            if (isRecompress && resultPanel) {
+                button = resultPanel.querySelector('#apply-compression-btn');
+            } else if (processBtn) {
+                button = processBtn;
+            }
+
+            if (!button) return; // Exit if button not found
+
+            originalText = button.innerHTML;
+            
+            button.disabled = true;
+            button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+            if (!isRecompress && addMoreFilesBtn) addMoreFilesBtn.disabled = true;
+
+            try {
+                const finalBytes = await processPdf(compressionLevel);
+                
+                if (!isRecompress) {
+                    mergedOnlyBytes = finalBytes;
+                    if (mergedOnlyBlobUrl) URL.revokeObjectURL(mergedOnlyBlobUrl);
+                    mergedOnlyBlobUrl = URL.createObjectURL(new Blob([mergedOnlyBytes], { type: 'application/pdf' }));
+                    
+                    let originalSize = 0;
+                    allPages.filter(p => p.isSelected).forEach(p => {
+                        const fileInfo = fileDataStore[p.fileId];
+                        if (fileInfo && fileInfo.pageCount > 0) {
+                            originalSize += fileInfo.size / fileInfo.pageCount;
+                        }
+                    });
+                    displayResultPanel(originalSize, finalBytes.length);
+                } else {
+                    const finalSizeResultDisplay = document.getElementById('final-size-result');
+                    const finalSizeLabel = document.getElementById('final-size-label');
+                    const downloadBtn = document.getElementById('download-btn');
+                    
+                    if (finalSizeLabel) finalSizeLabel.textContent = 'Compressed Size';
+                    if (finalSizeResultDisplay) finalSizeResultDisplay.textContent = formatBytes(finalBytes.length);
+
+                    if (downloadBtn && downloadBtn.href && downloadBtn.href !== mergedOnlyBlobUrl) {
+                        URL.revokeObjectURL(downloadBtn.href);
+                    }
+                    if (downloadBtn) downloadBtn.href = URL.createObjectURL(new Blob([finalBytes], { type: 'application/pdf' }));
+                }
+            } catch (error) {
+                console.error("Error processing PDF:", error);
+                alert("An error occurred. Please try again or check the console for details.");
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalText;
+                if (!isRecompress && addMoreFilesBtn) addMoreFilesBtn.disabled = false;
+            }
+        }
+
+        function displayResultPanel(originalSize, finalSize) {
+            if (configPanel) configPanel.classList.add('hidden');
+            if (resultPanel) resultPanel.classList.remove('hidden');
+            if (pagePreviewGrid) pagePreviewGrid.classList.add('locked');
+
+            if (resultPanel) {
+                resultPanel.innerHTML = `
+                    <div class="size-comparison">
+                        <span>Original (Estimated): <strong class="size-info">${formatBytes(originalSize)}</strong></span>
+                        <i class="fa-solid fa-arrow-right-long"></i>
+                        <span><strong id="final-size-label">Merged Size</strong>: <strong id="final-size-result" class="size-info">${formatBytes(finalSize)}</strong></span>
+                    </div>
+                    <div class="compression-settings">
+                         <p style="margin:0 0 0.5rem 0;"><strong>Compression Level</strong></p>
+                         <div class="slider-container">
+                            <button id="slider-decrement" class="stepper-btn">-</button>
+                            <input type="range" id="compression-slider-result" min="0" max="99" value="0" step="1" style="width:100%;">
+                            <button id="slider-increment" class="stepper-btn">+</button>
+                         </div>
+                         <strong id="compression-level-text-result">No Compression</strong>
+                    </div>
+                    <button id="apply-compression-btn" class="action-button" style="max-width: 500px;">Apply Compression</button>
+                    <div id="result-buttons-container" class="button-group" style="flex-wrap: wrap; max-width: 500px;"></div>
+                `;
+            }
+
+            const sliderResult = resultPanel ? resultPanel.querySelector('#compression-slider-result') : null;
+            const levelTextResult = resultPanel ? resultPanel.querySelector('#compression-level-text-result') : null;
+            const buttonsContainer = resultPanel ? resultPanel.querySelector('#result-buttons-container') : null;
+            const finalSizeResultDisplay = resultPanel ? resultPanel.querySelector('#final-size-result') : null;
+            const finalSizeLabel = resultPanel ? resultPanel.querySelector('#final-size-label') : null;
+            const applyBtn = resultPanel ? resultPanel.querySelector('#apply-compression-btn') : null;
+            const decrementBtn = resultPanel ? resultPanel.querySelector('#slider-decrement') : null;
+            const incrementBtn = resultPanel ? resultPanel.querySelector('#slider-increment') : null;
+
+            const downloadBtn = document.createElement('a');
+            downloadBtn.id = 'download-btn';
+            downloadBtn.className = 'download-button';
+            downloadBtn.style.flex = '1';
+            downloadBtn.download = 'jkm-edit-final.pdf';
+            downloadBtn.innerHTML = `<i class="fa-solid fa-download"></i> Download PDF`;
+            downloadBtn.href = mergedOnlyBlobUrl;
+
+            const startOverBtn = document.createElement('button');
+            startOverBtn.className = 'download-button secondary-button'; 
+            startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
+            startOverBtn.style.flex = '1'; 
+            startOverBtn.addEventListener('click', resetApp);
+            
+            if (buttonsContainer) {
+                buttonsContainer.appendChild(downloadBtn);
+                buttonsContainer.appendChild(startOverBtn);
+            }
+
+            const updateSliderUI = () => {
+                const level = parseInt(sliderResult.value);
+                if (levelTextResult) levelTextResult.textContent = level === 0 ? "No Compression" : `${level}% Compression`;
+            };
+            
+            if (sliderResult) sliderResult.addEventListener('input', updateSliderUI);
+            if (decrementBtn) decrementBtn.addEventListener('click', () => { 
+                if (sliderResult) {
+                    sliderResult.value = Math.max(0, parseInt(sliderResult.value) - 1); 
+                    sliderResult.dispatchEvent(new Event('input')); 
+                }
+            });
+            if (incrementBtn) incrementBtn.addEventListener('click', () => { 
+                if (sliderResult) {
+                    sliderResult.value = Math.min(99, parseInt(sliderResult.value) + 1); 
+                    sliderResult.dispatchEvent(new Event('input')); 
+                }
+            });
+            
+            if (applyBtn) {
+                applyBtn.addEventListener('click', () => {
+                    const level = parseInt(sliderResult.value);
+                    if (level === 0) {
+                        if (mergedOnlyBytes && mergedOnlyBlobUrl) {
+                            if (finalSizeLabel) finalSizeLabel.textContent = 'Merged Size';
+                            if (finalSizeResultDisplay) finalSizeResultDisplay.textContent = formatBytes(mergedOnlyBytes.length);
+                            if (downloadBtn && downloadBtn.href && downloadBtn.href !== mergedOnlyBlobUrl) {
+                                URL.revokeObjectURL(downloadBtn.href);
+                            }
+                            if (downloadBtn) downloadBtn.href = mergedOnlyBlobUrl;
+                        }
+                    } else {
+                        handleProcessing(level, true);
+                    }
+                });
+            }
+        }
+    });
     </script>
 </body>
 </html>
