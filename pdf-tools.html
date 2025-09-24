@@ -218,7 +218,7 @@
         }
 
 
-        /* --- Overlay for Protected Content --- */
+        /* --- Overlay for Protected Content (BLOCKING FUNCTIONALITY) --- */
         .auth-overlay {
             position: fixed;
             top: 0;
@@ -249,6 +249,7 @@
             width: 90%;
             border-top: 5px solid var(--primary-color);
             animation: slideIn 0.4s ease-out; /* Reuse existing animation */
+            /* REMOVED close-btn from HTML for this modal, as it shouldn't be dismissible */
         }
         .auth-prompt-modal h2 {
             color: var(--primary-color);
@@ -285,15 +286,20 @@
             color: var(--primary-color);
             font-size: 0.9em;
             text-decoration: none;
-            display: block; /* Make it a block element to control its alignment easier */
+            display: block; 
             text-align: right;
-            margin-top: -0.5rem; /* Pull it up slightly closer to the password field */
-            margin-bottom: 1rem; /* Space between it and the login button */
+            margin-top: -0.5rem; 
+            margin-bottom: 1rem; 
             transition: color var(--transition-speed);
         }
         #forgot-password-link:hover {
             color: var(--secondary-color);
             text-decoration: underline;
+        }
+
+        /* --- Prevent scrolling when overlay is active --- */
+        body.body-no-scroll {
+            overflow: hidden !important;
         }
 
         /* --- Responsive Design --- */
@@ -325,6 +331,7 @@
     <header class='main-header'>
         <div style="display: flex; align-items: center;">
             <div class='logo-container'>
+                <!-- IMPORTANT: Changed href to point to the root of the site -->
                 <a href='https://jkmpdf.github.io/JKMEDIT/' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'>
                     <div class='logo-icon-3d'><i class='fa-solid fa-cube'></i></div>
                     <h1>JKM Edit - By M&M</h1>
@@ -477,11 +484,12 @@
             <a href='Pdf-tools/protect-pdf.html' class='tool-card'><i class='fa-solid fa-lock tool-icon'></i><h3>Protect PDF</h3><p>Add a password and encrypt your PDF file to secure it.</p></a>
         </div>
         <div style='text-align: center; margin-top: 3rem;'>
+            <!-- IMPORTANT: Changed href to point to the root of the site -->
             <a href='https://jkmpdf.github.io/JKMEDIT/' class='back-to-dashboard-btn'><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
         </div>
     </main>
     
-    <!-- Modals -->
+    <!-- Modals (About, Contact, Login, Signup) -->
     <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation.</p></div></div>
     <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>×</span><h2>Contact Us</h2><p>You can email us directly at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a></div></div>
 
@@ -572,7 +580,7 @@
         const signupConfirmPasswordInput = document.getElementById('signup-confirm-password');
         const signupErrorMessage = document.getElementById('signup-error-message');
 
-        const forgotPasswordLink = document.getElementById('forgot-password-link'); // Added for reset password
+        const forgotPasswordLink = document.getElementById('forgot-password-link'); 
 
         // Helper function to open/close modals
         const openModal = (modal) => { modal.classList.add('show-modal'); };
@@ -585,17 +593,17 @@
                 closeModal(contactModal);
                 closeModal(loginModal);
                 closeModal(signupModal);
-                // The authPromptOverlay is created dynamically, handle its close separately
+                // authPromptOverlay is handled separately below, it should not close this way if unauthenticated.
             });
         });
 
-        // Click outside modal to close
+        // Click outside modal to close (only for about/contact/login/signup modals)
         window.addEventListener('click', (e) => {
             if (e.target === aboutModal) closeModal(aboutModal);
             if (e.target === contactModal) closeModal(contactModal);
             if (e.target === loginModal) closeModal(loginModal);
             if (e.target === signupModal) closeModal(signupModal);
-            if (e.target === authPromptOverlay) closeModal(authPromptOverlay); // For the new auth prompt
+            // DO NOT close authPromptOverlay here, it's explicitly managed by auth state.
         });
 
         // Existing event listeners for About & Contact
@@ -665,7 +673,7 @@
             try {
                 await auth.signInWithEmailAndPassword(email, password);
                 closeModal(loginModal);
-                closeModal(authPromptOverlay); // Close auth prompt after successful login
+                hideAuthPrompt(); // Close auth prompt after successful login
                 // alert('Logged in successfully!'); // Suppress alert for smoother UX
             } catch (error) {
                 console.error('Login Error:', error.message);
@@ -710,7 +718,7 @@
                     displayName: name
                 });
                 closeModal(signupModal);
-                closeModal(authPromptOverlay); // Close auth prompt after successful signup
+                hideAuthPrompt(); // Close auth prompt after successful signup
                 // alert('Account created successfully! You are now logged in.'); // Suppress alert for smoother UX
             } catch (error) {
                 console.error('Signup Error:', error.message);
@@ -776,11 +784,7 @@
             }
         });
         
-        // --- Password Visibility Toggle Logic (REMOVED) ---
-        // The setupPasswordToggle function and its calls are removed.
-
-
-        // --- Protected Content Logic (2-minute timer) ---
+        // --- Protected Content Logic (2-minute timer to block access) ---
         const INACTIVITY_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes in milliseconds
         const AUTH_PROMPT_KEY = 'jkm-edit-auth-prompt-time'; // Key for localStorage
         let inactivityTimer;
@@ -807,25 +811,27 @@
         
         // Add event listeners for the dynamically created buttons
         promptLoginBtn.addEventListener('click', () => {
-            closeModal(authPromptOverlay);
+            closeModal(authPromptOverlay); // Temporarily close overlay to show login modal
             clearFormErrors('login'); // Clear errors
             openModal(loginModal);
         });
         promptSignupBtn.addEventListener('click', () => {
-            closeModal(authPromptOverlay);
+            closeModal(authPromptOverlay); // Temporarily close overlay to show signup modal
             clearFormErrors('signup'); // Clear errors
             openModal(signupModal);
         });
 
         const showAuthPrompt = () => {
             openModal(authPromptOverlay);
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.body.classList.add('body-no-scroll'); // Prevent scrolling
+            authPromptOverlay.style.pointerEvents = 'auto'; // Ensure it captures clicks
         };
 
         const hideAuthPrompt = () => {
             closeModal(authPromptOverlay);
-            document.body.style.overflow = ''; // Restore scrolling
+            document.body.classList.remove('body-no-scroll'); // Restore scrolling
             localStorage.removeItem(AUTH_PROMPT_KEY); // Clear timestamp once user is auth'd or prompt hidden
+            authPromptOverlay.style.pointerEvents = 'none'; // Make it non-interactive when hidden
         };
 
         const resetInactivityTimer = () => {
@@ -855,7 +861,6 @@
             if (user) {
                 // User is signed in
                 userDisplayDropdown.textContent = user.email; // Shows email in dropdown
-                // You can also display name here if preferred: userDisplayDropdown.textContent = user.displayName || user.email;
                 userProfileWrapper.style.display = 'flex'; // Show user icon and dropdown
                 authButtonsDiv.style.display = 'none';    // Hide login/signup buttons
 
@@ -934,6 +939,9 @@
                 loginPasswordInput.value = '';
                 loginPasswordInput.type = 'password';
                 clearFormErrors('login'); // Clear errors and reset color
+                if (!auth.currentUser) { // If user is still not logged in, show auth prompt again
+                    showAuthPrompt();
+                }
             }
         });
         signupModal.addEventListener('transitionend', () => {
@@ -945,6 +953,9 @@
                 signupPasswordInput.type = 'password';
                 signupConfirmPasswordInput.type = 'password';
                 clearFormErrors('signup'); // Clear errors
+                if (!auth.currentUser) { // If user is still not logged in, show auth prompt again
+                    showAuthPrompt();
+                }
             }
         });
 
