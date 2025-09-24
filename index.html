@@ -243,7 +243,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
-            backdrop-filter: blur(8px); /* Blur effect */
+            backdrop-filter: blur(5px); /* Blur effect */
             z-index: 2000; /* Ensure it's above everything else */
             display: flex;
             align-items: center;
@@ -294,20 +294,30 @@
         }
         .toggle-password-visibility {
             position: absolute;
-            right: 10px; /* Adjust as needed */
-            top: 50%;
-            transform: translateY(-50%);
+            right: 10px; /* Distance from right edge of input */
+            top: 0;
+            bottom: 0;
             background: none;
             border: none;
             color: #6c757d; /* Default icon color */
             cursor: pointer;
-            font-size: 1.15rem; /* Slightly larger icon */
-            padding: 0.25rem;
+            font-size: 1.15rem; /* Standard icon size */
+            padding: 0; /* Remove default padding from button */
+            display: flex; /* Use flexbox for centering */
+            align-items: center; /* Vertically center icon */
+            justify-content: center; /* Horizontally center icon */
             transition: color 0.2s;
+            width: 2.5rem; /* Give it a fixed width to ensure spacing */
         }
         .toggle-password-visibility:hover {
             color: var(--primary-color);
         }
+        /* Adjust input padding to prevent text from going under the icon */
+        .password-input-wrapper input[type="password"],
+        .password-input-wrapper input[type="text"] {
+            padding-right: 3.5rem; /* Enough space for the icon + its padding */
+        }
+
 
         /* --- Responsive Design --- */
         @media (max-width: 1024px) {
@@ -720,7 +730,7 @@
         </div>
     </div>
 
-    <!-- Signup Modal - UPDATED -->
+    <!-- Signup Modal -->
     <div id='signup-modal' class='modal'>
         <div class='modal-content'>
             <span class='close-btn signup-close-btn'>×</span>
@@ -782,13 +792,13 @@
         const loginTogglePassword = document.getElementById('login-toggle-password');
 
         const signupForm = document.getElementById('signup-form');
-        const signupNameInput = document.getElementById('signup-name'); // NEW
+        const signupNameInput = document.getElementById('signup-name');
         const signupEmailInput = document.getElementById('signup-email');
         const signupPasswordInput = document.getElementById('signup-password');
-        const signupConfirmPasswordInput = document.getElementById('signup-confirm-password'); // NEW
+        const signupConfirmPasswordInput = document.getElementById('signup-confirm-password');
         const signupErrorMessage = document.getElementById('signup-error-message');
         const signupTogglePassword = document.getElementById('signup-toggle-password');
-        const signupConfirmTogglePassword = document.getElementById('signup-confirm-toggle-password'); // NEW
+        const signupConfirmTogglePassword = document.getElementById('signup-confirm-toggle-password');
 
 
         // Helper function to open/close modals
@@ -820,37 +830,27 @@
         contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
 
         // --- Form Clearing and Opening Logic ---
-        const resetLoginForm = () => {
-            loginEmailInput.value = '';
-            loginPasswordInput.value = '';
-            loginPasswordInput.type = 'password';
-            loginTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
-            clearErrorMessages();
+        // Function to clear errors (but not user input)
+        const clearFormErrors = (formType) => {
+            if (formType === 'login') {
+                loginErrorMessage.style.display = 'none';
+            } else if (formType === 'signup') {
+                signupErrorMessage.style.display = 'none';
+            }
         };
-
-        const resetSignupForm = () => {
-            signupNameInput.value = '';
-            signupEmailInput.value = '';
-            signupPasswordInput.value = '';
-            signupConfirmPasswordInput.value = '';
-            signupPasswordInput.type = 'password';
-            signupTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
-            signupConfirmPasswordInput.type = 'password';
-            signupConfirmTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
-            clearErrorMessages();
-        };
-
 
         // New event listeners for header Login/Signup buttons
         headerLoginBtn.addEventListener('click', (e) => { 
             e.preventDefault(); 
-            resetLoginForm(); // Reset form before opening
+            // Do not clear input fields on open, only errors
+            clearFormErrors('login'); 
             closeModal(signupModal); 
             openModal(loginModal); 
         });
         headerSignupBtn.addEventListener('click', (e) => { 
             e.preventDefault(); 
-            resetSignupForm(); // Reset form before opening
+            // Do not clear input fields on open, only errors
+            clearFormErrors('signup'); 
             closeModal(loginModal); 
             openModal(signupModal); 
         });
@@ -859,14 +859,14 @@
         document.getElementById('open-signup-from-login').addEventListener('click', (e) => {
             e.preventDefault();
             closeModal(loginModal);
-            resetSignupForm(); // Reset form before opening
+            clearFormErrors('signup'); // Clear errors
             openModal(signupModal);
         });
 
         document.getElementById('open-login-from-signup').addEventListener('click', (e) => {
             e.preventDefault();
             closeModal(signupModal);
-            resetLoginForm(); // Reset form before opening
+            clearFormErrors('login'); // Clear errors
             openModal(loginModal);
         });
 
@@ -878,16 +878,10 @@
         };
 
         // --- Firebase Authentication Logic ---
-        // Function to clear error messages
-        const clearErrorMessages = () => {
-            loginErrorMessage.style.display = 'none';
-            signupErrorMessage.style.display = 'none';
-        };
-
         // Handle Login Form Submission
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            clearErrorMessages();
+            clearFormErrors('login');
             const email = loginEmailInput.value.trim(); // Trim whitespace
             const password = loginPasswordInput.value;
 
@@ -912,13 +906,13 @@
         // Handle Signup Form Submission
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            clearErrorMessages();
-            const name = signupNameInput.value.trim(); // NEW
+            clearFormErrors('signup');
+            const name = signupNameInput.value.trim();
             const email = signupEmailInput.value.trim(); // Trim whitespace
             const password = signupPasswordInput.value;
-            const confirmPassword = signupConfirmPasswordInput.value; // NEW
+            const confirmPassword = signupConfirmPasswordInput.value;
 
-            if (name.length === 0) { // NEW
+            if (name.length === 0) {
                 signupErrorMessage.textContent = 'Please enter your name.';
                 signupErrorMessage.style.display = 'block';
                 return;
@@ -933,7 +927,7 @@
                 signupErrorMessage.style.display = 'block';
                 return; // Stop execution if password is too short
             }
-            if (password !== confirmPassword) { // NEW
+            if (password !== confirmPassword) {
                 signupErrorMessage.textContent = 'Passwords do not match.';
                 signupErrorMessage.style.display = 'block';
                 return;
@@ -1028,12 +1022,12 @@
         // Add event listeners for the dynamically created buttons
         promptLoginBtn.addEventListener('click', () => {
             closeModal(authPromptOverlay);
-            resetLoginForm(); // Reset form before opening
+            clearFormErrors('login'); // Clear errors
             openModal(loginModal);
         });
         promptSignupBtn.addEventListener('click', () => {
             closeModal(authPromptOverlay);
-            resetSignupForm(); // Reset form before opening
+            clearFormErrors('signup'); // Clear errors
             openModal(signupModal);
         });
 
@@ -1146,6 +1140,30 @@
         if (savedTheme) {
             themePicker.value = savedTheme;
         }
+
+        // When a modal closes, clear form fields and errors messages
+        loginModal.addEventListener('transitionend', () => {
+            if (!loginModal.classList.contains('show-modal')) { // When modal finishes closing
+                loginEmailInput.value = '';
+                loginPasswordInput.value = '';
+                loginPasswordInput.type = 'password';
+                loginTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
+                clearFormErrors('login'); // Clear errors
+            }
+        });
+        signupModal.addEventListener('transitionend', () => {
+            if (!signupModal.classList.contains('show-modal')) { // When modal finishes closing
+                signupNameInput.value = '';
+                signupEmailInput.value = '';
+                signupPasswordInput.value = '';
+                signupConfirmPasswordInput.value = '';
+                signupPasswordInput.type = 'password';
+                signupTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
+                signupConfirmPasswordInput.type = 'password';
+                signupConfirmTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
+                clearFormErrors('signup'); // Clear errors
+            }
+        });
 
     });
     </script>
