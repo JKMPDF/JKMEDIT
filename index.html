@@ -890,7 +890,7 @@
                 closeModal(contactModal);
                 closeModal(loginModal);
                 closeModal(signupModal);
-                // authPromptOverlay is handled separately below due to its strictness
+                // The authPromptOverlay is NOT closed here. It's handled strictly by auth state.
             });
         });
 
@@ -901,6 +901,8 @@
             if (e.target === loginModal) closeModal(loginModal);
             if (e.target === signupModal) closeModal(signupModal);
             // Crucially, authPromptOverlay is *not* dismissed by clicking outside if user is unauthenticated
+            // The logic for this is now implicitly handled because it lacks a close button and
+            // its dismissal is tied only to successful authentication.
         });
 
         // Existing event listeners for About & Contact
@@ -1148,6 +1150,7 @@
         });
 
         const showAuthPrompt = () => {
+            console.log("Showing authentication prompt."); // Debugging line
             openModal(authPromptOverlay);
             document.body.style.overflow = 'hidden'; // Prevent scrolling
         };
