@@ -188,7 +188,7 @@
         
         /* --- New CSS for User Profile Dropdown and Auth Overlay --- */
         .user-profile-wrapper {
-            position: relative;
+            position: relative; /* IMPORTANT: Ensures dropdown positions relative to this wrapper */
             display: none; /* Controlled by JS */
             align-items: center;
         }
@@ -210,7 +210,7 @@
         #user-dropdown {
             display: none; /* Hidden by default, shown on click */
             position: absolute;
-            right: 10px; /* Aligned with a small offset from right edge */
+            right: 0; /* Changed from 10px to 0 to align its right edge with the parent's right edge */
             top: calc(100% + 10px); /* Position below the header */
             background-color: var(--surface-color);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -303,8 +303,8 @@
         .toggle-password-visibility {
             position: absolute;
             right: 10px; /* Distance from right edge of the input box */
-            top: 0;
-            bottom: 0;
+            top: 50%; /* Vertically center the button */
+            transform: translateY(-50%); /* Adjust for button's own height */
             /* Using flexbox for perfect vertical and horizontal centering within the button's bounds */
             display: flex; 
             align-items: center; /* Vertically center icon */
