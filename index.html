@@ -300,26 +300,27 @@
         }
         /* Style the actual input field inside the wrapper */
         .password-input-wrapper input {
-            /* Ensure enough space for the button, factoring in its width (2.5rem) + right padding (10px) */
-            padding-right: calc(2.5rem + 15px) !important; 
+            /* Add enough padding-right to prevent text from going under the icon */
+            padding-right: 3rem !important; /* Adjusted: 2.5rem (icon width) + 0.5rem (gap) = 3rem */
         }
         .toggle-password-visibility {
             position: absolute;
-            right: 5px; /* Distance from right edge of the input box */
-            top: 50%; /* Vertically center the button */
-            transform: translateY(-50%); /* Adjust for button's own height */
-            height: calc(100% - 2px); /* Make button height visually match input field height (minus borders) */
-            /* Using flexbox for perfect vertical and horizontal centering within the button's bounds */
-            display: flex; 
-            align-items: center; /* Vertically center icon */
-            justify-content: center; /* Horizontally center icon */
-            width: 2.5rem; /* Fixed width for the clickable area */
+            right: 8px; /* Slightly adjusted to be closer to the right edge but with a small visual margin */
+            top: 50%;
+            transform: translateY(-50%);
+            /* Ensure the button itself is vertically centered relative to the input */
+            height: auto; /* Let content define height, then center */
+            width: 2.5rem; /* Maintain width for consistent clickable area */
+            line-height: 1; /* Reset line-height to prevent extra spacing issues */
+            display: flex; /* Use flex to perfectly center the icon within the button's area */
+            align-items: center;
+            justify-content: center;
             background: none;
             border: none;
-            color: #6c757d; /* Default icon color */
+            color: #6c757d;
             cursor: pointer;
-            font-size: 1.15rem; /* Larger icon for better visibility */
-            padding: 0; /* Remove default padding from button */
+            font-size: 1.15rem;
+            padding: 0; /* Remove default button padding */
             transition: color 0.2s;
         }
         .toggle-password-visibility:hover {
@@ -734,6 +735,9 @@
                         <i class="fa-solid fa-eye-slash"></i>
                     </button>
                 </div>
+                <p style="text-align: right; margin-top: -0.5rem; margin-bottom: 1rem;">
+                    <a href="#" id="forgot-password-link" style="color: var(--primary-color); font-size: 0.9em; text-decoration: none;">Forgot password?</a>
+                </p>
                 <button type='submit' class='contact-email' style='width: 100%; border: none;'>Login</button>
                 <p id="login-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
             </form>
@@ -811,6 +815,7 @@
         const signupTogglePassword = document.getElementById('signup-toggle-password');
         const signupConfirmTogglePassword = document.getElementById('signup-confirm-toggle-password');
 
+        const forgotPasswordLink = document.getElementById('forgot-password-link'); // Added for reset password
 
         // Helper function to open/close modals
         const openModal = (modal) => { modal.classList.add('show-modal'); };
@@ -844,6 +849,7 @@
         const clearFormErrors = (formType) => {
             if (formType === 'login') {
                 loginErrorMessage.style.display = 'none';
+                loginErrorMessage.style.color = 'red'; // Reset color in case it was green from a successful reset email
             } else if (formType === 'signup') {
                 signupErrorMessage.style.display = 'none';
             }
@@ -966,6 +972,31 @@
                 // alert(`Logout failed: ${error.message}`); // Suppress alert for smoother UX
             }
             userDropdown.classList.remove('show-dropdown'); // Hide dropdown on logout
+        });
+
+        // Handle Forgot Password
+        forgotPasswordLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            clearFormErrors('login'); // Clear any existing login errors
+            const email = loginEmailInput.value.trim();
+
+            if (!email || !isValidEmail(email)) {
+                loginErrorMessage.textContent = 'Please enter your email in the login field above to reset your password.';
+                loginErrorMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                loginErrorMessage.style.color = 'green';
+                loginErrorMessage.textContent = `Password reset email sent to ${email}. Please check your inbox.`;
+                loginErrorMessage.style.display = 'block';
+            } catch (error) {
+                console.error('Password Reset Error:', error.message);
+                loginErrorMessage.style.color = 'red';
+                loginErrorMessage.textContent = `Failed to send reset email: ${error.message}`;
+                loginErrorMessage.style.display = 'block';
+            }
         });
 
 
@@ -1156,7 +1187,7 @@
                 loginPasswordInput.value = '';
                 loginPasswordInput.type = 'password';
                 loginTogglePassword.querySelector('i').className = 'fa-solid fa-eye-slash';
-                clearFormErrors('login'); // Clear errors
+                clearFormErrors('login'); // Clear errors and reset color
             }
         });
         signupModal.addEventListener('transitionend', () => {
