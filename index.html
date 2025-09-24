@@ -170,6 +170,7 @@
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
         .modal.show-modal { display: flex; align-items: center; justify-content: center; }
         .modal-content { background-color: var(--surface-color); margin: auto; padding: 30px; border-top: 5px solid var(--primary-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; animation: slideIn 0.4s ease-out; }
+        /* Removed close-btn styles for the auth-prompt-modal, keeping them for other modals */
         .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
         .close-btn:hover,.close-btn:focus { color: var(--text-color); }
         .modal-content h2 { color: var(--primary-color); margin-top: 0; }
@@ -882,28 +883,24 @@
         const openModal = (modal) => { modal.classList.add('show-modal'); };
         const closeModal = (modal) => { modal.classList.remove('show-modal'); };
 
-        // Close button functionality for all modals (using event delegation for simplicity)
+        // Close button functionality for ALL modals *except* the strict auth-prompt-overlay
         document.querySelectorAll('.close-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 closeModal(aboutModal);
                 closeModal(contactModal);
                 closeModal(loginModal);
                 closeModal(signupModal);
-                // The authPromptOverlay is created dynamically, handle its close separately
-                hideAuthPrompt(); // Ensure auth prompt also hides if its close button is clicked.
+                // authPromptOverlay is handled separately below due to its strictness
             });
         });
 
-        // Click outside modal to close
+        // Click outside modal to close (only for non-strict modals)
         window.addEventListener('click', (e) => {
             if (e.target === aboutModal) closeModal(aboutModal);
             if (e.target === contactModal) closeModal(contactModal);
             if (e.target === loginModal) closeModal(loginModal);
             if (e.target === signupModal) closeModal(signupModal);
-            // This condition is important: check if the prompt is active and the click is outside its content
-            if (authPromptOverlay.classList.contains('show-overlay') && e.target === authPromptOverlay) {
-                hideAuthPrompt(); 
-            }
+            // Crucially, authPromptOverlay is *not* dismissed by clicking outside if user is unauthenticated
         });
 
         // Existing event listeners for About & Contact
@@ -975,8 +972,7 @@
             try {
                 await auth.signInWithEmailAndPassword(email, password);
                 closeModal(loginModal);
-                hideAuthPrompt(); // Close auth prompt after successful login
-                // alert('Logged in successfully!'); // Suppress alert for smoother UX
+                // hideAuthPrompt() is called by onAuthStateChanged after successful login
             } catch (error) {
                 console.error('Login Error:', error.message);
                 loginErrorMessage.textContent = `Login failed: ${error.message}`;
@@ -1020,8 +1016,7 @@
                     displayName: name
                 });
                 closeModal(signupModal);
-                hideAuthPrompt(); // Close auth prompt after successful signup
-                // alert('Account created successfully! You are now logged in.'); // Suppress alert for smoother UX
+                // hideAuthPrompt() is called by onAuthStateChanged after successful signup
             } catch (error) {
                 console.error('Signup Error:', error.message);
                 signupErrorMessage.textContent = `Signup failed: ${error.message}`;
@@ -1035,7 +1030,7 @@
             try {
                 await auth.signInWithPopup(googleProvider);
                 closeModal(loginModal);
-                hideAuthPrompt();
+                // hideAuthPrompt() is called by onAuthStateChanged after successful Google login
             } catch (error) {
                 console.error('Google Login Error:', error.message);
                 loginErrorMessage.textContent = `Google login failed: ${error.message}`;
@@ -1049,7 +1044,7 @@
             try {
                 await auth.signInWithPopup(googleProvider);
                 closeModal(signupModal);
-                hideAuthPrompt();
+                // hideAuthPrompt() is called by onAuthStateChanged after successful Google signup
             } catch (error) {
                 console.error('Google Signup Error:', error.message);
                 signupErrorMessage.textContent = `Google signup failed: ${error.message}`;
@@ -1115,13 +1110,12 @@
             }
         });
         
-        // --- Protected Content Logic (2-minute timer) ---
-        const INACTIVITY_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes in milliseconds
-        const AUTH_PROMPT_KEY = 'jkm-edit-auth-prompt-time'; // Key for localStorage
-        let inactivityTimer;
-        let lastActivityTime = Date.now(); // Track last activity
+        // --- Protected Content Logic (Strict 2-minute lockout) ---
+        const LOCKOUT_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes in milliseconds
+        const LOCKOUT_START_TIME_KEY = 'jkm-edit-lockout-start-time'; // Key for localStorage
+        let lockoutTimer; // Holds the setTimeout ID
 
-        // Create the auth prompt overlay dynamically
+        // Create the auth prompt overlay dynamically (without a close button)
         const authPromptOverlay = document.createElement('div');
         authPromptOverlay.id = 'auth-prompt-overlay';
         authPromptOverlay.classList.add('auth-overlay');
@@ -1143,12 +1137,12 @@
         
         // Add event listeners for the dynamically created buttons
         promptLoginBtn.addEventListener('click', () => {
-            closeModal(authPromptOverlay);
+            closeModal(authPromptOverlay); // Close the lockout prompt to show login modal
             clearFormErrors('login'); // Clear errors
             openModal(loginModal);
         });
         promptSignupBtn.addEventListener('click', () => {
-            closeModal(authPromptOverlay);
+            closeModal(authPromptOverlay); // Close the lockout prompt to show signup modal
             clearFormErrors('signup'); // Clear errors
             openModal(signupModal);
         });
@@ -1161,107 +1155,89 @@
         const hideAuthPrompt = () => {
             closeModal(authPromptOverlay);
             document.body.style.overflow = ''; // Restore scrolling
-            localStorage.removeItem(AUTH_PROMPT_KEY); // Clear timestamp once user is auth'd or prompt hidden
-            resetInactivityTimer(); // Restart the timer for the now authenticated user, or fresh for unauth'd state.
-        };
-
-        const resetInactivityTimer = () => {
-            if (inactivityTimer) {
-                clearTimeout(inactivityTimer);
-            }
-            lastActivityTime = Date.now(); // Update last activity time
-            localStorage.setItem(AUTH_PROMPT_KEY, lastActivityTime.toString());
-
-            if (!auth.currentUser) { // Only start timer if user is not logged in
-                inactivityTimer = setTimeout(() => {
-                    if (!auth.currentUser) { // Double check right before showing
-                        showAuthPrompt();
-                    }
-                }, INACTIVITY_THRESHOLD_MS);
+            localStorage.removeItem(LOCKOUT_START_TIME_KEY); // Clear timestamp
+            if (lockoutTimer) { // Stop any pending lockout timer
+                clearTimeout(lockoutTimer);
             }
         };
 
-        // Track user activity to reset timer
-        const activityEvents = ['mousemove', 'keydown', 'scroll', 'click'];
-        activityEvents.forEach(event => {
-            window.addEventListener(event, resetInactivityTimer);
-        });
-
-        // Handle visibility change (tab switching)
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                // Tab is hidden, save current time
-                localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
-                if (inactivityTimer) {
-                    clearTimeout(inactivityTimer); // Pause timer
+        const startLockoutTimer = (delay) => {
+            if (lockoutTimer) {
+                clearTimeout(lockoutTimer);
+            }
+            lockoutTimer = setTimeout(() => {
+                // Double check if user is still not logged in before showing prompt
+                if (!auth.currentUser) { 
+                    showAuthPrompt();
                 }
+            }, delay);
+        };
+
+        // This function will initialize or resume the lockout timer
+        const initializeOrResumeLockout = () => {
+            if (auth.currentUser) {
+                hideAuthPrompt(); // User is logged in, ensure no lockout
+                return;
+            }
+
+            let lockoutStartTime = localStorage.getItem(LOCKOUT_START_TIME_KEY);
+            if (!lockoutStartTime) {
+                // First time unauthenticated user, set start time
+                lockoutStartTime = Date.now().toString();
+                localStorage.setItem(LOCKOUT_START_TIME_KEY, lockoutStartTime);
+                startLockoutTimer(LOCKOUT_THRESHOLD_MS);
             } else {
-                // Tab is visible again
-                const storedTime = localStorage.getItem(AUTH_PROMPT_KEY);
-                if (storedTime && !auth.currentUser) {
-                    const elapsedTime = Date.now() - parseInt(storedTime);
-                    if (elapsedTime >= INACTIVITY_THRESHOLD_MS) {
-                        showAuthPrompt(); // Show immediately if threshold passed while hidden
-                    } else {
-                        // Restart timer with remaining time
-                        resetInactivityTimer(); // This will recalculate and set a new timer
-                    }
-                } else if (!auth.currentUser) {
-                    // No stored time, or user is not logged in, just reset normally
-                    resetInactivityTimer();
+                // User has been unauthenticated before, calculate elapsed time
+                const elapsed = Date.now() - parseInt(lockoutStartTime);
+                if (elapsed >= LOCKOUT_THRESHOLD_MS) {
+                    showAuthPrompt(); // Immediately show if threshold passed
                 } else {
-                    // User is logged in, ensure prompt is hidden and no timer is running
-                    hideAuthPrompt();
+                    // Resume timer with remaining time
+                    startLockoutTimer(LOCKOUT_THRESHOLD_MS - elapsed);
                 }
             }
-        });
-
+        };
 
         // Listen for authentication state changes (this is key for persistent login across pages)
         auth.onAuthStateChanged((user) => {
             if (user) {
                 // User is signed in
-                // MODIFIED: Display displayName, fall back to email if displayName is null or empty
-                userDisplayDropdown.textContent = user.displayName || user.email; 
+                userDisplayDropdown.textContent = user.displayName || user.email; // Shows name or email
                 userProfileWrapper.style.display = 'flex'; // Show user icon and dropdown
                 authButtonsDiv.style.display = 'none';    // Hide login/signup buttons
-
                 hideAuthPrompt(); // Ensure prompt is hidden if user logs in
-                localStorage.removeItem(AUTH_PROMPT_KEY); // Clear any pending prompt timer info
-                
-                // Clear the inactivity timer if logged in
-                if (inactivityTimer) {
-                    clearTimeout(inactivityTimer);
-                }
             } else {
                 // User is signed out
                 userProfileWrapper.style.display = 'none'; // Hide user icon and dropdown
                 userDropdown.classList.remove('show-dropdown'); // Ensure dropdown is closed
                 authButtonsDiv.style.display = 'flex';       // Show login/signup buttons
-
-                // Logic for 2-minute prompt for unauthenticated users
-                const authPromptTime = localStorage.getItem(AUTH_PROMPT_KEY);
-                if (!authPromptTime) {
-                    // First time seeing an unauthenticated user, set timestamp and start timer
-                    localStorage.setItem(AUTH_PROMPT_KEY, Date.now().toString());
-                    resetInactivityTimer(); // Start the timer
-                } else {
-                    const elapsedTime = Date.now() - parseInt(authPromptTime);
-                    if (elapsedTime >= INACTIVITY_THRESHOLD_MS) {
-                        showAuthPrompt(); // Show immediately if threshold already passed
-                    } else {
-                        // Restart timer with remaining time
-                        if (inactivityTimer) clearTimeout(inactivityTimer);
-                        inactivityTimer = setTimeout(() => {
-                            if (!auth.currentUser) { // Double check in case user logs in right before timer fires
-                                showAuthPrompt();
-                            }
-                        }, INACTIVITY_THRESHOLD_MS - elapsedTime);
-                    }
-                }
+                initializeOrResumeLockout(); // Start or resume lockout timer
             }
         });
 
+        // Handle visibility change (tab switching) to account for time spent in other tabs
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Tab is hidden, if user is not logged in, pause the timer and save current time
+                if (!auth.currentUser) {
+                    if (lockoutTimer) clearTimeout(lockoutTimer);
+                    // Update the start time to now, so when they come back, it calculates from this point.
+                    // This makes the 2 minutes continuous across hidden state.
+                    localStorage.setItem(LOCKOUT_START_TIME_KEY, Date.now().toString()); 
+                }
+            } else {
+                // Tab is visible again
+                initializeOrResumeLockout(); // Re-evaluate lockout state
+            }
+        });
+
+        // Initial check on page load if the user is already authenticated
+        // The onAuthStateChanged will handle the first logic path.
+        // We only call this here if onAuthStateChanged hasn't fired yet or to make sure.
+        // For a strict lockout from page load, this initial check is crucial.
+        if (!auth.currentUser) { // If user is initially not logged in
+            initializeOrResumeLockout();
+        }
 
         // --- Theme and Dark Mode Event Listeners (Logic unchanged) ---
         const themePicker = document.getElementById('theme-picker');
