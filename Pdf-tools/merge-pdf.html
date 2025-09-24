@@ -371,6 +371,91 @@
             overflow: hidden !important;
         }
 
+        /* --- Modals (About, Contact, Login, Signup) - ADDED/CORRECTED STYLES --- */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal.show-modal {
+            display: flex; /* Use flex to center content */
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            margin: auto; /* For browsers that don't support flex centering */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: slideIn 0.4s ease-out; /* Reuse existing animation */
+            border-top: 5px solid var(--primary-color); /* Add a border top for style */
+        }
+        
+        .modal-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        .modal-content p {
+            font-size: 1rem;
+            color: var(--text-color);
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .close-btn {
+            color: var(--text-color);
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .contact-email {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white !important; /* Ensure text is white */
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color var(--transition-speed);
+            max-width: 250px; /* Limit width */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .contact-email:hover {
+            background-color: var(--secondary-color);
+        }
+
         /* --- Responsive Design --- */
         @media (max-width: 1024px) {
             .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
@@ -682,8 +767,17 @@
 
 
         // Helper function to open/close modals
-        const openModal = (modal) => { modal.classList.add('show-modal'); };
-        const closeModal = (modal) => { modal.classList.remove('show-modal'); };
+        const openModal = (modal) => { 
+            modal.classList.add('show-modal'); 
+            document.body.classList.add('body-no-scroll'); // Prevent background scrolling
+        };
+        const closeModal = (modal) => { 
+            modal.classList.remove('show-modal'); 
+            // Only remove body-no-scroll if no other modal is open
+            if (!document.querySelector('.modal.show-modal')) {
+                document.body.classList.remove('body-no-scroll'); 
+            }
+        };
 
         // Close button functionality for all modals (using event delegation for simplicity)
         allCloseBtns.forEach(btn => {
@@ -990,7 +1084,10 @@
 
         const hideAuthPrompt = () => {
             authPromptOverlay.classList.remove('show-overlay'); // Directly remove 'show-overlay' to hide it
-            document.body.classList.remove('body-no-scroll'); // Restore scrolling
+            // Only remove body-no-scroll if no other modal or overlay is open
+            if (!document.querySelector('.modal.show-modal') && !document.querySelector('.auth-overlay.show-overlay')) {
+                document.body.classList.remove('body-no-scroll'); 
+            }
             localStorage.removeItem(LOCKOUT_START_TIME_KEY); // Clear timestamp
             if (lockoutTimer) { // Stop any pending lockout timer
                 clearTimeout(lockoutTimer);
@@ -1112,8 +1209,8 @@
                     if (loginPasswordInput) loginPasswordInput.value = '';
                     if (loginPasswordInput) loginPasswordInput.type = 'password';
                     clearFormErrors('login'); // Clear errors and reset color
-                    if (!auth.currentUser) { // If user is still not logged in, show auth prompt again
-                        showAuthPrompt();
+                    if (!auth.currentUser && !authPromptOverlay.classList.contains('show-overlay')) { // If user is still not logged in, and prompt not shown, show auth prompt again
+                        initializeOrResumeLockout(); // Re-check lockout state
                     }
                 }
             });
@@ -1128,8 +1225,8 @@
                     if (signupPasswordInput) signupPasswordInput.type = 'password';
                     if (signupConfirmPasswordInput) signupConfirmPasswordInput.type = 'password';
                     clearFormErrors('signup'); // Clear errors
-                    if (!auth.currentUser) { // If user is still not logged in, show auth prompt again
-                        showAuthPrompt();
+                    if (!auth.currentUser && !authPromptOverlay.classList.contains('show-overlay')) { // If user is still not logged in, and prompt not shown, show auth prompt again
+                        initializeOrResumeLockout(); // Re-check lockout state
                     }
                 }
             });
