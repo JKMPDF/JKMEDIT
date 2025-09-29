@@ -159,6 +159,8 @@
         margin-bottom: 2rem;
         cursor: pointer;
         transition: background-color var(--transition-speed), border-color var(--transition-speed);
+        position: relative; /* Crucial for positioning the invisible input */
+        overflow: hidden; /* Ensures input doesn't visibly overflow if larger */
     }
     .video-upload-area:hover {
         background-color: color-mix(in srgb, var(--surface-color) 90%, var(--primary-color) 5%);
@@ -179,17 +181,16 @@
     }
     html.dark-mode .video-upload-area p { color: #a0a0a0; }
 
-    /* Fix for hidden input to allow programmatic clicks */
+    /* Styling to make the file input invisible but clickable over the entire drop-area */
     #video-upload-input {
         position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0); /* Standard way to clip for screen readers */
-        white-space: nowrap;
-        border: 0;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0; /* Makes it invisible */
+        cursor: pointer; /* Shows a pointer when hovering over the drop-area */
+        z-index: 10; /* Ensure it's above other content in the drop-area for clicks */
     }
 
     #video-player-container {
@@ -823,7 +824,8 @@
     <p>Upload a video to precisely trim, cut, or split it into multiple clips directly in your browser.</p>
 
     <div class="video-upload-area" id="drop-area">
-        <input type="file" id="video-upload-input" accept="video/*"> <!-- Removed 'hidden' attribute -->
+        <!-- The input type="file" is now inside the drop-area -->
+        <input type="file" id="video-upload-input" accept="video/*"> 
         <i class="fa-solid fa-cloud-arrow-up"></i>
         <h3>Drag & Drop your video here, or click to upload</h3>
         <p>Supports MP4, MOV, AVI, and more.</p>
@@ -1520,10 +1522,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Video Upload Logic ---
-    dropArea.addEventListener('click', () => {
-        console.log('Drop area clicked, triggering file input.'); // Debugging
-        videoUploadInput.click();
-    });
+    // NO LONGER NEEDED: dropArea.addEventListener('click', () => { videoUploadInput.click(); });
+    // The invisible input inside dropArea now directly receives the click.
     
     dropArea.addEventListener('dragover', (e) => {
         e.preventDefault();
