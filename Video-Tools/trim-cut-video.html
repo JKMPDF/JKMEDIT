@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+<!-- =================================================================== -->
+<!-- SEO & META TAGS - FOR BETTER SEARCH ENGINE AND SOCIAL MEDIA RANKING -->
+<!-- =================================================================== -->
+<title>Trim/Cut Video - JKM Edit</title>
+<meta name="description" content="Trim, cut, and split your videos online for free with JKM Edit. Advanced client-side video editing tools powered by WebAssembly."/>
+<meta name="keywords" content="trim video, cut video, split video, video editor, free video tools, online video cutter, JKM Edit, ffmpeg.wasm, WebAssembly"/>
+<meta name="author" content="JKM Edit"/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/Video-Tools/trim-cut-video.html"/>
+
+<!-- Open Graph Meta Tags (for Facebook, LinkedIn, etc.) -->
+<meta property="og:title" content="Trim/Cut Video - JKM Edit"/>
+<meta property="og:description" content="Trim, cut, and split your videos online for free with JKM Edit. Advanced client-side video editing tools powered by WebAssembly."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://jkmpdf.github.io/JKMEDIT/Video-Tools/trim-cut-video.html"/>
+<meta property="og:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Trim/Cut Video - JKM Edit"/>
+<meta name="twitter:description" content="Advanced client-side video editing tools for trimming, cutting, and splitting videos directly in your browser."/>
+<meta name="twitter:image" content="https://jkmpdf.github.io/JKMEDIT/assets/og-preview-image.png"/>
+<!-- =================================================================== -->
+
+<!-- Favicon - Added your logo here for the browser tab title -->
+<link rel="icon" type="image/png" href='../assets/jkm-edit-logo.png'> <!-- Path adjusted -->
+
+<!-- SCRIPT TO PREVENT THEME FLICKERING - MUST BE IN <HEAD> -->
+<script>
+    (function() {
+        try {
+            const theme = localStorage.getItem('jkm-edit-theme') || 'corporate-blue';
+            document.documentElement.setAttribute('data-theme', theme);
+            const mode = localStorage.getItem('jkm-edit-mode');
+            if (mode === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        } catch (e) {
+            console.error("Error applying initial theme:", e);
+        }
+    })();
+</script>
+
+<!-- Firebase SDK - Updated with your configuration -->
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOXMffkcv4wYubtkFbkpq6w20Ya0t7KMU",
+      authDomain: "jkm-edit-auth.firebaseapp.com",
+      projectId: "jkm-edit-auth",
+      storageBucket: "jkm-edit-auth.firebasestorage.app",
+      messagingSenderId: "445112295101",
+      appId: "1:445112295101:web:c6bba4454c1951642361d4",
+      measurementId: "G-0QKSL4W36S"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
+</script>
+<!-- END Firebase SDK -->
+
+<!-- Link to Google Fonts and Font Awesome -->
+<link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+<!-- FFmpeg.wasm Script (for client-side video processing) -->
+<script src='https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js'></script>
+
+
+<!-- All CSS styles are placed here for a single-file structure -->
+<style>
+    /* --- Basic Setup & Variables --- */
+    :root { font-family: 'Poppins', sans-serif; --transition-speed: 0.3s; }
+    body { margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); }
+    *, *::before, *::after { box-sizing: border-box; }
+
+    /* --- THEME DEFINITIONS (Copied from main.html) --- */
+    [data-theme='corporate-blue'] { --primary-color: #0052cc; --secondary-color: #0747a6; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; --accent-color: #ffab00; --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); }
+    [data-theme='forest-green'] { --primary-color: #28a745; --secondary-color: #218838; --bg-color: #f0f3f2; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, var(--primary-color), #34d058); }
+    [data-theme='sunset-gradient'] { --primary-color: #fd7e14; --secondary-color: #e65100; --bg-color: #fff8f2; --surface-color: #ffffff; --text-color: #492b0e; --accent-color: #20c997; --gradient: linear-gradient(45deg, #ff4e50, #f9d423); }
+    [data-theme='tech-noir'] { --primary-color: #e83e8c; --secondary-color: #d81b60; --bg-color: #1a1a2e; --surface-color: #242444; --text-color: #e0e0e0; --accent-color: #00bcd4; --gradient: linear-linear-gradient(45deg, #4a00e0, #8e2de2); }
+    [data-theme='minty-fresh'] { --primary-color: #1abc9c; --secondary-color: #16a085; --bg-color: #f1fefb; --surface-color: #ffffff; --text-color: #3d524d; --accent-color: #f39c12; --gradient: linear-gradient(45deg, #1abc9c, #1dd3b0); }
+    [data-theme='royal-purple'] { --primary-color: #6f42c1; --secondary-color: #5a32a3; --bg-color: #f8f7fa; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #fd7e14; --gradient: linear-gradient(45deg, #6f42c1, #8a5fd6); }
+    [data-theme='graphite-gray'] { --primary-color: #6c757d; --secondary-color: #5a6268; --bg-color: #e9ecef; --surface-color: #f8f9fa; --text-color: #212529; --accent-color: #007bff; --gradient: linear-gradient(45deg, #6c757d, #adb5bd); }
+    [data-theme='crimson-red'] { --primary-color: #dc3545; --secondary-color: #c82333; --bg-color: #fdf5f6; --surface-color: #ffffff; --text-color: #343a40; --accent-color: #ffc107; --gradient: linear-gradient(45deg, #dc3545, #f05a68); }
+
+    /* --- DARK MODE (Applied to <html> tag now) --- */
+    html.dark-mode { --bg-color: #121212; --surface-color: #1e1e1e; --text-color: #e0e0e0; }
+    html.dark-mode[data-theme='tech-noir'] { --bg-color: #0f0f1e; --surface-color: #1a1a2e; }
+    html.dark-mode[data-theme='corporate-blue'] { --text-color: #d0d5dd; }
+
+    /* --- Header & Navigation (Copied from main.html) --- */
+    .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--primary-color); transition: background-color var(--transition-speed), color var(--transition-speed); z-index: 100; position: relative; }
+    .logo-container { display: flex; align-items: center; gap: 0.75rem; }
+    .site-logo { height: 2rem; width: auto; transition: transform var(--transition-speed); }
+    .site-logo:hover { transform: scale(1.05); }
+    .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+    .main-nav { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-link { text-decoration: none; color: var(--text-color); font-weight: 600; position: relative; transition: color var(--transition-speed); }
+    .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-color); transition: width var(--transition-speed); }
+    .nav-link:hover { color: var(--primary-color); }
+    .nav-link:hover::after { width: 100%; }
+    .theme-selector { display: flex; align-items: center; gap: 0.5rem; }
+    #theme-picker { padding: 0.25rem 0.5rem; border-radius: 5px; border: 1px solid var(--primary-color); background: var(--surface-color); color: var(--text-color); font-family: 'Poppins', sans-serif; }
+    #dark-mode-toggle { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--text-color); padding: 0.5rem; }
+    #dark-mode-toggle .fa-sun { display: none; }
+    html.dark-mode #dark-mode-toggle .fa-sun { display: inline; }
+    html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+    /* --- Tool Navigation Dropdown (Copied from main.html) --- */
+    .tool-nav { display: flex; gap: 1rem; margin-left: 2rem; }
+    .tool-nav-item { position: relative; }
+    .tool-nav-button { background: none; border: none; color: var(--text-color); font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; padding: 0.5rem 0.75rem; border-radius: 4px; transition: all var(--transition-speed); }
+    .tool-nav-button:hover { color: var(--primary-color); background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+    .tool-dropdown { position: absolute; top: 100%; left: 0; background-color: var(--surface-color); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; min-width: 200px; display: none; z-index: 1000; padding: 0.5rem 0; border-top: 2px solid var(--primary-color); }
+    .tool-nav-item:hover .tool-dropdown { display: block; }
+    .tool-dropdown a { display: block; padding: 0.5rem 1rem; color: var(--text-color); text-decoration: none; transition: background-color var(--transition-speed); }
+    .tool-dropdown a:hover { background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+
+    /* --- Login/Signup Button (Copied from main.html) --- */
+    .auth-buttons { display: flex; gap: 0.5rem; }
+    .auth-button { padding: 0.5rem 1rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all var(--transition-speed); }
+    .login-button { background: none; border: 1px solid var(--primary-color); color: var(--primary-color); }
+    .login-button:hover { background-color: var(--primary-color); color: white; }
+    .signup-button { background-color: var(--primary-color); border: 1px solid var(--primary-color); color: white; }
+    .signup-button:hover { background-color: var(--secondary-color); border-color: var(--secondary-color); }
+
+    /* --- Main Content Area for Tool Pages --- */
+    .tool-page-container { 
+        padding: 2rem 4rem; 
+        max-width: 1200px; 
+        margin: auto; 
+        text-align: center; /* Center content for the tool page */
+    }
+    .tool-page-container h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+    }
+    .tool-page-container p {
+        font-size: 1.1rem;
+        color: var(--text-color);
+        margin-bottom: 2rem;
+    }
+
+    /* --- Specific styles for Video Tool --- */
+    .video-upload-area {
+        background-color: var(--surface-color);
+        border: 2px dashed var(--primary-color);
+        border-radius: 10px;
+        padding: 3rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        cursor: pointer;
+        transition: background-color var(--transition-speed), border-color var(--transition-speed);
+    }
+    .video-upload-area:hover {
+        background-color: color-mix(in srgb, var(--surface-color) 90%, var(--primary-color) 5%);
+        border-color: var(--secondary-color);
+    }
+    .video-upload-area i {
+        font-size: 4rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    .video-upload-area h3 {
+        margin: 0.5rem 0;
+        color: var(--text-color);
+    }
+    .video-upload-area p {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    html.dark-mode .video-upload-area p { color: #a0a0a0; }
+
+    #video-player-container {
+        display: none; /* Hidden until a video is loaded */
+        margin-bottom: 2rem;
+        background-color: var(--surface-color);
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    #video-player {
+        width: 100%;
+        max-height: 500px;
+        background-color: black;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    /* Conceptual Timeline/Track */
+    .timeline-wrapper {
+        position: relative;
+        padding-top: 30px; /* Space for time labels */
+    }
+    .timeline-container {
+        position: relative;
+        width: 100%;
+        height: 50px;
+        background-color: var(--bg-color);
+        border-radius: 5px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        border: 1px solid #ccc;
+        cursor: pointer; /* Allows clicking to set playhead */
+    }
+    html.dark-mode .timeline-container {
+        background-color: #2a2a2a;
+        border-color: #555;
+    }
+
+    .timeline-segment {
+        height: 100%;
+        background-color: var(--primary-color);
+        opacity: 0.7;
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: width 0.05s linear, left 0.05s linear; /* Smoother dragging */
+    }
+
+    .handle {
+        width: 15px;
+        height: 100%;
+        background-color: var(--accent-color);
+        border-radius: 3px;
+        cursor: ew-resize;
+        position: relative;
+        z-index: 2; /* Bring handles above segment */
+    }
+    .handle.left { left: -7.5px; } /* Position half outside the segment */
+    .handle.right { right: -7.5px; }
+
+    .time-label {
+        font-size: 0.8rem;
+        color: var(--text-color);
+        position: absolute;
+        top: -25px;
+        white-space: nowrap;
+        background-color: var(--surface-color);
+        padding: 2px 5px;
+        border-radius: 3px;
+        border: 1px solid #ddd;
+        transform: translateX(-50%); /* Center label horizontally */
+        pointer-events: none; /* Do not interfere with clicks on timeline */
+    }
+    html.dark-mode .time-label {
+        background-color: var(--surface-color);
+        border-color: #555;
+    }
+
+    #playhead {
+        position: absolute;
+        top: -25px; /* Aligned with time labels */
+        left: 0;
+        width: 2px;
+        height: calc(100% + 25px); /* Extend slightly above timeline for label */
+        background-color: red;
+        z-index: 5;
+        pointer-events: none; /* Do not interfere with clicks */
+        transition: left 0.05s linear;
+    }
+    #playhead-label {
+        position: absolute;
+        top: -25px;
+        left: 0;
+        font-size: 0.8rem;
+        color: white; /* Contrast against red playhead */
+        background-color: red;
+        padding: 2px 5px;
+        border-radius: 3px;
+        transform: translateX(-50%);
+        pointer-events: none;
+        white-space: nowrap;
+    }
+
+    .control-group {
+        display: flex;
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        gap: 1.5rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+    .control-box {
+        background-color: var(--surface-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        flex: 1;
+        min-width: 280px; /* Ensure boxes don't get too small */
+        text-align: left;
+    }
+    .control-box h4 {
+        color: var(--primary-color);
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+    .control-box label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    .control-box input[type="number"],
+    .control-box input[type="text"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+    .control-box button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color var(--transition-speed);
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    .control-box button:hover {
+        background-color: var(--secondary-color);
+    }
+    .message-box {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 5px;
+        font-weight: 600;
+        text-align: center;
+        display: none;
+        font-size: 0.9rem;
+    }
+    .message-box.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .message-box.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    html.dark-mode .message-box.error { background-color: #58151c; color: #f8d7da; border-color: #721c24; }
+    html.dark-mode .message-box.success { background-color: #0c3315; color: #d4edda; border-color: #155724; }
+    
+    /* Loading Overlay */
+    #loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        z-index: 3000;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 20px;
+    }
+    #loading-overlay .spinner {
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid var(--primary-color);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    #loading-overlay p {
+        margin: 0.5rem 0;
+    }
+    #loading-progress {
+        margin-top: 1rem;
+        font-size: 1rem;
+        color: #ddd;
+    }
+
+
+    /* Download/Output Area */
+    #output-area {
+        margin-top: 3rem;
+        background-color: var(--surface-color);
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        display: none; /* Hidden until results are ready */
+    }
+    #output-area h3 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+    .download-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    .download-item {
+        background-color: var(--bg-color);
+        padding: 1rem;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        word-break: break-all; /* Allow long filenames to wrap */
+    }
+    .download-item .download-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-grow: 1;
+        text-align: left;
+    }
+    .download-item .download-info strong {
+        color: var(--text-color);
+        font-size: 0.95rem;
+    }
+    .download-item .download-info span {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    html.dark-mode .download-item .download-info span { color: #a0a0a0; }
+
+    .download-item a {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 0.75rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color var(--transition-speed);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        flex-shrink: 0; /* Prevent button from shrinking */
+        text-decoration: none; /* Remove underline from link */
+    }
+    .download-item a:hover {
+        background-color: var(--secondary-color);
+    }
+    html.dark-mode .download-item { background-color: #2a2a2a; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    
+    /* --- User Profile Dropdown and Auth Overlay (Copied from main.html) --- */
+    .user-profile-wrapper {
+        display: none; /* Controlled by JS */
+        align-items: center;
+        margin-left: 1.5rem; /* Added for consistent spacing within main-nav */
+    }
+
+    #user-icon-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.25rem;
+        color: var(--primary-color);
+        padding: 0.5rem;
+        border-radius: 50%; /* Make it round */
+        transition: background-color var(--transition-speed);
+    }
+    #user-icon-button:hover {
+        background-color: color-mix(in srgb, var(--primary-color) 15%, transparent);
+    }
+
+    #user-dropdown {
+        display: none; /* Hidden by default, shown on click */
+        position: absolute;
+        right: 2rem; /* Matches the padding of .main-header */
+        top: calc(100% + 10px); /* Position below the header */
+        background-color: var(--surface-color);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        min-width: 220px; /* Increased min-width for email */
+        max-width: 280px; /* Maximum width to prevent excessive growth */
+        z-index: 1000;
+        padding: 0.5rem 0;
+        border-top: 2px solid var(--primary-color);
+        word-wrap: break-word; /* Allows long emails to wrap within the dropdown */
+        left: auto; /* Allows it to expand left naturally */
+    }
+    #user-dropdown.show-dropdown {
+        display: block;
+    }
+    #user-display-dropdown {
+        font-weight: 600;
+        padding: 0.75rem 1rem; /* Consistent padding */
+        color: var(--text-color);
+        border-bottom: 1px solid var(--bg-color);
+        margin-bottom: 0.5rem;
+    }
+    #user-dropdown #logout-button {
+        width: calc(100% - 2rem); /* Adjusted for dropdown internal padding */
+        margin: 0.5rem 1rem; /* Centered with vertical spacing */
+    }
+
+
+    /* --- Overlay for Protected Content (Copied from main.html) --- */
+    .auth-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+        backdrop-filter: blur(5px); /* Blur effect */
+        z-index: 2000; /* Ensure it's above everything else */
+        display: none; /* IMPORTANT: Hide by default */
+        align-items: center;
+        justify-content: center;
+        opacity: 0; /* Will transition from 0 to 1 */
+        visibility: hidden; /* Will transition from hidden to visible */
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .auth-overlay.show-overlay {
+        display: flex; /* IMPORTANT: Show as flex when active */
+        opacity: 1;
+        visibility: visible;
+    }
+    .auth-prompt-modal {
+        background-color: var(--surface-color);
+        padding: 40px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        max-width: 450px;
+        width: 90%;
+        border-top: 5px solid var(--primary-color);
+        animation: slideIn 0.4s ease-out; /* Reuse existing animation */
+    }
+    .auth-prompt-modal h2 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+    }
+    .auth-prompt-modal p {
+        font-size: 1.1rem;
+        color: var(--text-color);
+        margin-bottom: 2rem;
+    }
+    .auth-prompt-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1rem; /* Space between text and buttons */
+    }
+    .auth-prompt-buttons .auth-button {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    /* --- Password Input Wrapper (Copied from main.html) --- */
+    .password-input-wrapper {
+        position: relative; 
+        margin-bottom: 1rem;
+    }
+    .password-input-wrapper input {
+        padding-right: 0.75rem !important; /* Default padding */
+    }
+
+    /* --- Styling for Forgot Password Link (Copied from main.html) --- */
+    #forgot-password-link {
+        color: var(--primary-color);
+        font-size: 0.9em;
+        text-decoration: none;
+        display: block;
+        text-align: right;
+        margin-top: -0.5rem;
+        margin-bottom: 1rem;
+        transition: color var(--transition-speed);
+    }
+    #forgot-password-link:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+    }
+
+    /* --- Social Login Buttons (Copied from main.html) --- */
+    .social-login-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .social-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-speed);
+        border: 1px solid #ccc;
+        background-color: var(--surface-color);
+        color: var(--text-color);
+        text-decoration: none;
+    }
+
+    .social-button i {
+        margin-right: 0.75rem;
+        font-size: 1.2em;
+    }
+
+    .google-button {
+        background-color: #DB4437;
+        color: white;
+        border-color: #DB4437;
+    }
+    .google-button:hover {
+        background-color: #c0392b;
+        border-color: #c0392b;
+    }
+
+    /* --- Separator Style (Copied from main.html) --- */
+    .separator {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: #888;
+        margin: 1.5rem 0 1rem 0;
+    }
+    .separator::before,
+    .separator::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #ddd;
+    }
+    .separator:not(:empty)::before {
+        margin-right: .75em;
+    }
+    .separator:not(:empty)::after {
+        margin-left: .75em;
+    }
+
+    /* --- Responsive Design (Copied from main.html, extended for tool page) --- */
+    @media (max-width: 1024px) {
+        .main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+        .tool-nav { margin-left: 0; flex-wrap: wrap; justify-content: center; }
+        .tool-page-container { padding: 2rem 1.5rem; }
+        #user-dropdown { right: 1rem; }
+    }
+    @media (max-width: 768px) {
+        .main-nav { flex-wrap: wrap; justify-content: center; }
+        .tool-nav { gap: 0.5rem; }
+        .tool-nav-button { font-size: 0.9rem; padding: 0.4rem 0.6rem; }
+        .auth-buttons { margin-top: 0.5rem; }
+        #user-dropdown {
+            right: 1rem;
+            left: auto;
+            max-width: calc(100vw - 2rem);
+            min-width: 150px;
+        }
+        .control-group {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .control-box {
+            min-width: unset;
+            width: 100%;
+        }
+    }
+</style>
+</head>
+<body>
+    <!-- Header Section (Copied from main.html, adjusted relative paths) -->
+    <header class='main-header'>
+        <div style="display: flex; align-items: center;">
+            <div class='logo-container'>
+                <a href='../index.html#' style='text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;'> <!-- Adjusted path to index.html -->
+                    <img src='../assets/jkm-edit-logo.png' alt='JKM Edit Logo' class='site-logo'> <!-- Adjusted path -->
+                    <h1>JKM Edit - By M&M</h1>
+                </a>
+            </div>
+			
+<!-- Tool Navigation (Copied from main.html, adjusted relative paths) -->
+        <nav class='tool-nav'>
+            <div class='tool-nav-item'>
+                <button class='tool-nav-button'>PDF Tools</button>
+                <div class='tool-dropdown'>
+                    <a href='../Pdf-tools/merge-pdf.html'>Merge PDF</a>
+                    <a href='../Pdf-tools/split-pdf.html'>Split PDF</a>
+                    <a href='../Pdf-tools/compress-pdf.html'>Compress PDF</a>
+                    <a href='../Pdf-tools/pdf-to-ocr-word.html'>PDF to Word</a>
+                    <a href='../Pdf-tools/pdf-to-powerpoint.html'>PDF to Power Point</a>
+                    <a href='../Pdf-tools/pdf-to-excel.html'>PDF to Excel</a>
+                    <a href='../Pdf-tools/pdf-to-image.html'>PDF to JPG/PNG</a>
+                    <a href='../Pdf-tools/word-to-pdf.html'>Word to PDF</a>
+                    <a href='../pdf-tools.html#function9'>Powerpoint to PDF</a>
+                    <a href='../Pdf-tools/excel-to-pdf.html'>Excel to PDF</a>
+                    <a href='../Pdf-tools/image-to-pdf.html'>JPG/PNG to PDF</a>
+                    <a href='../Pdf-tools/sign-pdf.html'>Sign PDF</a>
+                    <a href='../Pdf-tools/add-page-numbers.html'>Add Page Numbers</a>
+                    <a href='../Pdf-tools/rotate-pdf.html'>Rotate PDF</a>
+                    <a href='../Pdf-tools/protect-pdf.html'>Protect PDF</a>
+                </div>
+            </div>
+            
+            <div class='tool-nav-item'>
+                <button class='tool-nav-button'>Video Tools</button>
+                <div class='tool-dropdown'>
+                    <a href='trim-cut-video.html'>Trim/Cut Video</a> <!-- Self-referencing link -->
+                    <a href='../Video-Tools.html#function2'>Merge Video</a>
+                    <a href='../Video-Tools.html#function3'>Video to MP3</a>
+                    <a href='../Video-Tools.html#function4'>Video Compressor</a>
+                    <a href='../Video-Tools.html#function5'>Video to GIF Convertor</a>
+                    <a href='../Video-Tools.html#function6'>Add Subtitles to Video</a>
+                    <a href='../Video-Tools.html#function7'>Change Video Speed</a>
+                    <a href='../Video-Tools.html#function8'>Video to Image Frames</a>
+                    <a href='../Video-Tools.html#function9'>Other Tools</a>
+                </div>
+            </div>
+            
+            <div class='tool-nav-item'>
+                <button class='tool-nav-button'>Files Tools</button>
+                <div class='tool-dropdown'>
+                    <a href='../File-Tools.html#function1'>File Convertor</a>
+                    <a href='../File-Tools.html#function2'>ZIP/RAR Creator & Extrator</a>
+                    <a href='../File-Tools.html#function3'>File Splitter & Joiner</a>
+                    <a href='../File-Tools.html#function4'>Batch Rename File</a>
+                    <a href='../File-Tools.html#function5'>File Size Reducer</a>
+                    <a href='../File-Tools.html#function6'>Secure File Share</a>
+                </div>
+            </div>
+            
+            <div class='tool-nav-item'>
+                <button class='tool-nav-button'>Utilities</button>
+                <div class='tool-dropdown'>
+                    <a href='../Utilities/Text-Case-Converter.html'>Text Case Converter</a>
+                    <a href='../Utilities/Income-Expenses-Tracker.html'>Income & Expenses Tracker</a>
+                    <a href='../Utilities/Calculator.html'>Calculator</a>
+                    <a href='../Utilities/qr-code-generator.html'>QR Code Generator & Extrater</a>
+                    <a href='../Utilities.html#function5'>Barcode Generator</a>
+                    <a href='../Utilities/currency-converter.html'>Currency Converter</a>
+                    <a href='../Utilities.html#function7'>Online Notepad/Clipboard</a>
+                    <a href='../Utilities.html#function8'>Screen Recoder</a>
+                    <a href='../Utilities.html#function9'>Unit Converter</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    
+    <nav class='main-nav'>
+        <div class='theme-selector'>
+            <label for='theme-picker'>Theme:</label>
+            <select id='theme-picker'>
+                <option value='corporate-blue' selected='selected'>Corporate Blue</option>
+                <option value='forest-green'>Forest Green</option>
+                <option value='sunset-gradient'>Sunset Gradient</option>
+                <option value='tech-noir'>Tech Noir</option>
+                <option value='minty-fresh'>Minty Fresh</option>
+                <option value='royal-purple'>Royal Purple</option>
+                <option value='graphite-gray'>Graphite Gray</option>
+                <option value='crimson-red'>Crimson Red</option>
+            </select>
+        </div>
+        <button id='dark-mode-toggle' class='nav-button' aria-label='Toggle Dark Mode'>
+            <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
+        </button>
+        <a href='../#' id='about-btn' class='nav-link'>About</a> <!-- Adjusted path -->
+        <a href='../#' id='contact-btn' class='nav-link'>Contact Us</a> <!-- Adjusted path -->
+        
+        <!-- User Profile and Logout Dropdown -->
+        <div class='user-profile-wrapper'>
+            <button id='user-icon-button' class='nav-button' aria-label='User Account'>
+                <i class='fa-solid fa-user'></i>
+            </button>
+            <div id='user-dropdown' class='tool-dropdown'>
+                <span id="user-display-dropdown"></span>
+                <button id='logout-button' class='auth-button signup-button' style='width: calc(100% - 2rem); margin: 0.5rem 1rem;'>Logout</button>
+            </div>
+        </div>
+        <!-- Login/Signup Buttons (visible when not logged in) -->
+        <div class='auth-buttons'>
+            <button id='header-login-btn' class='auth-button login-button'>Login</button>
+            <button id='header-signup-btn' class='auth-button signup-button'>Sign Up</button>
+        </div>
+    </nav>
+</header>
+
+<!-- Main Content Area for Trim/Cut Video -->
+<main class='tool-page-container'>
+    <h2>Trim & Split Video</h2>
+    <p>Upload a video to precisely trim, cut, or split it into multiple clips directly in your browser.</p>
+
+    <div class="video-upload-area" id="drop-area">
+        <input type="file" id="video-upload-input" accept="video/*" hidden>
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <h3>Drag & Drop your video here, or click to upload</h3>
+        <p>Supports MP4, MOV, AVI, and more.</p>
+    </div>
+
+    <div id="video-player-container">
+        <video id="video-player" controls preload="metadata"></video>
+        <div class="timeline-wrapper">
+            <div class="timeline-container">
+                <div class="timeline-segment" id="trim-segment">
+                    <div class="handle left" id="left-handle"></div>
+                    <div class="handle right" id="right-handle"></div>
+                </div>
+                <div class="time-label" id="current-start-time">00:00:000</div>
+                <div class="time-label" id="current-end-time">00:00:000</div>
+                <div id="playhead"></div>
+                <div id="playhead-label">00:00:000</div>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <div class="control-box">
+                <h4>Manual Trim/Cut</h4>
+                <label for="trim-start">Start Time (seconds):</label>
+                <input type="number" id="trim-start" value="0.0" min="0" step="0.1">
+                <label for="trim-end">End Time (seconds):</label>
+                <input type="number" id="trim-end" value="0.0" min="0" step="0.1">
+                <button id="apply-trim-btn">Trim & Keep Selected Segment</button>
+                <button id="remove-segment-btn" class="login-button">Remove Selected Segment</button>
+                <div id="trim-message" class="message-box"></div>
+            </div>
+            <div class="control-box">
+                <h4>Split Options</h4>
+                <label for="split-duration">Split every (seconds):</label>
+                <input type="number" id="split-duration" value="30" min="1" step="1">
+                <button id="apply-split-btn">Split Video by Duration</button>
+                <button id="split-at-playhead-btn">Cut Video at Playhead</button>
+                <div id="split-message" class="message-box"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="output-area">
+        <h3>Your Processed Videos</h3>
+        <div class="download-list" id="download-list">
+            <!-- Download items will appear here -->
+        </div>
+    </div>
+
+    <!-- Loading Overlay for FFmpeg.wasm operations -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p id="loading-text">Initializing FFmpeg.wasm...</p>
+        <p id="loading-progress"></p>
+    </div>
+</main>
+
+<!-- Modals (Copied from main.html, adjusted relative paths, added inline style for robust hiding) -->
+<div id='about-modal' class='modal' style="display: none !important;">
+    <div class='modal-content'>
+        <span class='close-btn'>×</span>
+        <h2>About JKM Edit</h2>
+        <p>JKM Edit is your all-in-one solution for online file manipulation.</p>
+    </div>
+</div>
+<div id='contact-modal' class='modal' style="display: none !important;">
+    <div class='modal-content'>
+        <span class='close-btn'>×</span>
+        <h2>Contact Us</h2>
+        <p>You can email us directly at:</p>
+        <a href='mailto:Mpurohit2414@gmail.com' class='contact-email'>Mpurohit2414@gmail.com</a>
+    </div>
+</div>
+
+<!-- Login Modal (Copied from main.html, adjusted relative paths, added inline style for robust hiding) -->
+<div id='login-modal' class='modal' style="display: none !important;">
+    <div class='modal-content'>
+        <span class='close-btn login-close-btn'>×</span>
+        <h2>Login to JKM Edit</h2>
+        <div class="social-login-buttons">
+            <button type="button" id="google-login-btn" class="social-button google-button">
+                <i class="fab fa-google"></i> Sign in with Google
+            </button>
+        </div>
+        <div class="separator">OR</div>
+        <form id='login-form'>
+            <div style='margin-bottom: 1rem;'>
+                <label for='login-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
+                <input type='email' id='login-email' placeholder='Enter your email' required
+                       style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+            </div>
+            <div class="password-input-wrapper">
+                <label for='login-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
+                <input type='password' id='login-password' placeholder='Enter your password' required
+                       style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+            </div>
+            <p style="text-align: right; margin-top: -0.5rem; margin-bottom: 1rem;">
+                <a href="../#" id="forgot-password-link" style="color: var(--primary-color); font-size: 0.9em; text-decoration: none;">Forgot password?</a> <!-- Adjusted path -->
+            </p>
+            <button type='submit' class='contact-email' style='width: 100%; border: none;'>Login</button>
+            <p id="login-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
+        </form>
+        <p style="margin-top: 1rem; text-align: center;">Don't have an account? <a href="#" id="open-signup-from-login" style="color: var(--primary-color);">Sign Up</a></p>
+    </div>
+</div>
+
+<!-- Signup Modal (Copied from main.html, adjusted relative paths, added inline style for robust hiding) -->
+<div id='signup-modal' class='modal' style="display: none !important;">
+    <div class='modal-content'>
+        <span class='close-btn signup-close-btn'>×</span>
+        <h2>Create an Account</h2>
+        <div class="social-login-buttons">
+            <button type="button" id="google-signup-btn" class="social-button google-button">
+                <i class="fab fa-google"></i> Sign up with Google
+            </button>
+        </div>
+        <div class="separator">OR</div>
+        <form id='signup-form'>
+            <div style='margin-bottom: 1rem;'>
+                <label for='signup-name' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Name:</label>
+                <input type='text' id='signup-name' placeholder='Enter your name' required
+                       style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 44px; background-color: var(--bg-color); color: var(--text-color);'>
+            </div>
+            <div style='margin-bottom: 1rem;'>
+                <label for='signup-email' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Email:</label>
+                <input type='email' id='signup-email' placeholder='Enter your email' required
+                       style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+            </div>
+            <div class="password-input-wrapper">
+                <label for='signup-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Password:</label>
+                <input type='password' id='signup-password' placeholder='Create a password (min 6 characters)' required
+                       style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+            </div>
+            <div class="password-input-wrapper">
+                <label for='signup-confirm-password' style='display: block; margin-bottom: 0.5rem; color: var(--text-color);'>Confirm Password:</label>
+                <input type='password' id='signup-confirm-password' placeholder='Confirm your password' required
+                       style='width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);'>
+            </div>
+            <button type='submit' class='contact-email' style='width: 100%; border: none;'>Sign Up</button>
+            <p id="signup-error-message" style="color: red; margin-top: 1rem; display: none;"></p>
+        </form>
+        <p style="margin-top: 1rem; text-align: center;">Already have an account? <a href="#" id="open-login-from-signup" style="color: var(--primary-color);">Login</a></p>
+    </div>
+</div>
+
+
+<!-- JavaScript (Copied from main.html, plus new video tool logic) -->
+<script>
+    // FFmpeg.wasm global instance
+    const { FFmpeg } = FFmpegWASM;
+    let ffmpeg = null;
+    let ffmpegLoaded = false;
+    // IMPORTANT: Adjusted paths assuming trim-cut-video.html is in Video-Tools/ and lib/ is in Video-Tools/lib/ffmpeg
+    const corePath = './lib/ffmpeg/ffmpeg-core.js'; 
+    const wasmPath = './lib/ffmpeg/ffmpeg-core.wasm'; 
+    // If you add worker, it would be: const workerPath = './lib/ffmpeg/ffmpeg-worker.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Existing Modal Logic (Copied from main.html, adjusted relative paths) ---
+    const aboutModal = document.getElementById('about-modal');
+    const contactModal = document.getElementById('contact-modal');
+    const aboutBtn = document.getElementById('about-btn');
+    const contactBtn = document.getElementById('contact-btn');
+
+    const loginModal = document.getElementById('login-modal');
+    const signupModal = document.getElementById('signup-modal');
+    const headerLoginBtn = document.getElementById('header-login-btn');
+    const headerSignupBtn = document.getElementById('header-signup-btn');
+    const logoutButton = document.getElementById('logout-button');
+
+    const loginForm = document.getElementById('login-form');
+    const loginEmailInput = document.getElementById('login-email');
+    const loginPasswordInput = document.getElementById('login-password');
+    const loginErrorMessage = document.getElementById('login-error-message');
+
+    const signupForm = document.getElementById('signup-form');
+    const signupNameInput = document.getElementById('signup-name');
+    const signupEmailInput = document.getElementById('signup-email');
+    const signupPasswordInput = document.getElementById('signup-password');
+    const signupConfirmPasswordInput = document.getElementById('signup-confirm-password');
+    const signupErrorMessage = document.getElementById('signup-error-message');
+
+    const forgotPasswordLink = document.getElementById('forgot-password-link');
+
+    const googleLoginBtn = document.getElementById('google-login-btn');
+    const googleSignupBtn = document.getElementById('google-signup-btn');
+
+    const openModal = (modal) => { 
+        modal.style.display = 'flex'; // Make visible
+        // Allow transition to apply (if any) by adding class slightly after display
+        setTimeout(() => modal.classList.add('show-modal'), 10); 
+    };
+    const closeModal = (modal) => { 
+        modal.classList.remove('show-modal'); 
+        // Hide after transition ends to allow animation to play
+        modal.addEventListener('transitionend', () => {
+            if (!modal.classList.contains('show-modal')) { // Only hide if it's actually closed
+                modal.style.display = 'none'; 
+            }
+        }, { once: true });
+    };
+
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            closeModal(aboutModal);
+            closeModal(contactModal);
+            closeModal(loginModal);
+            closeModal(signupModal);
+        });
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === aboutModal) closeModal(aboutModal);
+        if (e.target === contactModal) closeModal(contactModal);
+        if (e.target === loginModal) closeModal(loginModal);
+        if (e.target === signupModal) closeModal(signupModal);
+    });
+
+    aboutBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(aboutModal); });
+    contactBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(contactModal); });
+
+    const clearFormErrors = (formType) => {
+        if (formType === 'login') {
+            loginErrorMessage.textContent = '';
+            loginErrorMessage.style.display = 'none';
+            loginErrorMessage.style.color = 'red';
+        } else if (formType === 'signup') {
+            signupErrorMessage.textContent = '';
+            signupErrorMessage.style.display = 'none';
+        }
+    };
+
+    headerLoginBtn.addEventListener('click', (e) => { 
+        e.preventDefault(); 
+        clearFormErrors('login');
+        closeModal(signupModal); 
+        openModal(loginModal); 
+    });
+    headerSignupBtn.addEventListener('click', (e) => { 
+        e.preventDefault(); 
+        clearFormErrors('signup');
+        closeModal(loginModal); 
+        openModal(signupModal); 
+    });
+
+    document.getElementById('open-signup-from-login').addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModal(loginModal);
+        clearFormErrors('signup');
+        openModal(signupModal);
+    });
+
+    document.getElementById('open-login-from-signup').addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModal(signupModal);
+        clearFormErrors('login');
+        openModal(loginModal);
+    });
+
+    const isValidEmail = (email) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    };
+
+    // --- Firebase Authentication Logic (Copied from main.html) ---
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearFormErrors('login');
+        const email = loginEmailInput.value.trim();
+        const password = loginPasswordInput.value;
+
+        if (!isValidEmail(email)) {
+            loginErrorMessage.textContent = 'Please enter a valid email address format.';
+            loginErrorMessage.style.display = 'block';
+            return;
+        }
+
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            closeModal(loginModal);
+        } catch (error) {
+            console.error('Login Error:', error.message);
+            loginErrorMessage.textContent = `Login failed: ${error.message}`;
+            loginErrorMessage.style.display = 'block';
+        }
+    });
+
+    signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearFormErrors('signup');
+        const name = signupNameInput.value.trim();
+        const email = signupEmailInput.value.trim();
+        const password = signupPasswordInput.value;
+        const confirmPassword = signupConfirmPasswordInput.value;
+
+        if (name.length === 0) {
+            signupErrorMessage.textContent = 'Please enter your name.';
+            signupErrorMessage.style.display = 'block';
+            return;
+        }
+        if (!isValidEmail(email)) {
+            signupErrorMessage.textContent = 'Please enter a valid email address format.';
+            signupErrorMessage.style.display = 'block';
+            return;
+        }
+        if (password.length < 6) {
+            signupErrorMessage.textContent = 'Password should be at least 6 characters.';
+            signupErrorMessage.style.display = 'block';
+            return;
+        }
+        if (password !== confirmPassword) {
+            signupErrorMessage.textContent = 'Passwords do not match.';
+            signupErrorMessage.style.display = 'block';
+            return;
+        }
+
+        try {
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            await userCredential.user.updateProfile({
+                displayName: name
+            });
+            closeModal(signupModal);
+        } catch (error) {
+            console.error('Signup Error:', error.message);
+            signupErrorMessage.textContent = `Signup failed: ${error.message}`;
+            signupErrorMessage.style.display = 'block';
+        }
+    });
+
+    googleLoginBtn.addEventListener('click', async () => {
+        clearFormErrors('login');
+        try {
+            await auth.signInWithPopup(googleProvider);
+            closeModal(loginModal);
+        } catch (error) {
+            console.error('Google Login Error:', error.message);
+            loginErrorMessage.textContent = `Google login failed: ${error.message}`;
+            loginErrorMessage.style.display = 'block';
+        }
+    });
+
+    googleSignupBtn.addEventListener('click', async () => {
+        clearFormErrors('signup');
+        try {
+            await auth.signInWithPopup(googleProvider);
+            closeModal(signupModal);
+        } catch (error) {
+            console.error('Google Signup Error:', error.message);
+            signupErrorMessage.textContent = `Google signup failed: ${error.message}`;
+            signupErrorMessage.style.display = 'block';
+        }
+    });
+
+    logoutButton.addEventListener('click', async () => {
+        try {
+            await auth.signOut();
+        } catch (error) {
+            console.error('Logout Error:', error.message);
+        }
+        userDropdown.classList.remove('show-dropdown');
+    });
+
+    forgotPasswordLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        clearFormErrors('login');
+        const email = loginEmailInput.value.trim();
+
+        if (!email || !isValidEmail(email)) {
+            loginErrorMessage.textContent = 'Please enter your email in the login field above to reset your password.';
+            loginErrorMessage.style.display = 'block';
+            return;
+        }
+
+        try {
+            await auth.sendPasswordResetEmail(email);
+            loginErrorMessage.style.color = 'green';
+            loginErrorMessage.textContent = `Password reset email sent to ${email}. Please check your inbox.`;
+            loginErrorMessage.style.display = 'block';
+        } catch (error) {
+            console.error('Password Reset Error:', error.message);
+            loginErrorMessage.style.color = 'red';
+            loginErrorMessage.textContent = `Failed to send reset email: ${error.message}`;
+            loginErrorMessage.style.display = 'block';
+        }
+    });
+
+    // --- Header UI: User Logo and Dropdown (Copied from main.html) ---
+    const userProfileWrapper = document.querySelector('.user-profile-wrapper');
+    const userIconButton = document.getElementById('user-icon-button');
+    const userDropdown = document.getElementById('user-dropdown');
+    const userDisplayDropdown = document.getElementById('user-display-dropdown');
+    const authButtonsDiv = document.querySelector('.auth-buttons');
+
+    userIconButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userDropdown.classList.toggle('show-dropdown');
+    });
+
+    window.addEventListener('click', (e) => {
+        if (userDropdown.classList.contains('show-dropdown') && !userIconButton.contains(e.target) && !userDropdown.contains(e.target)) {
+            userDropdown.classList.remove('show-dropdown');
+        }
+    });
+    
+    // --- Protected Content Logic (Copied from main.html) ---
+    const LOCKOUT_THRESHOLD_MS = 2 * 60 * 1000;
+    const LOCKOUT_START_TIME_KEY = 'jkm-edit-lockout-start-time';
+    let lockoutTimer;
+
+    const authPromptOverlay = document.createElement('div');
+    authPromptOverlay.id = 'auth-prompt-overlay';
+    authPromptOverlay.classList.add('auth-overlay');
+    authPromptOverlay.innerHTML = `
+        <div class='auth-prompt-modal'>
+            <h2>Login Required</h2>
+            <p>Please log in or sign up to continue using JKM Edit and access all our tools.</p>
+            <div class='auth-prompt-buttons'>
+                <button id='prompt-login-btn' class='auth-button login-button'>Login</button>
+                <button id='prompt-signup-btn' class='auth-button signup-button'>Sign Up</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(authPromptOverlay);
+
+    const promptLoginBtn = authPromptOverlay.querySelector('#prompt-login-btn');
+    const promptSignupBtn = authPromptOverlay.querySelector('#prompt-signup-btn');
+    
+    promptLoginBtn.addEventListener('click', () => {
+        authPromptOverlay.classList.remove('show-overlay');
+        clearFormErrors('login');
+        openModal(loginModal);
+    });
+    promptSignupBtn.addEventListener('click', () => {
+        authPromptOverlay.classList.remove('show-overlay');
+        clearFormErrors('signup');
+        openModal(signupModal);
+    });
+
+    const showAuthPrompt = () => {
+        authPromptOverlay.classList.add('show-overlay');
+        document.body.style.overflow = 'hidden';
+    };
+
+    const hideAuthPrompt = () => {
+        authPromptOverlay.classList.remove('show-overlay');
+        document.body.style.overflow = '';
+        localStorage.removeItem(LOCKOUT_START_TIME_KEY);
+        if (lockoutTimer) {
+            clearTimeout(lockoutTimer);
+        }
+    };
+
+    const startLockoutTimer = (delay) => {
+        if (lockoutTimer) {
+            clearTimeout(lockoutTimer);
+        }
+        lockoutTimer = setTimeout(() => {
+            if (!auth.currentUser) { 
+                showAuthPrompt();
+            }
+        }, delay);
+    };
+
+    const initializeOrResumeLockout = () => {
+        if (auth.currentUser) {
+            hideAuthPrompt();
+            return;
+        }
+
+        let lockoutStartTime = localStorage.getItem(LOCKOUT_START_TIME_KEY);
+        if (!lockoutStartTime) {
+            lockoutStartTime = Date.now().toString();
+            localStorage.setItem(LOCKOUT_START_TIME_KEY, lockoutStartTime);
+            startLockoutTimer(LOCKOUT_THRESHOLD_MS);
+        } else {
+            const elapsed = Date.now() - parseInt(lockoutStartTime);
+            if (elapsed >= LOCKOUT_THRESHOLD_MS) {
+                showAuthPrompt();
+            } else {
+                startLockoutTimer(LOCKOUT_THRESHOLD_MS - elapsed);
+            }
+        }
+    };
+
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            userDisplayDropdown.textContent = user.displayName || user.email;
+            userProfileWrapper.style.display = 'flex';
+            authButtonsDiv.style.display = 'none';
+            hideAuthPrompt();
+        } else {
+            userProfileWrapper.style.display = 'none';
+            userDropdown.classList.remove('show-dropdown');
+            authButtonsDiv.style.display = 'flex';
+            initializeOrResumeLockout();
+        }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            if (!auth.currentUser) {
+                if (lockoutTimer) clearTimeout(lockoutTimer);
+                localStorage.setItem(LOCKOUT_START_TIME_KEY, Date.now().toString()); 
+            }
+        } else {
+            initializeOrResumeLockout();
+        }
+    });
+
+    if (!auth.currentUser) {
+        initializeOrResumeLockout();
+    }
+
+    // --- Theme and Dark Mode Event Listeners (Copied from main.html) ---
+    const themePicker = document.getElementById('theme-picker');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const htmlElement = document.documentElement;
+
+    const setTheme = (theme) => {
+        htmlElement.dataset.theme = theme;
+        localStorage.setItem('jkm-edit-theme', theme);
+    };
+
+    const enableDarkMode = () => {
+        htmlElement.classList.add('dark-mode');
+        localStorage.setItem('jkm-edit-mode', 'dark');
+    };
+
+    const disableDarkMode = () => {
+        htmlElement.classList.remove('dark-mode');
+        localStorage.setItem('jkm-edit-mode', 'light');
+    };
+
+    themePicker.addEventListener('change', () => setTheme(themePicker.value));
+
+    darkModeToggle.addEventListener('click', () => {
+        htmlElement.classList.contains('dark-mode') ? disableDarkMode() : enableDarkMode();
+    });
+
+    const savedTheme = localStorage.getItem('jkm-edit-theme');
+    if (savedTheme) {
+        themePicker.value = savedTheme;
+    }
+
+    loginModal.addEventListener('transitionend', () => {
+        if (!loginModal.classList.contains('show-modal')) {
+            loginEmailInput.value = '';
+            loginPasswordInput.value = '';
+            loginPasswordInput.type = 'password';
+            clearFormErrors('login');
+        }
+    });
+    signupModal.addEventListener('transitionend', () => {
+        if (!signupModal.classList.contains('show-modal')) {
+            signupNameInput.value = '';
+            signupEmailInput.value = '';
+            signupPasswordInput.value = '';
+            signupConfirmPasswordInput.value = '';
+            signupPasswordInput.type = 'password';
+            signupConfirmPasswordInput.type = 'password';
+            clearFormErrors('signup');
+        }
+    });
+
+    // --- NEW VIDEO TOOL SPECIFIC JAVASCRIPT ---
+    const dropArea = document.getElementById('drop-area');
+    const videoUploadInput = document.getElementById('video-upload-input');
+    const videoPlayerContainer = document.getElementById('video-player-container');
+    const videoPlayer = document.getElementById('video-player');
+    const trimStartInput = document.getElementById('trim-start');
+    const trimEndInput = document.getElementById('trim-end');
+    const applyTrimBtn = document.getElementById('apply-trim-btn');
+    const removeSegmentBtn = document.getElementById('remove-segment-btn'); // New button
+    const trimMessage = document.getElementById('trim-message');
+    const splitDurationInput = document.getElementById('split-duration');
+    const applySplitBtn = document.getElementById('apply-split-btn');
+    const splitAtPlayheadBtn = document.getElementById('split-at-playhead-btn'); // New button
+    const splitMessage = document.getElementById('split-message');
+    const outputArea = document.getElementById('output-area');
+    const downloadList = document.getElementById('download-list');
+    const currentStartTimeLabel = document.getElementById('current-start-time');
+    const currentEndTimeLabel = document.getElementById('current-end-time');
+    const timelineContainer = document.querySelector('.timeline-container');
+    const trimSegment = document.getElementById('trim-segment');
+    const leftHandle = document.getElementById('left-handle');
+    const rightHandle = document.getElementById('right-handle');
+    const playhead = document.getElementById('playhead');
+    const playheadLabel = document.getElementById('playhead-label');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingText = document.getElementById('loading-text');
+    const loadingProgress = document.getElementById('loading-progress');
+
+
+    let videoFile = null;
+    let videoDuration = 0;
+    let trimStart = 0;
+    let trimEnd = 0;
+    let isDraggingLeft = false;
+    let isDraggingRight = false;
+    let isDraggingSegment = false;
+    let dragStartX = 0;
+    let segmentStartOffset = 0; // Where the segment was relative to parent left at drag start
+    let originalVideoFileName = '';
+    let originalVideoFileExtension = '';
+
+    // --- FFmpeg.wasm Initialization ---
+    const loadFFmpeg = async () => {
+        if (ffmpegLoaded) return;
+
+        showLoadingOverlay('Initializing FFmpeg.wasm (this may take a moment)...');
+        
+        ffmpeg = new FFmpeg();
+        ffmpeg.on('log', ({ message }) => {
+            console.log(`[FFmpeg.wasm log] ${message}`);
+            // Update loading text for relevant FFmpeg messages
+            if (message.includes('conversion failed')) {
+                hideLoadingOverlay();
+                showMessage(trimMessage, `FFmpeg conversion failed: ${message}`, 'error');
+                showMessage(splitMessage, `FFmpeg conversion failed: ${message}`, 'error');
+            } else if (message.includes('Input #')) {
+                 loadingText.textContent = 'Processing: Reading video information...';
+            } else if (message.includes('Stream mapping:')) {
+                loadingText.textContent = 'Processing: Applying edits...';
+            }
+        });
+        ffmpeg.on('progress', ({ progress, time }) => {
+            if (progress >= 0 && progress <= 1) { // Progress is typically 0-1
+                loadingProgress.textContent = `Progress: ${(progress * 100).toFixed(0)}%`;
+            }
+            if (time && videoDuration > 0) {
+                // time is in microseconds from ffmpeg, convert to seconds
+                const currentTimeInSeconds = time / 1000000; 
+                loadingProgress.textContent += ` (${formatTime(currentTimeInSeconds)} / ${formatTime(videoDuration)})`;
+            }
+        });
+
+        try {
+            await ffmpeg.load({
+                coreURL: corePath,
+                wasmURL: wasmPath,
+                // Uncomment if you have a separate worker script:
+                // workerURL: './lib/ffmpeg/ffmpeg-worker.js', // Adjusted path
+            });
+            ffmpegLoaded = true;
+            hideLoadingOverlay();
+            console.log('FFmpeg.wasm loaded successfully!');
+        } catch (error) {
+            console.error('Failed to load FFmpeg.wasm:', error);
+            hideLoadingOverlay();
+            showMessage(trimMessage, `Failed to load video processing engine: ${error.message}. Please ensure ${corePath} and ${wasmPath} are correctly placed.`, 'error');
+        }
+    };
+
+    const showLoadingOverlay = (message = 'Processing video...') => {
+        loadingText.textContent = message;
+        loadingProgress.textContent = '';
+        loadingOverlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    };
+
+    const hideLoadingOverlay = () => {
+        loadingOverlay.style.display = 'none';
+        document.body.style.overflow = '';
+    };
+
+    // --- Utility Functions ---
+    const formatTime = (seconds) => {
+        const totalMs = Math.floor(seconds * 1000);
+        const hours = Math.floor(totalMs / 3600000);
+        const minutes = Math.floor((totalMs % 3600000) / 60000);
+        const remainingSeconds = Math.floor((totalMs % 60000) / 1000);
+        const milliseconds = totalMs % 1000;
+        
+        const h = String(hours).padStart(2, '0');
+        const m = String(minutes).padStart(2, '0');
+        const s = String(remainingSeconds).padStart(2, '0');
+        const ms = String(milliseconds).padStart(3, '0');
+
+        return `${h}:${m}:${s}.${ms}`;
+    };
+
+    const showMessage = (element, message, type) => {
+        element.textContent = message;
+        element.className = `message-box ${type}`; // Add type class (error/success)
+        element.style.display = 'block';
+    };
+
+    const hideMessage = (element) => {
+        element.style.display = 'none';
+        element.textContent = '';
+    };
+
+    // --- Video Upload Logic ---
+    dropArea.addEventListener('click', () => videoUploadInput.click());
+    
+    dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = 'var(--secondary-color)';
+        dropArea.style.backgroundColor = 'color-mix(in srgb, var(--surface-color) 90%, var(--primary-color) 5%)';
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+        dropArea.style.borderColor = 'var(--primary-color)';
+        dropArea.style.backgroundColor = 'var(--surface-color)';
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = 'var(--primary-color)';
+        dropArea.style.backgroundColor = 'var(--surface-color)';
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleVideoFile(files[0]);
+        }
+    });
+
+    videoUploadInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        if (files.length > 0) {
+            handleVideoFile(files[0]);
+        }
+    });
+
+    const handleVideoFile = (file) => {
+        if (!file.type.startsWith('video/')) {
+            showMessage(trimMessage, 'Please upload a valid video file.', 'error');
+            return;
+        }
+
+        videoFile = file;
+        originalVideoFileName = videoFile.name.split('.').slice(0, -1).join('.');
+        originalVideoFileExtension = videoFile.name.split('.').pop();
+
+        const videoURL = URL.createObjectURL(videoFile);
+        videoPlayer.src = videoURL;
+        videoPlayerContainer.style.display = 'block';
+        dropArea.style.display = 'none'; // Hide drop area once video is loaded
+        outputArea.style.display = 'none'; // Hide output area until processed
+        downloadList.innerHTML = ''; // Clear previous output
+        hideMessage(trimMessage);
+        hideMessage(splitMessage);
+
+        videoPlayer.addEventListener('loadedmetadata', () => {
+            videoDuration = videoPlayer.duration;
+            trimStart = 0;
+            trimEnd = videoDuration; // Default trim end to full duration
+            trimStartInput.value = trimStart.toFixed(1);
+            trimEndInput.value = videoDuration.toFixed(1);
+
+            // Make inputs reflect total duration limits
+            trimStartInput.max = videoDuration;
+            trimEndInput.max = videoDuration;
+            splitDurationInput.max = videoDuration;
+
+            // Reset playhead to 0
+            videoPlayer.currentTime = 0;
+            updateTimelineUI(); // Initialize timeline display
+            updatePlayheadUI();
+        }, { once: true });
+    };
+
+    // --- Timeline UI Logic ---
+    const updateTimelineUI = () => {
+        if (!videoFile || videoDuration === 0) {
+            // Hide timeline elements if no video is loaded
+            trimSegment.style.width = '0px';
+            playhead.style.display = 'none';
+            playheadLabel.style.display = 'none';
+            currentStartTimeLabel.style.display = 'none';
+            currentEndTimeLabel.style.display = 'none';
+            return;
+        }
+        
+        playhead.style.display = 'block';
+        playheadLabel.style.display = 'block';
+        currentStartTimeLabel.style.display = 'block';
+        currentEndTimeLabel.style.display = 'block';
+
+        const timelineWidth = timelineContainer.clientWidth;
+        const pixelsPerSecond = timelineWidth / videoDuration;
+        
+        // Ensure trim values are within bounds
+        trimStart = Math.max(0, Math.min(trimStart, videoDuration));
+        trimEnd = Math.max(0, Math.min(trimEnd, videoDuration));
+        if (trimStart >= trimEnd) trimEnd = trimStart + 0.1; // Ensure a minimum segment duration
+        if (trimEnd > videoDuration) trimEnd = videoDuration;
+        if (trimStart < 0) trimStart = 0;
+
+        const segmentWidth = (trimEnd - trimStart) * pixelsPerSecond;
+        const segmentLeft = trimStart * pixelsPerSecond;
+
+        trimSegment.style.width = `${segmentWidth}px`;
+        trimSegment.style.left = `${segmentLeft}px`;
+
+        currentStartTimeLabel.textContent = formatTime(trimStart);
+        currentEndTimeLabel.textContent = formatTime(trimEnd);
+
+        currentStartTimeLabel.style.left = `${segmentLeft}px`;
+        currentEndTimeLabel.style.left = `${segmentLeft + segmentWidth}px`;
+        
+        // Update input fields, but only if not actively dragging to avoid input flicker
+        if (!isDraggingLeft && !isDraggingRight && !isDraggingSegment) {
+            trimStartInput.value = trimStart.toFixed(1);
+            trimEndInput.value = trimEnd.toFixed(1);
+        }
+    };
+
+    const updatePlayheadUI = () => {
+        if (!videoFile || videoDuration === 0) return;
+        const timelineWidth = timelineContainer.clientWidth;
+        const pixelsPerSecond = timelineWidth / videoDuration;
+        const playheadX = videoPlayer.currentTime * pixelsPerSecond;
+
+        playhead.style.left = `${playheadX}px`;
+        playheadLabel.style.left = `${playheadX}px`;
+        playheadLabel.textContent = formatTime(videoPlayer.currentTime);
+    };
+
+    // Event listeners for draggable handles and segment
+    leftHandle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // Prevent segment drag from starting
+        isDraggingLeft = true;
+        dragStartX = e.clientX;
+        videoPlayer.pause();
+    });
+
+    rightHandle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // Prevent segment drag from starting
+        isDraggingRight = true;
+        dragStartX = e.clientX;
+        videoPlayer.pause();
+    });
+
+    trimSegment.addEventListener('mousedown', (e) => {
+        // Only allow dragging the segment itself if not clicking on a handle
+        if (e.target === trimSegment) { 
+            e.preventDefault();
+            isDraggingSegment = true;
+            dragStartX = e.clientX;
+            segmentStartOffset = trimSegment.offsetLeft;
+            videoPlayer.pause();
+        }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!videoFile || videoDuration === 0) return;
+
+        const timelineWidth = timelineContainer.clientWidth;
+        const pixelsPerSecond = timelineWidth / videoDuration;
+        
+        if (isDraggingLeft) {
+            let newTrimStartPixels = trimStart * pixelsPerSecond + (e.clientX - dragStartX);
+            newTrimStartPixels = Math.max(0, Math.min(newTrimStartPixels, (trimEnd * pixelsPerSecond) - (0.1 * pixelsPerSecond))); // Keep min 0.1s segment
+            trimStart = newTrimStartPixels / pixelsPerSecond;
+            videoPlayer.currentTime = trimStart; // Update player position for preview
+            updateTimelineUI();
+            dragStartX = e.clientX; // Update drag start for continuous dragging
+        } else if (isDraggingRight) {
+            let newTrimEndPixels = trimEnd * pixelsPerSecond + (e.clientX - dragStartX);
+            newTrimEndPixels = Math.max((trimStart * pixelsPerSecond) + (0.1 * pixelsPerSecond), Math.min(newTrimEndPixels, timelineWidth)); // Keep min 0.1s segment, max video duration
+            trimEnd = newTrimEndPixels / pixelsPerSecond;
+            videoPlayer.currentTime = trimEnd; // Update player position for preview
+            updateTimelineUI();
+            dragStartX = e.clientX;
+        } else if (isDraggingSegment) {
+            let newSegmentLeftPixels = segmentStartOffset + (e.clientX - dragStartX);
+            
+            const segmentCurrentWidth = trimSegment.clientWidth;
+            newSegmentLeftPixels = Math.max(0, Math.min(newSegmentLeftPixels, timelineWidth - segmentCurrentWidth));
+            
+            trimStart = newSegmentLeftPixels / pixelsPerSecond;
+            trimEnd = trimStart + (segmentCurrentWidth / pixelsPerSecond);
+            
+            videoPlayer.currentTime = trimStart; // Update player position for preview
+            updateTimelineUI();
+            // No need to update dragStartX for segment drag; segmentStartOffset is based on initial click.
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDraggingLeft = false;
+        isDraggingRight = false;
+        isDraggingSegment = false;
+    });
+
+    // Handle timeline clicks for seeking and setting playhead
+    timelineContainer.addEventListener('click', (e) => {
+        // Only seek if not dragging a handle/segment
+        if (!isDraggingLeft && !isDraggingRight && !isDraggingSegment && e.target !== leftHandle && e.target !== rightHandle) {
+            const clickX = e.clientX - timelineContainer.getBoundingClientRect().left;
+            const clickTime = (clickX / timelineContainer.clientWidth) * videoDuration;
+            videoPlayer.currentTime = clickTime;
+        }
+    });
+
+    // Update playhead position when video plays or seeks
+    videoPlayer.addEventListener('timeupdate', () => {
+        if (videoDuration > 0) {
+            updatePlayheadUI();
+        }
+    });
+
+    // Input field change listeners to update timeline
+    trimStartInput.addEventListener('change', () => {
+        let newStart = parseFloat(trimStartInput.value);
+        if (!isNaN(newStart) && newStart >= 0 && newStart < trimEnd && newStart <= videoDuration) {
+            trimStart = newStart;
+            videoPlayer.currentTime = trimStart;
+            updateTimelineUI();
+            hideMessage(trimMessage);
+        } else {
+            showMessage(trimMessage, `Invalid start time. Must be less than end time and less than or equal to ${videoDuration.toFixed(1)}s.`, 'error');
+            trimStartInput.value = trimStart.toFixed(1); // Revert to valid value
+        }
+    });
+
+    trimEndInput.addEventListener('change', () => {
+        let newEnd = parseFloat(trimEndInput.value);
+        if (!isNaN(newEnd) && newEnd > trimStart && newEnd <= videoDuration) {
+            trimEnd = newEnd;
+            videoPlayer.currentTime = trimEnd;
+            updateTimelineUI();
+            hideMessage(trimMessage);
+        } else {
+            showMessage(trimMessage, `Invalid end time. Must be greater than start time and less than or equal to ${videoDuration.toFixed(1)}s.`, 'error');
+            trimEndInput.value = trimEnd.toFixed(1); // Revert to valid value
+        }
+    });
+
+
+    // --- Processing with FFmpeg.wasm ---
+    applyTrimBtn.addEventListener('click', async () => {
+        if (!videoFile) {
+            showMessage(trimMessage, 'Please upload a video first.', 'error');
+            return;
+        }
+        if (!auth.currentUser) {
+            showAuthPrompt(); // Show auth prompt if not logged in
+            return;
+        }
+        if (!ffmpegLoaded) {
+            showMessage(trimMessage, 'FFmpeg.wasm is still loading. Please wait...', 'error');
+            await loadFFmpeg(); // Try loading again
+            if (!ffmpegLoaded) return; // If still not loaded, exit
+        }
+
+        const start = parseFloat(trimStartInput.value);
+        const end = parseFloat(trimEndInput.value);
+        const duration = end - start;
+
+        if (isNaN(start) || isNaN(end) || start < 0 || end > videoDuration || start >= end) {
+            showMessage(trimMessage, 'Please enter valid start and end times for trimming.', 'error');
+            return;
+        }
+        
+        hideMessage(trimMessage);
+        downloadList.innerHTML = ''; // Clear previous results
+        outputArea.style.display = 'block';
+        showLoadingOverlay('Trimming video (this may take time for large files)...');
+
+        try {
+            await ffmpeg.writeFile(videoFile.name, await FFmpegWASM.fetchFile(videoFile));
+            const outputFileName = `${originalVideoFileName}_trimmed.${originalVideoFileExtension}`;
+            
+            // Use -ss for seek, -t for duration. -i for input. -c copy to avoid re-encoding if possible.
+            // If -c copy is not compatible with -ss or complex filters, re-encoding might occur.
+            await ffmpeg.exec([
+                '-ss', start.toFixed(3), // Start time in seconds (with milliseconds)
+                '-i', videoFile.name,
+                '-t', duration.toFixed(3), // Duration in seconds (with milliseconds)
+                '-c', 'copy', // Attempt to copy streams without re-encoding
+                outputFileName
+            ]);
+
+            const data = await ffmpeg.readFile(outputFileName);
+            addDownloadLink(outputFileName, `Trimmed Video: ${formatTime(start)} - ${formatTime(end)}`, new Blob([data.buffer], { type: videoFile.type }));
+            showMessage(trimMessage, 'Video trimmed successfully!', 'success');
+        } catch (error) {
+            console.error('Error trimming video:', error);
+            showMessage(trimMessage, `Error trimming video: ${error.message}`, 'error');
+        } finally {
+            await ffmpeg.deleteFile(videoFile.name); // Clean up file from FFmpeg memory
+            hideLoadingOverlay();
+        }
+    });
+
+    // New: Remove Selected Segment
+    removeSegmentBtn.addEventListener('click', async () => {
+        if (!videoFile) {
+            showMessage(trimMessage, 'Please upload a video first.', 'error');
+            return;
+        }
+        if (!auth.currentUser) {
+            showAuthPrompt();
+            return;
+        }
+        if (!ffmpegLoaded) {
+            showMessage(trimMessage, 'FFmpeg.wasm is still loading. Please wait...', 'error');
+            await loadFFmpeg();
+            if (!ffmpegLoaded) return;
+        }
+
+        const start = parseFloat(trimStartInput.value);
+        const end = parseFloat(trimEndInput.value);
+
+        if (isNaN(start) || isNaN(end) || start < 0 || end > videoDuration || start >= end) {
+            showMessage(trimMessage, 'Please select a valid segment to remove (start < end).', 'error');
+            return;
+        }
+
+        hideMessage(trimMessage);
+        downloadList.innerHTML = '';
+        outputArea.style.display = 'block';
+        showLoadingOverlay('Removing selected segment (this may take time)...');
+
+        try {
+            await ffmpeg.writeFile(videoFile.name, await FFmpegWASM.fetchFile(videoFile));
+            
+            const outputFiles = [];
+
+            // Part 1: From 0 to trimStart
+            if (start > 0.05) { // Add a small buffer to avoid tiny unusable clips
+                const clip1FileName = `${originalVideoFileName}_part1_0s_to_${Math.floor(start)}s.${originalVideoFileExtension}`;
+                const duration1 = start;
+                await ffmpeg.exec([
+                    '-ss', '0',
+                    '-i', videoFile.name,
+                    '-t', duration1.toFixed(3),
+                    '-c', 'copy',
+                    clip1FileName
+                ]);
+                const data1 = await ffmpeg.readFile(clip1FileName);
+                outputFiles.push({
+                    name: clip1FileName,
+                    description: `Part 1 (Before removed segment): ${formatTime(0)} - ${formatTime(start)}`,
+                    blob: new Blob([data1.buffer], { type: videoFile.type })
+                });
+                await ffmpeg.deleteFile(clip1FileName); // Clean up
+            }
+
+            // Part 2: From trimEnd to videoDuration
+            if (end < videoDuration - 0.05) { // Add a small buffer
+                const clip2FileName = `${originalVideoFileName}_part2_${Math.floor(end)}s_to_${Math.floor(videoDuration)}s.${originalVideoFileExtension}`;
+                const duration2 = videoDuration - end;
+                await ffmpeg.exec([
+                    '-ss', end.toFixed(3),
+                    '-i', videoFile.name,
+                    '-t', duration2.toFixed(3),
+                    '-c', 'copy',
+                    clip2FileName
+                ]);
+                const data2 = await ffmpeg.readFile(clip2FileName);
+                outputFiles.push({
+                    name: clip2FileName,
+                    description: `Part 2 (After removed segment): ${formatTime(end)} - ${formatTime(videoDuration)}`,
+                    blob: new Blob([data2.buffer], { type: videoFile.type })
+                });
+                await ffmpeg.deleteFile(clip2FileName); // Clean up
+            }
+
+            if (outputFiles.length === 0) {
+                showMessage(trimMessage, 'The selected segment covers the entire video or is too small to split effectively. No output clips generated.', 'success');
+            } else {
+                outputFiles.forEach(file => addDownloadLink(file.name, file.description, file.blob));
+                showMessage(trimMessage, 'Segment removal complete! Check output list.', 'success');
+            }
+        } catch (error) {
+            console.error('Error removing segment:', error);
+            showMessage(trimMessage, `Error removing segment: ${error.message}`, 'error');
+        } finally {
+            await ffmpeg.deleteFile(videoFile.name); // Clean up
+            hideLoadingOverlay();
+        }
+    });
+
+
+    applySplitBtn.addEventListener('click', async () => {
+        if (!videoFile) {
+            showMessage(splitMessage, 'Please upload a video first.', 'error');
+            return;
+        }
+        if (!auth.currentUser) {
+            showAuthPrompt();
+            return;
+        }
+        if (!ffmpegLoaded) {
+            showMessage(splitMessage, 'FFmpeg.wasm is still loading. Please wait...', 'error');
+            await loadFFmpeg();
+            if (!ffmpegLoaded) return;
+        }
+
+        const splitDuration = parseFloat(splitDurationInput.value);
+
+        if (isNaN(splitDuration) || splitDuration <= 0.1 || splitDuration >= videoDuration) { // Min split duration 0.1s
+            showMessage(splitMessage, `Please enter a valid split duration (greater than 0.1s and less than video length ${videoDuration.toFixed(1)}s).`, 'error');
+            return;
+        }
+
+        hideMessage(splitMessage);
+        downloadList.innerHTML = ''; // Clear previous results
+        outputArea.style.display = 'block';
+        showLoadingOverlay(`Splitting video into ${splitDuration}s segments...`);
+
+        try {
+            await ffmpeg.writeFile(videoFile.name, await FFmpegWASM.fetchFile(videoFile));
+            
+            const numClips = Math.ceil(videoDuration / splitDuration);
+            const outputPromises = [];
+
+            for (let i = 0; i < numClips; i++) {
+                const clipStart = i * splitDuration;
+                const clipDuration = Math.min(splitDuration, videoDuration - clipStart); // Ensure last clip doesn't exceed video end
+                
+                // Skip if clip duration is too small (e.g., last fragment)
+                if (clipDuration < 0.1) continue; 
+
+                const clipFileName = `${originalVideoFileName}_clip_${i + 1}.${originalVideoFileExtension}`;
+
+                outputPromises.push(async () => {
+                    await ffmpeg.exec([
+                        '-ss', clipStart.toFixed(3),
+                        '-i', videoFile.name,
+                        '-t', clipDuration.toFixed(3),
+                        '-c', 'copy',
+                        clipFileName
+                    ]);
+                    const data = await ffmpeg.readFile(clipFileName);
+                    addDownloadLink(clipFileName, `Split by Duration (Clip ${i + 1}): ${formatTime(clipStart)} - ${formatTime(clipStart + clipDuration)}`, new Blob([data.buffer], { type: videoFile.type }));
+                    await ffmpeg.deleteFile(clipFileName); // Clean up
+                });
+            }
+
+            // Execute promises sequentially to avoid overloading FFmpeg.wasm worker
+            for (const p of outputPromises) {
+                await p();
+            }
+
+            showMessage(splitMessage, `Video split into ${outputPromises.length} clips successfully! Check output list.`, 'success');
+
+        } catch (error) {
+            console.error('Error splitting video:', error);
+            showMessage(splitMessage, `Error splitting video: ${error.message}`, 'error');
+        } finally {
+            await ffmpeg.deleteFile(videoFile.name); // Clean up
+            hideLoadingOverlay();
+        }
+    });
+
+    // New: Split at Playhead
+    splitAtPlayheadBtn.addEventListener('click', async () => {
+        if (!videoFile) {
+            showMessage(splitMessage, 'Please upload a video first.', 'error');
+            return;
+        }
+        if (!auth.currentUser) {
+            showAuthPrompt();
+            return;
+        }
+        if (!ffmpegLoaded) {
+            showMessage(splitMessage, 'FFmpeg.wasm is still loading. Please wait...', 'error');
+            await loadFFmpeg();
+            if (!ffmpegLoaded) return;
+        }
+
+        const playheadTime = videoPlayer.currentTime;
+
+        if (playheadTime <= 0.05 || playheadTime >= videoDuration - 0.05) { // Add a small buffer
+            showMessage(splitMessage, 'Please move the playhead to a valid split point within the video (not at the very start or end).', 'error');
+            return;
+        }
+
+        hideMessage(splitMessage);
+        downloadList.innerHTML = '';
+        outputArea.style.display = 'block';
+        showLoadingOverlay(`Cutting video at ${formatTime(playheadTime)}...`);
+
+        try {
+            await ffmpeg.writeFile(videoFile.name, await FFmpegWASM.fetchFile(videoFile));
+            
+            const outputPromises = [];
+
+            // Clip 1: From 0 to playheadTime
+            const clip1FileName = `${originalVideoFileName}_cut1_0s_to_${Math.floor(playheadTime)}s.${originalVideoFileExtension}`;
+            outputPromises.push(async () => {
+                await ffmpeg.exec([
+                    '-ss', '0',
+                    '-i', videoFile.name,
+                    '-t', playheadTime.toFixed(3),
+                    '-c', 'copy',
+                    clip1FileName
+                ]);
+                const data = await ffmpeg.readFile(clip1FileName);
+                addDownloadLink(clip1FileName, `Cut at Playhead (Part 1): ${formatTime(0)} - ${formatTime(playheadTime)}`, new Blob([data.buffer], { type: videoFile.type }));
+                await ffmpeg.deleteFile(clip1FileName); // Clean up
+            });
+
+            // Clip 2: From playheadTime to videoDuration
+            const clip2FileName = `${originalVideoFileName}_cut2_${Math.floor(playheadTime)}s_to_${Math.floor(videoDuration)}s.${originalVideoFileExtension}`;
+            outputPromises.push(async () => {
+                await ffmpeg.exec([
+                    '-ss', playheadTime.toFixed(3),
+                    '-i', videoFile.name,
+                    '-t', (videoDuration - playheadTime).toFixed(3),
+                    '-c', 'copy',
+                    clip2FileName
+                ]);
+                const data = await ffmpeg.readFile(clip2FileName);
+                addDownloadLink(clip2FileName, `Cut at Playhead (Part 2): ${formatTime(playheadTime)} - ${formatTime(videoDuration)}`, new Blob([data.buffer], { type: videoFile.type }));
+                await ffmpeg.deleteFile(clip2FileName); // Clean up
+            });
+
+            // Execute promises sequentially
+            for (const p of outputPromises) {
+                await p();
+            }
+
+            showMessage(splitMessage, 'Video cut at playhead successfully! Check output list.', 'success');
+
+        } catch (error) {
+            console.error('Error cutting video at playhead:', error);
+            showMessage(splitMessage, `Error cutting video at playhead: ${error.message}`, 'error');
+        } finally {
+            await ffmpeg.deleteFile(videoFile.name); // Clean up
+            hideLoadingOverlay();
+        }
+    });
+
+
+    const addDownloadLink = (fileName, description, blob) => {
+        const downloadItem = document.createElement('div');
+        downloadItem.classList.add('download-item');
+
+        const blobUrl = URL.createObjectURL(blob);
+
+        downloadItem.innerHTML = `
+            <div class="download-info">
+                <strong>${fileName}</strong>
+                <span>${description}</span>
+            </div>
+            <a href="${blobUrl}" download="${fileName}">
+                <i class="fa-solid fa-download"></i> Download
+            </a>
+        `;
+        downloadList.appendChild(downloadItem);
+    };
+
+    // Ensure initial timeline update on window resize (responsive)
+    window.addEventListener('resize', () => {
+        if (videoFile) { // Only update if a video is loaded
+            updateTimelineUI();
+            updatePlayheadUI(); // Also update playhead position
+        }
+    });
+
+    // Initial load of FFmpeg.wasm when the page loads
+    loadFFmpeg();
+});
+</script>
+</body>
+</html>
