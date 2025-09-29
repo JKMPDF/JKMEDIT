@@ -69,7 +69,7 @@
 <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
-<!-- FFmpeg.wasm Script (for client-side video processing) -->
+<!-- FFmpeg.wasm Script (for client-side video processing - loaded from CDN) -->
 <script src='https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js'></script>
 
 
@@ -963,10 +963,10 @@
     const { FFmpeg } = FFmpegWASM;
     let ffmpeg = null;
     let ffmpegLoaded = false;
-    // IMPORTANT: Adjusted paths assuming trim-cut-video.html is in Video-Tools/ and lib/ is in Video-Tools/lib/ffmpeg
-    const corePath = './lib/ffmpeg/ffmpeg-core.js'; 
-    const wasmPath = './lib/ffmpeg/ffmpeg-core.wasm'; 
-    // If you add worker, it would be: const workerPath = './lib/ffmpeg/ffmpeg-worker.js';
+    // IMPORTANT: FFmpeg.wasm core files are now loaded from CDN to avoid GitHub Pages MIME type issues.
+    // The local 'lib/ffmpeg' folder is no longer needed for ffmpeg-core.js and ffmpeg-core.wasm.
+    const ffmpegCoreCDNPath = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/';
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Existing Modal Logic (Copied from main.html, adjusted relative paths) ---
@@ -999,22 +999,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const googleSignupBtn = document.getElementById('google-signup-btn');
 
     const openModal = (modal) => { 
+        console.log(`Opening modal: ${modal.id}`); // Debugging
         modal.style.display = 'flex'; // Make visible
-        // Allow transition to apply (if any) by adding class slightly after display
-        setTimeout(() => modal.classList.add('show-modal'), 10); 
+        setTimeout(() => modal.classList.add('show-modal'), 10); // Allow transition
     };
     const closeModal = (modal) => { 
+        console.log(`Closing modal: ${modal.id}`); // Debugging
         modal.classList.remove('show-modal'); 
-        // Hide after transition ends to allow animation to play
         modal.addEventListener('transitionend', () => {
-            if (!modal.classList.contains('show-modal')) { // Only hide if it's actually closed
+            if (!modal.classList.contains('show-modal')) {
                 modal.style.display = 'none'; 
             }
         }, { once: true });
     };
 
     document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent clicks inside modal content from bubbling up to window
             closeModal(aboutModal);
             closeModal(contactModal);
             closeModal(loginModal);
@@ -1023,6 +1024,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('click', (e) => {
+        // Only close if click is directly on the modal backdrop, not on its content
         if (e.target === aboutModal) closeModal(aboutModal);
         if (e.target === contactModal) closeModal(contactModal);
         if (e.target === loginModal) closeModal(loginModal);
@@ -1421,6 +1423,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ffmpegLoaded) return;
 
         showLoadingOverlay('Initializing FFmpeg.wasm (this may take a moment)...');
+        console.log('Attempting to load FFmpeg.wasm...');
         
         ffmpeg = new FFmpeg();
         ffmpeg.on('log', ({ message }) => {
@@ -1449,10 +1452,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             await ffmpeg.load({
-                coreURL: corePath,
-                wasmURL: wasmPath,
-                // Uncomment if you have a separate worker script:
-                // workerURL: './lib/ffmpeg/ffmpeg-worker.js', // Adjusted path
+                // IMPORTANT: Fetching core files directly from CDN to avoid GitHub Pages MIME type issues.
+                coreURL: ffmpegCoreCDNPath + 'ffmpeg-core.js',
+                wasmURL: ffmpegCoreCDNPath + 'ffmpeg-core.wasm',
+                // workerURL: ffmpegCoreCDNPath + 'ffmpeg-core.worker.js', // If worker is ever needed
             });
             ffmpegLoaded = true;
             hideLoadingOverlay();
@@ -1460,7 +1463,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Failed to load FFmpeg.wasm:', error);
             hideLoadingOverlay();
-            showMessage(trimMessage, `Failed to load video processing engine: ${error.message}. Please ensure ${corePath} and ${wasmPath} are correctly placed.`, 'error');
+            showMessage(trimMessage, `Failed to load video processing engine: ${error.message}. Please ensure you are running on a local server or a hosted site.`, 'error');
         }
     };
 
@@ -1504,17 +1507,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Video Upload Logic ---
-    dropArea.addEventListener('click', () => videoUploadInput.click());
+    dropArea.addEventListener('click', () => {
+        console.log('Drop area clicked, triggering file input.'); // Debugging
+        videoUploadInput.click();
+    });
     
     dropArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropArea.style.borderColor = 'var(--secondary-color)';
         dropArea.style.backgroundColor = 'color-mix(in srgb, var(--surface-color) 90%, var(--primary-color) 5%)';
+        console.log('Drag over event.'); // Debugging
     });
 
     dropArea.addEventListener('dragleave', () => {
         dropArea.style.borderColor = 'var(--primary-color)';
         dropArea.style.backgroundColor = 'var(--surface-color)';
+        console.log('Drag leave event.'); // Debugging
     });
 
     dropArea.addEventListener('drop', (e) => {
@@ -1522,6 +1530,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dropArea.style.borderColor = 'var(--primary-color)';
         dropArea.style.backgroundColor = 'var(--surface-color)';
         const files = e.dataTransfer.files;
+        console.log('Drop event. Files dropped:', files); // Debugging
         if (files.length > 0) {
             handleVideoFile(files[0]);
         }
@@ -1529,14 +1538,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     videoUploadInput.addEventListener('change', (e) => {
         const files = e.target.files;
+        console.log('File input change event. Files selected:', files); // Debugging
         if (files.length > 0) {
             handleVideoFile(files[0]);
         }
     });
 
     const handleVideoFile = (file) => {
+        console.log('handleVideoFile called with:', file); // Debugging
         if (!file.type.startsWith('video/')) {
             showMessage(trimMessage, 'Please upload a valid video file.', 'error');
+            console.error('Invalid file type uploaded:', file.type); // Debugging
             return;
         }
 
@@ -1554,6 +1566,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hideMessage(splitMessage);
 
         videoPlayer.addEventListener('loadedmetadata', () => {
+            console.log('Video loadedmetadata event fired. Duration:', videoPlayer.duration); // Debugging
             videoDuration = videoPlayer.duration;
             trimStart = 0;
             trimEnd = videoDuration; // Default trim end to full duration
@@ -1570,12 +1583,16 @@ document.addEventListener('DOMContentLoaded', () => {
             updateTimelineUI(); // Initialize timeline display
             updatePlayheadUI();
         }, { once: true });
+        
+        videoPlayer.addEventListener('error', (e) => {
+            console.error('Video player error:', e);
+            showMessage(trimMessage, 'Error loading video. The file might be corrupt or unsupported.', 'error');
+        });
     };
 
     // --- Timeline UI Logic ---
     const updateTimelineUI = () => {
         if (!videoFile || videoDuration === 0) {
-            // Hide timeline elements if no video is loaded
             trimSegment.style.width = '0px';
             playhead.style.display = 'none';
             playheadLabel.style.display = 'none';
@@ -1772,29 +1789,41 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadList.innerHTML = ''; // Clear previous results
         outputArea.style.display = 'block';
         showLoadingOverlay('Trimming video (this may take time for large files)...');
+        console.log(`Attempting to trim video from ${start.toFixed(3)}s to ${end.toFixed(3)}s`); // Debugging
 
         try {
+            // Write the uploaded video file to FFmpeg's virtual file system
             await ffmpeg.writeFile(videoFile.name, await FFmpegWASM.fetchFile(videoFile));
             const outputFileName = `${originalVideoFileName}_trimmed.${originalVideoFileExtension}`;
             
-            // Use -ss for seek, -t for duration. -i for input. -c copy to avoid re-encoding if possible.
-            // If -c copy is not compatible with -ss or complex filters, re-encoding might occur.
-            await ffmpeg.exec([
-                '-ss', start.toFixed(3), // Start time in seconds (with milliseconds)
+            // FFmpeg command: -ss (seek to start), -i (input file), -t (duration), -c copy (copy streams without re-encoding)
+            // -c copy is fast but might have issues with non-keyframe cuts. If you need frame-accurate cuts at all points,
+            // remove '-c copy' but be aware it will be much slower due to re-encoding.
+            const ffmpegArgs = [
+                '-ss', start.toFixed(3), // Start time in seconds (with milliseconds precision)
                 '-i', videoFile.name,
-                '-t', duration.toFixed(3), // Duration in seconds (with milliseconds)
+                '-t', duration.toFixed(3), // Duration in seconds
                 '-c', 'copy', // Attempt to copy streams without re-encoding
                 outputFileName
-            ]);
+            ];
+            console.log('FFmpeg command:', ffmpegArgs.join(' ')); // Debugging
+            await ffmpeg.exec(ffmpegArgs);
 
             const data = await ffmpeg.readFile(outputFileName);
             addDownloadLink(outputFileName, `Trimmed Video: ${formatTime(start)} - ${formatTime(end)}`, new Blob([data.buffer], { type: videoFile.type }));
             showMessage(trimMessage, 'Video trimmed successfully!', 'success');
+            console.log('Video trimming complete.'); // Debugging
         } catch (error) {
             console.error('Error trimming video:', error);
             showMessage(trimMessage, `Error trimming video: ${error.message}`, 'error');
         } finally {
-            await ffmpeg.deleteFile(videoFile.name); // Clean up file from FFmpeg memory
+            // Clean up file from FFmpeg's virtual file system
+            try {
+                await ffmpeg.deleteFile(videoFile.name); 
+                console.log(`Cleaned up ${videoFile.name} from FFmpeg FS.`); // Debugging
+            } catch (cleanupError) {
+                console.warn(`Failed to delete file ${videoFile.name} from FFmpeg FS:`, cleanupError);
+            }
             hideLoadingOverlay();
         }
     });
@@ -1822,11 +1851,16 @@ document.addEventListener('DOMContentLoaded', () => {
             showMessage(trimMessage, 'Please select a valid segment to remove (start < end).', 'error');
             return;
         }
+        if (end - start < 0.1) { // Minimum segment to remove
+            showMessage(trimMessage, 'Selected segment to remove is too short (min 0.1s).', 'error');
+            return;
+        }
 
         hideMessage(trimMessage);
         downloadList.innerHTML = '';
         outputArea.style.display = 'block';
         showLoadingOverlay('Removing selected segment (this may take time)...');
+        console.log(`Attempting to remove segment from ${start.toFixed(3)}s to ${end.toFixed(3)}s`); // Debugging
 
         try {
             await ffmpeg.writeFile(videoFile.name, await FFmpegWASM.fetchFile(videoFile));
@@ -1834,16 +1868,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const outputFiles = [];
 
             // Part 1: From 0 to trimStart
-            if (start > 0.05) { // Add a small buffer to avoid tiny unusable clips
+            if (start > 0.05) { // Ensure a meaningful first segment
                 const clip1FileName = `${originalVideoFileName}_part1_0s_to_${Math.floor(start)}s.${originalVideoFileExtension}`;
                 const duration1 = start;
-                await ffmpeg.exec([
+                const ffmpegArgs1 = [
                     '-ss', '0',
                     '-i', videoFile.name,
                     '-t', duration1.toFixed(3),
                     '-c', 'copy',
                     clip1FileName
-                ]);
+                ];
+                console.log('FFmpeg command (part 1):', ffmpegArgs1.join(' ')); // Debugging
+                await ffmpeg.exec(ffmpegArgs1);
                 const data1 = await ffmpeg.readFile(clip1FileName);
                 outputFiles.push({
                     name: clip1FileName,
@@ -1854,16 +1890,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Part 2: From trimEnd to videoDuration
-            if (end < videoDuration - 0.05) { // Add a small buffer
+            if (end < videoDuration - 0.05) { // Ensure a meaningful second segment
                 const clip2FileName = `${originalVideoFileName}_part2_${Math.floor(end)}s_to_${Math.floor(videoDuration)}s.${originalVideoFileExtension}`;
                 const duration2 = videoDuration - end;
-                await ffmpeg.exec([
+                const ffmpegArgs2 = [
                     '-ss', end.toFixed(3),
                     '-i', videoFile.name,
                     '-t', duration2.toFixed(3),
                     '-c', 'copy',
                     clip2FileName
-                ]);
+                ];
+                console.log('FFmpeg command (part 2):', ffmpegArgs2.join(' ')); // Debugging
+                await ffmpeg.exec(ffmpegArgs2);
                 const data2 = await ffmpeg.readFile(clip2FileName);
                 outputFiles.push({
                     name: clip2FileName,
@@ -1874,11 +1912,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (outputFiles.length === 0) {
-                showMessage(trimMessage, 'The selected segment covers the entire video or is too small to split effectively. No output clips generated.', 'success');
+                showMessage(trimMessage, 'The selected segment covers almost the entire video. No meaningful clips generated.', 'success');
             } else {
                 outputFiles.forEach(file => addDownloadLink(file.name, file.description, file.blob));
                 showMessage(trimMessage, 'Segment removal complete! Check output list.', 'success');
             }
+            console.log('Segment removal complete.'); // Debugging
         } catch (error) {
             console.error('Error removing segment:', error);
             showMessage(trimMessage, `Error removing segment: ${error.message}`, 'error');
@@ -1915,6 +1954,7 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadList.innerHTML = ''; // Clear previous results
         outputArea.style.display = 'block';
         showLoadingOverlay(`Splitting video into ${splitDuration}s segments...`);
+        console.log(`Attempting to split video every ${splitDuration.toFixed(3)}s.`); // Debugging
 
         try {
             await ffmpeg.writeFile(videoFile.name, await FFmpegWASM.fetchFile(videoFile));
@@ -1926,19 +1966,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 const clipStart = i * splitDuration;
                 const clipDuration = Math.min(splitDuration, videoDuration - clipStart); // Ensure last clip doesn't exceed video end
                 
-                // Skip if clip duration is too small (e.g., last fragment)
+                // Skip if clip duration is too small (e.g., last fragment that is less than 0.1s)
                 if (clipDuration < 0.1) continue; 
 
                 const clipFileName = `${originalVideoFileName}_clip_${i + 1}.${originalVideoFileExtension}`;
 
                 outputPromises.push(async () => {
-                    await ffmpeg.exec([
+                    const ffmpegArgs = [
                         '-ss', clipStart.toFixed(3),
                         '-i', videoFile.name,
                         '-t', clipDuration.toFixed(3),
                         '-c', 'copy',
                         clipFileName
-                    ]);
+                    ];
+                    console.log(`FFmpeg command (clip ${i+1}):`, ffmpegArgs.join(' ')); // Debugging
+                    await ffmpeg.exec(ffmpegArgs);
                     const data = await ffmpeg.readFile(clipFileName);
                     addDownloadLink(clipFileName, `Split by Duration (Clip ${i + 1}): ${formatTime(clipStart)} - ${formatTime(clipStart + clipDuration)}`, new Blob([data.buffer], { type: videoFile.type }));
                     await ffmpeg.deleteFile(clipFileName); // Clean up
@@ -1951,6 +1993,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             showMessage(splitMessage, `Video split into ${outputPromises.length} clips successfully! Check output list.`, 'success');
+            console.log('Video splitting by duration complete.'); // Debugging
 
         } catch (error) {
             console.error('Error splitting video:', error);
@@ -1979,7 +2022,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const playheadTime = videoPlayer.currentTime;
 
-        if (playheadTime <= 0.05 || playheadTime >= videoDuration - 0.05) { // Add a small buffer
+        if (playheadTime <= 0.05 || playheadTime >= videoDuration - 0.05) { // Add a small buffer for valid split points
             showMessage(splitMessage, 'Please move the playhead to a valid split point within the video (not at the very start or end).', 'error');
             return;
         }
@@ -1988,6 +2031,7 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadList.innerHTML = '';
         outputArea.style.display = 'block';
         showLoadingOverlay(`Cutting video at ${formatTime(playheadTime)}...`);
+        console.log(`Attempting to cut video at playhead: ${playheadTime.toFixed(3)}s`); // Debugging
 
         try {
             await ffmpeg.writeFile(videoFile.name, await FFmpegWASM.fetchFile(videoFile));
@@ -1997,13 +2041,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // Clip 1: From 0 to playheadTime
             const clip1FileName = `${originalVideoFileName}_cut1_0s_to_${Math.floor(playheadTime)}s.${originalVideoFileExtension}`;
             outputPromises.push(async () => {
-                await ffmpeg.exec([
+                const ffmpegArgs1 = [
                     '-ss', '0',
                     '-i', videoFile.name,
                     '-t', playheadTime.toFixed(3),
                     '-c', 'copy',
                     clip1FileName
-                ]);
+                ];
+                console.log('FFmpeg command (cut part 1):', ffmpegArgs1.join(' ')); // Debugging
+                await ffmpeg.exec(ffmpegArgs1);
                 const data = await ffmpeg.readFile(clip1FileName);
                 addDownloadLink(clip1FileName, `Cut at Playhead (Part 1): ${formatTime(0)} - ${formatTime(playheadTime)}`, new Blob([data.buffer], { type: videoFile.type }));
                 await ffmpeg.deleteFile(clip1FileName); // Clean up
@@ -2012,13 +2058,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // Clip 2: From playheadTime to videoDuration
             const clip2FileName = `${originalVideoFileName}_cut2_${Math.floor(playheadTime)}s_to_${Math.floor(videoDuration)}s.${originalVideoFileExtension}`;
             outputPromises.push(async () => {
-                await ffmpeg.exec([
+                const ffmpegArgs2 = [
                     '-ss', playheadTime.toFixed(3),
                     '-i', videoFile.name,
-                    '-t', (videoDuration - playheadTime).toFixed(3),
+                    '-t', (videoDuration - playheadTime).toFixed(3), // Calculate remaining duration
                     '-c', 'copy',
                     clip2FileName
-                ]);
+                ];
+                console.log('FFmpeg command (cut part 2):', ffmpegArgs2.join(' ')); // Debugging
+                await ffmpeg.exec(ffmpegArgs2);
                 const data = await ffmpeg.readFile(clip2FileName);
                 addDownloadLink(clip2FileName, `Cut at Playhead (Part 2): ${formatTime(playheadTime)} - ${formatTime(videoDuration)}`, new Blob([data.buffer], { type: videoFile.type }));
                 await ffmpeg.deleteFile(clip2FileName); // Clean up
@@ -2030,6 +2078,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             showMessage(splitMessage, 'Video cut at playhead successfully! Check output list.', 'success');
+            console.log('Video cut at playhead complete.'); // Debugging
 
         } catch (error) {
             console.error('Error cutting video at playhead:', error);
