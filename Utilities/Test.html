@@ -13,15 +13,24 @@
         :root {
             font-family: 'Inter', sans-serif;
         }
+        /* Custom chat bubble styles for a modern look */
         .chat-bubble-mine {
-            background-color: #4f46e5;
+            background-color: #4f46e5; /* Indigo-600 */
             color: white;
             border-bottom-right-radius: 0.75rem;
         }
         .chat-bubble-partner {
-            background-color: #f3f4f6;
-            color: #1f2937;
+            background-color: #f3f4f6; /* Gray-100 */
+            color: #1f2937; /* Gray-800 */
             border-bottom-left-radius: 0.75rem;
+        }
+        /* Make sure video elements cover their containers */
+        #local-video, #remote-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Added opacity transition for smooth camera on/off feedback */
+            transition: opacity 0.3s ease-in-out; 
         }
     </style>
 </head>
@@ -38,7 +47,11 @@
                 
                 <!-- Room Joining Form -->
                 <div class="mb-4 space-y-2">
-                    <button id="create-room-btn" class="w-full p-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50 shadow-md flex items-center justify-center gap-2 text-sm">
+                    <button 
+                        id="create-room-btn" 
+                        class="w-full p-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50 shadow-md flex items-center justify-center gap-2 text-sm"
+                        disabled
+                    >
                         START NEW ROOM
                     </button>
                     <div class="flex gap-2">
@@ -111,17 +124,18 @@
                         </div>
 
                         <!-- Video Panel (Initially Hidden) -->
+                        <!-- max-h-0 and opacity-0 transition controls collapse/expand effect -->
                         <div id="video-panel" class="transition-all duration-300 ease-in-out max-h-0 opacity-0 overflow-hidden">
                             <div class="p-4 bg-gray-100">
                                 <div class="grid grid-cols-2 gap-4">
                                     <!-- Local Video Stream -->
                                     <div class="relative bg-gray-800 rounded-lg shadow aspect-video overflow-hidden">
-                                        <video id="local-video" autoplay muted playsinline class="w-full h-full object-cover transform scale-x-[-1]"></video>
+                                        <video id="local-video" autoplay muted playsinline class="transform scale-x-[-1]"></video>
                                         <span class="absolute bottom-1 left-1 px-2 py-1 bg-black bg-opacity-50 text-white text-xs rounded">You</span>
                                     </div>
                                     <!-- Remote Video Stream -->
                                     <div class="relative bg-gray-800 rounded-lg shadow aspect-video overflow-hidden">
-                                        <video id="remote-video" autoplay playsinline class="w-full h-full object-cover transform scale-x-[-1]"></video>
+                                        <video id="remote-video" autoplay playsinline class="transform scale-x-[-1]"></video>
                                         <span class="absolute bottom-1 left-1 px-2 py-1 bg-black bg-opacity-50 text-white text-xs rounded">Partner</span>
                                     </div>
                                 </div>
@@ -186,8 +200,8 @@
         let userId = '';
         let activeRoomId = null;
         let joinedRooms = [];
-        let status = 'ready'; // 'ready', 'calling', 'receiving', 'connected', 'error'
-
+        let status = 'initializing'; // Explicitly initializing
+        
         // WebRTC variables
         const servers = {
             iceServers: [
@@ -240,23 +254,26 @@
             const activeRoomName = activeRoom ? activeRoom.name : 'No Room Selected';
 
             let statusText = '';
-            let alertVisible = 'hidden';
 
-            if (status === 'receiving') {
+            if (status === 'initializing') {
+                statusText = '<div class="text-white font-semibold flex items-center gap-2"><svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Authenticating...</div>';
+            } else if (status === 'error') {
+                 statusText = '<div class="text-red-300 font-semibold">Authentication Error. Check console.</div>';
+            } else if (status === 'receiving') {
                 statusText = `Incoming Video Call in ${activeRoomName}!`;
-                alertVisible = 'flex';
                 $callAlert.classList.remove('hidden');
             } else {
                 $callAlert.classList.add('hidden');
             }
 
-            if (activeRoomId) {
-                statusText = `<span class="text-green-600 font-semibold flex items-center gap-2">
+            if (activeRoomId && status !== 'initializing' && status !== 'error') {
+                // Show the Room ID here clearly
+                statusText = `<span class="text-green-300 font-semibold flex items-center gap-2">
                     <i data-lucide="message-square" class="w-4 h-4"></i> Active Room: ${activeRoomName} 
-                    <span class="text-xs ml-4 text-gray-700">| ID: ${activeRoomId}</span>
+                    <span class="text-xs ml-4 text-white opacity-70">| ID: ${activeRoomId}</span>
                 </span>`;
-            } else {
-                statusText = '<div class="text-blue-500 font-semibold">Select a chat or start a new room.</div>';
+            } else if (status === 'ready') {
+                 statusText = '<div class="text-white font-semibold">Ready to chat.</div>';
             }
             
             $statusDisplay.innerHTML = statusText;
@@ -286,7 +303,7 @@
             }
 
             // Update input/button states
-            const isDisabled = !activeRoomId || status === 'calling' || status === 'receiving';
+            const isDisabled = !activeRoomId || status === 'calling' || status === 'receiving' || status === 'initializing' || status === 'error';
             $newMessageInput.disabled = isDisabled;
             $sendMessageBtn.disabled = isDisabled;
             $startCallBtn.disabled = status !== 'ready' && status !== 'chat_only';
@@ -310,19 +327,23 @@
         }
         
         function updateVideoVisibility() {
+            // Controls the visual collapse/expand of the video panel
             $videoPanel.classList.toggle('max-h-[40vh]', isVideosVisible && activeRoomId);
             $videoPanel.classList.toggle('opacity-100', isVideosVisible && activeRoomId);
             $videoPanel.classList.toggle('max-h-0', !isVideosVisible);
             $videoPanel.classList.toggle('opacity-0', !isVideosVisible);
 
+            // Controls the visual feedback on the local video stream when camera is off
             $localVideo.classList.toggle('opacity-100', isCameraOn);
             $localVideo.classList.toggle('opacity-20', !isCameraOn);
             
+            // Toggle mic button style
             const icon = isMicOn ? 'mic' : 'mic-off';
             $micToggleBtn.innerHTML = `<i data-lucide="${icon}" class="w-6 h-6"></i>`;
             $micToggleBtn.classList.toggle('bg-indigo-500', isMicOn);
             $micToggleBtn.classList.toggle('bg-red-500', !isMicOn);
             
+            // Toggle camera button style
             const cameraIcon = isCameraOn ? 'video' : 'video-off';
             $cameraToggleBtn.innerHTML = `<i data-lucide="${cameraIcon}" class="w-6 h-6"></i>`;
             $cameraToggleBtn.classList.toggle('bg-indigo-500', isCameraOn);
@@ -360,49 +381,75 @@
                 msgDiv.appendChild(contentDiv);
                 $messageList.appendChild(msgDiv);
             });
-            $messageList.scrollTop = $messageList.scrollHeight;
+            $messageList.scrollTop = $messageList.scrollHeight; // Auto-scroll to latest message
         }
 
-        // --- FIREBASE & AUTH ---
+        // --- FIREBASE & AUTH (Initialization and Sign-In) ---
 
         async function initFirebase() {
             try {
+                // 1. Initialize Firebase
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
                 
-                let currentUserId;
-                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : undefined;
+                $userIdDisplay.textContent = 'Authenticating...';
+                status = 'initializing';
+                updateStatusDisplay();
+
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
                 
+                // 2. Start Sign-In Process (without waiting for result)
                 if (initialAuthToken) {
-                    const userCredential = await signInWithCustomToken(auth, initialAuthToken);
-                    currentUserId = userCredential.user.uid;
+                    signInWithCustomToken(auth, initialAuthToken).catch(e => console.error("Custom token sign-in failed:", e));
                 } else {
-                    const userCredential = await signInAnonymously(auth);
-                    currentUserId = userCredential.user.uid;
+                    signInAnonymously(auth).catch(e => console.error("Anonymous sign-in failed:", e));
                 }
                 
-                userId = currentUserId;
+                // 3. Wait for User ID confirmation using onAuthStateChanged (The definitive fix)
+                await new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => {
+                        reject(new Error("Authentication timed out after 5 seconds."));
+                    }, 5000); 
+
+                    const unsubscribe = onAuthStateChanged(auth, (user) => {
+                        if (user && user.uid) {
+                            clearTimeout(timeout);
+                            userId = user.uid;
+                            unsubscribe();
+                            resolve();
+                        }
+                    });
+                });
+
+                // 4. Finalize UI State
+                status = 'ready';
                 $userIdDisplay.textContent = userId.substring(0, 6) + '...';
+                $createRoomBtn.disabled = false; 
+                $joinRoomBtn.disabled = ($newRoomCodeInput.value.length !== 6);
+                
                 updateStatusDisplay();
-                console.log("Firebase initialized and authenticated.");
+                console.log("Firebase initialized and authenticated successfully with User ID:", userId);
                 
             } catch (error) {
                 console.error("Firebase initialization failed:", error);
                 status = 'error';
+                $userIdDisplay.textContent = 'Auth Error! FAILED.';
+                $createRoomBtn.disabled = true; 
+                $joinRoomBtn.disabled = true;
                 updateStatusDisplay();
             }
         }
 
         // --- ROOM LOGIC ---
 
+        // Sets the currently active chat room, resets media state, and starts message listener
         function setActiveRoom(roomId) {
             activeRoomId = roomId;
             updateStatusDisplay();
             startMessageListener();
-            // Reset media controls when switching rooms
             disconnectMedia(); 
-            status = 'ready'; // Ready to start a new call in this room
+            status = 'ready'; 
         }
         
         async function createNewRoom() {
@@ -410,6 +457,7 @@
             const newId = generateRandomId();
             const roomName = `Room ${newId.substring(0, 4)}`;
 
+            // Create room document in public space
             await setDoc(doc(db, `artifacts/${appId}/public/data/calls/${newId}`), {
                 name: roomName,
                 createdAt: new Date(),
@@ -417,6 +465,7 @@
                 status: 'chat_only'
             });
             
+            // Add room to local list and select it
             joinedRooms = [...joinedRooms.filter(r => r.id !== newId), { id: newId, name: roomName }];
             updateRoomListUI();
             setActiveRoom(newId);
@@ -429,9 +478,10 @@
 
             try {
                 const roomDocRef = doc(db, `artifacts/${appId}/public/data/calls/${code}`);
+                // Use a temporary listener to check if the room exists
                 const unsubscribe = onSnapshot(roomDocRef, (snapshot) => {
                     const data = snapshot.data();
-                    unsubscribe(); 
+                    unsubscribe(); // Stop listening after first data received
 
                     if (data) {
                         const roomName = data.name || `Room ${code.substring(0, 4)}`;
@@ -449,6 +499,7 @@
             }
         }
         
+        // Disconnects from the room locally
         function leaveRoom(roomId) {
             if (pc) disconnectMedia();
             
@@ -465,8 +516,9 @@
         
         let messageListenerUnsubscribe = () => {};
 
+        // Sets up the real-time listener for messages in the active room
         function startMessageListener() {
-            messageListenerUnsubscribe(); // Stop previous listener
+            messageListenerUnsubscribe(); 
             if (!activeRoomId) {
                 renderMessages([]);
                 return;
@@ -493,7 +545,7 @@
             try {
                 await addDoc(collection(db, `artifacts/${appId}/public/data/calls/${activeRoomId}/messages`), {
                     text: text,
-                    userId: userId.substring(0, 6),
+                    userId: userId.substring(0, 6), // Use short ID for chat display
                     timestamp: serverTimestamp()
                 });
                 $newMessageInput.value = '';
@@ -504,13 +556,13 @@
 
         // --- WEBRTC CORE LOGIC ---
 
+        // Requests local media (camera/mic)
         async function getMedia() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 localStream = stream;
                 $localVideo.srcObject = stream;
                 
-                // Initial state setup for toggles
                 stream.getAudioTracks().forEach(track => (track.enabled = isMicOn));
                 stream.getVideoTracks().forEach(track => (track.enabled = isCameraOn));
                 
@@ -524,6 +576,7 @@
             }
         }
 
+        // Sets up the RTCPeerConnection object
         function createPeerConnection(stream, remoteCallDocRef) {
             pc = new RTCPeerConnection(servers);
 
@@ -536,6 +589,7 @@
                 }
             };
             
+            // Collect ICE candidates and push them to Firestore
             pc.onicecandidate = async (event) => {
                 if (event.candidate) {
                     await addDoc(collection(remoteCallDocRef, 'iceCandidates'), event.candidate.toJSON());
@@ -547,6 +601,7 @@
             return pc;
         }
         
+        // Initiates a video call (Sender side)
         async function startVideoCall() {
             if (!userId || !activeRoomId || status !== 'ready') return;
 
@@ -556,7 +611,7 @@
             updateVideoVisibility();
             
             const stream = await getMedia();
-            if (!stream) { status = 'ready'; updateStatusDisplay(); return; } // Cannot start call without media
+            if (!stream) { status = 'ready'; updateStatusDisplay(); return; }
 
             const callDocRef = doc(db, `artifacts/${appId}/public/data/calls/${activeRoomId}`);
             const peerConnection = createPeerConnection(stream, callDocRef);
@@ -564,10 +619,11 @@
             const offer = await peerConnection.createOffer();
             await peerConnection.setLocalDescription(offer);
 
-            await setDoc(callDocRef, { offer: { ...offer.toJSON(), userId }, status: 'offering' }, { merge: true });
+            // Send the offer to Firestore
+            await setDoc(callDocRef, { offer: { ...offer.toJSON(), userId: userId.substring(0, 6) }, status: 'offering' }, { merge: true });
             console.log(`Video Call started in room ${activeRoomId}. Waiting for partner...`);
 
-            // Listen for answer
+            // Listen for answer from partner
             let answerListener = onSnapshot(callDocRef, async (snapshot) => {
                 const data = snapshot.data();
                 if (data?.answer && !peerConnection.currentRemoteDescription) {
@@ -579,6 +635,7 @@
             });
         }
         
+        // Answers an incoming video call (Receiver side)
         async function answerVideoCall() {
             if (!userId || !activeRoomId || status !== 'receiving') return;
 
@@ -589,6 +646,7 @@
             const stream = await getMedia();
             if (!stream) { status = 'ready'; updateStatusDisplay(); return; }
 
+            // Get the current offer snapshot
             const callSnapshot = await new Promise(resolve => {
                 const unsub = onSnapshot(callDocRef, (snapshot) => {
                     unsub(); 
@@ -602,11 +660,13 @@
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(answer);
 
-            await setDoc(callDocRef, { answer: { ...answer.toJSON(), userId }, status: 'connected' }, { merge: true });
+            // Send the answer to Firestore
+            await setDoc(callDocRef, { answer: { ...answer.toJSON(), userId: userId.substring(0, 6) }, status: 'connected' }, { merge: true });
             console.log('Answer sent, video connection established.');
             listenForIceCandidates(peerConnection, callDocRef);
         }
 
+        // Listens for ICE candidates created by the peer and adds them
         function listenForIceCandidates(peerConnection, callDocRef) {
             const candidatesCollectionRef = collection(callDocRef, 'iceCandidates');
             onSnapshot(candidatesCollectionRef, (snapshot) => {
@@ -619,6 +679,7 @@
             });
         }
         
+        // Disconnects local media streams and clears call status in Firestore
         function disconnectMedia() {
             if (localStream) {
                 localStream.getTracks().forEach(track => track.stop());
@@ -628,12 +689,13 @@
             }
             
             if(activeRoomId) {
+                // Clear signaling data in Firestore to notify the peer the call has ended
                 setDoc(doc(db, `artifacts/${appId}/public/data/calls/${activeRoomId}`), 
                        { status: 'chat_only', offer: deleteField(), answer: deleteField() }, 
                        { merge: true });
             }
             
-            // Reset media states
+            // Reset local states
             status = 'ready';
             $localVideo.srcObject = null;
             $remoteVideo.srcObject = null;
@@ -648,12 +710,35 @@
             console.log("Media session ended.");
         }
         
-        function startIncomingCallListener() {
-            if (!userId) return;
+        // --- INCOMING CALL WATCHER ---
+        // Listens for an offer from a peer in the currently active room
+        // This listener is initialized after the first successful authentication in initFirebase
+        // For the purpose of the onAuthStateChanged setup, we'll keep the core logic simple here.
 
-            // This is complex in native JS without React useEffects, so we attach one listener per room change.
-            // The logic to detect and prompt for incoming calls is handled inside setActiveRoom,
-            // but we need a global listener management function here.
+        // Global watcher for all rooms, filtering for the active one.
+        let roomWatcherUnsubscribe = null;
+
+        function startRoomWatcher() {
+             if (!db || roomWatcherUnsubscribe) return;
+
+             roomWatcherUnsubscribe = onSnapshot(collection(db, `artifacts/${appId}/public/data/calls`), (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    const data = change.doc.data();
+                    const roomId = change.doc.id;
+
+                    if (roomId === activeRoomId) {
+                         if (data?.offer && data.status === 'offering' && data.offer.userId !== userId.substring(0, 6) && status === 'ready') {
+                            // Incoming call detected and current user is ready to receive
+                            status = 'receiving';
+                            updateStatusDisplay(); 
+                        }
+                        if (data?.status === 'chat_only' && status === 'connected') {
+                             // Peer hung up, force a disconnect locally
+                             disconnectMedia();
+                        }
+                    }
+                });
+            });
         }
 
         // --- EVENT HANDLERS ---
@@ -661,17 +746,22 @@
         $newRoomCodeInput.addEventListener('input', () => {
             const val = $newRoomCodeInput.value.toUpperCase();
             $newRoomCodeInput.value = val;
-            $joinRoomBtn.disabled = val.length !== 6;
+            // The JOIN button is enabled if 6 digits are entered AND the user ID is active
+            $joinRoomBtn.disabled = val.length !== 6 || !userId; 
         });
 
         $joinRoomBtn.addEventListener('click', joinExistingRoom);
         $createRoomBtn.addEventListener('click', createNewRoom);
         $leaveRoomBtn.addEventListener('click', () => leaveRoom(activeRoomId));
-        $sendMessageBtn.addEventListener('click', sendMessage);
+        
+        // Use form submission for sending messages
+        document.getElementById('message-form').addEventListener('submit', sendMessage);
+        
         $startCallBtn.addEventListener('click', startVideoCall);
         $endMediaBtn.addEventListener('click', disconnectMedia);
         $answerCallBtn.addEventListener('click', answerVideoCall);
-        $declineCallBtn.addEventListener('click', () => { status = 'ready'; updateStatusDisplay(); });
+        // Decline button just resets the status and hides the alert
+        $declineCallBtn.addEventListener('click', () => { status = 'ready'; updateStatusDisplay(); }); 
         
         $micToggleBtn.addEventListener('click', () => {
             isMicOn = !isMicOn;
@@ -690,10 +780,15 @@
             updateVideoVisibility();
         });
         
-        document.addEventListener('DOMContentLoaded', () => {
-            initFirebase();
-            // Start listening for incoming calls after auth is complete
-            // startIncomingCallListener(); // Managed via onSnapshot in startVideoCall/answerVideoCall
+        // Placeholder for file sharing
+        document.getElementById('file-share-input').addEventListener('change', (e) => {
+            console.log("File selected:", e.target.files[0].name);
+            // This would require WebRTC Data Channel implementation for P2P file transfer.
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+             await initFirebase();
+             startRoomWatcher(); // Start watching for rooms once Firebase is ready
         });
 
     </script>
