@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Real-Time Messenger</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tailwind Configuration -->
+    <style>
+        :root {
+            font-family: 'Inter', sans-serif;
+        }
+        .chat-bubble-mine {
+            background-color: #4f46e5;
+            color: white;
+            border-bottom-right-radius: 0.75rem;
+        }
+        .chat-bubble-partner {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            border-bottom-left-radius: 0.75rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <div id="app-container" class="min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-7xl w-full mx-auto bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
+            
+            <!-- --- Lobby Panel (Left/Top) --- -->
+            <div id="lobby-panel" class="w-full md:w-1/4 bg-gray-50 border-r border-gray-200 p-4 flex flex-col md:min-h-[90vh]">
+                <h2 class="text-lg font-extrabold text-gray-800 mb-4 flex items-center gap-2 border-b pb-2">
+                    <i data-lucide="users" class="w-5 h-5"></i> Active Chats
+                </h2>
+                
+                <!-- Room Joining Form -->
+                <div class="mb-4 space-y-2">
+                    <button id="create-room-btn" class="w-full p-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50 shadow-md flex items-center justify-center gap-2 text-sm">
+                        START NEW ROOM
+                    </button>
+                    <div class="flex gap-2">
+                        <input
+                            type="text"
+                            id="new-room-code-input"
+                            placeholder="Enter Room ID (6 digits)"
+                            maxlength="6"
+                            class="flex-1 p-3 border border-gray-300 rounded-lg text-sm uppercase font-mono shadow-inner"
+                        />
+                        <button
+                            id="join-room-btn"
+                            class="p-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition disabled:opacity-50 text-sm"
+                            disabled
+                        >
+                            JOIN
+                        </button>
+                    </div>
+                </div>
+
+                <!-- List of Joined Rooms -->
+                <div id="room-list" class="flex-1 overflow-y-auto space-y-1">
+                    <p id="no-rooms-msg" class="text-sm text-gray-500 italic">No active rooms. Start a new one above!</p>
+                </div>
+                
+                <p class="text-xs text-center mt-4 text-gray-500 border-t pt-2">
+                    Your User ID: <span id="user-id-display">Initializing...</span>
+                </p>
+            </div>
+
+            <!-- Chat & Video Area (Right/Main) -->
+            <div class="flex flex-col flex-1">
+                <div id="header-bar" class="p-4 bg-indigo-700 text-white flex justify-between items-center">
+                    <h1 class="text-3xl font-extrabold">P2P Messenger</h1>
+                    <div id="status-display" class="text-sm">Initializing...</div>
+                </div>
+                
+                <div id="main-content" class="flex-1 flex flex-col">
+                    <!-- Welcome Screen -->
+                    <div id="welcome-screen" class="flex-1 flex items-center justify-center p-8 text-center text-gray-500">
+                        <p class="text-lg">Please use the panel on the left to **START A NEW ROOM** or **JOIN** an existing one using a 6-digit Room ID.</p>
+                    </div>
+
+                    <!-- Chat Area (Hidden until room is selected) -->
+                    <div id="chat-area" class="flex flex-col flex-1 bg-white h-[65vh] hidden">
+                        
+                        <!-- Chat Header (Name, Call/Leave Buttons) -->
+                        <div id="chat-header" class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-gray-800">Room Name</h2>
+                            <div class="flex items-center space-x-2">
+                                <button id="end-media-btn" class="p-2 bg-yellow-600 text-white rounded-lg font-semibold hover:bg-yellow-700 transition shadow-md text-sm flex items-center gap-1 hidden" title="End Video Call Only">
+                                    <i data-lucide="phone-off" class="w-4 h-4"></i> End Media
+                                </button>
+                                <button id="start-call-btn" class="p-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition shadow-md text-sm flex items-center gap-1 disabled:opacity-50">
+                                    <i data-lucide="video" class="w-4 h-4"></i> Call
+                                </button>
+                                <button id="leave-room-btn" class="p-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition shadow-md text-sm flex items-center gap-1">
+                                    <i data-lucide="x" class="w-4 h-4"></i> Leave
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Incoming Call Alert (Hidden by default) -->
+                        <div id="call-alert" class="hidden flex items-center justify-between bg-red-100 p-3 border border-red-300">
+                            <span class="text-red-700 font-semibold">Incoming Video Call!</span>
+                            <div class="flex gap-2">
+                                <button id="answer-call-btn" class="p-2 px-4 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600">Answer</button>
+                                <button id="decline-call-btn" class="p-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600">Decline</button>
+                            </div>
+                        </div>
+
+                        <!-- Video Panel (Initially Hidden) -->
+                        <div id="video-panel" class="transition-all duration-300 ease-in-out max-h-0 opacity-0 overflow-hidden">
+                            <div class="p-4 bg-gray-100">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <!-- Local Video Stream -->
+                                    <div class="relative bg-gray-800 rounded-lg shadow aspect-video overflow-hidden">
+                                        <video id="local-video" autoplay muted playsinline class="w-full h-full object-cover transform scale-x-[-1]"></video>
+                                        <span class="absolute bottom-1 left-1 px-2 py-1 bg-black bg-opacity-50 text-white text-xs rounded">You</span>
+                                    </div>
+                                    <!-- Remote Video Stream -->
+                                    <div class="relative bg-gray-800 rounded-lg shadow aspect-video overflow-hidden">
+                                        <video id="remote-video" autoplay playsinline class="w-full h-full object-cover transform scale-x-[-1]"></video>
+                                        <span class="absolute bottom-1 left-1 px-2 py-1 bg-black bg-opacity-50 text-white text-xs rounded">Partner</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Video Controls -->
+                                <div id="media-controls" class="flex justify-center items-center p-3 border-t border-gray-200 bg-gray-50 space-x-4 mt-4 rounded-b-lg">
+                                    <button id="mic-toggle-btn" class="p-3 rounded-full shadow-md bg-indigo-500 text-white hover:bg-indigo-600 transition" title="Mute Mic"><i data-lucide="mic" class="w-6 h-6"></i></button>
+                                    <button id="camera-toggle-btn" class="p-3 rounded-full shadow-md bg-indigo-500 text-white hover:bg-indigo-600 transition" title="Turn Off Camera"><i data-lucide="video" class="w-6 h-6"></i></button>
+                                    <button id="video-toggle-btn" class="p-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition shadow-md" title="Collapse Video Panel"><i data-lucide="minimize-2" class="w-6 h-6"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Message List -->
+                        <div id="message-list" class="flex-1 overflow-y-auto space-y-3 p-4">
+                            <!-- Messages will be injected here -->
+                            <div id="messages-end-ref"></div>
+                        </div>
+
+                        <!-- Message Input -->
+                        <div class="p-4 border-t border-gray-200 bg-white">
+                            <form id="message-form" class="flex gap-2">
+                                <label class="p-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition cursor-pointer disabled:opacity-50" title="Share Photo/Video (P2P)">
+                                    <input type="file" id="file-share-input" class="hidden" accept="image/*,video/*" />
+                                    <i data-lucide="upload" class="w-5 h-5"></i>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="new-message-input"
+                                    placeholder="Message..."
+                                    class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-inner"
+                                    disabled
+                                />
+                                <button
+                                    type="submit"
+                                    id="send-message-btn"
+                                    class="p-3 bg-indigo-500 text-white rounded-lg font-semibold hover:bg-indigo-600 transition disabled:opacity-50"
+                                    disabled
+                                >
+                                    <i data-lucide="corner-down-left" class="w-5 h-5"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- GLOBAL STATE & CONFIGURATION ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        let db;
+        let auth;
+        let userId = '';
+        let activeRoomId = null;
+        let joinedRooms = [];
+        let status = 'ready'; // 'ready', 'calling', 'receiving', 'connected', 'error'
+
+        // WebRTC variables
+        const servers = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+            ],
+        };
+        let pc = null;
+        let localStream = null;
+        let isMicOn = true;
+        let isCameraOn = true;
+        let isVideosVisible = false;
+        
+        // DOM Elements
+        const $ = (id) => document.getElementById(id);
+        const $userIdDisplay = $('user-id-display');
+        const $roomList = $('room-list');
+        const $newRoomCodeInput = $('new-room-code-input');
+        const $joinRoomBtn = $('join-room-btn');
+        const $createRoomBtn = $('create-room-btn');
+        const $statusDisplay = $('status-display');
+        const $welcomeScreen = $('welcome-screen');
+        const $chatArea = $('chat-area');
+        const $chatHeader = $('chat-header').querySelector('h2');
+        const $messageList = $('message-list');
+        const $newMessageInput = $('new-message-input');
+        const $sendMessageBtn = $('send-message-btn');
+        const $startCallBtn = $('start-call-btn');
+        const $leaveRoomBtn = $('leave-room-btn');
+        const $endMediaBtn = $('end-media-btn');
+        const $localVideo = $('local-video');
+        const $remoteVideo = $('remote-video');
+        const $micToggleBtn = $('mic-toggle-btn');
+        const $cameraToggleBtn = $('camera-toggle-btn');
+        const $videoToggleBtn = $('video-toggle-btn');
+        const $videoPanel = $('video-panel');
+        const $callAlert = $('call-alert');
+        const $answerCallBtn = $('answer-call-btn');
+        const $declineCallBtn = $('decline-call-btn');
+
+        // --- UTILITIES ---
+        function generateRandomId() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        // --- UI UPDATES ---
+        
+        function updateStatusDisplay() {
+            const activeRoom = joinedRooms.find(r => r.id === activeRoomId);
+            const activeRoomName = activeRoom ? activeRoom.name : 'No Room Selected';
+
+            let statusText = '';
+            let alertVisible = 'hidden';
+
+            if (status === 'receiving') {
+                statusText = `Incoming Video Call in ${activeRoomName}!`;
+                alertVisible = 'flex';
+                $callAlert.classList.remove('hidden');
+            } else {
+                $callAlert.classList.add('hidden');
+            }
+
+            if (activeRoomId) {
+                statusText = `<span class="text-green-600 font-semibold flex items-center gap-2">
+                    <i data-lucide="message-square" class="w-4 h-4"></i> Active Room: ${activeRoomName} 
+                    <span class="text-xs ml-4 text-gray-700">| ID: ${activeRoomId}</span>
+                </span>`;
+            } else {
+                statusText = '<div class="text-blue-500 font-semibold">Select a chat or start a new room.</div>';
+            }
+            
+            $statusDisplay.innerHTML = statusText;
+            lucide.createIcons(); // Re-render Lucide icons
+
+            // Update Video/Call Controls visibility
+            if (activeRoomId) {
+                $chatArea.classList.remove('hidden');
+                $welcomeScreen.classList.add('hidden');
+                $chatHeader.textContent = activeRoomName;
+
+                $startCallBtn.classList.remove('hidden');
+                $leaveRoomBtn.classList.remove('hidden');
+                
+                // Toggle End Media button
+                if (status === 'connected') {
+                    $endMediaBtn.classList.remove('hidden');
+                    $startCallBtn.classList.add('hidden');
+                } else {
+                    $endMediaBtn.classList.add('hidden');
+                    $startCallBtn.classList.remove('hidden');
+                }
+                
+            } else {
+                 $chatArea.classList.add('hidden');
+                 $welcomeScreen.classList.remove('hidden');
+            }
+
+            // Update input/button states
+            const isDisabled = !activeRoomId || status === 'calling' || status === 'receiving';
+            $newMessageInput.disabled = isDisabled;
+            $sendMessageBtn.disabled = isDisabled;
+            $startCallBtn.disabled = status !== 'ready' && status !== 'chat_only';
+        }
+
+        function updateRoomListUI() {
+            $roomList.innerHTML = ''; // Clear list
+            if (joinedRooms.length === 0) {
+                $roomList.innerHTML = '<p id="no-rooms-msg" class="text-sm text-gray-500 italic">No active rooms. Start a new one above!</p>';
+                return;
+            }
+
+            joinedRooms.forEach(room => {
+                const isActive = room.id === activeRoomId;
+                const button = document.createElement('button');
+                button.className = `w-full text-left p-3 rounded-lg transition duration-150 flex justify-between items-center ${isActive ? 'bg-indigo-100 border-l-4 border-indigo-600 font-bold' : 'hover:bg-gray-200'}`;
+                button.innerHTML = `<span class="truncate">${room.name}</span><span class="text-xs text-gray-500 ml-2">${room.id}</span>`;
+                button.onclick = () => setActiveRoom(room.id);
+                $roomList.appendChild(button);
+            });
+        }
+        
+        function updateVideoVisibility() {
+            $videoPanel.classList.toggle('max-h-[40vh]', isVideosVisible && activeRoomId);
+            $videoPanel.classList.toggle('opacity-100', isVideosVisible && activeRoomId);
+            $videoPanel.classList.toggle('max-h-0', !isVideosVisible);
+            $videoPanel.classList.toggle('opacity-0', !isVideosVisible);
+
+            $localVideo.classList.toggle('opacity-100', isCameraOn);
+            $localVideo.classList.toggle('opacity-20', !isCameraOn);
+            
+            const icon = isMicOn ? 'mic' : 'mic-off';
+            $micToggleBtn.innerHTML = `<i data-lucide="${icon}" class="w-6 h-6"></i>`;
+            $micToggleBtn.classList.toggle('bg-indigo-500', isMicOn);
+            $micToggleBtn.classList.toggle('bg-red-500', !isMicOn);
+            
+            const cameraIcon = isCameraOn ? 'video' : 'video-off';
+            $cameraToggleBtn.innerHTML = `<i data-lucide="${cameraIcon}" class="w-6 h-6"></i>`;
+            $cameraToggleBtn.classList.toggle('bg-indigo-500', isCameraOn);
+            $cameraToggleBtn.classList.toggle('bg-red-500', !isCameraOn);
+            
+            lucide.createIcons();
+        }
+
+        function renderMessages(msgs) {
+            $messageList.innerHTML = '';
+            msgs.forEach(msg => {
+                const isMyMessage = msg.userId === userId.substring(0, 6);
+                const senderId = isMyMessage ? "You" : `User ${msg.userId}`;
+                
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `flex ${isMyMessage ? 'justify-end' : 'justify-start'}`;
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = `max-w-xs md:max-w-md p-3 rounded-xl shadow-md text-sm ${
+                    isMyMessage ? 'chat-bubble-mine rounded-br-none' : 'chat-bubble-partner rounded-tl-none border border-gray-200'
+                }`;
+                
+                let contentHTML = '';
+                if (!isMyMessage) {
+                    contentHTML += `<p class="font-bold text-xs mb-1 opacity-70">User ${msg.userId}</p>`;
+                }
+                
+                contentHTML += `<p>${msg.text}</p>`;
+                if (msg.timestamp) {
+                    const time = new Date(msg.timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    contentHTML += `<span class="text-xs mt-1 block opacity-60 text-right">${time}</span>`;
+                }
+
+                contentDiv.innerHTML = contentHTML;
+                msgDiv.appendChild(contentDiv);
+                $messageList.appendChild(msgDiv);
+            });
+            $messageList.scrollTop = $messageList.scrollHeight;
+        }
+
+        // --- FIREBASE & AUTH ---
+
+        async function initFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                let currentUserId;
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : undefined;
+                
+                if (initialAuthToken) {
+                    const userCredential = await signInWithCustomToken(auth, initialAuthToken);
+                    currentUserId = userCredential.user.uid;
+                } else {
+                    const userCredential = await signInAnonymously(auth);
+                    currentUserId = userCredential.user.uid;
+                }
+                
+                userId = currentUserId;
+                $userIdDisplay.textContent = userId.substring(0, 6) + '...';
+                updateStatusDisplay();
+                console.log("Firebase initialized and authenticated.");
+                
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                status = 'error';
+                updateStatusDisplay();
+            }
+        }
+
+        // --- ROOM LOGIC ---
+
+        function setActiveRoom(roomId) {
+            activeRoomId = roomId;
+            updateStatusDisplay();
+            startMessageListener();
+            // Reset media controls when switching rooms
+            disconnectMedia(); 
+            status = 'ready'; // Ready to start a new call in this room
+        }
+        
+        async function createNewRoom() {
+            if (!userId) return;
+            const newId = generateRandomId();
+            const roomName = `Room ${newId.substring(0, 4)}`;
+
+            await setDoc(doc(db, `artifacts/${appId}/public/data/calls/${newId}`), {
+                name: roomName,
+                createdAt: new Date(),
+                hostId: userId,
+                status: 'chat_only'
+            });
+            
+            joinedRooms = [...joinedRooms.filter(r => r.id !== newId), { id: newId, name: roomName }];
+            updateRoomListUI();
+            setActiveRoom(newId);
+            console.log(`New room created: ${newId}`);
+        }
+
+        async function joinExistingRoom() {
+            if (!userId || $newRoomCodeInput.value.length !== 6) return;
+            const code = $newRoomCodeInput.value.toUpperCase();
+
+            try {
+                const roomDocRef = doc(db, `artifacts/${appId}/public/data/calls/${code}`);
+                const unsubscribe = onSnapshot(roomDocRef, (snapshot) => {
+                    const data = snapshot.data();
+                    unsubscribe(); 
+
+                    if (data) {
+                        const roomName = data.name || `Room ${code.substring(0, 4)}`;
+                        joinedRooms = [...joinedRooms.filter(r => r.id !== code), { id: code, name: roomName }];
+                        updateRoomListUI();
+                        setActiveRoom(code);
+                        $newRoomCodeInput.value = '';
+                        console.log(`Joined room: ${code}`);
+                    } else {
+                        console.error("Room not found.");
+                    }
+                });
+            } catch (error) {
+                console.error("Error joining room:", error);
+            }
+        }
+        
+        function leaveRoom(roomId) {
+            if (pc) disconnectMedia();
+            
+            joinedRooms = joinedRooms.filter(room => room.id !== roomId);
+            
+            if (activeRoomId === roomId) {
+                const nextRoom = joinedRooms.length > 0 ? joinedRooms[0].id : null;
+                setActiveRoom(nextRoom);
+            }
+            updateRoomListUI();
+        }
+
+        // --- CHAT MESSAGING ---
+        
+        let messageListenerUnsubscribe = () => {};
+
+        function startMessageListener() {
+            messageListenerUnsubscribe(); // Stop previous listener
+            if (!activeRoomId) {
+                renderMessages([]);
+                return;
+            }
+
+            const chatCollectionRef = collection(db, `artifacts/${appId}/public/data/calls/${activeRoomId}/messages`);
+            const q = query(chatCollectionRef, orderBy('timestamp', 'asc'));
+
+            messageListenerUnsubscribe = onSnapshot(q, (snapshot) => {
+                const msgs = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    timestamp: doc.data().timestamp || { seconds: Date.now() / 1000 }
+                }));
+                renderMessages(msgs);
+            });
+        }
+        
+        async function sendMessage(e) {
+            e.preventDefault();
+            const text = $newMessageInput.value.trim();
+            if (!text || !activeRoomId) return;
+
+            try {
+                await addDoc(collection(db, `artifacts/${appId}/public/data/calls/${activeRoomId}/messages`), {
+                    text: text,
+                    userId: userId.substring(0, 6),
+                    timestamp: serverTimestamp()
+                });
+                $newMessageInput.value = '';
+            } catch (error) {
+                console.error("Error sending message:", error);
+            }
+        }
+
+        // --- WEBRTC CORE LOGIC ---
+
+        async function getMedia() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                localStream = stream;
+                $localVideo.srcObject = stream;
+                
+                // Initial state setup for toggles
+                stream.getAudioTracks().forEach(track => (track.enabled = isMicOn));
+                stream.getVideoTracks().forEach(track => (track.enabled = isCameraOn));
+                
+                return stream;
+            } catch (error) {
+                console.error("Error accessing media devices for video call:", error);
+                isMicOn = false;
+                isCameraOn = false;
+                updateVideoVisibility();
+                return null;
+            }
+        }
+
+        function createPeerConnection(stream, remoteCallDocRef) {
+            pc = new RTCPeerConnection(servers);
+
+            stream.getTracks().forEach(track => { pc.addTrack(track, stream); });
+
+            pc.ontrack = (event) => {
+                if ($remoteVideo.srcObject !== event.streams[0]) {
+                    $remoteVideo.srcObject = event.streams[0];
+                    console.log('Remote stream added.');
+                }
+            };
+            
+            pc.onicecandidate = async (event) => {
+                if (event.candidate) {
+                    await addDoc(collection(remoteCallDocRef, 'iceCandidates'), event.candidate.toJSON());
+                }
+            };
+            
+            status = 'connected';
+            updateStatusDisplay();
+            return pc;
+        }
+        
+        async function startVideoCall() {
+            if (!userId || !activeRoomId || status !== 'ready') return;
+
+            status = 'calling';
+            isVideosVisible = true;
+            updateStatusDisplay();
+            updateVideoVisibility();
+            
+            const stream = await getMedia();
+            if (!stream) { status = 'ready'; updateStatusDisplay(); return; } // Cannot start call without media
+
+            const callDocRef = doc(db, `artifacts/${appId}/public/data/calls/${activeRoomId}`);
+            const peerConnection = createPeerConnection(stream, callDocRef);
+
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+
+            await setDoc(callDocRef, { offer: { ...offer.toJSON(), userId }, status: 'offering' }, { merge: true });
+            console.log(`Video Call started in room ${activeRoomId}. Waiting for partner...`);
+
+            // Listen for answer
+            let answerListener = onSnapshot(callDocRef, async (snapshot) => {
+                const data = snapshot.data();
+                if (data?.answer && !peerConnection.currentRemoteDescription) {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+                    console.log('Answer received, video connection established.');
+                    answerListener();
+                    listenForIceCandidates(peerConnection, callDocRef);
+                }
+            });
+        }
+        
+        async function answerVideoCall() {
+            if (!userId || !activeRoomId || status !== 'receiving') return;
+
+            isVideosVisible = true;
+            updateVideoVisibility();
+            
+            const callDocRef = doc(db, `artifacts/${appId}/public/data/calls/${activeRoomId}`);
+            const stream = await getMedia();
+            if (!stream) { status = 'ready'; updateStatusDisplay(); return; }
+
+            const callSnapshot = await new Promise(resolve => {
+                const unsub = onSnapshot(callDocRef, (snapshot) => {
+                    unsub(); 
+                    resolve(snapshot);
+                });
+            });
+            const data = callSnapshot.data();
+
+            const peerConnection = createPeerConnection(stream, callDocRef);
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+
+            await setDoc(callDocRef, { answer: { ...answer.toJSON(), userId }, status: 'connected' }, { merge: true });
+            console.log('Answer sent, video connection established.');
+            listenForIceCandidates(peerConnection, callDocRef);
+        }
+
+        function listenForIceCandidates(peerConnection, callDocRef) {
+            const candidatesCollectionRef = collection(callDocRef, 'iceCandidates');
+            onSnapshot(candidatesCollectionRef, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === 'added') {
+                        const candidate = new RTCIceCandidate(change.doc.data());
+                        peerConnection.addIceCandidate(candidate).catch(e => console.error('Error adding ICE candidate:', e));
+                    }
+                });
+            });
+        }
+        
+        function disconnectMedia() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+            if (pc) {
+                pc.close();
+            }
+            
+            if(activeRoomId) {
+                setDoc(doc(db, `artifacts/${appId}/public/data/calls/${activeRoomId}`), 
+                       { status: 'chat_only', offer: deleteField(), answer: deleteField() }, 
+                       { merge: true });
+            }
+            
+            // Reset media states
+            status = 'ready';
+            $localVideo.srcObject = null;
+            $remoteVideo.srcObject = null;
+            localStream = null;
+            pc = null;
+            isMicOn = true;
+            isCameraOn = true;
+            isVideosVisible = false;
+            
+            updateStatusDisplay();
+            updateVideoVisibility();
+            console.log("Media session ended.");
+        }
+        
+        function startIncomingCallListener() {
+            if (!userId) return;
+
+            // This is complex in native JS without React useEffects, so we attach one listener per room change.
+            // The logic to detect and prompt for incoming calls is handled inside setActiveRoom,
+            // but we need a global listener management function here.
+        }
+
+        // --- EVENT HANDLERS ---
+        
+        $newRoomCodeInput.addEventListener('input', () => {
+            const val = $newRoomCodeInput.value.toUpperCase();
+            $newRoomCodeInput.value = val;
+            $joinRoomBtn.disabled = val.length !== 6;
+        });
+
+        $joinRoomBtn.addEventListener('click', joinExistingRoom);
+        $createRoomBtn.addEventListener('click', createNewRoom);
+        $leaveRoomBtn.addEventListener('click', () => leaveRoom(activeRoomId));
+        $sendMessageBtn.addEventListener('click', sendMessage);
+        $startCallBtn.addEventListener('click', startVideoCall);
+        $endMediaBtn.addEventListener('click', disconnectMedia);
+        $answerCallBtn.addEventListener('click', answerVideoCall);
+        $declineCallBtn.addEventListener('click', () => { status = 'ready'; updateStatusDisplay(); });
+        
+        $micToggleBtn.addEventListener('click', () => {
+            isMicOn = !isMicOn;
+            localStream?.getAudioTracks().forEach(track => (track.enabled = isMicOn));
+            updateVideoVisibility();
+        });
+        
+        $cameraToggleBtn.addEventListener('click', () => {
+            isCameraOn = !isCameraOn;
+            localStream?.getVideoTracks().forEach(track => (track.enabled = isCameraOn));
+            updateVideoVisibility();
+        });
+        
+        $videoToggleBtn.addEventListener('click', () => {
+            isVideosVisible = !isVideosVisible;
+            updateVideoVisibility();
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initFirebase();
+            // Start listening for incoming calls after auth is complete
+            // startIncomingCallListener(); // Managed via onSnapshot in startVideoCall/answerVideoCall
+        });
+
+    </script>
+</body>
+</html>
+
