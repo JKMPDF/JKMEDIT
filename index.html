@@ -164,31 +164,40 @@
             .sidebar-nav-item.is-open > .sidebar-accordion-submenu { display: block; }
             @media (min-width: 1025px) { .sidebar-nav-link .chevron { display: none; } }
         }
-        /* --- MOBILE SLIDER FIX (Flexbox Version) --- */
+    /* --- MOBILE SLIDER FIX (Final Version) --- */
 @media (max-width: 768px) {
     .gallery-grid {
-        /* Grid se Flex mein badlein */
+        /* 1. Layout ko Flex mein badlein */
         display: flex;
         
-        /* Horizontal scroll (swipe) on karein */
+        /* 2. Horizontal scrolling on karein */
         overflow-x: auto;
         
-        /* Optional: Scrollbar chupa dein */
+        /* 3. Puraani grid settings ko reset karein */
+        grid-template-columns: none;
+        gap: 0; /* Grid gap ko band karein */
+
+        /* 4. Scrollbar ko chupa dein (Optional) */
         scrollbar-width: none; /* Firefox */
         -ms-overflow-style: none; /* IE */
     }
-    
+
     .gallery-grid::-webkit-scrollbar {
         display: none; /* Chrome, Safari */
     }
 
     .gallery-item {
-        /* Sabse zaroori: Har item ko 80% width dein */
-        /* Yeh shrink nahi hoga, grow nahi hoga */
+        /* 1. Har item ki width 80% set karein */
+        /* Yeh shrink ya grow nahi hoga */
         flex: 0 0 80%;
         
-        /* Original code se min-width lein (safety ke liye) */
-        min-width: 250px; 
+        /* 2. Items ke beech gap ke liye margin ka istemal karein */
+        margin-right: 1rem; /* 16px gap */
+    }
+
+    /* 3. Aakhri item se margin hata dein */
+    .gallery-item:last-child {
+        margin-right: 0;
     }
 }
     </style>
