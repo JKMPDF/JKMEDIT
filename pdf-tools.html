@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <!-- Meta Tags and SEO -->
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>PDF Tools - JKM Edit</title>
+    <meta name="description" content="A complete suite of free online PDF tools. Merge, split, compress, convert, rotate, and protect your PDF files with JKM Edit."/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="robots" content="index, follow"/>
+    <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/pdf-tools.html"/>
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Pre-load theme to prevent flash of unstyled content -->
+    <script>
+        (function() {
+            try {
+                if (localStorage.getItem('jkm-edit-mode') === 'dark') {
+                    document.documentElement.classList.add('dark-mode');
+                }
+            } catch (e) { console.error("Error applying initial theme:", e); }
+        })();
+    </script>
+
+    <!-- Fonts and Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+    <!-- Main Stylesheet -->
+    <style>
+        :root {
+            font-family: 'Poppins', sans-serif;
+            --sidebar-width: 280px;
+            --transition-speed: 0.25s;
+        }
+
+        /* --- THEME DEFINITIONS (From Main Page) --- */
+        html { /* Light Mode Variables */
+            --primary-color: #0052cc; --bg-color: #f4f5f7; --surface-color: #ffffff;
+            --text-color: #172b4d; --text-secondary-color: #6b778c; --border-color: #dfe1e6;
+            --primary-faded-color: #e6efff; --shadow-color: rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff);
+        }
+        html.dark-mode { /* Dark Mode Variables */
+            --primary-color: #4c9aff; --bg-color: #0d1117; --surface-color: #161b22;
+            --text-color: #c9d1d9; --text-secondary-color: #8b949e; --border-color: #30363d;
+            --primary-faded-color: #1f2d47; --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- BASE & LAYOUT --- */
+        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+        *, *::before, *::after { box-sizing: border-box; }
+        #app-container { display: grid; grid-template-columns: var(--sidebar-width) 1fr; min-height: 100vh; }
+
+        /* --- SIDEBAR STRUCTURE (From Main Page) --- */
+        #static-sidebar {
+            background-color: var(--surface-color); border-right: 1px solid var(--border-color);
+            z-index: 1000; transition: transform var(--transition-speed) ease-in-out;
+            display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0;
+        }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; }
+        .site-logo { height: 2.5rem; }
+        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; }
+
+        .sidebar-nav-container { flex-grow: 1; overflow-y: auto; padding: 1rem 0; }
+        .sidebar-nav-container::-webkit-scrollbar { width: 6px; }
+        .sidebar-nav-container::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav-container::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 6px; }
+
+        .sidebar-nav { list-style: none; padding: 0 1rem; margin: 0; }
+        .sidebar-nav-item { position: relative; margin-bottom: 0.25rem; }
+        .sidebar-nav-link {
+            display: flex; align-items: center; justify-content: space-between; gap: 0.85rem; padding: 0.8rem 1rem;
+            border-radius: 8px; font-weight: 500; font-size: 0.95rem; color: var(--text-secondary-color);
+            text-decoration: none; transition: all 0.2s; border-left: 3px solid transparent; cursor: pointer;
+        }
+        .sidebar-nav-link .link-content { display: flex; align-items: center; gap: 0.85rem; }
+        .sidebar-nav-link i { width: 20px; text-align: center; font-size: 1.1em; }
+
+        .sidebar-nav-link:hover { color: var(--text-color); background-color: var(--primary-faded-color); }
+        .sidebar-nav-link.active {
+            color: var(--primary-color); background-color: var(--primary-faded-color);
+            border-left: 3px solid var(--primary-color); font-weight: 600;
+        }
+
+        /* --- SIDEBAR FOOTER (From Main Page) --- */
+        .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; }
+        .sidebar-footer-controls { display: flex; justify-content: space-around; align-items: center; }
+        .footer-btn {
+            background: none; border: none; color: var(--text-secondary-color); font-size: 1.25rem; cursor: pointer; padding: 0.5rem;
+            border-radius: 50%; width: 40px; height: 40px; line-height: 1; transition: all 0.2s;
+        }
+        .footer-btn:hover { color: var(--primary-color); background-color: var(--primary-faded-color); }
+        #dark-mode-toggle .fa-sun { display: none; }
+        html.dark-mode #dark-mode-toggle .fa-sun { display: inline-block; }
+        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+        /* --- MAIN CONTENT & MOBILE TOGGLE (From Main Page) --- */
+        #main-content { position: relative; padding: 2rem 4rem; }
+        #menu-toggle {
+            display: none; position: fixed; top: 15px; left: 15px; z-index: 1001; background: var(--surface-color); border: 1px solid var(--border-color);
+            border-radius: 8px; width: 40px; height: 40px; font-size: 1.2rem; box-shadow: 0 4px 10px var(--shadow-color);
+        }
+
+        /* --- FLYOUT & ACCORDION MENUS (From Main Page) --- */
+        #sidebar-flyout-menu {
+            display: none; position: fixed; background-color: var(--surface-color); box-shadow: 0 10px 30px var(--shadow-color);
+            border-radius: 8px; min-width: 250px; z-index: 2000; padding: 0.5rem; border: 1px solid var(--border-color);
+            max-height: 450px; overflow-y: auto; opacity: 0; transform: scale(0.95); transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+        }
+        #sidebar-flyout-menu.is-visible { display: block; opacity: 1; transform: scale(1); }
+        #sidebar-flyout-menu a { display: block; padding: 0.6rem 1rem; color: var(--text-secondary-color); text-decoration: none; border-radius: 5px; font-size: 0.9rem; transition: all 0.2s; }
+        #sidebar-flyout-menu a:hover { background-color: var(--primary-faded-color); color: var(--primary-color); }
+        .sidebar-accordion-submenu { display: none; max-height: 450px; overflow-y: auto; border-left: 1px solid var(--border-color); margin: 0.5rem 0 0.5rem 1.7rem; padding-left: 1rem; }
+        .sidebar-accordion-submenu a { display: block; padding: 0.5rem 0; color: var(--text-secondary-color); text-decoration: none; font-size: 0.9rem; transition: all 0.2s; }
+        .sidebar-accordion-submenu a:hover { color: var(--primary-color); }
+        .sidebar-nav-link .chevron { transition: transform var(--transition-speed); }
+        .sidebar-nav-item.is-open > .sidebar-nav-link .chevron { transform: rotate(90deg); }
+
+        /* --- MODAL STYLES (From Main Page) --- */
+        .modal {
+            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background-color: var(--surface-color); padding: 30px; border-top: 5px solid var(--primary-color);
+            border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
+
+        /* --- PDF TOOLS CONTENT STYLES (Adapted and Corrected) --- */
+        .dashboard-container { max-width: 1400px; margin: auto; }
+        .dashboard-header { text-align: center; margin-bottom: 3rem; }
+        .dashboard-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .dashboard-header p { font-size: 1.1rem; color: var(--text-secondary-color); }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .tool-card {
+            display: flex; flex-direction: column; justify-content: center; background: var(--surface-color);
+            border-radius: 10px; padding: 2rem; text-align: center; box-shadow: 0 4px 15px var(--shadow-color);
+            border-bottom: 4px solid var(--primary-color); transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none; color: var(--text-color); min-height: 250px;
+        }
+        .tool-card:hover { transform: translateY(-10px); box-shadow: 0 10px 25px var(--shadow-color); }
+        .tool-icon {
+            font-size: 3rem; margin-bottom: 1rem; background-image: var(--gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; text-fill-color: transparent;
+        }
+        .tool-card h3 { margin: 0.5rem 0; font-size: 1.5rem; }
+        .tool-card p { font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary-color); }
+        .ad-card {
+            border: 2px dashed var(--primary-color);
+            background-color: color-mix(in srgb, var(--surface-color) 95%, var(--primary-color) 5%);
+            justify-content: center; align-items: center; display: flex;
+            padding: 1rem;
+        }
+        .ad-placeholder-text { color: var(--text-color); opacity: 0.6; font-style: italic; }
+        html.dark-mode .ad-card { background-color: color-mix(in srgb, var(--surface-color) 90%, var(--primary-color) 10%); }
+
+
+        /* --- RESPONSIVE BREAKPOINTS (From Main Page) --- */
+        @media (max-width: 1024px) {
+            #app-container { grid-template-columns: 1fr; }
+            #static-sidebar { position: fixed; height: 100%; transform: translateX(-100%); box-shadow: 5px 0 25px var(--shadow-color); }
+            #app-container.sidebar-open #static-sidebar { transform: translateX(0); }
+            #menu-toggle { display: block; }
+            #main-content { padding: 2rem 1.5rem; padding-top: 70px; /* Space for fixed menu toggle */ }
+            .sidebar-nav-item.is-open > .sidebar-accordion-submenu { display: block; }
+            @media (min-width: 1025px) { .sidebar-nav-link .chevron { display: none; } }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <!-- Sidebar: a flex column with a scrolling middle section -->
+        <aside id="static-sidebar">
+            <div class="sidebar-header">
+                <a href='index.html' class='logo-container'>
+                    <img src='assets/jkm-edit-logo.png' alt='JKM Edit Logo' class='site-logo'>
+                    <h1>JKM Edit</h1>
+                </a>
+            </div>
+            <div class="sidebar-nav-container">
+                <ul class='sidebar-nav' id="sidebar-nav-list">
+                    <!-- Navigation items are dynamically inserted here by JavaScript -->
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <div class="sidebar-footer-controls">
+                    <button id='about-btn' class='footer-btn' aria-label="About"><i class="fa-solid fa-circle-info"></i></button>
+                    <button id='contact-btn' class='footer-btn' aria-label="Contact Us"><i class="fa-solid fa-envelope"></i></button>
+                    <button id='dark-mode-toggle' class='footer-btn' aria-label="Toggle Dark Mode">
+                        <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content area -->
+        <main id="main-content">
+            <button id="menu-toggle" aria-label="Open Menu"><i class="fa-solid fa-bars"></i></button>
+
+            <!-- PDF Tools Content with 3+3 Layout -->
+            <div class='dashboard-container'>
+                <div class='dashboard-header'>
+                    <h2>PDF Tools</h2>
+                    <p>A complete suite of tools to manage your PDF files. Fast, easy, and free.</p>
+                </div>
+                <div class='tools-grid'>
+                    <!-- Row 1: 3 Tools -->
+                    <a href='Pdf-tools/merge-pdf.html' class='tool-card'><i class='fa-solid fa-object-group tool-icon'></i><h3>Merge PDF</h3><p>Combine multiple PDF files into a single document.</p></a>
+                    <a href="Pdf-tools/split-pdf.html" class='tool-card'><i class='fa-solid fa-scissors tool-icon'></i><h3>Split PDF</h3><p>Extract a range of pages or every page into separate PDFs.</p></a>
+                    <a href="Pdf-tools/compress-pdf.html" class='tool-card'><i class='fa-solid fa-file-zipper tool-icon'></i><h3>Compress PDF</h3><p>Reduce the file size of your PDF while optimizing for quality.</p></a>
+                    
+                    <!-- Row 2: 3 Ads -->
+                    <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+                    <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+                    <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+
+                    <!-- Row 3: 3 Tools -->
+                    <a href="Pdf-tools/pdf-to-ocr-word.html" class='tool-card'><i class='fa-solid fa-file-word tool-icon'></i><h3>PDF to Word</h3><p>Convert your PDF files to editable DOCX documents.</p></a>
+                    <a href='Pdf-tools/pdf-to-powerpoint.html' class='tool-card'><i class='fa-solid fa-file-powerpoint tool-icon'></i><h3>PDF to PowerPoint</h3><p>Turn your PDFs into easy-to-edit PPTX slideshows.</p></a>
+                    <a href='Pdf-tools/pdf-to-excel.html' class='tool-card'><i class='fa-solid fa-file-excel tool-icon'></i><h3>PDF to Excel</h3><p>Convert PDF data to easily editable XLSX spreadsheets.</p></a>
+
+                    <!-- Row 4: 3 Ads -->
+                    <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+                    <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+                    <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+
+                    <!-- Row 5: 3 Tools -->
+                    <a href='Pdf-tools/pdf-to-image.html' class='tool-card'><i class='fa-solid fa-file-image tool-icon'></i><h3>PDF to JPG/PNG</h3><p>Convert each PDF page into a high-quality JPG/PNG image.</p></a>
+                    <a href='Pdf-tools/word-to-pdf.html' class='tool-card'><i class='fa-solid fa-file-lines tool-icon'></i><h3>Word to PDF</h3><p>Convert DOCX documents to professional PDF files.</p></a>
+                    <a href='Pdf-tools/powerpoint-to-pdf.html' class='tool-card'><i class='fa-solid fa-file-powerpoint tool-icon'></i><h3>PowerPoint to PDF</h3><p>Convert PPTX presentations to easily shareable PDFs.</p></a>
+                    
+                    <!-- Row 6: 3 More Tools -->
+                    <a href='Pdf-tools/excel-to-pdf.html' class='tool-card'><i class='fa-solid fa-table-cells tool-icon'></i><h3>Excel to PDF</h3><p>Convert XLSX spreadsheets into easily shareable PDFs.</p></a>
+                    <a href='Pdf-tools/image-to-pdf.html' class='tool-card'><i class='fa-solid fa-image tool-icon'></i><h3>JPG/PNG to PDF</h3><p>Combine multiple JPG/PNG images into a single PDF file.</p></a>
+                    <a href='Pdf-tools/sign-pdf.html' class='tool-card'><i class='fa-solid fa-signature tool-icon'></i><h3>Sign PDF</h3><p>Sign your PDF documents yourself or request signatures.</p></a>
+                    
+                     <!-- Row 7: 3 Ads -->
+                    <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+                    <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+                    <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+
+                    <!-- Row 8: Final Tools -->
+                    <a href='Pdf-tools/add-page-numbers.html' class='tool-card'><i class='fa-solid fa-list-ol tool-icon'></i><h3>Add Page Numbers</h3><p>Insert page numbers into your PDF files with ease.</p></a>
+                    <a href='Pdf-tools/rotate-pdf.html' class='tool-card'><i class='fa-solid fa-rotate tool-icon'></i><h3>Rotate PDF</h3><p>Rotate all or specific pages in your PDF document.</p></a>
+                    <a href='Pdf-tools/protect-pdf.html' class='tool-card'><i class='fa-solid fa-lock tool-icon'></i><h3>Protect PDF</h3><p>Add a password and encrypt your PDF file to secure it.</p></a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- A single, dedicated element for the flyout menu -->
+    <div id="sidebar-flyout-menu"></div>
+
+    <!-- Modals for About and Contact -->
+    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation, conversion, and utility tools. Our mission is to provide fast, free, and secure tools that are accessible to everyone, everywhere.</p></div></div>
+    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>Contact Us</h2><p>For any questions or feedback, please email us at:</p><a href='mailto:Mpurohit2414@gmail.com' style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600;">Mpurohit2414@gmail.com</a></div></div>
+
+    <!-- Sidebar & App Logic (From Main Page with FULL navData) -->
+    <script>
+    // DATA SOURCE: This is the FULL list from your original main page code.
+    const navData = [
+        { name: "PDF Tools", icon: "fa-file-pdf", link: "pages/pdf-tools.html", sub: [
+            { name: "Merge PDF", link: "pages/merge-pdf.html" }, { name: "Split PDF", link: "pages/split-pdf.html" }, { name: "Compress PDF", link: "pages/compress-pdf.html" },
+            { name: "PDF to WORD", link: "pages/pdf-to-word.html" }, { name: "PDF to Powerpoint", link: "pages/pdf-to-ppt.html" }, { name: "PDF to Excel", link: "pages/pdf-to-excel.html" },
+            { name: "PDF to JPG/PNG", link: "pages/pdf-to-image.html" }, { name: "Word to PDF", link: "pages/word-to-pdf.html" }, { name: "Powerpoint to PDF", link: "pages/ppt-to-pdf.html" },
+            { name: "JPG/PNG to PDF", link: "pages/image-to-pdf.html" }, { name: "Sign PDF", link: "pages/sign-pdf.html" }, { name: "Add page number", link: "pages/add-page-number.html" },
+            { name: "Rotate PDF", link: "pages/rotate-pdf.html" }, { name: "Protect PDF", link: "pages/protect-pdf.html" }
+        ]},
+        { name: "Image Tools", icon: "fa-image", link: "pages/image-tools.html", sub: [
+            { name: "Image Cropper", link: "pages/image-cropper.html" }, { name: "Image Resizer", link: "pages/image-resizer.html" }, { name: "JPG/PNG Converter", link: "pages/jpg-png-converter.html" },
+            { name: "WEBP to PNG/JPG Converter", link: "pages/webp-converter.html" }, { name: "Grayscale Filter", link: "pages/grayscale-filter.html" }, { name: "Rotate & Flip", link: "pages/rotate-flip.html" },
+            { name: "Color Picker/Inverter", link: "pages/color-picker.html" }, { name: "Brightness/Contrast Adjuster", link: "pages/brightness-contrast.html" },
+            { name: "Add Text Overlay", link: "pages/add-text.html" }, { name: "EXIF Data Viewer", link: "pages/exif-viewer.html" }
+        ]},
+        { name: "Accounting", icon: "fa-calculator", link: "pages/accounting.html", sub: [
+            { name: "Accounting Software", link: "pages/accounting-software.html" }
+        ]},
+        { name: "File Tools", icon: "fa-folder-open", link: "pages/file-tools.html", sub: [
+            { name: "CSV to JSON Converter", link: "pages/csv-to-json.html" }, { name: "JSON Formatter/Minifier", link: "pages/json-formatter.html" },
+            { name: "Base64 Encoder/Decoder", link: "pages/base64-tool.html" }, { name: "Text Case Converter", link: "pages/case-converter.html" },
+            { name: "Remove Duplicate Lines", link: "pages/remove-duplicates.html" }, { name: "Find/Replace in Text", link: "pages/find-replace.html" },
+            { name: "Calculate Text Hash (SHA-256)", link: "pages/hash-calculator.html" }, { name: "File Reader/Viewer", link: "pages/file-viewer.html" },
+            { name: "Line Sorter", link: "pages/line-sorter.html" }, { name: "File Splitter (By Size)", link: "pages/file-splitter.html" }
+        ]},
+        { name: "Code Generators", icon: "fa-qrcode", link: "pages/code-generators.html", sub: [
+            { name: "QR Code Generator", link: "pages/qr-generator.html" }, { name: "Barcode Generator", link: "pages/barcode-generator.html" }, { name: "Password Generator", link: "pages/password-generator.html" },
+            { name: "UUID/GUID Generator", link: "pages/uuid-generator.html" }, { name: "Color Palette Generator", link: "pages/color-palette.html" }, { name: "Lorem Ipsum Generator", link: "pages/lorem-ipsum.html" },
+            { name: "Favicon Preview/Generator", link: "pages/favicon-generator.html" }, { name: "CSS Box Shadow Generator", link: "pages/box-shadow.html" },
+            { name: "CSS Linear Gradient Generator", link: "pages/gradient-generator.html" }, { name: "HTML Entities Converter", link: "pages/html-entities.html" }
+        ]},
+        { name: "Time & Date", icon: "fa-clock", link: "pages/time-date.html", sub: [
+            { name: "Timestamp Converter", link: "pages/timestamp-converter.html" }, { name: "Date Difference Calculator", link: "pages/date-difference.html" }, { name: "Countdown Timer", link: "pages/countdown.html" },
+            { name: "Stopwatch", link: "pages/stopwatch.html" }, { name: "Time Zone Converter", link: "pages/timezone.html" }, { name: "Leap Year Checker", link: "pages/leap-year.html" },
+            { name: "Day of the Week Calculator", link: "pages/day-of-week.html" }, { name: "Age Calculator", link: "pages/age-calculator.html" },
+            { name: "Time Adder/Subtracter", link: "pages/time-adder.html" }, { name: "Calendar Generator", link: "pages/calendar.html" }
+        ]},
+        { name: "Unit Converters", icon: "fa-ruler-combined", link: "pages/unit-converters.html", sub: [
+            { name: "Length Converter", link: "pages/length-converter.html" }, { name: "Mass/Weight Converter", link: "pages/weight-converter.html" }, { name: "Temperature Converter", link: "pages/temp-converter.html" },
+            { name: "Area Converter", link: "pages/area-converter.html" }, { name: "Volume Converter", link: "pages/volume-converter.html" }, { name: "Speed Converter", link: "pages/speed-converter.html" },
+            { name: "Base Converter", link: "pages/base-converter.html" }, { name: "Hex-RGB-HSL Converter", link: "pages/color-code-converter.html" },
+            { name: "Scientific Calculator", link: "pages/sci-calculator.html" }, { name: "Simple Interest Calculator", link: "pages/interest-calculator.html" }
+        ]},
+        { name: "Web & UI Tools", icon: "fa-palette", link: "pages/web-tools.html", sub: [
+            { name: "Function 1", link: "pages/web-tool-1.html" }, { name: "Function 2", link: "pages/web-tool-2.html" }, { name: "Function 3", link: "pages/web-tool-3.html" },
+            { name: "Function 4", link: "pages/web-tool-4.html" }, { name: "Function 5", link: "pages/web-tool-5.html" }, { name: "Function 6", link: "pages/web-tool-6.html" },
+            { name: "Function 7", link: "pages/web-tool-7.html" }, { name: "Function 8", link: "pages/web-tool-8.html" }, { name: "Function 9", link: "pages/web-tool-9.html" }
+        ]},
+        { name: "Utilities", icon: "fa-screwdriver-wrench", link: "pages/utilities.html", sub: [
+            { name: "Function 1", link: "pages/utility-1.html" }, { name: "Function 2", link: "pages/utility-2.html" }, { name: "Function 3", link: "pages/utility-3.html" },
+            { name: "Function 4", link: "pages/utility-4.html" }, { name: "Function 5", link: "pages/utility-5.html" }, { name: "Function 6", link: "pages/utility-6.html" },
+            { name: "Function 7", link: "pages/utility-7.html" }, { name: "Function 8", link: "pages/utility-8.html" }, { name: "Function 9", link: "pages/utility-9.html" }
+        ]}
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const appContainer = document.getElementById('app-container');
+        const menuToggle = document.getElementById('menu-toggle');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const htmlElement = document.documentElement;
+        const navList = document.getElementById('sidebar-nav-list');
+        const flyoutMenu = document.getElementById('sidebar-flyout-menu');
+
+        // Dynamically build the sidebar navigation
+        navData.forEach((item, index) => {
+            const listItem = document.createElement('li');
+            listItem.className = 'sidebar-nav-item';
+            listItem.dataset.index = index;
+            const hasSub = item.sub && item.sub.length > 0;
+            listItem.innerHTML = `
+                <a href="${item.link}" class="sidebar-nav-link">
+                    <div class="link-content"><i class="fa-solid ${item.icon}"></i> ${item.name}</div>
+                    ${hasSub ? '<i class="fa-solid fa-chevron-right chevron"></i>' : ''}
+                </a>
+                ${hasSub ? `<div class="sidebar-accordion-submenu">${item.sub.map(s => `<a href="${s.link}">${s.name}</a>`).join('')}</div>` : ''}
+            `;
+            navList.appendChild(listItem);
+        });
+
+        // Set the active link for the current page
+        document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+            const linkText = link.querySelector('.link-content').textContent.trim();
+            if (linkText === 'PDF Tools') {
+                link.classList.add('active');
+            }
+        });
+
+        // EVENT LISTENERS
+        let flyoutTimeout;
+        navList.addEventListener('mouseover', (e) => {
+            if (window.innerWidth <= 1024) return;
+            const navItem = e.target.closest('.sidebar-nav-item');
+            if (navItem) {
+                clearTimeout(flyoutTimeout);
+                const itemIndex = parseInt(navItem.dataset.index, 10);
+                const data = navData[itemIndex];
+                if (data && data.sub) {
+                    flyoutMenu.innerHTML = data.sub.map(s => `<a href="${s.link}">${s.name}</a>`).join('');
+                    const rect = navItem.getBoundingClientRect();
+                    flyoutMenu.classList.add('is-visible');
+                    const menuHeight = flyoutMenu.offsetHeight;
+                    const viewportHeight = window.innerHeight;
+                    flyoutMenu.style.bottom = 'auto';
+                    if ((rect.top + menuHeight) > viewportHeight - 10) {
+                        flyoutMenu.style.top = 'auto';
+                        flyoutMenu.style.bottom = '10px';
+                    } else {
+                        flyoutMenu.style.top = `${rect.top}px`;
+                    }
+                    flyoutMenu.style.left = `${rect.right}px`;
+                }
+            }
+        });
+
+        const hideFlyout = () => {
+             if (window.innerWidth <= 1024) return;
+             flyoutTimeout = setTimeout(() => flyoutMenu.classList.remove('is-visible'), 150);
+        };
+
+        navList.addEventListener('mouseout', hideFlyout);
+        flyoutMenu.addEventListener('mouseover', () => clearTimeout(flyoutTimeout));
+        flyoutMenu.addEventListener('mouseout', hideFlyout);
+
+        document.body.addEventListener('click', (e) => {
+            const clickedLink = e.target.closest('a');
+            if (!clickedLink) return;
+            const isSidebarLink = clickedLink.closest('#static-sidebar, #sidebar-flyout-menu');
+            if (isSidebarLink) {
+                const parentItem = clickedLink.closest('.sidebar-nav-item');
+                if (window.innerWidth <= 1024 && clickedLink.classList.contains('sidebar-nav-link') && parentItem && parentItem.querySelector('.sidebar-accordion-submenu')) {
+                    e.preventDefault();
+                    parentItem.classList.toggle('is-open');
+                    return;
+                }
+                if (window.innerWidth <= 1024) appContainer.classList.remove('sidebar-open');
+                flyoutMenu.classList.remove('is-visible');
+            }
+        });
+
+        // General App Controls
+        menuToggle.addEventListener('click', () => appContainer.classList.toggle('sidebar-open'));
+
+        const setDarkMode = (isDark) => {
+            htmlElement.classList.toggle('dark-mode', isDark);
+            localStorage.setItem('jkm-edit-mode', isDark ? 'dark' : 'light');
+        };
+
+        darkModeToggle.addEventListener('click', () => setDarkMode(!htmlElement.classList.contains('dark-mode')));
+
+        // MODAL LOGIC
+        const aboutModal = document.getElementById('about-modal');
+        const contactModal = document.getElementById('contact-modal');
+        const openModal = (modal) => modal.style.display = 'flex';
+        const closeModal = (modal) => modal.style.display = 'none';
+        document.getElementById('about-btn').addEventListener('click', () => openModal(aboutModal));
+        document.getElementById('contact-btn').addEventListener('click', () => openModal(contactModal));
+        document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal'))));
+        window.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) closeModal(e.target); });
+    });
+    </script>
+</body>
+</html>
