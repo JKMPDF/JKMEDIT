@@ -164,6 +164,34 @@
             .sidebar-nav-item.is-open > .sidebar-accordion-submenu { display: block; }
             @media (min-width: 1025px) { .sidebar-nav-link .chevron { display: none; } }
         }
+        /* --- MOBILE SLIDER FIX --- */
+@media (max-width: 768px) {
+    .gallery-grid {
+        /* पुराने grid-template-columns को रीसेट करें */
+        grid-template-columns: none; 
+        
+        /* आइटम्स को हॉरिजॉन्टली (column-wise) फ्लो कराएं */
+        grid-auto-flow: column;
+        
+        /* हर आइटम को स्क्रीन की 80% चौड़ाई दें */
+        /* (आप इसे 75% या 90% भी कर सकते हैं) */
+        grid-auto-columns: 80%; 
+        
+        /* हॉरिजॉन्टल स्क्रॉल को इनेबल करें */
+        overflow-x: auto; 
+        
+        /* iOS पर स्मूथ स्क्रॉलिंग के लिए */
+        -webkit-overflow-scrolling: touch; 
+        
+        /* स्लाइडर जैसी स्नैपिंग फील के लिए (Optional) */
+        scroll-snap-type: x mandatory;
+    }
+
+    .gallery-item {
+        /* स्नैपिंग के लिए (Optional) */
+        scroll-snap-align: start;
+    }
+}
     </style>
 </head>
 <body>
