@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <!-- Meta Tags and SEO -->
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>JKM Edit - Free Online PDF, Image, Web & File Tools</title>
+    <meta name="description" content="JKM Edit: Your ultimate free online toolkit. Edit PDFs, convert images, manage files, use accounting and web tools, generate codes, and more. Secure, fast, and no installation needed."/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="robots" content="index, follow"/>
+    <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/"/>
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Pre-load theme to prevent flash of unstyled content -->
+    <script>
+        (function() {
+            try {
+                if (localStorage.getItem('jkm-edit-mode') === 'dark') {
+                    document.documentElement.classList.add('dark-mode');
+                }
+            } catch (e) { console.error("Error applying initial theme:", e); }
+        })();
+    </script>
+
+    <!-- Fonts and Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+    <!-- Main Stylesheet -->
+    <style>
+        :root {
+            font-family: 'Poppins', sans-serif;
+            --sidebar-width: 280px;
+            --transition-speed: 0.25s;
+        }
+
+        /* --- THEME DEFINITIONS --- */
+        html { /* Light Mode Variables */
+            --primary-color: #0052cc; --bg-color: #f4f5f7; --surface-color: #ffffff;
+            --text-color: #172b4d; --text-secondary-color: #6b778c; --border-color: #dfe1e6;
+            --primary-faded-color: #e6efff; --shadow-color: rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff);
+        }
+        html.dark-mode { /* Dark Mode Variables */
+            --primary-color: #4c9aff; --bg-color: #0d1117; --surface-color: #161b22;
+            --text-color: #c9d1d9; --text-secondary-color: #8b949e; --border-color: #30363d;
+            --primary-faded-color: #1f2d47; --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- BASE & LAYOUT --- */
+        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+        #app-container { display: grid; grid-template-columns: var(--sidebar-width) 1fr; height: 100vh; }
+
+        /* --- SIDEBAR STRUCTURE --- */
+        #static-sidebar {
+            background-color: var(--surface-color); border-right: 1px solid var(--border-color);
+            z-index: 1000; transition: transform var(--transition-speed) ease-in-out;
+            display: flex; flex-direction: column; height: 100vh;
+        }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; }
+        .site-logo { height: 2.5rem; }
+        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; }
+
+        .sidebar-nav-container { flex-grow: 1; overflow-y: auto; padding: 1rem 0; }
+        .sidebar-nav-container::-webkit-scrollbar { width: 6px; }
+        .sidebar-nav-container::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav-container::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 6px; }
+
+        .sidebar-nav { list-style: none; padding: 0 1rem; margin: 0; }
+        .sidebar-nav-item { position: relative; margin-bottom: 0.25rem; }
+        .sidebar-nav-link {
+            display: flex; align-items: center; justify-content: space-between; gap: 0.85rem; padding: 0.8rem 1rem;
+            border-radius: 8px; font-weight: 500; font-size: 0.95rem; color: var(--text-secondary-color);
+            text-decoration: none; transition: all 0.2s; border-left: 3px solid transparent; cursor: pointer;
+        }
+        .sidebar-nav-link .link-content { display: flex; align-items: center; gap: 0.85rem; }
+        .sidebar-nav-link i { width: 20px; text-align: center; font-size: 1.1em; } /* Icon Style */
+
+        .sidebar-nav-link:hover { color: var(--text-color); background-color: var(--primary-faded-color); }
+        .sidebar-nav-link.active {
+            color: var(--primary-color); background-color: var(--primary-faded-color);
+            border-left: 3px solid var(--primary-color); font-weight: 600;
+        }
+
+        /* --- SIDEBAR FOOTER --- */
+        .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; }
+        .sidebar-footer-controls { display: flex; justify-content: space-around; align-items: center; }
+        .footer-btn {
+            background: none; border: none; color: var(--text-secondary-color); font-size: 1.25rem; cursor: pointer; padding: 0.5rem;
+            border-radius: 50%; width: 40px; height: 40px; line-height: 1; transition: all 0.2s;
+        }
+        .footer-btn:hover { color: var(--primary-color); background-color: var(--primary-faded-color); }
+        #dark-mode-toggle .fa-sun { display: none; }
+        html.dark-mode #dark-mode-toggle .fa-sun { display: inline-block; }
+        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
+
+        /* --- MAIN CONTENT AREA --- */
+        #main-content {
+            position: relative;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        #menu-toggle {
+            display: none; position: fixed; top: 15px; left: 15px; z-index: 1001; background: var(--surface-color); border: 1px solid var(--border-color);
+            border-radius: 8px; width: 40px; height: 40px; font-size: 1.2rem; box-shadow: 0 4px 10px var(--shadow-color);
+        }
+
+        /* --- JAVASCRIPT-CONTROLLED HOVER FLYOUT MENU --- */
+        #sidebar-flyout-menu {
+            display: none; position: fixed; background-color: var(--surface-color); box-shadow: 0 10px 30px var(--shadow-color);
+            border-radius: 8px; min-width: 250px; z-index: 2000; padding: 0.5rem; border: 1px solid var(--border-color);
+            max-height: 450px; overflow-y: auto; opacity: 0; transform: scale(0.95); transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+        }
+        #sidebar-flyout-menu.is-visible { display: block; opacity: 1; transform: scale(1); }
+        #sidebar-flyout-menu a {
+            display: block; padding: 0.6rem 1rem; color: var(--text-secondary-color); text-decoration: none; border-radius: 5px; font-size: 0.9rem; transition: all 0.2s;
+        }
+        #sidebar-flyout-menu a:hover { background-color: var(--primary-faded-color); color: var(--primary-color); }
+
+        /* --- MOBILE-ONLY ACCORDION SUBMENU --- */
+        .sidebar-accordion-submenu { display: none; max-height: 450px; overflow-y: auto; border-left: 1px solid var(--border-color); margin: 0.5rem 0 0.5rem 1.7rem; padding-left: 1rem; }
+        .sidebar-accordion-submenu a { display: block; padding: 0.5rem 0; color: var(--text-secondary-color); text-decoration: none; font-size: 0.9rem; transition: all 0.2s; }
+        .sidebar-accordion-submenu a:hover { color: var(--primary-color); }
+        .sidebar-nav-link .chevron { transition: transform var(--transition-speed); }
+        .sidebar-nav-item.is-open > .sidebar-nav-link .chevron { transform: rotate(90deg); }
+
+        /* --- MODAL STYLES --- */
+        .modal {
+            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background-color: var(--surface-color); padding: 30px; border-top: 5px solid var(--primary-color);
+            border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .close-btn {
+            color: #aaa; position: absolute; top: 10px; right: 20px;
+            font-size: 28px; font-weight: bold; cursor: pointer;
+        }
+
+        /* --- HOMEPAGE CONTENT STYLES --- */
+        .content-wrapper{padding:2rem 4rem;max-width:1400px;margin:auto}@media(max-width:768px){.content-wrapper{padding:2rem 1.5rem}}.dashboard-header{text-align:center;margin-bottom:3rem}.dashboard-header h2{font-size:2.5rem;margin-bottom:.5rem}.dashboard-header p{font-size:1.1rem;color:var(--text-secondary-color)}.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem}.tool-card{display:flex;flex-direction:column;justify-content:center;background:var(--surface-color);border-radius:10px;padding:2rem;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,.05);border-bottom:4px solid var(--primary-color);transition:transform .3s,box-shadow .3s;text-decoration:none;color:var(--text-color);min-height:250px;min-width:280px}.tool-card:hover{transform:translateY(-10px);box-shadow:0 10px 25px rgba(0,0,0,.1)}.tool-icon{font-size:3rem;margin-bottom:1rem;background-image:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-fill-color:transparent}.tool-card h3{margin:.5rem 0;font-size:1.5rem}.tool-card p{font-size:.9rem;line-height:1.5;color:var(--text-secondary-color)}.ad-card{border:2px dashed var(--accent-color);background-color:color-mix(in srgb,var(--surface-color) 95%,var(--accent-color) 5%);justify-content:center;align-items:center;display:flex;flex-direction:column;min-height:250px;min-width:280px;padding:1rem;border-radius:10px}html.dark-mode .ad-card{background-color:color-mix(in srgb,var(--surface-color) 90%,var(--accent-color) 10%)}.ad-placeholder-text{color:var(--text-color);opacity:.6;font-style:italic}.services-section{padding:4rem 2rem;background-color:var(--surface-color);margin-top:4rem}.services-container{max-width:1100px;margin:auto;text-align:center}.services-container h2{font-size:2.2rem;margin-bottom:.5rem;color:var(--primary-color)}.services-container > p{font-size:1.1rem;color:var(--text-secondary-color);margin-bottom:3rem;}.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2.5rem;text-align:left}.service-item{display:flex;align-items:flex-start;gap:1rem}.service-item i{font-size:1.5rem;color:var(--primary-color);margin-top:5px;min-width:25px}.service-item h4{margin:0 0 .25rem;font-size:1.1rem}.service-item p{margin:0;font-size:.9rem;color:var(--text-secondary-color)}.image-gallery-section{padding:4rem 2rem;background-color:var(--bg-color);text-align:center}.image-gallery-section h2{font-size:2.2rem;margin-bottom:2rem;color:var(--primary-color)}.gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;}.gallery-item{background-color:var(--surface-color);border-radius:10px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.05);}.gallery-item img{width:100%;height:150px;object-fit:cover;display:block;}.gallery-item h4{margin:1rem;font-size:1.2rem;color:var(--text-color)}.functions-section{padding:4rem 2rem;background-color:var(--surface-color)}.functions-container{max-width:1100px;margin:auto}.function-category{margin-bottom:3rem}.function-category h2{text-align:center;font-size:2.2rem;color:var(--primary-color);margin-bottom:2rem}.function-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}.function-item{background-color:var(--bg-color);padding:1.5rem;border-radius:8px;border-left:4px solid var(--primary-color)}.function-item h3{margin-top:0;font-size:1.1rem}.function-item a{text-decoration:none;color:var(--primary-color);font-weight:600}.function-item a:hover{text-decoration:underline}.function-item p{color:var(--text-secondary-color);margin-bottom:0;font-size:.9rem}
+
+        /* --- RESPONSIVE BREAKPOINTS --- */
+        @media (max-width: 1024px) {
+            #app-container { grid-template-columns: 1fr; }
+            #static-sidebar { position: fixed; height: 100%; transform: translateX(-100%); box-shadow: 5px 0 25px var(--shadow-color); }
+            #app-container.sidebar-open #static-sidebar { transform: translateX(0); }
+            #menu-toggle { display: block; }
+            .sidebar-nav-item.is-open > .sidebar-accordion-submenu { display: block; }
+            @media (min-width: 1025px) { .sidebar-nav-link .chevron { display: none; } }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <!-- Sidebar -->
+        <aside id="static-sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class='logo-container'>
+                    <img src='assets/jkm-edit-logo.png' alt='JKM Edit Logo' class='site-logo'>
+                    <h1>JKM Edit</h1>
+                </a>
+            </div>
+            <div class="sidebar-nav-container">
+                <ul class='sidebar-nav' id="sidebar-nav-list">
+                    <!-- Navigation items are dynamically inserted here -->
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <div class="sidebar-footer-controls">
+                    <button id='about-btn' class='footer-btn' aria-label="About"><i class="fa-solid fa-circle-info"></i></button>
+                    <button id='contact-btn' class='footer-btn' aria-label="Contact Us"><i class="fa-solid fa-envelope"></i></button>
+                    <button id='dark-mode-toggle' class='footer-btn' aria-label="Toggle Dark Mode">
+                        <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content area -->
+        <main id="main-content">
+            <button id="menu-toggle" aria-label="Open Menu"><i class="fa-solid fa-bars"></i></button>
+            <!-- Content will be loaded here by JavaScript -->
+        </main>
+    </div>
+
+    <!-- Flyout menu -->
+    <div id="sidebar-flyout-menu"></div>
+
+    <!-- Modals -->
+    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation, conversion, and utility tools. Our mission is to provide fast, free, and secure tools that are accessible to everyone, everywhere.</p></div></div>
+    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>Contact Us</h2><p>For any questions or feedback, please email us at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email' style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s;">Mpurohit2414@gmail.com</a></div></div>
+
+    <script>
+    // =================================================================================
+    // JAVASCRIPT LOGIC
+    // =================================================================================
+
+    // DATA SOURCE with icons
+    const navData = [
+        { name: "PDF Tools", icon: "fa-file-pdf", link: "pdf-tools.html", sub: [
+            { name: "Merge PDF", link: "pages/merge-pdf.html" }, { name: "Split PDF", link: "pages/split-pdf.html" }, { name: "Compress PDF", link: "pages/compress-pdf.html" },
+            { name: "PDF to WORD", link: "pages/pdf-to-word.html" }, { name: "PDF to Powerpoint", link: "pages/pdf-to-ppt.html" }, { name: "PDF to Excel", link: "pages/pdf-to-excel.html" },
+            { name: "PDF to JPG/PNG", link: "pages/pdf-to-image.html" }, { name: "Word to PDF", link: "pages/word-to-pdf.html" }, { name: "Powerpoint to PDF", link: "pages/ppt-to-pdf.html" },
+            { name: "JPG/PNG to PDF", link: "pages/image-to-pdf.html" }, { name: "Sign PDF", link: "pages/sign-pdf.html" }, { name: "Add page number", link: "pages/add-page-number.html" },
+            { name: "Rotate PDF", link: "pages/rotate-pdf.html" }, { name: "Protect PDF", link: "pages/protect-pdf.html" }
+        ]},
+        { name: "Image Tools", icon: "fa-image", link: "pages/image-tools.html", sub: [
+            { name: "Image Cropper", link: "pages/image-cropper.html" }, { name: "Image Resizer", link: "pages/image-resizer.html" }, { name: "JPG/PNG Converter", link: "pages/jpg-png-converter.html" },
+            { name: "WEBP to PNG/JPG Converter", link: "pages/webp-converter.html" }, { name: "Grayscale Filter", link: "pages/grayscale-filter.html" }, { name: "Rotate & Flip", link: "pages/rotate-flip.html" },
+            { name: "Color Picker/Inverter", link: "pages/color-picker.html" }, { name: "Brightness/Contrast Adjuster", link: "pages/brightness-contrast.html" },
+            { name: "Add Text Overlay", link: "pages/add-text.html" }, { name: "EXIF Data Viewer", link: "pages/exif-viewer.html" }
+        ]},
+        { name: "Accounting", icon: "fa-calculator", link: "pages/accounting.html", target: "_blank", sub: [
+            { name: "Accounting Software", link: "pages/accounting-software.html", target: "_blank" }
+        ]},
+        { name: "File Tools", icon: "fa-folder-open", link: "pages/file-tools.html", sub: [
+            { name: "CSV to JSON Converter", link: "pages/csv-to-json.html" }, { name: "JSON Formatter/Minifier", link: "pages/json-formatter.html" },
+            { name: "Base64 Encoder/Decoder", link: "pages/base64-tool.html" }, { name: "Text Case Converter", link: "pages/case-converter.html" },
+            { name: "Remove Duplicate Lines", link: "pages/remove-duplicates.html" }, { name: "Find/Replace in Text", link: "pages/find-replace.html" },
+            { name: "Calculate Text Hash (SHA-256)", link: "pages/hash-calculator.html" }, { name: "File Reader/Viewer", link: "pages/file-viewer.html" },
+            { name: "Line Sorter", link: "pages/line-sorter.html" }, { name: "File Splitter (By Size)", link: "pages/file-splitter.html" }
+        ]},
+        { name: "Code Generators", icon: "fa-qrcode", link: "pages/code-generators.html", sub: [
+            { name: "QR Code Generator", link: "pages/qr-generator.html" }, { name: "Barcode Generator", link: "pages/barcode-generator.html" }, { name: "Password Generator", link: "pages/password-generator.html" },
+            { name: "UUID/GUID Generator", link: "pages/uuid-generator.html" }, { name: "Color Palette Generator", link: "pages/color-palette.html" }, { name: "Lorem Ipsum Generator", link: "pages/lorem-ipsum.html" },
+            { name: "Favicon Preview/Generator", link: "pages/favicon-generator.html" }, { name: "CSS Box Shadow Generator", link: "pages/box-shadow.html" },
+            { name: "CSS Linear Gradient Generator", link: "pages/gradient-generator.html" }, { name: "HTML Entities Converter", link: "pages/html-entities.html" }
+        ]},
+        { name: "Time & Date", icon: "fa-clock", link: "pages/time-date.html", sub: [
+            { name: "Timestamp Converter", link: "pages/timestamp-converter.html" }, { name: "Date Difference Calculator", link: "pages/date-difference.html" }, { name: "Countdown Timer", link: "pages/countdown.html" },
+            { name: "Stopwatch", link: "pages/stopwatch.html" }, { name: "Time Zone Converter", link: "pages/timezone.html" }, { name: "Leap Year Checker", link: "pages/leap-year.html" },
+            { name: "Day of the Week Calculator", link: "pages/day-of-week.html" }, { name: "Age Calculator", link: "pages/age-calculator.html" },
+            { name: "Time Adder/Subtracter", link: "pages/time-adder.html" }, { name: "Calendar Generator", link: "pages/calendar.html" }
+        ]},
+        { name: "Unit Converters", icon: "fa-ruler-combined", link: "pages/unit-converters.html", sub: [
+            { name: "Length Converter", link: "pages/length-converter.html" }, { name: "Mass/Weight Converter", link: "pages/weight-converter.html" }, { name: "Temperature Converter", link: "pages/temp-converter.html" },
+            { name: "Area Converter", link: "pages/area-converter.html" }, { name: "Volume Converter", link: "pages/volume-converter.html" }, { name: "Speed Converter", link: "pages/speed-converter.html" },
+            { name: "Base Converter", link: "pages/base-converter.html" }, { name: "Hex-RGB-HSL Converter", link: "pages/color-code-converter.html" },
+            { name: "Scientific Calculator", link: "pages/sci-calculator.html" }, { name: "Simple Interest Calculator", link: "pages/interest-calculator.html" }
+        ]},
+        { name: "Web & UI Tools", icon: "fa-palette", link: "pages/web-tools.html", sub: [
+            { name: "Function 1", link: "pages/web-tool-1.html" }, { name: "Function 2", link: "pages/web-tool-2.html" }, { name: "Function 3", link: "pages/web-tool-3.html" },
+            { name: "Function 4", link: "pages/web-tool-4.html" }, { name: "Function 5", link: "pages/web-tool-5.html" }, { name: "Function 6", link: "pages/web-tool-6.html" },
+            { name: "Function 7", link: "pages/web-tool-7.html" }, { name: "Function 8", link: "pages/web-tool-8.html" }, { name: "Function 9", link: "pages/web-tool-9.html" }
+        ]},
+        { name: "Utilities", icon: "fa-screwdriver-wrench", link: "pages/utilities.html", sub: [
+            { name: "Function 1", link: "pages/utility-1.html" }, { name: "Function 2", link: "pages/utility-2.html" }, { name: "Function 3", link: "pages/utility-3.html" },
+            { name: "Function 4", link: "pages/utility-4.html" }, { name: "Function 5", link: "pages/utility-5.html" }, { name: "Function 6", link: "pages/utility-6.html" },
+            { name: "Function 7", link: "pages/utility-7.html" }, { name: "Function 8", link: "pages/utility-8.html" }, { name: "Function 9", link: "pages/utility-9.html" }
+        ]}
+    ];
+
+    // FUNCTION: Generate homepage markup
+    function generateHomePageMarkup() {
+        const allMainTools = [
+            {icon: 'fa-file-pdf', name: 'PDF Tools', desc: 'Merge, split, compress, and convert your PDF files with ease.', link: 'pages/pdf-tools.html'},
+            {icon: 'fa-image', name: 'Image Tools', desc: 'Crop, resize, compress, and convert images in various formats.', link: 'pages/image-tools.html'},
+            {icon: 'fa-file-invoice-dollar', name: 'Accounting Tools', desc: 'Calculate loans, taxes, and investments for financial planning.', link: 'pages/accounting.html', target: '_blank'},
+            {icon: 'fa-folder-open', name: 'File Tools', desc: 'Compress, convert, and manage various file types securely.', link: 'pages/file-tools.html'},
+            {icon: 'fa-qrcode', name: 'Code Generators', desc: 'Create QR codes, barcodes, passwords, and other data snippets.', link: 'pages/code-generators.html'},
+            {icon: 'fa-clock', name: 'Time & Date Tools', desc: 'Convert timezones, use timers, and calculate date durations.', link: 'pages/time-date.html'},
+            {icon: 'fa-exchange-alt', name: 'Unit Convertor', desc: 'Convert units of length, weight, temperature, and more.', link: 'pages/unit-converters.html'},
+            {icon: 'fa-palette', name: 'Web & UI Tools', desc: 'Tools for developers like minifiers, color pickers, and encoders.', link: 'pages/web-tools.html'},
+            {icon: 'fa-screwdriver-wrench', name: 'Utilities Tools', desc: 'A collection of helpful utilities for various daily tasks.', link: 'pages/utilities.html'}
+        ];
+        const adCardHtml = `<div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>`;
+
+        let toolsGridHtml = "";
+        for (let i = 0; i < allMainTools.length; i++) {
+            const tool = allMainTools[i];
+            const target = tool.target || '_self';
+            toolsGridHtml += `<a href='${tool.link}' target='${target}' class='tool-card'><i class='fa-solid ${tool.icon} tool-icon'></i><h3>${tool.name}</h3><p>${tool.desc}</p></a>`;
+            if ((i + 1) % 3 === 0) {
+                toolsGridHtml += adCardHtml + adCardHtml + adCardHtml;
+            }
+        }
+
+        const functionsHtml = navData.map(category => `
+            <div class='function-category'>
+                <h2>${category.name}</h2>
+                <div class='function-list'>
+                    ${category.sub.map(tool => {
+                        const target = tool.target || '_self';
+                        return `<div class='function-item'>
+                            <h3><a href='${tool.link}' target='${target}'>${tool.name}</a></h3>
+                            <p>A helpful description for the ${tool.name} tool. It's powerful and easy to use.</p>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>
+        `).join('');
+
+        return `
+            <div class='content-wrapper'>
+                <div class='dashboard-header'><h2>Your All-in-One Online Toolkit</h2><p>Select a tool category from the sidebar or explore our functions below.</p></div>
+                <div class='tools-grid'>${toolsGridHtml}</div>
+            </div>
+            <section class='services-section'>
+                <div class='services-container'>
+                    <h2>A Full Suite of Powerful Tools</h2>
+                    <p>JKM Edit provides everything you need in one place. Fast, secure, and always free.</p>
+                    <div class='services-grid'>
+                        <div class='service-item'><i class='fa-solid fa-shield-halved'></i><div><h4>Secure & Private</h4><p>Your files are processed securely and deleted from our servers automatically.</p></div></div>
+                        <div class='service-item'><i class='fa-solid fa-bolt-lightning'></i><div><h4>Blazing Fast</h4><p>Our tools are optimized for speed, so you can get your work done quickly.</p></div></div>
+                        <div class='service-item'><i class='fa-solid fa-cloud'></i><div><h4>Cloud-Based</h4><p>No installation needed. Access all tools directly from your web browser.</p></div></div>
+                        <div class='service-item'><i class='fa-solid fa-mobile-screen-button'></i><div><h4>Works Everywhere</h4><p>JKM Edit is fully responsive and works on desktop, tablet, and mobile devices.</p></div></div>
+                    </div>
+                </div>
+            </section>
+            <section class='image-gallery-section'>
+                <h2>Main Page Photos</h2>
+                <div class='gallery-grid'>
+                    <div class='gallery-item'><img src='assets/main-page-photo-1.jpg' alt='Photo 1'><h4>Photo 1 Title</h4></div>
+                    <div class='gallery-item'><img src='assets/main-page-photo-2.jpg' alt='Photo 2'><h4>Photo 2 Title</h4></div>
+                    <div class='gallery-item'><img src='assets/main-page-photo-3.jpg' alt='Photo 3'><h4>Photo 3 Title</h4></div>
+                </div>
+            </section>
+            <section class='functions-section'>
+                <div class='functions-container'>${functionsHtml}</div>
+            </section>
+        `;
+    }
+
+    // MAIN SCRIPT
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const appContainer = document.getElementById('app-container');
+        const mainContent = document.getElementById('main-content');
+        const menuToggle = document.getElementById('menu-toggle');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const htmlElement = document.documentElement;
+        const navList = document.getElementById('sidebar-nav-list');
+        const flyoutMenu = document.getElementById('sidebar-flyout-menu');
+
+        // Dynamically build sidebar navigation
+        navData.forEach((item, index) => {
+            const listItem = document.createElement('li');
+            listItem.className = 'sidebar-nav-item';
+            listItem.dataset.index = index;
+            const hasSub = item.sub && item.sub.length > 0;
+            const target = item.target || '_self';
+
+            listItem.innerHTML = `
+                <a href="${item.link}" target="${target}" class="sidebar-nav-link">
+                    <div class="link-content"><i class="fa-solid ${item.icon}"></i> ${item.name}</div>
+                    ${hasSub ? '<i class="fa-solid fa-chevron-right chevron"></i>' : ''}
+                </a>
+                ${hasSub ? `<div class="sidebar-accordion-submenu">${item.sub.map(s => {
+                    const subTarget = s.target || '_self';
+                    return `<a href="${s.link}" target="${subTarget}">${s.name}</a>`;
+                }).join('')}</div>` : ''}
+            `;
+            navList.appendChild(listItem);
+        });
+
+        // Load homepage content
+        if (mainContent.children.length <= 1) { // Only load if content area is empty
+             mainContent.innerHTML += generateHomePageMarkup();
+        }
+
+        // --- EVENT LISTENERS ---
+        let flyoutTimeout;
+        navList.addEventListener('mouseover', (e) => {
+            if (window.innerWidth <= 1024) return;
+            const navItem = e.target.closest('.sidebar-nav-item');
+            if (navItem) {
+                clearTimeout(flyoutTimeout);
+                const itemIndex = parseInt(navItem.dataset.index, 10);
+                const data = navData[itemIndex];
+                if (data && data.sub) {
+                    flyoutMenu.innerHTML = data.sub.map(s => {
+                         const subTarget = s.target || '_self';
+                         return `<a href="${s.link}" target="${subTarget}">${s.name}</a>`
+                    }).join('');
+                    const rect = navItem.getBoundingClientRect();
+                    flyoutMenu.classList.add('is-visible');
+                    const menuHeight = flyoutMenu.offsetHeight;
+                    const viewportHeight = window.innerHeight;
+                    flyoutMenu.style.bottom = 'auto';
+                    if ((rect.top + menuHeight) > viewportHeight - 10) {
+                        flyoutMenu.style.top = 'auto';
+                        flyoutMenu.style.bottom = '10px';
+                    } else {
+                        flyoutMenu.style.top = `${rect.top}px`;
+                    }
+                    flyoutMenu.style.left = `${rect.right}px`;
+                }
+            }
+        });
+
+        const hideFlyout = () => {
+             if (window.innerWidth <= 1024) return;
+             flyoutTimeout = setTimeout(() => flyoutMenu.classList.remove('is-visible'), 150);
+        };
+
+        navList.addEventListener('mouseout', hideFlyout);
+        flyoutMenu.addEventListener('mouseover', () => clearTimeout(flyoutTimeout));
+        flyoutMenu.addEventListener('mouseout', hideFlyout);
+
+        document.body.addEventListener('click', (e) => {
+            const clickedLink = e.target.closest('a');
+            if (!clickedLink) return;
+
+            const isSidebarLink = clickedLink.closest('#static-sidebar, #sidebar-flyout-menu');
+            if (isSidebarLink) {
+                const parentItem = clickedLink.closest('.sidebar-nav-item');
+                if (window.innerWidth <= 1024 && clickedLink.classList.contains('sidebar-nav-link') && parentItem && parentItem.querySelector('.sidebar-accordion-submenu')) {
+                    e.preventDefault();
+                    parentItem.classList.toggle('is-open');
+                    return;
+                }
+                if (window.innerWidth <= 1024) appContainer.classList.remove('sidebar-open');
+                flyoutMenu.classList.remove('is-visible');
+            }
+        });
+
+        // General App Controls
+        menuToggle.addEventListener('click', () => appContainer.classList.toggle('sidebar-open'));
+
+        const setDarkMode = (isDark) => {
+            htmlElement.classList.toggle('dark-mode', isDark);
+            localStorage.setItem('jkm-edit-mode', isDark ? 'dark' : 'light');
+        };
+
+        if (localStorage.getItem('jkm-edit-mode') === 'dark') setDarkMode(true);
+        darkModeToggle.addEventListener('click', () => setDarkMode(!htmlElement.classList.contains('dark-mode')));
+
+        // Modal Logic
+        const aboutModal = document.getElementById('about-modal');
+        const contactModal = document.getElementById('contact-modal');
+        const openModal = (modal) => modal.style.display = 'flex';
+        const closeModal = (modal) => modal.style.display = 'none';
+        document.getElementById('about-btn').addEventListener('click', () => openModal(aboutModal));
+        document.getElementById('contact-btn').addEventListener('click', () => openModal(contactModal));
+        document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal'))));
+        window.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) closeModal(e.target); });
+    });
+    </script>
+</body>
+</html>
