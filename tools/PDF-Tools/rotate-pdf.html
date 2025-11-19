@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    
+    <!-- =================================================================== -->
+    <!-- SEO & META TAGS -->
+    <!-- =================================================================== -->
+    <title>Rotate PDF - Free Online Tool | JKM Edit</title>
+    <meta name="description" content="Rotate PDF pages online for free. Rotate all pages, specific pages, odd or even pages. Permanent rotation with JKM Edit's secure and easy tool."/>
+    <meta name="author" content="JKM Edit"/>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+    <!-- =================================================================== -->
+
+    <!-- PDF-LIB SCRIPT (REQUIRED FOR PDF MANIPULATION) -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+    <style>
+        /* --- Basic Setup & Variables (LOCKED TO CORPORATE BLUE) --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --transition-speed: 0.3s; 
+            /* Corporate Blue Theme Definitions */
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        html, body { margin: 0; min-height: 100vh; }
+        body { color: var(--text-color); background-color: var(--bg-color); animation: fadeInPage 0.5s ease-in-out; }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- Branding Bar (Header) --- */
+        .branding-bar {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+            margin-bottom: 1rem;
+            justify-content: flex-start; /* Aligns content to the left */
+        }
+        
+        .logo-container { 
+            display: flex; 
+            align-items: center; 
+            gap: 1rem; 
+            text-decoration: none; 
+        }
+        
+        .logo-image {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .branding-bar h1 { 
+            font-size: 1.75rem; 
+            font-weight: 700; 
+            margin: 0; 
+            color: var(--text-color); 
+        }
+
+        /* --- Tool Specific Styles --- */
+        .tool-container { padding: 2rem 4rem; max-width: 900px; margin: auto; }
+        .tool-header { text-align: center; margin-bottom: 3rem; }
+        .tool-header h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+
+        .ad-slot-horizontal { width: 100%; max-width: 728px; height: 90px; margin: 0 auto 2rem auto; background-color: #f0f0f0; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #aaa; border-radius: 8px; }
+        
+        .upload-area { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; background: var(--surface-color); cursor: pointer; transition: all 0.3s; }
+        .upload-area:hover, .upload-area.drag-over { border-color: var(--primary-color); background-color: #f0f7ff; }
+        .upload-icon { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .upload-area p { margin: 0; font-size: 1.1rem; font-weight: 600; }
+        #pdf-upload { display: none; }
+
+        .options-panel { background: var(--surface-color); padding: 2rem; border-radius: 8px; margin-top: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
+        .options-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start; }
+        .option-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .option-group label { font-weight: 600; }
+        .option-group select, .option-group input { padding: 0.75rem; border-radius: 5px; border: 1px solid #ccc; background: var(--bg-color); color: var(--text-color); width: 100%; font-family: 'Poppins', sans-serif; }
+        .radio-group label { display: block; margin-bottom: 0.75rem; }
+        #page-range-input { display: none; margin-top: 0.5rem; }
+        
+        .process-button { display: block; width: 100%; padding: 1rem; margin-top: 2rem; background: var(--gradient); color: white; border: none; border-radius: 8px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .process-button:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        .process-button:disabled { background: #ccc; cursor: not-allowed; }
+
+        .file-info { margin-top: 1.5rem; text-align: center; font-weight: 600; display: none; }
+        .status-message { margin-top: 1rem; text-align: center; font-weight: 600; display: none; }
+        .spinner { border: 4px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: var(--primary-color); animation: spin 1s ease infinite; margin: 1rem auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .download-section { text-align: center; margin-top: 2rem; display: none; }
+        .download-btn { display: inline-block; padding: 1rem 2.5rem; background: var(--gradient); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.2rem; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+
+        .navigation-buttons { text-align: center; margin-top: 3rem; }
+        .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; margin: 0 0.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
+        .secondary-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .primary-nav-btn { background: var(--gradient); color: white !important; }
+
+        /* --- Page Transition Animations --- */
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .tool-container { padding: 2rem 1.5rem; }
+            .options-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- BRANDING SECTION (Left Aligned with Image Logo) -->
+    <header class="branding-bar">
+        <a href='../../' class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <main class='tool-container'>
+
+        <!-- ADVERTISEMENT SLOT -->
+        <div class="ad-slot-horizontal">
+            <!-- Paste your 728x90 Ad Code inside this div -->
+        </div>
+
+        <div class='tool-header'>
+            <h2>Rotate PDF</h2>
+            <p>Select a PDF file to rotate its pages permanently.</p>
+        </div>
+
+        <!-- UPLOAD AREA -->
+        <div id="upload-area" class="upload-area">
+            <input type="file" id="pdf-upload" accept=".pdf" />
+            <i class="fa-solid fa-file-arrow-up upload-icon"></i>
+            <p>Drag & Drop your PDF here</p>
+            <p style="font-size: 0.9rem; font-weight: 400; margin-top: 0.5rem;">or click to select a file</p>
+        </div>
+
+        <!-- FILE INFO & OPTIONS -->
+        <p id="file-info" class="file-info"></p>
+        <div id="options-panel" class="options-panel">
+            <h3>Rotation Options</h3>
+            <div class="options-grid">
+                <div class="option-group">
+                    <label for="rotation-angle">Angle</label>
+                    <select id="rotation-angle">
+                        <option value="90">90° Clockwise</option>
+                        <option value="180">180°</option>
+                        <option value="270">90° Counter-clockwise</option>
+                    </select>
+                </div>
+                <div class="option-group">
+                    <label>Apply to Pages</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="rotation-mode" value="all" checked> All pages</label>
+                        <label><input type="radio" name="rotation-mode" value="odd"> Odd pages only</label>
+                        <label><input type="radio" name="rotation-mode" value="even"> Even pages only</label>
+                        <label><input type="radio" name="rotation-mode" value="range"> Specific page range</label>
+                        <div id="page-range-input">
+                             <input type="text" id="page-range" placeholder="e.g., 2-5, 8, 10-12">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="process-button" class="process-button">Rotate PDF</button>
+        </div>
+
+        <!-- STATUS & DOWNLOAD -->
+        <div id="status-message" class="status-message">
+            <div class="spinner"></div>
+            <p>Rotating your PDF... Please wait.</p>
+        </div>
+        <div id="download-section" class="download-section">
+            <h3>Your PDF is Ready!</h3>
+            <a href="#" id="download-btn" class="download-btn" download="rotated-document.pdf">
+                <i class="fa-solid fa-download"></i> Download PDF
+            </a>
+        </div>
+
+        <!-- NAVIGATION BUTTONS -->
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn secondary-button"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="../../" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        // Handle Page Transitions
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                document.body.classList.remove('fade-out');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Page Transition ---
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
+            });
+        });
+        
+        // PDF PROCESSING SCRIPT
+        const { PDFDocument, rgb, degrees } = PDFLib;
+
+        const uploadArea = document.getElementById('upload-area');
+        const pdfUpload = document.getElementById('pdf-upload');
+        const fileInfo = document.getElementById('file-info');
+        const optionsPanel = document.getElementById('options-panel');
+        const processButton = document.getElementById('process-button');
+        const statusMessage = document.getElementById('status-message');
+        const downloadSection = document.getElementById('download-section');
+        const downloadBtn = document.getElementById('download-btn');
+        const pageRangeInput = document.getElementById('page-range-input');
+
+        let uploadedFile = null;
+
+        // Handle file selection
+        if (uploadArea) uploadArea.addEventListener('click', () => pdfUpload.click());
+        if (pdfUpload) pdfUpload.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+        // Handle drag and drop
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                handleFile(e.dataTransfer.files[0]);
+            });
+        }
+
+        function handleFile(file) {
+            if (file && file.type === 'application/pdf') {
+                uploadedFile = file;
+                fileInfo.textContent = `File selected: ${file.name}`;
+                fileInfo.style.display = 'block';
+                optionsPanel.style.display = 'block';
+                uploadArea.style.display = 'none';
+                downloadSection.style.display = 'none';
+            } else {
+                alert('Please select a valid PDF file.');
+            }
+        }
+        
+        // Show/hide page range input based on radio selection
+        document.querySelectorAll('input[name="rotation-mode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                pageRangeInput.style.display = e.target.value === 'range' ? 'block' : 'none';
+            });
+        });
+
+        // Parse page range string
+        function parsePageRange(rangeStr) {
+            const pages = new Set();
+            if (!rangeStr) return pages;
+            const parts = rangeStr.split(',');
+            for (const part of parts) {
+                if (part.includes('-')) {
+                    const [start, end] = part.split('-').map(num => parseInt(num.trim()));
+                    if (!isNaN(start) && !isNaN(end)) {
+                        for (let i = start; i <= end; i++) {
+                            pages.add(i);
+                        }
+                    }
+                } else {
+                    const page = parseInt(part.trim());
+                    if (!isNaN(page)) {
+                        pages.add(page);
+                    }
+                }
+            }
+            return pages;
+        }
+
+        // Process the PDF
+        if (processButton) {
+            processButton.addEventListener('click', async () => {
+                if (!uploadedFile) return;
+
+                statusMessage.style.display = 'block';
+                optionsPanel.style.display = 'none';
+                processButton.disabled = true;
+
+                try {
+                    const existingPdfBytes = await uploadedFile.arrayBuffer();
+                    const pdfDoc = await PDFDocument.load(existingPdfBytes);
+                    const pages = pdfDoc.getPages();
+                    
+                    const angle = parseInt(document.getElementById('rotation-angle').value, 10);
+                    const mode = document.querySelector('input[name="rotation-mode"]:checked').value;
+
+                    let pagesToRotate = new Set();
+
+                    switch (mode) {
+                        case 'all':
+                            pages.forEach((_, i) => pagesToRotate.add(i + 1));
+                            break;
+                        case 'odd':
+                            pages.forEach((_, i) => { if ((i + 1) % 2 !== 0) pagesToRotate.add(i + 1); });
+                            break;
+                        case 'even':
+                            pages.forEach((_, i) => { if ((i + 1) % 2 === 0) pagesToRotate.add(i + 1); });
+                            break;
+                        case 'range':
+                            const rangeStr = document.getElementById('page-range').value;
+                            pagesToRotate = parsePageRange(rangeStr);
+                            break;
+                    }
+                    
+                    pagesToRotate.forEach(pageNum => {
+                        if (pageNum > 0 && pageNum <= pages.length) {
+                            const pageIndex = pageNum - 1; 
+                            const page = pages[pageIndex];
+                            const currentRotation = page.getRotation().angle;
+                            page.setRotation(degrees(currentRotation + angle));
+                        }
+                    });
+
+                    const pdfBytes = await pdfDoc.save();
+                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    downloadBtn.href = url;
+                    downloadBtn.download = `rotated_${uploadedFile.name}`;
+                    statusMessage.style.display = 'none';
+                    downloadSection.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error(error);
+                    alert('An error occurred while processing the PDF. Please check your page range input.');
+                    statusMessage.style.display = 'none';
+                    optionsPanel.style.display = 'block';
+                } finally {
+                    processButton.disabled = false;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
