@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>3D Flipbook PDF Reader | JKM Edit</title>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <!-- LIBRARIES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+    <script src="https://unpkg.com/page-flip/dist/js/page-flip.browser.js"></script>
+
+    <style>
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            /* Wood Texture for the "Desk" vibe */
+            --desk-bg: #e8e5df url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+        }
+        
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- HEADER --- */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+            z-index: 10;
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- LAYOUT --- */
+        .tool-container { padding: 2rem 1rem; max-width: 1200px; margin: auto; width: 100%; flex: 1; display: flex; flex-direction: column;}
+        
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #e0e0e0; border: 1px dashed #999; 
+            margin: 0 auto 2rem auto; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        /* --- UPLOAD --- */
+        #upload-stage { text-align: center; padding: 2rem; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 2rem;}
+        .tool-header h2 { font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color); }
+        .tool-header p { margin-bottom: 2rem; color: #666; }
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
+            cursor: pointer; background-color: var(--surface-color); transition: 0.3s; 
+        }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+
+        /* --- BOOK STAGE --- */
+        #book-stage {
+            flex: 1;
+            background: var(--desk-bg);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.1);
+            padding: 40px 20px;
+            min-height: 600px;
+            overflow: hidden;
+        }
+
+        /* The Book Instance */
+        .flip-book {
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            display: none; /* Hidden until loaded */
+        }
+
+        .page {
+            background-color: #ffffff; /* Pure White for clarity */
+            padding: 0;
+            overflow: hidden;
+            border-right: 1px solid #eee; 
+        }
+        
+        /* Cover Style - FIXED: Removed dark background */
+        .page.-hard {
+            background-color: #ffffff; 
+            border: 1px solid #ddd;
+        }
+
+        .page-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: white; /* Ensures transparency in PDF becomes white */
+        }
+        
+        .page-content canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Controls */
+        .book-controls {
+            margin-top: 30px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .ctrl-btn {
+            background: none; border: none; cursor: pointer;
+            font-size: 1.2rem; color: #555; width: 40px; height: 40px;
+            border-radius: 50%; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ctrl-btn:hover { background: #eee; color: var(--primary-color); }
+        .page-counter { font-family: 'Courier New', monospace; font-size: 0.9rem; font-weight: bold; color: #333; }
+
+        /* Loading */
+        #loader {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; width: 300px;
+        }
+        .progress-bar-bg { width: 100%; height: 6px; background: #ccc; border-radius: 3px; margin-top: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.2s; }
+
+        /* Navigation Buttons */
+        .navigation-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }
+        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; border: none; font-size: 1rem; }
+        .nav-back { background: #e9ecef; color: #333; }
+        .nav-dash { background: var(--primary-color); color: white; }
+        .nav-dash:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="branding-bar">
+        <a href="index.html" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <main class='tool-container'>
+        <div class="ad-placeholder">Advertisement Space (728x90)</div>
+
+        <!-- STAGE 1: UPLOAD -->
+        <div id="upload-stage">
+            <div class='tool-header'>
+                <h2>Virtual Book Reader</h2>
+                <p>Read your PDF with a realistic 3D page-flipping experience.</p>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept="application/pdf"/>
+            <div id="dropzone">
+                <i class="fa-solid fa-book-open"></i>
+                <p><strong>Click to Upload PDF</strong><br>or drag and drop here</p>
+            </div>
+            
+            <div class="navigation-buttons">
+                <a href="javascript:history.back()" class="nav-btn nav-back"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+                <a href="index.html" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            </div>
+        </div>
+
+        <!-- STAGE 2: BOOK READER -->
+        <div id="book-stage" class="hidden">
+            
+            <!-- Loading Indicator -->
+            <div id="loader">
+                <h3>Building your Book...</h3>
+                <p>Rendering pages for 3D effect</p>
+                <div class="progress-bar-bg"><div id="progress-fill" class="progress-bar-fill"></div></div>
+            </div>
+
+            <!-- The Flipbook Container -->
+            <div id="flipbook" class="flip-book">
+                <!-- Pages injected here -->
+            </div>
+
+            <!-- Controls -->
+            <div class="book-controls hidden" id="controls">
+                <button class="ctrl-btn" onclick="book.flipPrev()" title="Previous Page"><i class="fa-solid fa-chevron-left"></i></button>
+                <span class="page-counter">Page <span id="current-page">1</span> of <span id="total-pages">--</span></span>
+                <button class="ctrl-btn" onclick="book.flipNext()" title="Next Page"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+            
+            <!-- Bottom Navigation in Reader Mode -->
+            <div class="navigation-buttons" style="margin-top: 30px;">
+                <button onclick="window.location.reload()" class="nav-btn nav-back">
+                    <i class="fa-solid fa-book"></i> Open Another Book
+                </button>
+                
+                <a href="javascript:history.back()" class="nav-btn nav-back">
+                    <i class="fa-solid fa-arrow-left"></i> Go Back
+                </a>
+                
+                <a href="index.html" class="nav-btn nav-dash">
+                    <i class="fa-solid fa-table-columns"></i> Dashboard
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // DOM Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const uploadStage = document.getElementById('upload-stage');
+        const bookStage = document.getElementById('book-stage');
+        const flipbookEl = document.getElementById('flipbook');
+        const loader = document.getElementById('loader');
+        const progressFill = document.getElementById('progress-fill');
+        const controls = document.getElementById('controls');
+        const currentPageSpan = document.getElementById('current-page');
+        const totalPagesSpan = document.getElementById('total-pages');
+
+        let book = null; 
+
+        // --- Upload Logic ---
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
+        fileInput.onchange = (e) => handleFiles(e.target.files);
+
+        function handleFiles(files) {
+            if (!files[0] || files[0].type !== 'application/pdf') return alert("Invalid PDF");
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadStage.classList.add('hidden');
+                bookStage.classList.remove('hidden');
+                initBook(e.target.result);
+            };
+            reader.readAsArrayBuffer(files[0]);
+        }
+
+        // --- Book Logic ---
+        async function initBook(buffer) {
+            try {
+                const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+                const numPages = pdf.numPages;
+                totalPagesSpan.innerText = numPages;
+
+                for (let i = 1; i <= numPages; i++) {
+                    // Update Progress
+                    const percent = Math.round((i / numPages) * 100);
+                    progressFill.style.width = `${percent}%`;
+
+                    // Render PDF Page
+                    const page = await pdf.getPage(i);
+                    const desiredHeight = 600; 
+                    const viewport = page.getViewport({ scale: 1 });
+                    const scale = desiredHeight / viewport.height;
+                    const scaledViewport = page.getViewport({ scale: scale });
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = scaledViewport.width;
+                    canvas.height = scaledViewport.height;
+                    const ctx = canvas.getContext('2d');
+                    
+                    await page.render({ canvasContext: ctx, viewport: scaledViewport }).promise;
+
+                    // Construct DOM
+                    const pageDiv = document.createElement('div');
+                    pageDiv.className = 'page';
+                    
+                    // Add hard class to Page 1, but CSS now ensures it's WHITE, not black
+                    if (i === 1) pageDiv.classList.add('-hard'); 
+
+                    const contentDiv = document.createElement('div');
+                    contentDiv.className = 'page-content';
+                    contentDiv.appendChild(canvas);
+                    
+                    // Add subtle page number
+                    if (i > 1) {
+                       const footer = document.createElement('div');
+                       footer.style.position = 'absolute'; footer.style.bottom = '10px';
+                       footer.style.width = '100%'; footer.style.textAlign = 'center';
+                       footer.style.fontSize = '10px'; footer.style.color = '#999';
+                       footer.innerText = i;
+                       contentDiv.appendChild(footer);
+                    }
+
+                    pageDiv.appendChild(contentDiv);
+                    flipbookEl.appendChild(pageDiv);
+                }
+
+                loader.classList.add('hidden');
+                flipbookEl.style.display = 'block';
+                controls.classList.remove('hidden');
+
+                // Initialize 3D Engine
+                book = new St.PageFlip(flipbookEl, {
+                    width: 450, 
+                    height: 600,
+                    size: 'stretch',
+                    minWidth: 300,
+                    maxWidth: 800,
+                    minHeight: 400,
+                    maxHeight: 1000,
+                    maxShadowOpacity: 0.5, 
+                    showCover: true,
+                    mobileScrollSupport: false 
+                });
+
+                book.loadFromHTML(document.querySelectorAll('.page'));
+
+                book.on('flip', (e) => {
+                    let current = e.data + 1;
+                    currentPageSpan.innerText = current;
+                });
+
+            } catch (err) {
+                console.error(err);
+                alert("Error generating book: " + err.message);
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
