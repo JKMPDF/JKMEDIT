@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>Image Resizer | JKM Edit</title>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- HEADER --- */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- MAIN LAYOUT --- */
+        .tool-container { padding: 2rem 1rem; max-width: 1100px; margin: 0 auto; width: 100%; flex: 1; }
+        
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #e0e0e0; border: 1px dashed #999; 
+            margin: 0 auto 2rem auto; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .tool-header p { color: #666; }
+
+        /* --- UPLOAD ZONE --- */
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
+            text-align: center; cursor: pointer; background-color: var(--surface-color); 
+            transition: 0.3s; margin-bottom: 20px;
+        }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+
+        /* --- EDITOR INTERFACE --- */
+        .editor-grid {
+            display: grid; grid-template-columns: 1fr 350px; gap: 20px;
+            align-items: start;
+        }
+
+        /* Left: Preview */
+        .preview-container {
+            background: var(--surface-color); padding: 20px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;
+            min-height: 400px; display: flex; flex-direction: column; justify-content: center;
+        }
+        #image-preview { max-width: 100%; max-height: 500px; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .img-info { margin-top: 10px; font-size: 0.9rem; color: #666; }
+
+        /* Right: Controls */
+        .controls-panel {
+            background: var(--surface-color); padding: 25px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-color); }
+
+        /* Dimension Inputs */
+        .dimensions-row { display: flex; align-items: center; gap: 10px; }
+        .dim-input { flex: 1; position: relative; }
+        .dim-input input { width: 100%; padding: 10px; padding-right: 30px; border: 1px solid #ccc; border-radius: 6px; }
+        .dim-input span { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #999; font-size: 0.8rem; }
+        
+        /* Lock Button */
+        .lock-btn {
+            background: none; border: 1px solid #ddd; border-radius: 4px;
+            padding: 8px; cursor: pointer; color: #aaa; transition: 0.2s;
+        }
+        .lock-btn.active { background: #eef2ff; color: var(--primary-color); border-color: var(--primary-color); }
+
+        /* Sliders and Selects */
+        input[type="range"] { width: 100%; margin-top: 5px; }
+        select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+
+        /* Buttons */
+        .btn {
+            width: 100%; padding: 12px; border: none; border-radius: 6px;
+            font-weight: 600; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem;
+        }
+        .btn-primary { background: var(--gradient); color: white; margin-top: 10px; }
+        .btn-primary:hover { opacity: 0.9; box-shadow: 0 5px 15px rgba(0, 82, 204, 0.3); }
+
+        /* Navigation */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; }
+        .nav-btn { padding: 10px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; background: #e9ecef; color: #333; display: inline-flex; align-items: center; gap: 5px; }
+        .nav-dash { background: var(--primary-color); color: white; }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            .editor-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="branding-bar">
+        <a href="index.html" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <main class="tool-container">
+        <div class="ad-placeholder">Advertisement Space (728x90)</div>
+
+        <!-- STAGE 1: UPLOAD -->
+        <div id="upload-stage">
+            <div class="tool-header">
+                <h2>Image Resizer</h2>
+                <p>Change image dimensions easily without losing quality.</p>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept="image/*"/>
+            <div id="dropzone">
+                <i class="fa-solid fa-expand"></i>
+                <p><strong>Click to Upload Image</strong><br>or drag and drop here</p>
+            </div>
+        </div>
+
+        <!-- STAGE 2: EDITOR -->
+        <div id="editor-stage" class="hidden">
+            <div class="editor-grid">
+                
+                <!-- Preview Side -->
+                <div class="preview-container">
+                    <img id="image-preview" src="" alt="Preview">
+                    <div class="img-info">
+                        Original: <span id="orig-dims">0 x 0</span> | Size: <span id="orig-size">0 KB</span>
+                    </div>
+                </div>
+
+                <!-- Controls Side -->
+                <div class="controls-panel">
+                    
+                    <!-- Dimensions -->
+                    <div class="input-group">
+                        <label>Dimensions (px)</label>
+                        <div class="dimensions-row">
+                            <div class="dim-input">
+                                <input type="number" id="input-width">
+                                <span>W</span>
+                            </div>
+                            
+                            <button class="lock-btn active" id="lock-btn" title="Lock Aspect Ratio" onclick="toggleLock()">
+                                <i class="fa-solid fa-link"></i>
+                            </button>
+                            
+                            <div class="dim-input">
+                                <input type="number" id="input-height">
+                                <span>H</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Percentage Scale -->
+                    <div class="input-group">
+                        <div style="display:flex; justify-content:space-between;">
+                            <label>Scale by Percentage</label>
+                            <span id="scale-val" style="color:var(--primary-color); font-weight:bold;">100%</span>
+                        </div>
+                        <input type="range" id="scale-range" min="10" max="200" value="100">
+                    </div>
+
+                    <hr style="border:0; border-top:1px solid #eee; margin: 20px 0;">
+
+                    <!-- Output Format -->
+                    <div class="input-group">
+                        <label>Save As</label>
+                        <select id="format-select">
+                            <option value="image/jpeg">JPG</option>
+                            <option value="image/png">PNG</option>
+                            <option value="image/webp">WEBP</option>
+                        </select>
+                    </div>
+
+                    <!-- Quality -->
+                    <div class="input-group">
+                        <div style="display:flex; justify-content:space-between;">
+                            <label>Quality</label>
+                            <span id="quality-val">90%</span>
+                        </div>
+                        <input type="range" id="quality-range" min="10" max="100" value="90">
+                    </div>
+
+                    <!-- Action -->
+                    <button class="btn btn-primary" onclick="resizeAndDownload()">
+                        <i class="fa-solid fa-download"></i> Resize & Download
+                    </button>
+
+                    <button onclick="location.reload()" style="width:100%; margin-top:15px; background:none; border:none; color:#666; cursor:pointer; text-decoration:underline;">Start Over</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="index.html" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+    </main>
+
+    <script>
+        // Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const uploadStage = document.getElementById('upload-stage');
+        const editorStage = document.getElementById('editor-stage');
+        const imgPreview = document.getElementById('image-preview');
+        
+        // Inputs
+        const widthInput = document.getElementById('input-width');
+        const heightInput = document.getElementById('input-height');
+        const scaleRange = document.getElementById('scale-range');
+        const scaleVal = document.getElementById('scale-val');
+        const lockBtn = document.getElementById('lock-btn');
+        const formatSelect = document.getElementById('format-select');
+        const qualityRange = document.getElementById('quality-range');
+        const qualityVal = document.getElementById('quality-val');
+
+        // State
+        let originalWidth = 0;
+        let originalHeight = 0;
+        let aspectRatio = 0;
+        let isLocked = true;
+        let fileName = "image";
+
+        // --- UPLOAD LOGIC ---
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
+        fileInput.onchange = (e) => handleFile(e.target.files[0]);
+
+        function handleFile(file) {
+            if (!file || !file.type.startsWith('image/')) return alert("Please upload an image.");
+            
+            fileName = file.name.substring(0, file.name.lastIndexOf('.'));
+            document.getElementById('orig-size').innerText = (file.size / 1024).toFixed(1) + ' KB';
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imgPreview.src = e.target.result;
+                imgPreview.onload = () => {
+                    originalWidth = imgPreview.naturalWidth;
+                    originalHeight = imgPreview.naturalHeight;
+                    aspectRatio = originalWidth / originalHeight;
+
+                    // Set initial values
+                    widthInput.value = originalWidth;
+                    heightInput.value = originalHeight;
+                    document.getElementById('orig-dims').innerText = `${originalWidth} x ${originalHeight}`;
+
+                    // Suggest format based on input
+                    if (file.type === 'image/png') formatSelect.value = 'image/png';
+                    else if (file.type === 'image/webp') formatSelect.value = 'image/webp';
+                    else formatSelect.value = 'image/jpeg';
+
+                    uploadStage.classList.add('hidden');
+                    editorStage.classList.remove('hidden');
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- INPUT LOGIC ---
+        
+        // Toggle Lock
+        function toggleLock() {
+            isLocked = !isLocked;
+            lockBtn.classList.toggle('active', isLocked);
+            lockBtn.innerHTML = isLocked ? '<i class="fa-solid fa-link"></i>' : '<i class="fa-solid fa-link-slash"></i>';
+            if(isLocked) {
+                // Re-sync if locked
+                heightInput.value = Math.round(widthInput.value / aspectRatio);
+            }
+        }
+
+        // Width Change
+        widthInput.addEventListener('input', () => {
+            if (isLocked && widthInput.value) {
+                heightInput.value = Math.round(widthInput.value / aspectRatio);
+            }
+            updateScaleSlider();
+        });
+
+        // Height Change
+        heightInput.addEventListener('input', () => {
+            if (isLocked && heightInput.value) {
+                widthInput.value = Math.round(heightInput.value * aspectRatio);
+            }
+            updateScaleSlider();
+        });
+
+        // Scale Slider Change
+        scaleRange.addEventListener('input', () => {
+            const percent = scaleRange.value;
+            scaleVal.innerText = percent + '%';
+            
+            const newW = Math.round(originalWidth * (percent / 100));
+            const newH = Math.round(originalHeight * (percent / 100));
+            
+            widthInput.value = newW;
+            heightInput.value = newH;
+        });
+
+        // Update slider if text inputs change manually
+        function updateScaleSlider() {
+            const w = parseInt(widthInput.value);
+            const percent = Math.round((w / originalWidth) * 100);
+            if(percent >= 10 && percent <= 200) {
+                scaleRange.value = percent;
+                scaleVal.innerText = percent + '%';
+            } else {
+                scaleVal.innerText = 'Custom';
+            }
+        }
+
+        // Quality Slider
+        qualityRange.addEventListener('input', () => {
+            qualityVal.innerText = qualityRange.value + '%';
+        });
+
+        // --- RESIZE & DOWNLOAD ---
+        function resizeAndDownload() {
+            const newW = parseInt(widthInput.value);
+            const newH = parseInt(heightInput.value);
+            const format = formatSelect.value;
+            const quality = parseInt(qualityRange.value) / 100;
+
+            if (!newW || !newH) return alert("Invalid dimensions.");
+
+            const canvas = document.createElement('canvas');
+            canvas.width = newW;
+            canvas.height = newH;
+            const ctx = canvas.getContext('2d');
+
+            // High Quality scaling
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+
+            // If JPG, fill white background (handle transparency)
+            if (format === 'image/jpeg') {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, newW, newH);
+            }
+
+            ctx.drawImage(imgPreview, 0, 0, newW, newH);
+
+            // Extension
+            let ext = 'jpg';
+            if (format === 'image/png') ext = 'png';
+            if (format === 'image/webp') ext = 'webp';
+
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${fileName}_resized.${ext}`;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+            }, format, quality);
+        }
+
+    </script>
+</body>
+</html>

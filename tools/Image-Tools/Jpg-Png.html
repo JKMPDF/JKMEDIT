@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>JPG to PNG & PNG to JPG Converter | JKM Edit</title>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <!-- LIBRARY: JSZip (For batch download) & FileSaver -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- HEADER --- */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- LAYOUT --- */
+        .tool-container { padding: 2rem 1rem; max-width: 1000px; margin: 0 auto; width: 100%; flex: 1; }
+        
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #e0e0e0; border: 1px dashed #999; 
+            margin: 0 auto 2rem auto; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .tool-header p { color: #666; }
+
+        /* --- UPLOAD ZONE --- */
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
+            text-align: center; cursor: pointer; background-color: var(--surface-color); 
+            transition: 0.3s; margin-bottom: 20px;
+        }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+
+        /* --- CONVERSION DASHBOARD --- */
+        .conversion-card {
+            background: var(--surface-color);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .controls-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px;
+            flex-wrap: wrap; gap: 15px;
+        }
+
+        .format-toggle {
+            display: flex; gap: 10px; align-items: center;
+        }
+        .format-btn {
+            padding: 8px 16px; border: 2px solid #ddd; border-radius: 20px;
+            cursor: pointer; font-weight: 600; background: white; transition: 0.2s;
+        }
+        .format-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+        /* File List */
+        .file-list {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;
+        }
+        .file-item {
+            background: #f8f9fa; border: 1px solid #eee; border-radius: 8px; padding: 10px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            position: relative;
+        }
+        .file-preview {
+            width: 100%; height: 120px; object-fit: contain; background: #fff;
+            border-radius: 4px; margin-bottom: 10px; border: 1px solid #eee;
+        }
+        .file-info { font-size: 0.85rem; color: #666; word-break: break-all; margin-bottom: 5px; }
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+        .badge-jpg { background: #ffeeba; color: #856404; }
+        .badge-png { background: #d4edda; color: #155724; }
+
+        /* Action Buttons */
+        .main-actions { margin-top: 30px; text-align: center; }
+        .btn {
+            padding: 12px 30px; border: none; border-radius: 6px;
+            font-weight: 600; cursor: pointer; transition: 0.3s;
+            display: inline-flex; align-items: center; gap: 8px; font-size: 1.1rem;
+        }
+        .btn-primary { background: var(--gradient); color: white; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 82, 204, 0.3); }
+        
+        /* Progress */
+        .progress-container { width: 100%; background: #eee; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 15px; display: none; }
+        .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.2s; }
+
+        /* --- NAVIGATION --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; }
+        .nav-btn { padding: 10px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; background: #e9ecef; color: #333; display: inline-flex; align-items: center; gap: 5px;}
+        .nav-dash { background: var(--primary-color); color: white; }
+
+    </style>
+</head>
+<body>
+
+    <header class="branding-bar">
+        <a href="index.html" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <main class="tool-container">
+        <div class="ad-placeholder">Advertisement Space (728x90)</div>
+
+        <!-- STAGE 1: UPLOAD -->
+        <div id="upload-stage">
+            <div class="tool-header">
+                <h2>Image Converter</h2>
+                <p>Convert JPG to PNG or PNG to JPG instantly.</p>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept="image/png, image/jpeg, image/jpg" multiple/>
+            <div id="dropzone">
+                <i class="fa-solid fa-images"></i>
+                <p><strong>Click to Upload Images</strong><br>or drag and drop here (JPG/PNG)</p>
+            </div>
+        </div>
+
+        <!-- STAGE 2: PROCESS -->
+        <div id="process-stage" class="hidden">
+            <div class="conversion-card">
+                
+                <div class="controls-header">
+                    <h3 style="margin:0; color:var(--primary-color);">Selected Images (<span id="file-count">0</span>)</h3>
+                    
+                    <div class="format-toggle">
+                        <span style="font-size:0.9rem; font-weight:600;">Convert All To:</span>
+                        <button class="format-btn active" id="to-png-btn" onclick="setTargetFormat('png')">PNG</button>
+                        <button class="format-btn" id="to-jpg-btn" onclick="setTargetFormat('jpg')">JPG</button>
+                    </div>
+                </div>
+
+                <div class="file-list" id="file-list-container">
+                    <!-- Items injected here -->
+                </div>
+
+                <div class="main-actions">
+                    <button class="btn btn-primary" id="convert-btn" onclick="startConversion()">
+                        <i class="fa-solid fa-rotate"></i> Convert & Download
+                    </button>
+                    
+                    <div class="progress-container" id="progress-wrapper">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <p id="status-text" style="margin-top:10px; color:#666; display:none;">Processing...</p>
+                </div>
+
+                <div style="text-align:center; margin-top:15px;">
+                    <button onclick="location.reload()" style="background:none; border:none; color:#666; cursor:pointer; text-decoration:underline;">Start Over</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="index.html" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+    </main>
+
+    <script>
+        // --- DOM ELEMENTS ---
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const uploadStage = document.getElementById('upload-stage');
+        const processStage = document.getElementById('process-stage');
+        const fileListContainer = document.getElementById('file-list-container');
+        const fileCountSpan = document.getElementById('file-count');
+        const convertBtn = document.getElementById('convert-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progressWrapper = document.getElementById('progress-wrapper');
+        const statusText = document.getElementById('status-text');
+
+        // --- STATE ---
+        let filesQueue = [];
+        let targetFormat = 'png'; // Default target
+
+        // --- UPLOAD HANDLERS ---
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
+        fileInput.onchange = (e) => handleFiles(e.target.files);
+
+        function handleFiles(files) {
+            if (files.length === 0) return;
+            
+            // Filter images
+            for (let file of files) {
+                if (file.type === 'image/jpeg' || file.type === 'image/png') {
+                    filesQueue.push(file);
+                }
+            }
+
+            if (filesQueue.length > 0) {
+                uploadStage.classList.add('hidden');
+                processStage.classList.remove('hidden');
+                renderFileList();
+                // Auto-detect suggested format based on first file
+                const firstType = filesQueue[0].type;
+                if (firstType === 'image/jpeg') setTargetFormat('png');
+                else setTargetFormat('jpg');
+            } else {
+                alert("Please upload valid JPG or PNG images.");
+            }
+        }
+
+        // --- RENDER UI ---
+        function renderFileList() {
+            fileListContainer.innerHTML = '';
+            fileCountSpan.innerText = filesQueue.length;
+
+            filesQueue.forEach((file, index) => {
+                const ext = file.type.split('/')[1].toUpperCase();
+                const badgeClass = ext === 'JPEG' || ext === 'JPG' ? 'badge-jpg' : 'badge-png';
+                
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                
+                // Create object URL for preview
+                const url = URL.createObjectURL(file);
+                
+                div.innerHTML = `
+                    <img src="${url}" class="file-preview">
+                    <div class="file-info">${file.name}</div>
+                    <span class="badge ${badgeClass}">${ext}</span>
+                `;
+                fileListContainer.appendChild(div);
+            });
+        }
+
+        // --- SETTINGS ---
+        function setTargetFormat(fmt) {
+            targetFormat = fmt;
+            document.getElementById('to-png-btn').classList.toggle('active', fmt === 'png');
+            document.getElementById('to-jpg-btn').classList.toggle('active', fmt === 'jpg');
+            convertBtn.innerHTML = `<i class="fa-solid fa-rotate"></i> Convert to ${fmt.toUpperCase()}`;
+        }
+
+        // --- CONVERSION LOGIC ---
+        async function startConversion() {
+            if (filesQueue.length === 0) return;
+
+            convertBtn.disabled = true;
+            progressWrapper.style.display = 'block';
+            statusText.style.display = 'block';
+            
+            const zip = new JSZip();
+            let processedCount = 0;
+
+            for (let i = 0; i < filesQueue.length; i++) {
+                const file = filesQueue[i];
+                statusText.innerText = `Converting ${file.name}...`;
+                
+                try {
+                    const blob = await convertImage(file, targetFormat);
+                    
+                    // If single file, we can download directly later? 
+                    // To keep logic simple, if >1 we Zip. If 1, we download direct.
+                    
+                    const newName = file.name.substring(0, file.name.lastIndexOf('.')) + '.' + targetFormat;
+                    
+                    if (filesQueue.length === 1) {
+                        saveAs(blob, newName);
+                        finishProcess();
+                        return;
+                    } else {
+                        zip.file(newName, blob);
+                    }
+
+                } catch (e) {
+                    console.error(e);
+                }
+
+                processedCount++;
+                const percent = (processedCount / filesQueue.length) * 100;
+                progressBar.style.width = `${percent}%`;
+            }
+
+            // Generate Zip if multiple
+            if (filesQueue.length > 1) {
+                statusText.innerText = "Creating Zip File...";
+                const content = await zip.generateAsync({ type: "blob" });
+                saveAs(content, "converted_images.zip");
+                finishProcess();
+            }
+        }
+
+        function convertImage(file, format) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+
+                    // If converting to JPG, fill background white (remove transparency)
+                    if (format === 'jpg' || format === 'jpeg') {
+                        ctx.fillStyle = "#ffffff";
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+
+                    ctx.drawImage(img, 0, 0);
+                    
+                    const mime = format === 'png' ? 'image/png' : 'image/jpeg';
+                    const quality = format === 'jpg' ? 0.9 : 1.0;
+
+                    canvas.toBlob((blob) => {
+                        if (blob) resolve(blob);
+                        else reject("Conversion failed");
+                    }, mime, quality);
+                };
+                img.onerror = reject;
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        function finishProcess() {
+            progressBar.style.width = "100%";
+            statusText.innerText = "Done! Downloading...";
+            setTimeout(() => {
+                convertBtn.disabled = false;
+                statusText.innerText = "Completed";
+            }, 1000);
+        }
+
+    </script>
+</body>
+</html>
