@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>Color Picker & Inverter | JKM Edit</title>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Fira+Code:wght@500&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- HEADER --- */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- LAYOUT --- */
+        .tool-container { padding: 2rem 1rem; max-width: 1100px; margin: 0 auto; width: 100%; flex: 1; }
+        
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #e0e0e0; border: 1px dashed #999; 
+            margin: 0 auto 2rem auto; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        .tool-header { text-align: center; margin-bottom: 3rem; }
+        .tool-header h2 { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .tool-header p { color: #666; }
+
+        /* --- COLOR WORKSPACE --- */
+        .color-grid {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        /* Color Card */
+        .color-card {
+            background: var(--surface-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* The Color Preview Box */
+        .color-preview {
+            height: 200px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+        
+        /* Invisible Color Input overlay for clicking */
+        .color-picker-input {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
+        }
+
+        .card-body { padding: 20px; }
+        .card-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 15px; color: var(--text-color); display: flex; justify-content: space-between; align-items: center;}
+
+        /* Input Groups */
+        .code-group {
+            display: flex; align-items: center; gap: 10px;
+            background: #f4f5f7; border: 1px solid #ddd;
+            padding: 8px 12px; border-radius: 6px; margin-bottom: 10px;
+        }
+        .code-label { font-weight: 600; color: #666; width: 40px; font-size: 0.9rem; }
+        .code-value { 
+            flex: 1; background: transparent; border: none; 
+            font-family: 'Fira Code', monospace; font-size: 1rem; color: #333; 
+            outline: none; text-transform: uppercase;
+        }
+        .copy-btn {
+            background: none; border: none; color: var(--primary-color);
+            cursor: pointer; font-size: 1rem; transition: 0.2s;
+        }
+        .copy-btn:hover { color: var(--secondary-color); transform: scale(1.1); }
+
+        /* Middle Controls */
+        .middle-controls {
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px;
+        }
+        .action-btn {
+            width: 50px; height: 50px; border-radius: 50%;
+            border: none; background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            color: var(--primary-color); font-size: 1.2rem;
+            cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .action-btn:hover { background: var(--primary-color); color: white; transform: rotate(180deg); }
+
+        /* Random Btn */
+        .random-btn {
+            background: var(--gradient); color: white; padding: 10px 20px;
+            border-radius: 30px; text-decoration: none; border: none; cursor: pointer;
+            font-weight: 600; box-shadow: 0 4px 15px rgba(0, 82, 204, 0.2);
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .random-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* Navigation */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; }
+        .nav-btn { padding: 10px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; background: #e9ecef; color: #333; display: inline-flex; align-items: center; gap: 5px; }
+        .nav-dash { background: var(--primary-color); color: white; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .color-grid { grid-template-columns: 1fr; }
+            .middle-controls { flex-direction: row; margin: 10px 0; }
+            .action-btn:hover { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="branding-bar">
+        <a href="index.html" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <main class="tool-container">
+        <div class="ad-placeholder">Advertisement Space (728x90)</div>
+
+        <div class="tool-header">
+            <h2>Color Picker & Inverter</h2>
+            <p>Select a color to automatically generate its perfect opposite.</p>
+            <button class="random-btn" onclick="setRandomColor()">
+                <i class="fa-solid fa-shuffle"></i> Random Color
+            </button>
+        </div>
+
+        <div class="color-grid">
+            
+            <!-- LEFT: ORIGINAL COLOR -->
+            <div class="color-card">
+                <div class="color-preview" id="preview-original">
+                    <span id="text-original">ORIGINAL</span>
+                    <input type="color" id="color-input" class="color-picker-input" value="#0052cc">
+                </div>
+                <div class="card-body">
+                    <div class="card-title">
+                        <span>Input Color</span>
+                        <i class="fa-solid fa-pen-to-square" style="color:#ccc; font-size:0.9rem;"></i>
+                    </div>
+                    
+                    <div class="code-group">
+                        <span class="code-label">HEX</span>
+                        <input type="text" class="code-value" id="hex-input" value="#0052CC" maxlength="7">
+                        <button class="copy-btn" onclick="copyText('hex-input')"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+
+                    <div class="code-group">
+                        <span class="code-label">RGB</span>
+                        <input type="text" class="code-value" id="rgb-input" value="0, 82, 204" readonly>
+                        <button class="copy-btn" onclick="copyText('rgb-input')"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MIDDLE: ACTIONS -->
+            <div class="middle-controls">
+                <button class="action-btn" onclick="swapColors()" title="Swap Colors">
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                </button>
+            </div>
+
+            <!-- RIGHT: INVERTED COLOR -->
+            <div class="color-card">
+                <div class="color-preview" id="preview-inverted">
+                    <span id="text-inverted">INVERTED</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">
+                        <span>Result</span>
+                        <i class="fa-solid fa-circle-half-stroke" style="color:#ccc; font-size:0.9rem;"></i>
+                    </div>
+
+                    <div class="code-group">
+                        <span class="code-label">HEX</span>
+                        <input type="text" class="code-value" id="hex-output" value="#FFAD33" readonly>
+                        <button class="copy-btn" onclick="copyText('hex-output')"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+
+                    <div class="code-group">
+                        <span class="code-label">RGB</span>
+                        <input type="text" class="code-value" id="rgb-output" value="255, 173, 51" readonly>
+                        <button class="copy-btn" onclick="copyText('rgb-output')"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="index.html" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+    </main>
+
+    <script>
+        // --- ELEMENTS ---
+        const colorInput = document.getElementById('color-input');
+        const hexInput = document.getElementById('hex-input');
+        const rgbInput = document.getElementById('rgb-input');
+        
+        const hexOutput = document.getElementById('hex-output');
+        const rgbOutput = document.getElementById('rgb-output');
+        
+        const prevOrig = document.getElementById('preview-original');
+        const prevInv = document.getElementById('preview-inverted');
+        const textOrig = document.getElementById('text-original');
+        const textInv = document.getElementById('text-inverted');
+
+        // --- LOGIC ---
+
+        function updateColors(hex) {
+            // Validate Hex
+            if (!/^#[0-9A-F]{6}$/i.test(hex)) return;
+
+            // 1. Update Original Side
+            prevOrig.style.backgroundColor = hex;
+            colorInput.value = hex;
+            hexInput.value = hex;
+            
+            const rgb = hexToRgb(hex);
+            rgbInput.value = `${rgb.r}, ${rgb.g}, ${rgb.b}`;
+            
+            // Text Contrast (Dark text for light bg, Light text for dark bg)
+            textOrig.style.color = getContrastColor(hex);
+
+            // 2. Calculate Inverted
+            const invR = 255 - rgb.r;
+            const invG = 255 - rgb.g;
+            const invB = 255 - rgb.b;
+            
+            const invHex = rgbToHex(invR, invG, invB);
+
+            // 3. Update Inverted Side
+            prevInv.style.backgroundColor = invHex;
+            hexOutput.value = invHex;
+            rgbOutput.value = `${invR}, ${invG}, ${invB}`;
+            textInv.style.color = getContrastColor(invHex);
+        }
+
+        // --- EVENT LISTENERS ---
+        
+        // Color Picker Change
+        colorInput.addEventListener('input', (e) => {
+            updateColors(e.target.value);
+        });
+
+        // Text Input Change (Manual Typing)
+        hexInput.addEventListener('input', (e) => {
+            let val = e.target.value;
+            if (!val.startsWith('#')) val = '#' + val;
+            if (val.length === 7) {
+                updateColors(val);
+            }
+        });
+
+        // --- HELPERS ---
+
+        function hexToRgb(hex) {
+            const bigint = parseInt(hex.substring(1), 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return { r, g, b };
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+
+        // Calculate brightness to determine text color
+        function getContrastColor(hex) {
+            const rgb = hexToRgb(hex);
+            // Formula for luminance
+            const yiq = ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000;
+            return (yiq >= 128) ? '#000000' : '#ffffff';
+        }
+
+        function setRandomColor() {
+            const randomColor = Math.floor(Math.random()*16777215).toString(16);
+            updateColors("#" + randomColor.padStart(6, '0'));
+        }
+
+        function swapColors() {
+            const currentInv = hexOutput.value;
+            updateColors(currentInv);
+        }
+
+        function copyText(elementId) {
+            const el = document.getElementById(elementId);
+            el.select();
+            navigator.clipboard.writeText(el.value).then(() => {
+                // Visual feedback could go here
+                const btn = el.nextElementSibling;
+                const originalIcon = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                setTimeout(() => btn.innerHTML = originalIcon, 1500);
+            });
+        }
+
+        // Initialize
+        updateColors('#0052cc');
+
+    </script>
+</body>
+</html>
