@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+
+    <title>Day of the Week Calculator | JKM Edit</title>
+    <meta name="description" content="Free online Day of the Week Calculator. Find out the day of the week, week number, and day of the year for any date."/>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Fonts & Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <style>
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
+            --weekend-color: #ffab00;
+        }
+
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* --- Advertisement Box (728x90) --- */
+        .ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 0 1rem;
+        }
+
+        .ad-slot {
+            width: 728px;
+            height: 90px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 800px; 
+            margin: auto; 
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); 
+            padding: 2.5rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+        }
+
+        /* --- Input Section --- */
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .input-group {
+            width: 100%;
+            max-width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .input-group label { font-weight: 600; color: var(--secondary-color); display: flex; justify-content: space-between; }
+
+        .btn-today {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            background: #f9fafc;
+            transition: border-color 0.3s;
+        }
+        input[type="date"]:focus { outline: none; border-color: var(--primary-color); background: #fff; }
+
+        /* --- Results Section --- */
+        .result-area {
+            display: none; /* Hidden by default */
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Calendar Card Style */
+        .calendar-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1rem;
+        }
+        .card-year { font-size: 1rem; opacity: 0.9; letter-spacing: 1px; }
+        .card-month { font-size: 1.5rem; font-weight: 700; text-transform: uppercase; }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .card-day-num {
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-weekday {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-footer {
+            background: #f9fafc;
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .stat-item { text-align: center; }
+        .stat-label { display: block; font-size: 0.75rem; color: #888; text-transform: uppercase; }
+        .stat-value { display: block; font-size: 1.1rem; font-weight: 600; color: var(--text-color); }
+
+        /* Weekend Mod */
+        .calendar-card.weekend .card-weekday { color: var(--weekend-color); }
+        .calendar-card.weekend .card-header { background: linear-gradient(45deg, #ff9966, #ff5e62); }
+
+        /* Button */
+        .btn-calc {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--gradient);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            max-width: 350px;
+        }
+        .btn-calc:hover { transform: translateY(-2px); }
+
+        /* --- Bottom Navigation Buttons --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto; 
+            padding-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+
+        .nav-btn-fill {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <a href="../../" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h1 class="brand-title">JKM Edit</h1>
+        </a>
+    </header>
+
+    <!-- Advertisement Box (728x90) -->
+    <div class="ad-container">
+        <div class="ad-slot">
+            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
+            Advertisement (728 x 90)
+        </div>
+    </div>
+
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        <div class="tool-header">
+            <h2>Day of the Week Calculator</h2>
+            <p>Enter a date to find out the day, week number, and more.</p>
+        </div>
+
+        <div class="tool-content-wrapper">
+            
+            <div class="input-container">
+                <div class="input-group">
+                    <label>Select Date <button class="btn-today" id="today-btn">Set Today</button></label>
+                    <input type="date" id="date-input">
+                </div>
+                <button class="btn-calc" id="calc-btn">Calculate Day</button>
+            </div>
+
+            <!-- Result Display -->
+            <div class="result-area" id="result-area">
+                <div class="calendar-card" id="cal-card">
+                    <div class="card-header">
+                        <div class="card-year" id="out-year">2023</div>
+                        <div class="card-month" id="out-month">October</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-day-num" id="out-day-num">25</div>
+                        <div class="card-weekday" id="out-weekday">Wednesday</div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stat-item">
+                            <span class="stat-label">Day of Year</span>
+                            <span class="stat-value" id="out-doy">298</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Week Number</span>
+                            <span class="stat-value" id="out-week">43</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="../../" class="nav-btn nav-btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('date-input');
+            const calcBtn = document.getElementById('calc-btn');
+            const todayBtn = document.getElementById('today-btn');
+            const resultArea = document.getElementById('result-area');
+            const calCard = document.getElementById('cal-card');
+
+            // Outputs
+            const outYear = document.getElementById('out-year');
+            const outMonth = document.getElementById('out-month');
+            const outDayNum = document.getElementById('out-day-num');
+            const outWeekday = document.getElementById('out-weekday');
+            const outDoy = document.getElementById('out-doy');
+            const outWeek = document.getElementById('out-week');
+
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+            // Set Today Function
+            todayBtn.addEventListener('click', () => {
+                const now = new Date();
+                dateInput.value = now.toISOString().split('T')[0];
+                calculateDate();
+            });
+
+            // Calculate Logic
+            calcBtn.addEventListener('click', calculateDate);
+
+            // Allow Enter Key
+            dateInput.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') calculateDate();
+            });
+
+            function calculateDate() {
+                const val = dateInput.value;
+                if (!val) {
+                    alert("Please select a date first.");
+                    return;
+                }
+
+                // Append time to ensure local parsing prevents timezone shift on some browsers
+                // or parse explicitly Y-M-D
+                const parts = val.split('-');
+                const year = parseInt(parts[0]);
+                const month = parseInt(parts[1]) - 1; // 0-indexed
+                const day = parseInt(parts[2]);
+
+                const dateObj = new Date(year, month, day);
+
+                // Basic Info
+                outYear.textContent = year;
+                outMonth.textContent = months[month];
+                outDayNum.textContent = day;
+                
+                const dayIndex = dateObj.getDay();
+                outWeekday.textContent = days[dayIndex];
+
+                // Weekend Styling
+                if (dayIndex === 0 || dayIndex === 6) {
+                    calCard.classList.add('weekend');
+                } else {
+                    calCard.classList.remove('weekend');
+                }
+
+                // Day of Year Calculation
+                const start = new Date(dateObj.getFullYear(), 0, 0);
+                const diff = (dateObj - start) + ((start.getTimezoneOffset() - dateObj.getTimezoneOffset()) * 60 * 1000);
+                const oneDay = 1000 * 60 * 60 * 24;
+                const dayOfYear = Math.floor(diff / oneDay);
+                outDoy.textContent = dayOfYear;
+
+                // ISO Week Number Calculation
+                outWeek.textContent = getISOWeek(dateObj);
+
+                // Show Result
+                resultArea.style.display = 'none'; // Reset animation
+                setTimeout(() => {
+                    resultArea.style.display = 'block';
+                }, 10);
+            }
+
+            // Helper: ISO Week Number
+            function getISOWeek(d) {
+                d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+                d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+                var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+                var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+                return weekNo;
+            }
+        });
+    </script>
+</body>
+</html>

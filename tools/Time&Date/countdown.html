@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+
+    <title>Countdown Timer | JKM Edit</title>
+    <meta name="description" content="Free online Countdown Timer. Set a target date and time and track the remaining days, hours, minutes, and seconds."/>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Fonts & Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <style>
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* --- Advertisement Box (728x90) --- */
+        .ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 0 1rem;
+        }
+
+        .ad-slot {
+            width: 728px;
+            height: 90px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 1000px; 
+            margin: auto; 
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); 
+            padding: 2.5rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- Input Section --- */
+        .input-section {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+            width: 100%;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 250px;
+            max-width: 350px;
+        }
+
+        .input-group label { font-weight: 600; color: var(--secondary-color); }
+
+        input[type="datetime-local"] {
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            width: 100%;
+        }
+        input:focus { outline: none; border-color: var(--primary-color); }
+
+        /* --- Timer Display --- */
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 2rem;
+        }
+
+        .time-box {
+            background: #f9fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.5rem 0.5rem;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .time-box:hover { transform: translateY(-5px); border-color: var(--primary-color); }
+
+        .time-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+            display: block;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .time-label {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+        }
+
+        /* --- Controls --- */
+        .controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 2.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-start { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+
+        .btn-reset { background-color: #e2e6ea; color: var(--text-color); border: 1px solid #ced4da; }
+        .btn-reset:hover { background-color: #dbe0e5; }
+
+        /* --- Completion Message --- */
+        .status-message {
+            margin-top: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success-color);
+            min-height: 2rem;
+            text-align: center;
+            animation: pulse 1s infinite;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto; 
+            padding-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+
+        .nav-btn-fill {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+            .timer-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+            .time-number { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <a href="../../" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h1 class="brand-title">JKM Edit</h1>
+        </a>
+    </header>
+
+    <!-- Advertisement Box (728x90) -->
+    <div class="ad-container">
+        <div class="ad-slot">
+            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
+            Advertisement (728 x 90)
+        </div>
+    </div>
+
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        <div class="tool-header">
+            <h2>Countdown Timer</h2>
+            <p>Set a specific date and time to count down to.</p>
+        </div>
+
+        <div class="tool-content-wrapper">
+            
+            <!-- Input -->
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="target-date">Target Date & Time:</label>
+                    <input type="datetime-local" id="target-date">
+                </div>
+            </div>
+
+            <!-- Timer Display -->
+            <div class="timer-grid">
+                <div class="time-box">
+                    <span class="time-number" id="days">00</span>
+                    <span class="time-label">Days</span>
+                </div>
+                <div class="time-box">
+                    <span class="time-number" id="hours">00</span>
+                    <span class="time-label">Hours</span>
+                </div>
+                <div class="time-box">
+                    <span class="time-number" id="minutes">00</span>
+                    <span class="time-label">Minutes</span>
+                </div>
+                <div class="time-box">
+                    <span class="time-number" id="seconds">00</span>
+                    <span class="time-label">Seconds</span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button class="btn btn-reset" id="reset-btn">Reset</button>
+                <button class="btn btn-start" id="start-btn">Start Timer</button>
+            </div>
+
+            <!-- Status -->
+            <div class="status-message" id="status-msg">Time's Up!</div>
+
+            <!-- Hidden Audio for Alarm (Optional) -->
+            <audio id="alarm-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+        </div>
+
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="../../" class="nav-btn nav-btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('target-date');
+            const startBtn = document.getElementById('start-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const statusMsg = document.getElementById('status-msg');
+            const alarmSound = document.getElementById('alarm-sound');
+
+            const elDays = document.getElementById('days');
+            const elHours = document.getElementById('hours');
+            const elMinutes = document.getElementById('minutes');
+            const elSeconds = document.getElementById('seconds');
+
+            let countdownInterval = null;
+
+            // Set default value to tomorrow same time
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setMinutes(tomorrow.getMinutes() - tomorrow.getTimezoneOffset());
+            dateInput.value = tomorrow.toISOString().slice(0,16);
+
+            function updateDisplay(d, h, m, s) {
+                elDays.textContent = d < 10 ? '0' + d : d;
+                elHours.textContent = h < 10 ? '0' + h : h;
+                elMinutes.textContent = m < 10 ? '0' + m : m;
+                elSeconds.textContent = s < 10 ? '0' + s : s;
+            }
+
+            function startTimer() {
+                const targetVal = dateInput.value;
+                if (!targetVal) return;
+
+                const targetDate = new Date(targetVal).getTime();
+                const now = new Date().getTime();
+
+                if (targetDate <= now) {
+                    alert("Please select a date in the future.");
+                    return;
+                }
+
+                // Clear existing timer if any
+                if (countdownInterval) clearInterval(countdownInterval);
+                statusMsg.style.display = 'none';
+                
+                // Disable input and start button while running
+                dateInput.disabled = true;
+                startBtn.disabled = true;
+                startBtn.textContent = "Running...";
+
+                countdownInterval = setInterval(() => {
+                    const currentTime = new Date().getTime();
+                    const distance = targetDate - currentTime;
+
+                    // Calculations
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    updateDisplay(days, hours, minutes, seconds);
+
+                    // If countdown finishes
+                    if (distance < 0) {
+                        clearInterval(countdownInterval);
+                        updateDisplay(0, 0, 0, 0);
+                        statusMsg.style.display = 'block';
+                        dateInput.disabled = false;
+                        startBtn.disabled = false;
+                        startBtn.textContent = "Start Timer";
+                        
+                        // Play sound
+                        try {
+                            alarmSound.play();
+                        } catch(e) {
+                            console.log("Audio play blocked by browser");
+                        }
+                    }
+                }, 1000);
+            }
+
+            function resetTimer() {
+                if (countdownInterval) clearInterval(countdownInterval);
+                updateDisplay(0, 0, 0, 0);
+                statusMsg.style.display = 'none';
+                dateInput.disabled = false;
+                startBtn.disabled = false;
+                startBtn.textContent = "Start Timer";
+                
+                // Reset audio
+                alarmSound.pause();
+                alarmSound.currentTime = 0;
+            }
+
+            startBtn.addEventListener('click', startTimer);
+            resetBtn.addEventListener('click', resetTimer);
+        });
+    </script>
+</body>
+</html>

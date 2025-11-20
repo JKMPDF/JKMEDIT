@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+
+    <title>Calendar Generator | JKM Edit</title>
+    <meta name="description" content="Free online Calendar Generator. Create and print monthly calendars. Customize month, year, and starting day of the week."/>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Fonts & Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <style>
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
+        }
+
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* --- Advertisement Box (728x90) --- */
+        .ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 0 1rem;
+        }
+
+        .ad-slot {
+            width: 728px;
+            height: 90px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 1000px; 
+            margin: auto; 
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); 
+            padding: 2rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+        }
+
+        /* --- Controls --- */
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: #f9fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 0.3rem; }
+        .input-group label { font-weight: 600; font-size: 0.9rem; color: var(--secondary-color); }
+
+        select, input[type="number"] {
+            padding: 0.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            min-width: 120px;
+        }
+
+        .btn-nav {
+            background: none;
+            border: 1px solid var(--border-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--primary-color);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1.2rem;
+        }
+        .btn-nav:hover { background: var(--primary-color); color: white; }
+
+        /* --- Calendar Preview --- */
+        .calendar-container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            background: white;
+        }
+
+        .cal-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            border-left: 1px solid #eee;
+            border-top: 1px solid #eee;
+        }
+
+        .day-name {
+            background: #f4f5f7;
+            color: #555;
+            font-weight: 700;
+            text-align: center;
+            padding: 10px 5px;
+            border-right: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .date-cell {
+            min-height: 80px; /* Height for print/view */
+            padding: 10px;
+            border-right: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            text-align: right;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .date-cell.empty { background: #fafafa; }
+        .date-cell.today { background-color: #e3f2fd; color: var(--primary-color); font-weight: 700; }
+
+        /* --- Print Button --- */
+        .action-area {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .btn-print {
+            padding: 0.8rem 2.5rem;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .btn-print:hover { transform: translateY(-2px); }
+
+        /* --- Bottom Navigation Buttons --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto; 
+            padding-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+
+        .nav-btn-fill {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        /* --- Print Media Query --- */
+        @media print {
+            body * { visibility: hidden; }
+            .calendar-container, .calendar-container * { visibility: visible; }
+            .calendar-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+                border: 2px solid #000;
+            }
+            .cal-header { background: #000 !important; color: #fff !important; -webkit-print-color-adjust: exact; }
+            .date-cell.today { background-color: #ddd !important; -webkit-print-color-adjust: exact; }
+        }
+
+        @media (max-width: 768px) {
+            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+            .date-cell { min-height: 50px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <a href="../../" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h1 class="brand-title">JKM Edit</h1>
+        </a>
+    </header>
+
+    <!-- Advertisement Box (728x90) -->
+    <div class="ad-container">
+        <div class="ad-slot">
+            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
+            Advertisement (728 x 90)
+        </div>
+    </div>
+
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        <div class="tool-header">
+            <h2>Calendar Generator</h2>
+            <p>Generate and print monthly calendars for any year.</p>
+        </div>
+
+        <div class="tool-content-wrapper">
+            
+            <!-- Controls -->
+            <div class="controls-bar">
+                <button class="btn-nav" id="prev-month"><i class="fa-solid fa-chevron-left"></i></button>
+                
+                <div class="input-group">
+                    <label>Month</label>
+                    <select id="sel-month">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Year</label>
+                    <input type="number" id="sel-year" min="1900" max="2100">
+                </div>
+
+                <div class="input-group">
+                    <label>Start Day</label>
+                    <select id="sel-start-day">
+                        <option value="0">Sunday</option>
+                        <option value="1">Monday</option>
+                    </select>
+                </div>
+
+                <button class="btn-nav" id="next-month"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <!-- Calendar Display -->
+            <div class="calendar-container" id="printable-area">
+                <div class="cal-header" id="cal-title">October 2025</div>
+                <div class="cal-grid" id="cal-grid">
+                    <!-- JS will populate this -->
+                </div>
+            </div>
+
+            <div class="action-area">
+                <button class="btn-print" onclick="window.print()">
+                    <i class="fa-solid fa-print"></i> Print Calendar
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="../../" class="nav-btn nav-btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const selMonth = document.getElementById('sel-month');
+            const selYear = document.getElementById('sel-year');
+            const selStartDay = document.getElementById('sel-start-day');
+            
+            const calTitle = document.getElementById('cal-title');
+            const calGrid = document.getElementById('cal-grid');
+            
+            const btnPrev = document.getElementById('prev-month');
+            const btnNext = document.getElementById('next-month');
+
+            // Initialize with current date
+            const today = new Date();
+            selMonth.value = today.getMonth();
+            selYear.value = today.getFullYear();
+
+            // Arrays
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const dayNamesSun = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            const dayNamesMon = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+            function renderCalendar() {
+                const month = parseInt(selMonth.value);
+                const year = parseInt(selYear.value);
+                const startDayOffset = parseInt(selStartDay.value); // 0 for Sun, 1 for Mon
+
+                // Update Header
+                calTitle.textContent = `${monthNames[month]} ${year}`;
+
+                // Clear Grid
+                calGrid.innerHTML = '';
+
+                // Render Day Headers
+                const daysArr = startDayOffset === 0 ? dayNamesSun : dayNamesMon;
+                daysArr.forEach(day => {
+                    const el = document.createElement('div');
+                    el.className = 'day-name';
+                    el.textContent = day;
+                    calGrid.appendChild(el);
+                });
+
+                // Logic to determine dates
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0); // Last day of current month
+                
+                let startDayIndex = firstDay.getDay(); // 0 (Sun) to 6 (Sat)
+                
+                // Adjust for "Start on Monday"
+                if (startDayOffset === 1) {
+                    startDayIndex = startDayIndex === 0 ? 6 : startDayIndex - 1;
+                }
+
+                const totalDays = lastDay.getDate();
+
+                // 1. Render Empty Previous Month Slots
+                for (let i = 0; i < startDayIndex; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'date-cell empty';
+                    calGrid.appendChild(cell);
+                }
+
+                // 2. Render Current Month Days
+                for (let d = 1; d <= totalDays; d++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'date-cell';
+                    cell.textContent = d;
+
+                    // Check if today
+                    if (
+                        d === today.getDate() &&
+                        month === today.getMonth() &&
+                        year === today.getFullYear()
+                    ) {
+                        cell.classList.add('today');
+                    }
+
+                    calGrid.appendChild(cell);
+                }
+
+                // 3. Fill remaining grid to make it look square (optional, but good for print)
+                // We need rows of 7. Calculate current total cells.
+                const currentCells = startDayIndex + totalDays;
+                const remainingCells = (7 - (currentCells % 7)) % 7; // Modulo logic
+                
+                for (let i = 0; i < remainingCells; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'date-cell empty';
+                    calGrid.appendChild(cell);
+                }
+            }
+
+            // Navigation Logic
+            btnPrev.addEventListener('click', () => {
+                let m = parseInt(selMonth.value);
+                let y = parseInt(selYear.value);
+                
+                if (m === 0) {
+                    selMonth.value = 11;
+                    selYear.value = y - 1;
+                } else {
+                    selMonth.value = m - 1;
+                }
+                renderCalendar();
+            });
+
+            btnNext.addEventListener('click', () => {
+                let m = parseInt(selMonth.value);
+                let y = parseInt(selYear.value);
+                
+                if (m === 11) {
+                    selMonth.value = 0;
+                    selYear.value = y + 1;
+                } else {
+                    selMonth.value = m + 1;
+                }
+                renderCalendar();
+            });
+
+            // Event Listeners
+            selMonth.addEventListener('change', renderCalendar);
+            selYear.addEventListener('change', renderCalendar);
+            selStartDay.addEventListener('change', renderCalendar);
+
+            // Initial Render
+            renderCalendar();
+        });
+    </script>
+</body>
+</html>

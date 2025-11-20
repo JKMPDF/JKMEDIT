@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+
+    <title>Temperature Converter | JKM Edit</title>
+    <meta name="description" content="Free online Temperature Converter. Convert between Celsius, Fahrenheit, and Kelvin instantly."/>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Fonts & Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <style>
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
+        }
+
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* --- Advertisement Box (728x90) --- */
+        .ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 0 1rem;
+        }
+
+        .ad-slot {
+            width: 728px;
+            height: 90px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 1000px; 
+            margin: auto; 
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); 
+            padding: 2.5rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+        }
+
+        /* --- Converter Grid --- */
+        .converter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .temp-card {
+            background: #f9fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .temp-card:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 82, 204, 0.1);
+            background: white;
+        }
+
+        .temp-icon {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .temp-label {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .temp-input {
+            width: 100%;
+            padding: 0.8rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--primary-color);
+            background: white;
+        }
+        .temp-input:focus { outline: none; border-color: var(--primary-color); }
+
+        .unit-symbol {
+            position: absolute;
+            right: 1.5rem;
+            bottom: 1.8rem;
+            font-size: 1.2rem;
+            color: #888;
+            font-weight: 600;
+        }
+
+        /* Formula Box */
+        .formula-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #eef2f9;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 4px;
+        }
+        .formula-title { font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem; display: block; }
+        .formula-text { font-family: 'Courier New', monospace; color: #555; font-size: 0.95rem; }
+
+        /* Clear Button */
+        .btn-clear {
+            display: block;
+            margin: 2rem auto 0;
+            padding: 0.8rem 2.5rem;
+            background: #e2e6ea;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-weight: 600;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-clear:hover { background: #dbe0e5; }
+
+        /* --- Bottom Navigation Buttons --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto; 
+            padding-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+
+        .nav-btn-fill {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <a href="../../" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h1 class="brand-title">JKM Edit</h1>
+        </a>
+    </header>
+
+    <!-- Advertisement Box (728x90) -->
+    <div class="ad-container">
+        <div class="ad-slot">
+            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
+            Advertisement (728 x 90)
+        </div>
+    </div>
+
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        <div class="tool-header">
+            <h2>Temperature Converter</h2>
+            <p>Instantly convert temperatures between Celsius, Fahrenheit, and Kelvin.</p>
+        </div>
+
+        <div class="tool-content-wrapper">
+            
+            <div class="converter-grid">
+                
+                <!-- Celsius -->
+                <div class="temp-card">
+                    <div class="temp-icon">
+                        <i class="fa-solid fa-temperature-half"></i>
+                    </div>
+                    <label class="temp-label" for="celsius">Celsius</label>
+                    <input type="number" id="celsius" class="temp-input" placeholder="0">
+                    <span class="unit-symbol">°C</span>
+                </div>
+
+                <!-- Fahrenheit -->
+                <div class="temp-card">
+                    <div class="temp-icon">
+                        <i class="fa-solid fa-temperature-high"></i>
+                    </div>
+                    <label class="temp-label" for="fahrenheit">Fahrenheit</label>
+                    <input type="number" id="fahrenheit" class="temp-input" placeholder="32">
+                    <span class="unit-symbol">°F</span>
+                </div>
+
+                <!-- Kelvin -->
+                <div class="temp-card">
+                    <div class="temp-icon">
+                        <i class="fa-solid fa-flask"></i>
+                    </div>
+                    <label class="temp-label" for="kelvin">Kelvin</label>
+                    <input type="number" id="kelvin" class="temp-input" placeholder="273.15">
+                    <span class="unit-symbol">K</span>
+                </div>
+
+            </div>
+
+            <div class="formula-section">
+                <span class="formula-title">Current Conversion Logic</span>
+                <div id="formula-display" class="formula-text">Type in any box to see the calculation.</div>
+            </div>
+
+            <button class="btn-clear" id="clear-btn">Reset Values</button>
+
+        </div>
+
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="../../" class="nav-btn nav-btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const celsiusInput = document.getElementById('celsius');
+            const fahrenheitInput = document.getElementById('fahrenheit');
+            const kelvinInput = document.getElementById('kelvin');
+            const formulaDisplay = document.getElementById('formula-display');
+            const clearBtn = document.getElementById('clear-btn');
+
+            // Helper to format number to avoid long decimals
+            const formatNum = (num) => {
+                return parseFloat(num.toFixed(2));
+            };
+
+            function updateFromCelsius() {
+                const c = parseFloat(celsiusInput.value);
+                if (isNaN(c)) {
+                    fahrenheitInput.value = '';
+                    kelvinInput.value = '';
+                    formulaDisplay.textContent = '';
+                    return;
+                }
+
+                const f = (c * 9/5) + 32;
+                const k = c + 273.15;
+
+                fahrenheitInput.value = formatNum(f);
+                kelvinInput.value = formatNum(k);
+                formulaDisplay.innerHTML = `${c}°C × 9/5 + 32 = <b>${formatNum(f)}°F</b> <br> ${c}°C + 273.15 = <b>${formatNum(k)}K</b>`;
+            }
+
+            function updateFromFahrenheit() {
+                const f = parseFloat(fahrenheitInput.value);
+                if (isNaN(f)) {
+                    celsiusInput.value = '';
+                    kelvinInput.value = '';
+                    formulaDisplay.textContent = '';
+                    return;
+                }
+
+                const c = (f - 32) * 5/9;
+                const k = (f - 32) * 5/9 + 273.15;
+
+                celsiusInput.value = formatNum(c);
+                kelvinInput.value = formatNum(k);
+                formulaDisplay.innerHTML = `(${f}°F - 32) × 5/9 = <b>${formatNum(c)}°C</b>`;
+            }
+
+            function updateFromKelvin() {
+                const k = parseFloat(kelvinInput.value);
+                if (isNaN(k)) {
+                    celsiusInput.value = '';
+                    fahrenheitInput.value = '';
+                    formulaDisplay.textContent = '';
+                    return;
+                }
+
+                const c = k - 273.15;
+                const f = (k - 273.15) * 9/5 + 32;
+
+                celsiusInput.value = formatNum(c);
+                fahrenheitInput.value = formatNum(f);
+                formulaDisplay.innerHTML = `${k}K - 273.15 = <b>${formatNum(c)}°C</b>`;
+            }
+
+            // Event Listeners
+            celsiusInput.addEventListener('input', updateFromCelsius);
+            fahrenheitInput.addEventListener('input', updateFromFahrenheit);
+            kelvinInput.addEventListener('input', updateFromKelvin);
+
+            clearBtn.addEventListener('click', () => {
+                celsiusInput.value = '';
+                fahrenheitInput.value = '';
+                kelvinInput.value = '';
+                formulaDisplay.textContent = 'Type in any box to see the calculation.';
+            });
+        });
+    </script>
+</body>
+</html>

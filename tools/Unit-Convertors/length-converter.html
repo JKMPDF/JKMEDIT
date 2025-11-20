@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+
+    <title>Length Converter | JKM Edit</title>
+    <meta name="description" content="Free online Length Converter. Convert between Meter, Kilometer, Centimeter, Millimeter, Mile, Yard, Foot, Inch, and more instantly."/>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Fonts & Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <style>
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
+        }
+
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* --- Advertisement Box (728x90) --- */
+        .ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 0 1rem;
+        }
+
+        .ad-slot {
+            width: 728px;
+            height: 90px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 1000px; 
+            margin: auto; 
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); 
+            padding: 2.5rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+        }
+
+        /* --- Converter Layout --- */
+        .converter-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 850px) {
+            .converter-wrapper { flex-direction: column; gap: 1rem; }
+            .swap-btn-container { transform: rotate(90deg); }
+        }
+
+        .input-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            width: 100%;
+        }
+
+        .input-label { font-weight: 600; color: var(--secondary-color); }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus { outline: none; border-color: var(--primary-color); }
+
+        select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            background-color: white;
+            cursor: pointer;
+        }
+        select:focus { outline: none; border-color: var(--primary-color); }
+
+        /* Swap Button */
+        .swap-btn-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 30px; /* Align with inputs roughly */
+        }
+
+        .btn-swap {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: white;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .btn-swap:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Formula Display */
+        .formula-box {
+            margin-top: 2.5rem;
+            padding: 1.5rem;
+            background-color: #eef2f9;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+        .formula-title { font-weight: 700; color: var(--text-color); margin-bottom: 0.5rem; display: block; }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto; 
+            padding-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+
+        .nav-btn-fill {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        /* Responsive Ad */
+        @media (max-width: 768px) {
+            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <a href="../../" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h1 class="brand-title">JKM Edit</h1>
+        </a>
+    </header>
+
+    <!-- Advertisement Box (728x90) -->
+    <div class="ad-container">
+        <div class="ad-slot">
+            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
+            Advertisement (728 x 90)
+        </div>
+    </div>
+
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        <div class="tool-header">
+            <h2>Length Converter</h2>
+            <p>Instantly convert between Metric and Imperial units of length.</p>
+        </div>
+
+        <div class="tool-content-wrapper">
+            
+            <div class="converter-wrapper">
+                
+                <!-- From Side -->
+                <div class="input-group">
+                    <span class="input-label">From</span>
+                    <input type="number" id="input-val" placeholder="Enter value" value="1">
+                    <select id="unit-from">
+                        <optgroup label="Metric">
+                            <option value="m" selected>Meter (m)</option>
+                            <option value="km">Kilometer (km)</option>
+                            <option value="cm">Centimeter (cm)</option>
+                            <option value="mm">Millimeter (mm)</option>
+                            <option value="um">Micrometer (µm)</option>
+                            <option value="nm">Nanometer (nm)</option>
+                        </optgroup>
+                        <optgroup label="Imperial">
+                            <option value="mi">Mile (mi)</option>
+                            <option value="yd">Yard (yd)</option>
+                            <option value="ft">Foot (ft)</option>
+                            <option value="in">Inch (in)</option>
+                            <option value="nmi">Nautical Mile (nmi)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Swap Button -->
+                <div class="swap-btn-container">
+                    <button class="btn-swap" id="swap-btn" title="Swap Units">
+                        <i class="fa-solid fa-right-left"></i>
+                    </button>
+                </div>
+
+                <!-- To Side -->
+                <div class="input-group">
+                    <span class="input-label">To</span>
+                    <input type="number" id="output-val" readonly>
+                    <select id="unit-to">
+                        <optgroup label="Metric">
+                            <option value="m">Meter (m)</option>
+                            <option value="km" selected>Kilometer (km)</option>
+                            <option value="cm">Centimeter (cm)</option>
+                            <option value="mm">Millimeter (mm)</option>
+                            <option value="um">Micrometer (µm)</option>
+                            <option value="nm">Nanometer (nm)</option>
+                        </optgroup>
+                        <optgroup label="Imperial">
+                            <option value="mi">Mile (mi)</option>
+                            <option value="yd">Yard (yd)</option>
+                            <option value="ft">Foot (ft)</option>
+                            <option value="in">Inch (in)</option>
+                            <option value="nmi">Nautical Mile (nmi)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- Formula Display -->
+            <div class="formula-box">
+                <span class="formula-title">Conversion Logic</span>
+                <span id="formula-text">1 Meter = 0.001 Kilometer</span>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="../../" class="nav-btn nav-btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputVal = document.getElementById('input-val');
+            const outputVal = document.getElementById('output-val');
+            const unitFrom = document.getElementById('unit-from');
+            const unitTo = document.getElementById('unit-to');
+            const swapBtn = document.getElementById('swap-btn');
+            const formulaText = document.getElementById('formula-text');
+
+            // Conversion factors to Meter (base unit)
+            const factors = {
+                m: 1,
+                km: 1000,
+                cm: 0.01,
+                mm: 0.001,
+                um: 0.000001,
+                nm: 1e-9,
+                mi: 1609.344,
+                yd: 0.9144,
+                ft: 0.3048,
+                in: 0.0254,
+                nmi: 1852
+            };
+
+            const unitNames = {
+                m: "Meters", km: "Kilometers", cm: "Centimeters", mm: "Millimeters", 
+                um: "Micrometers", nm: "Nanometers",
+                mi: "Miles", yd: "Yards", ft: "Feet", in: "Inches", nmi: "Nautical Miles"
+            };
+
+            function convert() {
+                const value = parseFloat(inputVal.value);
+                if (isNaN(value)) {
+                    outputVal.value = "";
+                    formulaText.textContent = "Enter a valid number to see results.";
+                    return;
+                }
+
+                const from = unitFrom.value;
+                const to = unitTo.value;
+
+                // Convert input to meters, then meters to output
+                const valueInMeters = value * factors[from];
+                const result = valueInMeters / factors[to];
+
+                // Handle formatting (avoid extremely long decimals or tiny floating point errors)
+                if (result % 1 !== 0) {
+                    outputVal.value = parseFloat(result.toPrecision(7)) / 1; // strip trailing zeros
+                } else {
+                    outputVal.value = result;
+                }
+
+                // Update Formula Text
+                const ratio = factors[from] / factors[to];
+                formulaText.textContent = `1 ${unitNames[from]} = ${parseFloat(ratio.toPrecision(7)) / 1} ${unitNames[to]}`;
+            }
+
+            function swap() {
+                const tempUnit = unitFrom.value;
+                unitFrom.value = unitTo.value;
+                unitTo.value = tempUnit;
+                
+                // Also swap visual values roughly to keep context (optional, but good UX)
+                // or just recalculate based on input
+                convert();
+                
+                // Visual feedback animation
+                swapBtn.style.transform = "rotate(180deg)";
+                setTimeout(() => swapBtn.style.transform = "rotate(0deg)", 300);
+            }
+
+            // Event Listeners
+            inputVal.addEventListener('input', convert);
+            unitFrom.addEventListener('change', convert);
+            unitTo.addEventListener('change', convert);
+            swapBtn.addEventListener('click', swap);
+
+            // Initial Run
+            convert();
+        });
+    </script>
+</body>
+</html>

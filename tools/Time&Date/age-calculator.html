@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+
+    <title>Age Calculator | JKM Edit</title>
+    <meta name="description" content="Free online Age Calculator. Calculate your exact age in years, months, days, and see detailed life statistics."/>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Fonts & Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <style>
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
+        }
+
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* --- Advertisement Box (728x90) --- */
+        .ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 0 1rem;
+        }
+
+        .ad-slot {
+            width: 728px;
+            height: 90px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 900px; 
+            margin: auto; 
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); 
+            padding: 2.5rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+        }
+
+        /* --- Input Section --- */
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .input-grid { grid-template-columns: 1fr; }
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .input-group label { font-weight: 600; color: var(--secondary-color); font-size: 0.95rem; }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            background: #f9fafc;
+            transition: border-color 0.3s;
+        }
+        input[type="date"]:focus { outline: none; border-color: var(--primary-color); background: #fff; }
+
+        .btn-calc {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--gradient);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-calc:hover { transform: translateY(-2px); }
+
+        /* --- Results Section --- */
+        .result-section {
+            margin-top: 3rem;
+            display: none; /* Hidden initially */
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Main Age Card */
+        .main-result-card {
+            background: #eef2f9;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .age-title { font-size: 1.1rem; color: #666; margin-bottom: 0.5rem; }
+        .age-value { font-size: 2rem; font-weight: 700; color: var(--primary-color); }
+        .age-highlight { color: var(--accent-color); }
+
+        /* Next Birthday Card */
+        .next-bday-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .bday-icon { font-size: 2.5rem; color: #ff6b6b; }
+        .bday-text { text-align: right; }
+        .bday-label { font-size: 0.9rem; color: #888; }
+        .bday-val { font-size: 1.3rem; font-weight: 600; color: var(--text-color); }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .stat-box {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-label { display: block; font-size: 0.8rem; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-num { font-size: 1.2rem; font-weight: 600; color: var(--text-color); }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto; 
+            padding-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+
+        .nav-btn-fill {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+            .age-value { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <a href="../../" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h1 class="brand-title">JKM Edit</h1>
+        </a>
+    </header>
+
+    <!-- Advertisement Box (728x90) -->
+    <div class="ad-container">
+        <div class="ad-slot">
+            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
+            Advertisement (728 x 90)
+        </div>
+    </div>
+
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        <div class="tool-header">
+            <h2>Age Calculator</h2>
+            <p>Calculate your exact age and see detailed life statistics.</p>
+        </div>
+
+        <div class="tool-content-wrapper">
+            
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob">
+                </div>
+                <div class="input-group">
+                    <label for="age-at">Age at the Date of</label>
+                    <input type="date" id="age-at">
+                </div>
+            </div>
+
+            <button class="btn-calc" id="calc-btn">
+                <i class="fa-solid fa-calculator"></i> Calculate Age
+            </button>
+
+            <!-- Results Area -->
+            <div class="result-section" id="result-area">
+                
+                <!-- Main Result -->
+                <div class="main-result-card">
+                    <div class="age-title">Your Age</div>
+                    <div class="age-value" id="res-main">--</div>
+                </div>
+
+                <!-- Next Birthday -->
+                <div class="next-bday-card">
+                    <div class="bday-icon"><i class="fa-solid fa-cake-candles"></i></div>
+                    <div class="bday-text">
+                        <div class="bday-label">Next Birthday</div>
+                        <div class="bday-val" id="res-next-bday">--</div>
+                        <div style="font-size: 0.85rem; color: #666;" id="res-bday-day">--</div>
+                    </div>
+                </div>
+
+                <!-- Summary Stats -->
+                <h4 style="margin-bottom:1rem; color:var(--text-color);">Summary</h4>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-label">Total Years</span>
+                        <span class="stat-num" id="stat-years">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Total Months</span>
+                        <span class="stat-num" id="stat-months">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Total Weeks</span>
+                        <span class="stat-num" id="stat-weeks">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Total Days</span>
+                        <span class="stat-num" id="stat-days">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Total Hours</span>
+                        <span class="stat-num" id="stat-hours">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Total Minutes</span>
+                        <span class="stat-num" id="stat-minutes">0</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="../../" class="nav-btn nav-btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dobInput = document.getElementById('dob');
+            const ageAtInput = document.getElementById('age-at');
+            const calcBtn = document.getElementById('calc-btn');
+            const resultArea = document.getElementById('result-area');
+
+            // Outputs
+            const resMain = document.getElementById('res-main');
+            const resNextBday = document.getElementById('res-next-bday');
+            const resBdayDay = document.getElementById('res-bday-day');
+            
+            const statYears = document.getElementById('stat-years');
+            const statMonths = document.getElementById('stat-months');
+            const statWeeks = document.getElementById('stat-weeks');
+            const statDays = document.getElementById('stat-days');
+            const statHours = document.getElementById('stat-hours');
+            const statMinutes = document.getElementById('stat-minutes');
+
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+            // Set default "Age At" to Today
+            const today = new Date();
+            ageAtInput.value = today.toISOString().split('T')[0];
+
+            calcBtn.addEventListener('click', calculateAge);
+
+            function calculateAge() {
+                if (!dobInput.value || !ageAtInput.value) {
+                    alert("Please select a Date of Birth.");
+                    return;
+                }
+
+                // Create dates (Parse manually to avoid timezone shift issues with inputs)
+                const dobParts = dobInput.value.split('-');
+                const targetParts = ageAtInput.value.split('-');
+
+                const dob = new Date(dobParts[0], dobParts[1] - 1, dobParts[2]);
+                const target = new Date(targetParts[0], targetParts[1] - 1, targetParts[2]);
+
+                if (target < dob) {
+                    alert("Date of Birth cannot be in the future relative to the comparison date.");
+                    return;
+                }
+
+                // 1. Exact Age Calculation
+                let years = target.getFullYear() - dob.getFullYear();
+                let months = target.getMonth() - dob.getMonth();
+                let days = target.getDate() - dob.getDate();
+
+                if (days < 0) {
+                    months--;
+                    // Days in previous month
+                    const prevMonth = new Date(target.getFullYear(), target.getMonth(), 0);
+                    days += prevMonth.getDate();
+                }
+
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+
+                // Display Main Age
+                resMain.innerHTML = `${years} <span style="font-size:1rem; color:#666;">Years</span> &nbsp; ${months} <span style="font-size:1rem; color:#666;">Months</span> &nbsp; ${days} <span style="font-size:1rem; color:#666;">Days</span>`;
+
+                // 2. Next Birthday Calculation
+                const currentYear = target.getFullYear();
+                let nextBday = new Date(currentYear, dob.getMonth(), dob.getDate());
+                
+                if (nextBday < target) {
+                    nextBday.setFullYear(currentYear + 1);
+                }
+
+                const diffTimeBday = Math.abs(nextBday - target);
+                const diffDaysBday = Math.ceil(diffTimeBday / (1000 * 60 * 60 * 24));
+                
+                // Calculate months/days for next birthday
+                let bMonths = nextBday.getMonth() - target.getMonth();
+                let bDays = nextBday.getDate() - target.getDate();
+                
+                if (bDays < 0) {
+                    bMonths--;
+                    const prevM = new Date(nextBday.getFullYear(), nextBday.getMonth(), 0);
+                    bDays += prevM.getDate();
+                }
+                if (bMonths < 0) bMonths += 12;
+
+                if(diffDaysBday === 0) {
+                     resNextBday.textContent = "Happy Birthday Today!";
+                     resBdayDay.textContent = "";
+                } else {
+                    resNextBday.textContent = `${bMonths} Months, ${bDays} Days`;
+                    resBdayDay.textContent = daysOfWeek[nextBday.getDay()];
+                }
+
+                // 3. Total Stats Calculation
+                const totalDiffMs = target - dob;
+                const totalSecs = Math.floor(totalDiffMs / 1000);
+                const totalMins = Math.floor(totalSecs / 60);
+                const totalHours = Math.floor(totalMins / 60);
+                const totalDays = Math.floor(totalHours / 24);
+                const totalWeeks = Math.floor(totalDays / 7);
+                // Approximate total months
+                const totalMonths = (years * 12) + months;
+
+                statYears.textContent = years.toLocaleString();
+                statMonths.textContent = totalMonths.toLocaleString();
+                statWeeks.textContent = totalWeeks.toLocaleString();
+                statDays.textContent = totalDays.toLocaleString();
+                statHours.textContent = totalHours.toLocaleString();
+                statMinutes.textContent = totalMins.toLocaleString();
+
+                // Show Results
+                resultArea.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
