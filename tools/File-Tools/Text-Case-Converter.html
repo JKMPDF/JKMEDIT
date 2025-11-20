@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>Text Case Converter | JKM Edit</title>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+    <style>
+        /* --- VARIABLES (Corporate Blue Theme) --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        /* --- RESET & LAYOUT --- */
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- HEADER --- */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- MAIN CONTAINER --- */
+        .tool-container { padding: 2rem 1rem; max-width: 1200px; margin: 0 auto; width: 100%; flex: 1; }
+        
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #e0e0e0; border: 1px dashed #999; 
+            margin: 0 auto 2rem auto; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .tool-header p { color: #666; }
+
+        /* --- CONVERTER GRID --- */
+        .converter-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .text-panel {
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        textarea {
+            width: 100%; height: 400px; padding: 1rem;
+            border-radius: 8px; border: 2px solid #ccc;
+            font-family: 'Poppins', sans-serif; font-size: 1rem;
+            background-color: var(--surface-color); color: var(--text-color);
+            resize: vertical; outline: none; transition: 0.3s;
+        }
+        textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.1); }
+        
+        #output-text { background-color: #e9ecef; } /* Read-only look */
+
+        .stats-bar {
+            padding: 0.5rem 1rem; font-size: 0.85rem; color: #6c757d;
+            background: var(--surface-color); border-radius: 6px; text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        /* --- CONTROLS --- */
+        .controls-bar {
+            background: var(--surface-color); padding: 1.5rem; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap;
+            gap: 1rem; justify-content: center; align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem;
+        }
+        
+        .btn-action { background: var(--gradient); color: white; }
+        .btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .btn-ai { background: linear-gradient(45deg, var(--accent-color), #ffc107); color: #333; }
+        
+        .btn-utility { background: white; border: 2px solid var(--secondary-color); color: var(--secondary-color); }
+        .btn-utility:hover { background: var(--secondary-color); color: white; }
+
+        /* --- NAVIGATION BUTTONS --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; }
+        .nav-btn { padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .nav-back { background: #e9ecef; color: #333; }
+        .nav-dash { background: var(--primary-color); color: white; }
+        .nav-dash:hover { background: var(--secondary-color); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .converter-wrapper { grid-template-columns: 1fr; }
+            textarea { height: 250px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="branding-bar">
+        <a href="index.html" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <main class="tool-container">
+        <!-- AD UNIT -->
+        <div class="ad-placeholder">Advertisement Space (728x90)</div>
+
+        <div class="tool-header">
+            <h2>Text Case Converter</h2>
+            <p>Automatically convert text to Uppercase, Lowercase, Title Case, and more.</p>
+        </div>
+
+        <!-- WORKSPACE -->
+        <div class="converter-wrapper">
+            
+            <!-- LEFT: INPUT -->
+            <div class="text-panel">
+                <label style="font-weight:600; color:#555;">Input Text:</label>
+                <textarea id="input-text" placeholder="Paste or type your text here..."></textarea>
+                <div id="stats-bar" class="stats-bar">Characters: 0 | Words: 0 | Lines: 0</div>
+            </div>
+
+            <!-- RIGHT: OUTPUT -->
+            <div class="text-panel">
+                <label style="font-weight:600; color:#555;">Converted Result:</label>
+                <textarea id="output-text" placeholder="Result will appear here..." readonly></textarea>
+                <div style="display:flex; gap:10px; justify-content: flex-end;">
+                    <button id="copy-btn" class="btn btn-utility"><i class="fa-solid fa-copy"></i> Copy</button>
+                    <button id="clear-btn" class="btn btn-utility" style="border-color:#dc3545; color:#dc3545;"><i class="fa-solid fa-trash"></i> Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="controls-bar">
+            <button id="upper-btn" class="btn btn-action">UPPERCASE</button>
+            <button id="lower-btn" class="btn btn-action">lowercase</button>
+            <button id="title-btn" class="btn btn-action">Title Case</button>
+            <button id="sentence-btn" class="btn btn-action">Sentence case</button>
+            <button id="ai-btn" class="btn btn-ai"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Correct Format</button>
+        </div>
+
+        <!-- NAVIGATION -->
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn nav-back">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="index.html" class="nav-btn nav-dash">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        // Elements
+        const inputText = document.getElementById('input-text');
+        const outputText = document.getElementById('output-text');
+        const statsBar = document.getElementById('stats-bar');
+        const copyBtn = document.getElementById('copy-btn');
+        const clearBtn = document.getElementById('clear-btn');
+
+        // Helper: Update Output & Animation
+        const updateOutput = (text) => {
+            outputText.value = text;
+            // Flash effect
+            outputText.style.backgroundColor = '#d1e7dd';
+            setTimeout(() => outputText.style.backgroundColor = '#e9ecef', 300);
+        };
+
+        // Helper: Update Stats
+        const updateStats = () => {
+            const text = inputText.value;
+            const charCount = text.length;
+            const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            const lineCount = text.length === 0 ? 0 : text.split(/\r\n|\r|\n/).length;
+            statsBar.textContent = `Characters: ${charCount} | Words: ${wordCount} | Lines: ${lineCount}`;
+        };
+
+        // 1. UPPERCASE
+        document.getElementById('upper-btn').addEventListener('click', () => {
+            updateOutput(inputText.value.toUpperCase());
+        });
+
+        // 2. lowercase
+        document.getElementById('lower-btn').addEventListener('click', () => {
+            updateOutput(inputText.value.toLowerCase());
+        });
+
+        // 3. Title Case
+        document.getElementById('title-btn').addEventListener('click', () => {
+            const text = inputText.value.toLowerCase().split(' ')
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(' ');
+            updateOutput(text);
+        });
+
+        // 4. Sentence case
+        document.getElementById('sentence-btn').addEventListener('click', () => {
+            const text = inputText.value.toLowerCase().replace(/(^\s*\w|[.!?]\s+\w)/g, c => c.toUpperCase());
+            updateOutput(text);
+        });
+
+        // 5. Auto-Correct / AI Format (Simple Heuristics)
+        document.getElementById('ai-btn').addEventListener('click', () => {
+            let text = inputText.value.trim();
+            // Fix basic capitalization start
+            if(text.length > 0) text = text.charAt(0).toUpperCase() + text.slice(1);
+            // Fix new sentences
+            text = text.replace(/([.!?]\s*)([a-z])/g, (match, p1, p2) => p1 + p2.toUpperCase());
+            // Fix solitary 'i'
+            text = text.replace(/\bi\b/g, 'I');
+            // Fix double spaces
+            text = text.replace(/\s+/g, ' ');
+            updateOutput(text);
+        });
+
+        // 6. Copy Logic
+        copyBtn.addEventListener('click', () => {
+            if(!outputText.value) return;
+            navigator.clipboard.writeText(outputText.value);
+            const original = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+            setTimeout(() => copyBtn.innerHTML = original, 1500);
+        });
+
+        // 7. Clear Logic
+        clearBtn.addEventListener('click', () => {
+            inputText.value = '';
+            outputText.value = '';
+            updateStats();
+            inputText.focus();
+        });
+
+        // Listen for typing
+        inputText.addEventListener('input', updateStats);
+
+    </script>
+</body>
+</html>
