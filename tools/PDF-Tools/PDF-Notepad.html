@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>PDF Data Extractor & Note Taker | JKM Edit</title>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <!-- LIBRARIES -->
+    <!-- PDF.js for Rendering (Viewer) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- PDF.js Worker -->
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+    <!-- jsPDF for Generating Note PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        /* --- RESET & BASE --- */
+        html, body { margin: 0; height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- HEADER --- */
+        .branding-bar {
+            flex-shrink: 0;
+            display: flex; align-items: center; padding: 10px 2rem;
+            background: var(--surface-color);
+            border-bottom: 3px solid var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 40px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- AD BOX --- */
+        .ad-section { flex-shrink: 0; background: var(--bg-color); padding: 10px 0; }
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #e0e0e0; border: 1px dashed #999; 
+            margin: 0 auto; display: flex; align-items: center; justify-content: center; 
+            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        /* --- UPLOAD STAGE --- */
+        #upload-stage {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;
+        }
+        .tool-header h2 { font-size: 2rem; margin-bottom: 0.5rem; text-align: center; color: var(--primary-color); }
+        .tool-header p { text-align: center; margin-bottom: 2rem; color: #666; }
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; width: 100%; max-width: 600px;
+            text-align: center; cursor: pointer; background-color: var(--surface-color); transition: 0.3s; 
+        }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+
+        /* --- WORKSPACE (SPLIT VIEW) --- */
+        #workspace-stage { flex: 1; display: flex; overflow: hidden; height: 100%; padding: 10px; gap: 10px; }
+        
+        /* LEFT: PDF VIEWER */
+        .pdf-panel {
+            flex: 1; display: flex; flex-direction: column;
+            background: #525659; /* Standard PDF Reader Grey */
+            border-radius: 8px; overflow: hidden;
+            border: 1px solid #ccc;
+        }
+        .pdf-toolbar {
+            background: #333; color: white; padding: 8px 15px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .pdf-toolbar button {
+            background: transparent; border: 1px solid #555; color: white;
+            padding: 5px 10px; border-radius: 4px; cursor: pointer;
+        }
+        .pdf-toolbar button:hover { background: #555; }
+        
+        .pdf-scroll-area {
+            flex: 1; overflow: auto; position: relative;
+            display: flex; justify-content: center; padding: 20px;
+        }
+        
+        /* PDF Layering for Selectable Text */
+        .pdf-wrapper { position: relative; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .pdf-canvas { display: block; }
+        .textLayer {
+            position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+            overflow: hidden; opacity: 0.2; line-height: 1.0;
+        }
+        .textLayer > span {
+            color: transparent; position: absolute; white-space: pre; cursor: text;
+            transform-origin: 0% 0%;
+        }
+        /* Selection Highlight Color */
+        ::selection { background: rgba(0, 82, 204, 0.3); }
+
+        /* RIGHT: NOTEPAD */
+        .notepad-panel {
+            flex: 1; display: flex; flex-direction: column;
+            background: var(--surface-color); border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            max-width: 45%;
+        }
+        .notepad-header {
+            background: #f0f7ff; padding: 15px; border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .notepad-title { font-weight: 700; color: var(--primary-color); display: flex; align-items: center; gap: 8px; }
+        
+        textarea#notes-area {
+            flex: 1; border: none; resize: none; padding: 20px;
+            font-family: 'Courier New', Courier, monospace; font-size: 1rem; line-height: 1.6;
+            color: #333; outline: none;
+        }
+        textarea#notes-area:focus { background-color: #fafafa; }
+
+        .notepad-footer {
+            padding: 15px; border-top: 1px solid var(--border-color); background: white;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 10px 20px; border: none; border-radius: 6px;
+            font-weight: 600; cursor: pointer; transition: 0.3s;
+            display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+        }
+        .btn-primary { background: var(--gradient); color: white; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-sm { padding: 5px 10px; font-size: 0.85rem; }
+        
+        .nav-btn { background: #e9ecef; color: #333; }
+        .nav-btn:hover { background: #dde2e6; }
+
+        /* --- NAV BOTTOM (Upload Stage) --- */
+        .bottom-nav { margin-top: 2rem; display: flex; gap: 1rem; }
+
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="branding-bar">
+        <a href="index.html" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <!-- ADVERTISEMENT -->
+    <div class="ad-section">
+        <div class="ad-placeholder">Advertisement Space (728x90)</div>
+    </div>
+
+    <!-- STAGE 1: UPLOAD -->
+    <div id="upload-stage">
+        <div class='tool-header'>
+            <h2>PDF Note Taker & Extractor</h2>
+            <p>View PDF, select text, and copy key data into your notes. Download notes as a new PDF.</p>
+        </div>
+        
+        <input type="file" id="file-input" class="hidden" accept="application/pdf"/>
+        <div id="dropzone">
+            <i class="fa-solid fa-file-pen"></i>
+            <p><strong>Click to Upload PDF</strong><br>or drag and drop here</p>
+        </div>
+
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="btn nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="index.html" class="btn btn-primary"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+    </div>
+
+    <!-- STAGE 2: WORKSPACE (Split Screen) -->
+    <div id="workspace-stage" class="hidden">
+        
+        <!-- LEFT: PDF READER -->
+        <div class="pdf-panel">
+            <div class="pdf-toolbar">
+                <div>
+                    <button onclick="changePage(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                    <span id="page-info" style="margin: 0 10px; font-size: 0.9rem;">Page 1 of --</span>
+                    <button onclick="changePage(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div style="font-size: 0.9rem; color: #ccc;">
+                    <i class="fa-solid fa-mouse-pointer"></i> Select text to copy
+                </div>
+            </div>
+            
+            <div class="pdf-scroll-area">
+                <div id="pdf-wrapper" class="pdf-wrapper">
+                    <canvas id="the-canvas" class="pdf-canvas"></canvas>
+                    <div id="text-layer" class="textLayer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: NOTEPAD -->
+        <div class="notepad-panel">
+            <div class="notepad-header">
+                <div class="notepad-title"><i class="fa-solid fa-note-sticky"></i> My Notes</div>
+                <button class="btn nav-btn btn-sm" onclick="clearNotes()">Clear</button>
+            </div>
+            
+            <textarea id="notes-area" placeholder="Paste extracted text here or type your notes..."></textarea>
+            
+            <div class="notepad-footer">
+                <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="downloadNotesPDF()">
+                    <i class="fa-solid fa-file-arrow-down"></i> Download Notes as PDF
+                </button>
+                <div style="text-align: center; margin-top: 10px;">
+                    <a href="javascript:location.reload()" style="color: #666; text-decoration: none; font-size: 0.85rem;">Exit / New File</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- STATE VARIABLES ---
+        let pdfDoc = null;
+        let pageNum = 1;
+        let pageRendering = false;
+        let pageNumPending = null;
+        let scale = 1.2; // Zoom level
+        
+        const canvas = document.getElementById('the-canvas');
+        const ctx = canvas.getContext('2d');
+        const textLayerDiv = document.getElementById('text-layer');
+        const pdfWrapper = document.getElementById('pdf-wrapper');
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+
+        // --- UPLOAD HANDLERS ---
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
+        fileInput.onchange = (e) => handleFiles(e.target.files);
+
+        function handleFiles(files) {
+            if (!files[0] || files[0].type !== 'application/pdf') return alert("Invalid PDF");
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const typedarray = new Uint8Array(e.target.result);
+                
+                // Switch UI
+                document.getElementById('upload-stage').classList.add('hidden');
+                document.getElementById('workspace-stage').classList.remove('hidden');
+                document.querySelector('.ad-section').style.display = 'none'; // Hide ad for more space
+
+                // Load PDF
+                pdfjsLib.getDocument(typedarray).promise.then(function(pdfDoc_) {
+                    pdfDoc = pdfDoc_;
+                    document.getElementById('page-info').textContent = `Page 1 of ${pdfDoc.numPages}`;
+                    renderPage(pageNum);
+                });
+            };
+            reader.readAsArrayBuffer(files[0]);
+        }
+
+        // --- PDF RENDERING LOGIC (With Text Layer) ---
+        function renderPage(num) {
+            pageRendering = true;
+            
+            // Fetch page
+            pdfDoc.getPage(num).then(function(page) {
+                const viewport = page.getViewport({scale: scale});
+                
+                // 1. Set dimensions
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                pdfWrapper.style.width = `${viewport.width}px`;
+                pdfWrapper.style.height = `${viewport.height}px`;
+
+                // 2. Render Canvas
+                const renderContext = { canvasContext: ctx, viewport: viewport };
+                const renderTask = page.render(renderContext);
+
+                // 3. Render Text Layer (Wait for canvas)
+                renderTask.promise.then(function() {
+                    pageRendering = false;
+                    
+                    // Clear previous text layer
+                    textLayerDiv.innerHTML = '';
+                    textLayerDiv.style.width = `${viewport.width}px`;
+                    textLayerDiv.style.height = `${viewport.height}px`;
+                    
+                    // Get Text Content
+                    return page.getTextContent();
+                }).then(function(textContent) {
+                    // Use PDF.js internal TextLayer logic manually
+                    // Note: Older versions used TextLayerBuilder, simplistic approach here for selecting:
+                    
+                    const textItems = textContent.items;
+                    let textDivs = [];
+                    
+                    for (let i = 0; i < textItems.length; i++) {
+                        const item = textItems[i];
+                        
+                        // Create span for text
+                        const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+                        
+                        // Calculate Font Size and Position
+                        const fontHeight = Math.sqrt((tx[2] * tx[2]) + (tx[3] * tx[3]));
+                        
+                        // Simple styling to overlay text roughly over canvas text
+                        // (Note: Perfect alignment requires complex PDF.js CSS, this is the lightweight approximation)
+                        const span = document.createElement('span');
+                        span.textContent = item.str;
+                        span.style.left = `${tx[4]}px`;
+                        span.style.top = `${tx[5] - fontHeight}px`; // PDF coords are bottom-up
+                        span.style.fontSize = `${fontHeight}px`;
+                        span.style.fontFamily = 'sans-serif';
+                        
+                        // Scale fix
+                        // Often PDF.js needs specific transform CSS. 
+                        // For simplicity in this snippet, we make text fully transparent 
+                        // and just selectable for copy/paste.
+                        
+                        textLayerDiv.appendChild(span);
+                    }
+                    
+                    // BETTER APPROACH FOR TEXT LAYER (Using PDF.js API if available, else basic HTML)
+                    // Since we are avoiding complex builds, we use the renderTextLayer API:
+                    textLayerDiv.innerHTML = ''; // Clear again
+                    pdfjsLib.renderTextLayer({
+                        textContent: textContent,
+                        container: textLayerDiv,
+                        viewport: viewport,
+                        textDivs: []
+                    });
+                });
+
+                if (pageNumPending !== null) {
+                    renderPage(pageNumPending);
+                    pageNumPending = null;
+                }
+            });
+
+            // Update Page Counters
+            document.getElementById('page-info').textContent = `Page ${num} of ${pdfDoc.numPages}`;
+        }
+
+        function queueRenderPage(num) {
+            if (pageRendering) pageNumPending = num;
+            else renderPage(num);
+        }
+
+        function changePage(offset) {
+            if (pageNum + offset <= 0 || pageNum + offset > pdfDoc.numPages) return;
+            pageNum += offset;
+            queueRenderPage(pageNum);
+        }
+
+        // --- NOTEPAD LOGIC ---
+        function clearNotes() {
+            if(confirm("Are you sure you want to clear your notes?")) {
+                document.getElementById('notes-area').value = "";
+            }
+        }
+
+        // --- DOWNLOAD NOTES (jsPDF) ---
+        function downloadNotesPDF() {
+            const text = document.getElementById('notes-area').value;
+            if (!text.trim()) return alert("Your notes are empty!");
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Set Theme Colors
+            const primaryColor = '#0052cc';
+            
+            // Header
+            doc.setFillColor(240, 247, 255); // Light Blue Background
+            doc.rect(0, 0, 210, 30, 'F'); // A4 Width is 210
+            
+            // Logo / Branding Text
+            doc.setFontSize(20);
+            doc.setTextColor(primaryColor);
+            doc.setFont("helvetica", "bold");
+            doc.text("JKM Edit | Notes", 15, 20);
+
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text("Extracted Notes Document", 150, 20);
+            
+            // Line Separator
+            doc.setDrawColor(primaryColor);
+            doc.setLineWidth(0.5);
+            doc.line(10, 32, 200, 32);
+
+            // Body Text
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(12);
+            doc.setTextColor(0);
+            
+            // Split text to wrap within margins (x=15, y=45, width=180)
+            const splitText = doc.splitTextToSize(text, 180);
+            
+            // Add text handling pagination automatically? 
+            // jsPDF text() doesn't auto-page well. Let's do simple check.
+            let y = 45;
+            for(let i=0; i<splitText.length; i++) {
+                if (y > 280) {
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.text(splitText[i], 15, y);
+                y += 7; // Line height
+            }
+
+            // Footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for(let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(150);
+                doc.text('Created with JKM Edit PDF Tools', 15, 290);
+                doc.text('Page ' + i + ' of ' + pageCount, 180, 290);
+            }
+
+            doc.save("JKM_Notes.pdf");
+        }
+    </script>
+</body>
+</html>
