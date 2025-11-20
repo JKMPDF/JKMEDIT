@@ -4,8 +4,8 @@
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
 
-    <title>P2P Secure Chat & Share | JKM Edit</title>
-    <meta name="description" content="Secure Peer-to-Peer Chat. Share code to connect, chat, and transfer photos/videos instantly without a server."/>
+    <title>P2P Chat | JKM Edit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
@@ -14,386 +14,220 @@
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
-    <!-- PeerJS Library (Handles the P2P Connection) -->
+    <!-- PeerJS Library (Robust Version) -->
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     
     <style>
-        /* --- Corporate Blue Theme Variables --- */
+        /* --- Theme --- */
         :root { 
             font-family: 'Poppins', sans-serif; 
             --primary-color: #0052cc; 
-            --secondary-color: #0747a6; 
             --bg-color: #f4f5f7; 
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
-            --border-color: #dfe1e6;
-            --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
-            --msg-sent: #e3f2fd;
+            --msg-sent: #d1eaff;
             --msg-received: #ffffff;
         }
 
-        /* --- Basic Reset & Layout --- */
         html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
         *, *::before, *::after { box-sizing: border-box; }
 
-        /* --- Header Section (Left Aligned) --- */
-        .main-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 1rem 2rem;
-            background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid var(--primary-color);
-        }
+        /* --- Layout --- */
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; height: 100vh; display: flex; flex-direction: column; }
         
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h2 { margin: 0; color: var(--primary-color); }
 
-        .logo-img {
-            width: 50px; 
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .brand-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--text-color);
-        }
-
-        /* --- Advertisement Box (728x90) --- */
-        .ad-container {
+        /* --- Connection View --- */
+        #view-connect { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
+        
+        .card {
+            background: var(--surface-color);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             width: 100%;
-            display: flex;
-            justify-content: center;
-            margin: 2rem 0;
-            padding: 0 1rem;
-        }
-
-        .ad-slot {
-            width: 728px;
-            height: 90px;
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            overflow: hidden;
-        }
-
-        /* --- Main Tool Container --- */
-        .dashboard-container { 
-            padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 1000px; 
-            margin: auto; 
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
-        .tool-header p { font-size: 1.1rem; color: #6c757d; }
-
-        /* --- Connection Panel (Login) --- */
-        .connection-panel {
-            background: var(--surface-color);
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            max-width: 400px;
             text-align: center;
-            max-width: 500px;
-            margin: 0 auto;
-            transition: all 0.3s;
         }
 
-        .code-display {
-            font-family: 'Courier New', monospace;
+        .code-box {
+            font-family: monospace;
             font-size: 2.5rem;
-            font-weight: 700;
             color: var(--primary-color);
-            letter-spacing: 5px;
-            margin: 1.5rem 0;
-            background: #f4f5f7;
-            padding: 1rem;
+            background: #f0f2f5;
+            padding: 15px;
             border-radius: 8px;
-            border: 2px dashed var(--border-color);
+            margin: 15px 0;
+            letter-spacing: 5px;
             cursor: pointer;
+            border: 2px dashed #ccc;
         }
 
         .input-code {
             width: 100%;
-            padding: 1rem;
+            padding: 12px;
             font-size: 1.2rem;
             text-align: center;
-            border: 2px solid var(--border-color);
+            border: 2px solid #ddd;
             border-radius: 8px;
-            margin-bottom: 1rem;
-            letter-spacing: 2px;
+            margin-bottom: 15px;
             text-transform: uppercase;
         }
-        .input-code:focus { outline: none; border-color: var(--primary-color); }
 
-        /* --- Chat Interface (Hidden by default) --- */
-        .chat-interface {
-            display: none;
-            background: var(--surface-color);
-            border-radius: 12px;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
-            overflow: hidden;
-            height: 600px;
-            flex-direction: column;
-            border: 1px solid var(--border-color);
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
+        .btn-primary { background: var(--gradient); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* --- Chat View --- */
+        #view-chat { display: none; flex-direction: column; height: 100%; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
 
         .chat-header {
             background: var(--gradient);
             color: white;
-            padding: 1rem;
+            padding: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background: #2ecc71;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-            box-shadow: 0 0 5px #2ecc71;
+            font-weight: 600;
         }
 
-        .chat-messages {
+        .chat-body {
             flex: 1;
-            padding: 1.5rem;
+            padding: 20px;
             overflow-y: auto;
-            background-color: #eef2f9;
+            background: #f0f2f5;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 10px;
         }
 
         .message {
-            max-width: 70%;
-            padding: 0.8rem 1.2rem;
+            max-width: 75%;
+            padding: 10px 15px;
             border-radius: 12px;
-            position: relative;
-            word-wrap: break-word;
             font-size: 0.95rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            word-wrap: break-word;
+            position: relative;
         }
+        .msg-sent { align-self: flex-end; background: var(--msg-sent); color: #003366; border-bottom-right-radius: 2px; }
+        .msg-received { align-self: flex-start; background: var(--msg-received); border-bottom-left-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        
+        .media-img { max-width: 100%; border-radius: 8px; margin-top: 5px; }
 
-        .msg-sent {
-            align-self: flex-end;
-            background-color: var(--msg-sent);
-            border-bottom-right-radius: 2px;
-            color: var(--text-color);
-        }
-
-        .msg-received {
-            align-self: flex-start;
-            background-color: var(--msg-received);
-            border-bottom-left-radius: 2px;
-            color: var(--text-color);
-        }
-
-        .msg-media {
-            max-width: 100%;
-            border-radius: 8px;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .chat-controls {
-            padding: 1rem;
+        .chat-footer {
+            padding: 15px;
             background: white;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid #eee;
             display: flex;
-            gap: 0.5rem;
+            gap: 10px;
             align-items: center;
         }
 
         .chat-input {
             flex: 1;
-            padding: 0.8rem;
-            border: 1px solid var(--border-color);
+            padding: 12px;
+            border: 1px solid #ddd;
             border-radius: 25px;
-            font-family: 'Poppins', sans-serif;
             outline: none;
         }
-        .chat-input:focus { border-color: var(--primary-color); }
-
-        /* Buttons */
-        .btn {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-            font-size: 1rem;
-        }
-        .btn-primary { background: var(--gradient); color: white; width: 100%; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
         .btn-icon {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             border: none;
-            background: var(--bg-color);
-            color: var(--secondary-color);
-            font-size: 1.2rem;
+            background: #f0f2f5;
+            color: #555;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            font-size: 1.1rem;
         }
-        .btn-icon:hover { background: var(--border-color); }
+        .btn-send { background: var(--primary-color); color: white; }
 
-        .btn-send {
-            background: var(--primary-color);
-            color: white;
+        /* Logs */
+        .status-log {
+            font-size: 0.8rem;
+            color: #dc3545;
+            margin-top: 10px;
+            min-height: 20px;
         }
-        .btn-send:hover { background: var(--secondary-color); }
-
-        /* File Input Hidden */
-        #file-input { display: none; }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin: 1.5rem 0;
-            color: #888;
-        }
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid #ddd;
-        }
-        .divider:not(:empty)::before { margin-right: .5em; }
-        .divider:not(:empty)::after { margin-left: .5em; }
-
-        /* --- Bottom Navigation Buttons --- */
-        .bottom-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: auto; 
-            padding-top: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .nav-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 2rem;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .nav-btn-outline {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
-
-        .nav-btn-fill {
-            background: var(--primary-color);
-            color: white;
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-fill:hover {
-            background: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
+        .loading-spinner { display: none; margin-left: 10px; }
+        
+        /* Ad Box */
+        .ad-container { margin-bottom: 1rem; text-align: center; }
+        .ad-box { width: 728px; height: 90px; background: #eee; display: inline-flex; align-items: center; justify-content: center; color: #888; font-size: 0.8rem; }
+        @media(max-width:768px){ .ad-box { width: 100%; height: auto; padding: 10px; } }
     </style>
 </head>
 <body>
 
-    <!-- Header Section -->
-    <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
-        </a>
-    </header>
-
-    <!-- Advertisement Box -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
-    <main class="dashboard-container">
+    <div class="container">
         
-        <!-- View 1: Connection Panel -->
-        <div id="connection-view">
-            <div class="tool-header">
-                <h2>P2P Secure Share & Chat</h2>
-                <p>Connect directly with another device to chat and share files.</p>
-            </div>
+        <div class="ad-container">
+            <div class="ad-box">ADVERTISEMENT (728x90)</div>
+        </div>
 
-            <div class="connection-panel">
-                <h3>Your Connection Code</h3>
-                <div class="code-display" id="my-code" title="Click to Copy">...</div>
-                <p style="font-size:0.9rem; color:#666; margin-bottom:1.5rem;">Share this code with your friend.</p>
+        <div class="header">
+            <a href="../../" style="text-decoration:none; color:inherit;">
+                <h2><i class="fa-solid fa-comments"></i> JKM Chat</h2>
+            </a>
+            <small style="color:#666;">Secure P2P Connection</small>
+        </div>
+
+        <!-- LOGIN SCREEN -->
+        <div id="view-connect">
+            <div class="card">
+                <h3>Your ID</h3>
+                <div class="code-box" id="my-id" title="Click to Copy">...</div>
+                <p style="font-size:0.85rem; color:#666;">Share this ID with your friend</p>
                 
-                <div class="divider">OR</div>
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+                <h3>Connect to Friend</h3>
+                <input type="text" id="remote-id" class="input-code" placeholder="ENTER ID HERE" maxlength="6">
                 
-                <h3>Join a Friend</h3>
-                <input type="text" id="remote-code-input" class="input-code" placeholder="ENTER CODE" maxlength="6">
-                <button class="btn btn-primary" id="btn-connect">Connect Now</button>
-                <p id="conn-status" style="margin-top:10px; color: var(--secondary-color); font-weight:600; min-height:1.5em;"></p>
+                <button class="btn btn-primary" id="btn-connect" disabled>
+                    Connect <i class="fa-solid fa-circle-notch fa-spin loading-spinner" id="spinner"></i>
+                </button>
+                
+                <div class="status-log" id="status-log">Initializing...</div>
             </div>
         </div>
 
-        <!-- View 2: Chat Interface -->
-        <div id="chat-view" class="chat-interface">
+        <!-- CHAT SCREEN -->
+        <div id="view-chat">
             <div class="chat-header">
-                <div style="display:flex; align-items:center;">
-                    <div class="status-dot"></div>
-                    <span>Connected to <strong id="remote-peer-id">Peer</strong></span>
-                </div>
-                <button class="btn-icon" style="color:white; background:rgba(255,255,255,0.2); width:35px; height:35px;" id="btn-disconnect" title="Disconnect">
+                <span id="chat-partner-name">Connected</span>
+                <button class="btn-icon" style="background: rgba(255,255,255,0.2); color: white;" onclick="location.reload()">
                     <i class="fa-solid fa-power-off"></i>
                 </button>
             </div>
-
-            <div class="chat-messages" id="chat-box">
-                <!-- Messages will appear here -->
-                <div style="text-align:center; color:#888; font-size:0.9rem; margin-top:20px;">
-                    <i class="fa-solid fa-lock"></i> Messages are end-to-end encrypted via P2P.
+            
+            <div class="chat-body" id="chat-body">
+                <div style="text-align:center; color:#999; font-size:0.8rem; margin-top:10px;">
+                    <i class="fa-solid fa-lock"></i> End-to-End Encrypted
                 </div>
             </div>
 
-            <div class="chat-controls">
-                <button class="btn-icon" id="btn-attach" title="Send Photo/Video">
-                    <i class="fa-solid fa-paperclip"></i>
+            <div class="chat-footer">
+                <button class="btn-icon" id="btn-file" title="Send Image">
+                    <i class="fa-regular fa-image"></i>
                 </button>
-                <input type="file" id="file-input" accept="image/*,video/*">
+                <input type="file" id="file-input" accept="image/*" style="display:none;">
                 
                 <input type="text" class="chat-input" id="msg-input" placeholder="Type a message..." autocomplete="off">
                 
@@ -403,236 +237,218 @@
             </div>
         </div>
 
-        <!-- Bottom Navigation Buttons -->
-        <div class="bottom-nav">
-            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
-                <i class="fa-solid fa-arrow-left"></i> Go Back
-            </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
-                <i class="fa-solid fa-table-columns"></i> Dashboard
-            </a>
-        </div>
-    </main>
+    </div>
 
     <script>
-        // --- Generate a Random 6-char ID ---
+        // 1. Generate Short Random ID
         function generateId() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'; // Removed ambiguous chars like I, 1, 0, O
             let result = '';
-            for (let i = 0; i < 6; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
+            for (let i = 0; i < 6; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
             return result;
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Elements
-            const connectionView = document.getElementById('connection-view');
-            const chatView = document.getElementById('chat-view');
-            const myCodeDisplay = document.getElementById('my-code');
-            const remoteCodeInput = document.getElementById('remote-code-input');
-            const btnConnect = document.getElementById('btn-connect');
-            const connStatus = document.getElementById('conn-status');
-            
-            const remotePeerIdDisplay = document.getElementById('remote-peer-id');
-            const btnDisconnect = document.getElementById('btn-disconnect');
-            const chatBox = document.getElementById('chat-box');
-            const msgInput = document.getElementById('msg-input');
-            const btnSend = document.getElementById('btn-send');
-            const btnAttach = document.getElementById('btn-attach');
-            const fileInput = document.getElementById('file-input');
+        const myId = generateId();
+        let peer = null;
+        let conn = null;
 
-            // State
-            const myId = generateId();
-            let peer = null;
-            let conn = null;
+        // UI Elements
+        const uiMyId = document.getElementById('my-id');
+        const uiRemoteId = document.getElementById('remote-id');
+        const btnConnect = document.getElementById('btn-connect');
+        const statusLog = document.getElementById('status-log');
+        const spinner = document.getElementById('spinner');
+        
+        const viewConnect = document.getElementById('view-connect');
+        const viewChat = document.getElementById('view-chat');
+        const chatBody = document.getElementById('chat-body');
+        const msgInput = document.getElementById('msg-input');
+        const btnSend = document.getElementById('btn-send');
+        const btnFile = document.getElementById('btn-file');
+        const fileInput = document.getElementById('file-input');
 
-            // --- 1. Initialize PeerJS ---
-            // Uses the public PeerJS cloud server. For production, host your own PeerServer.
+        // --- INITIALIZE PEER ---
+        function initPeer() {
+            // Standard PeerJS config
             peer = new Peer(myId, {
-                debug: 1
+                debug: 1 // 0=none, 1=errors, 2=warnings, 3=all
             });
 
-            myCodeDisplay.textContent = myId;
-
-            // Click code to copy
-            myCodeDisplay.addEventListener('click', () => {
-                navigator.clipboard.writeText(myId);
-                const original = myCodeDisplay.textContent;
-                myCodeDisplay.textContent = "COPIED!";
-                setTimeout(() => myCodeDisplay.textContent = original, 1000);
+            peer.on('open', (id) => {
+                uiMyId.textContent = id;
+                log("Ready to connect!", "green");
+                btnConnect.disabled = false;
             });
 
-            // --- 2. Handle Incoming Connection ---
             peer.on('connection', (c) => {
-                if (conn) {
-                    c.close(); // Only allow one connection for this simple demo
-                    return;
-                }
+                // Incoming connection
                 conn = c;
                 setupConnection();
             });
 
             peer.on('error', (err) => {
-                connStatus.style.color = "#dc3545";
-                connStatus.textContent = "Error: " + err.type;
                 console.error(err);
+                let msg = "An error occurred.";
+                if (err.type === 'peer-unavailable') msg = "Peer ID not found. Check the code.";
+                if (err.type === 'network') msg = "Network error. Check internet.";
+                if (err.type === 'browser-incompatible') msg = "Browser not supported.";
+                log(msg, "red");
+                setLoading(false);
             });
 
-            // --- 3. Handle Outgoing Connection ---
-            btnConnect.addEventListener('click', () => {
-                const targetId = remoteCodeInput.value.trim().toUpperCase();
-                if (targetId.length !== 6) {
-                    connStatus.textContent = "Invalid Code Length";
-                    return;
-                }
-                if (targetId === myId) {
-                    connStatus.textContent = "You cannot connect to yourself";
-                    return;
-                }
-
-                connStatus.textContent = "Connecting...";
-                conn = peer.connect(targetId);
-                setupConnection();
+            peer.on('disconnected', () => {
+                log("Disconnected from server. Reconnecting...", "orange");
+                peer.reconnect();
             });
+        }
 
-            // --- 4. Setup Connection Logic ---
-            function setupConnection() {
-                conn.on('open', () => {
-                    // Switch UI
-                    connectionView.style.display = 'none';
-                    chatView.style.display = 'flex';
-                    remotePeerIdDisplay.textContent = conn.peer;
-                    connStatus.textContent = "";
-                });
-
-                conn.on('data', (data) => {
-                    handleIncomingData(data);
-                });
-
-                conn.on('close', () => {
-                    alert("Connection lost.");
-                    resetApp();
-                });
+        // --- CONNECT TO FRIEND ---
+        btnConnect.addEventListener('click', () => {
+            const targetId = uiRemoteId.value.trim().toUpperCase();
+            if (targetId.length !== 6) {
+                log("Please enter a valid 6-character ID.", "red");
+                return;
+            }
+            if (targetId === myId) {
+                log("You cannot connect to yourself.", "red");
+                return;
             }
 
-            // --- 5. Messaging Logic ---
+            setLoading(true);
+            log("Searching for peer...", "blue");
             
-            // Send Text
-            function sendText() {
-                const text = msgInput.value.trim();
-                if (!text) return;
-                
-                if (conn && conn.open) {
-                    conn.send({ type: 'text', content: text });
-                    appendMessage(text, 'sent', 'text');
-                    msgInput.value = '';
-                } else {
-                    alert("Connection is not open.");
-                }
-            }
-
-            btnSend.addEventListener('click', sendText);
-            msgInput.addEventListener('keypress', (e) => {
-                if(e.key === 'Enter') sendText();
-            });
-
-            // Send File
-            btnAttach.addEventListener('click', () => fileInput.click());
-            
-            fileInput.addEventListener('change', () => {
-                const file = fileInput.files[0];
-                if (!file) return;
-                
-                // Limit size for stability (PeerJS data channels have limits, usually ~16MB but smaller is safer for base64)
-                if (file.size > 5 * 1024 * 1024) {
-                    alert("File too large. Max 5MB for this demo.");
-                    fileInput.value = '';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const dataUrl = e.target.result;
-                    const fileType = file.type.startsWith('image/') ? 'image' : 'video';
-                    
-                    if (conn && conn.open) {
-                        conn.send({ type: fileType, content: dataUrl });
-                        appendMessage(dataUrl, 'sent', fileType);
-                    }
-                };
-                reader.readAsDataURL(file);
-                fileInput.value = ''; // Reset
-            });
-
-            // Handle Incoming
-            function handleIncomingData(data) {
-                appendMessage(data.content, 'received', data.type);
-            }
-
-            // Render Message to UI
-            function appendMessage(content, side, type) {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = `message msg-${side}`;
-
-                if (type === 'text') {
-                    msgDiv.textContent = content;
-                } else if (type === 'image') {
-                    const img = document.createElement('img');
-                    img.src = content;
-                    img.className = 'msg-media';
-                    msgDiv.appendChild(img);
-                    
-                    // Add download link
-                    const link = document.createElement('a');
-                    link.href = content;
-                    link.download = "image-" + Date.now();
-                    link.innerHTML = '<i class="fa-solid fa-download"></i> Download Image';
-                    link.style.display = "block";
-                    link.style.marginTop = "5px";
-                    link.style.fontSize = "0.8rem";
-                    link.style.color = "var(--primary-color)";
-                    msgDiv.appendChild(link);
-
-                } else if (type === 'video') {
-                    const video = document.createElement('video');
-                    video.src = content;
-                    video.controls = true;
-                    video.className = 'msg-media';
-                    msgDiv.appendChild(video);
-                }
-
-                // Time
-                const timeSpan = document.createElement('div');
-                timeSpan.style.fontSize = "0.7rem";
-                timeSpan.style.textAlign = "right";
-                timeSpan.style.opacity = "0.6";
-                timeSpan.style.marginTop = "4px";
-                const now = new Date();
-                timeSpan.textContent = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
-                msgDiv.appendChild(timeSpan);
-
-                chatBox.appendChild(msgDiv);
-                chatBox.scrollTop = chatBox.scrollHeight; // Auto scroll
-            }
-
-            // --- 6. Reset / Disconnect ---
-            btnDisconnect.addEventListener('click', () => {
-                if (confirm("End chat?")) {
-                    if (conn) conn.close();
-                    resetApp();
-                }
-            });
-
-            function resetApp() {
-                connectionView.style.display = 'block';
-                chatView.style.display = 'none';
-                conn = null;
-                chatBox.innerHTML = '<div style="text-align:center; color:#888; font-size:0.9rem; margin-top:20px;"><i class="fa-solid fa-lock"></i> Messages are end-to-end encrypted via P2P.</div>';
-                remoteCodeInput.value = '';
-                connStatus.textContent = '';
-            }
+            conn = peer.connect(targetId);
+            setupConnection();
         });
+
+        // --- SETUP CONNECTION LOGIC ---
+        function setupConnection() {
+            conn.on('open', () => {
+                setLoading(false);
+                // Switch Screens
+                viewConnect.style.display = 'none';
+                viewChat.style.display = 'flex';
+                document.getElementById('chat-partner-name').textContent = "ID: " + conn.peer;
+            });
+
+            conn.on('data', (data) => {
+                receiveMessage(data);
+            });
+
+            conn.on('close', () => {
+                alert("Partner disconnected.");
+                location.reload();
+            });
+
+            // Backup timeout if connection hangs
+            setTimeout(() => {
+                if (!conn.open && viewConnect.style.display !== 'none') {
+                    setLoading(false);
+                    // log("Connection timed out. Is the ID correct?", "red");
+                }
+            }, 5000);
+        }
+
+        // --- CHAT FUNCTIONS ---
+        function sendMessage(content, type = 'text') {
+            if (conn && conn.open) {
+                const payload = { type: type, content: content, time: new Date().toLocaleTimeString() };
+                conn.send(payload);
+                displayMessage(payload, 'sent');
+                msgInput.value = '';
+            } else {
+                alert("Connection lost!");
+            }
+        }
+
+        function receiveMessage(data) {
+            displayMessage(data, 'received');
+        }
+
+        function displayMessage(data, side) {
+            const div = document.createElement('div');
+            div.className = `message msg-${side}`;
+            
+            if (data.type === 'text') {
+                div.textContent = data.content;
+            } else if (data.type === 'image') {
+                const img = document.createElement('img');
+                img.src = data.content;
+                img.className = 'media-img';
+                div.appendChild(img);
+            }
+
+            // Time
+            const time = document.createElement('div');
+            time.style.fontSize = '0.7rem';
+            time.style.textAlign = 'right';
+            time.style.opacity = '0.6';
+            time.style.marginTop = '5px';
+            time.textContent = data.time || 'Now';
+            div.appendChild(time);
+
+            chatBody.appendChild(div);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Event Listeners for Chat
+        btnSend.addEventListener('click', () => {
+            const txt = msgInput.value.trim();
+            if (txt) sendMessage(txt, 'text');
+        });
+        
+        msgInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') btnSend.click();
+        });
+
+        // File Handling
+        btnFile.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            // Simple size check (PeerJS limit ~16MB, keeping it safe at 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Image is too large. Max 5MB.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                sendMessage(e.target.result, 'image');
+            };
+            reader.readAsDataURL(file);
+            fileInput.value = ''; // Reset
+        });
+
+        // --- UTILS ---
+        function log(msg, color) {
+            statusLog.textContent = msg;
+            statusLog.style.color = color === 'green' ? '#28a745' : (color === 'red' ? '#dc3545' : '#0052cc');
+        }
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                btnConnect.disabled = true;
+                spinner.style.display = 'inline-block';
+            } else {
+                btnConnect.disabled = false;
+                spinner.style.display = 'none';
+            }
+        }
+
+        // Copy ID logic
+        uiMyId.addEventListener('click', () => {
+            navigator.clipboard.writeText(myId);
+            const old = uiMyId.textContent;
+            uiMyId.textContent = "COPIED!";
+            setTimeout(() => uiMyId.textContent = old, 1000);
+        });
+
+        // Start
+        initPeer();
+
     </script>
 </body>
 </html>
