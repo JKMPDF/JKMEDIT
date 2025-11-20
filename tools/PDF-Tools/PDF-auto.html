@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>PDF Auto-Scroll / Teleprompter | JKM Edit</title>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <!-- PDF LIBRARY -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <style>
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- Header --- */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+            position: relative; z-index: 10;
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- Main Layout --- */
+        .tool-container { padding: 2rem 1rem; max-width: 1100px; margin: auto; width: 100%; flex: 1; }
+        
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #e0e0e0; border: 1px dashed #999; 
+            margin: 0 auto 2rem auto; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        /* --- Upload Zone --- */
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
+            text-align: center; cursor: pointer; background-color: var(--surface-color); 
+            transition: 0.3s; 
+        }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .tool-header h2 { font-size: 2rem; margin-bottom: 0.5rem; text-align: center; color: var(--primary-color); }
+        .tool-header p { text-align: center; margin-bottom: 2rem; color: #666; }
+
+        /* --- Navigation Buttons --- */
+        .navigation-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 3rem; }
+        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav-back { background: #e9ecef; color: #333; }
+        .nav-dash { background: var(--primary-color); color: white; }
+        .nav-dash:hover { opacity: 0.9; }
+
+        /* --- Viewer Stage (The Scroll Area) --- */
+        #viewer-stage { position: relative; }
+        #viewer-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding-bottom: 150px; /* Space for bottom bar */
+        }
+
+        .pdf-page-canvas {
+            display: block;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: white;
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s;
+        }
+
+        /* Modes */
+        body.dark-mode-active { background-color: #1a1a1a; }
+        body.dark-mode-active .pdf-page-canvas { filter: invert(1) hue-rotate(180deg); }
+        body.mirror-mode-active #viewer-container { transform: scaleX(-1); } /* Flip horizontally */
+
+        /* --- Floating Control Bar --- */
+        .control-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 100;
+            border: 1px solid #eee;
+            transition: 0.3s;
+            width: 90%;
+            max-width: 800px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-group { display: flex; align-items: center; gap: 10px; }
+        
+        /* Buttons in Control Bar */
+        .c-btn {
+            background: none; border: none; cursor: pointer; font-size: 1.2rem;
+            color: #555; transition: 0.2s; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .c-btn:hover { background: #eee; color: var(--primary-color); }
+        .c-btn.active { background: var(--primary-color); color: white; }
+        
+        .play-btn {
+            background: var(--primary-color); color: white; font-size: 1.5rem;
+            width: 60px; height: 60px; box-shadow: 0 4px 10px rgba(0, 82, 204, 0.3);
+        }
+        .play-btn:hover { background: #003d82; transform: scale(1.05); }
+
+        /* Sliders */
+        input[type=range] { width: 100px; cursor: pointer; }
+        .label-text { font-size: 0.8rem; font-weight: 600; color: #666; }
+        
+        /* Marker Line (Guide) */
+        #guide-line {
+            position: fixed; top: 30%; left: 0; width: 100%; height: 2px;
+            background: rgba(255, 0, 0, 0.3); pointer-events: none; z-index: 50;
+            display: none;
+        }
+
+        /* Progress Overlay */
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); z-index: 200;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER (Link updated to index.html) -->
+    <header class="branding-bar" id="main-header">
+        <a href="index.html" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <main class='tool-container' id="upload-container">
+        <div class="ad-placeholder" id="top-ad">Advertisement Space (728x90)</div>
+
+        <!-- UPLOAD STAGE -->
+        <div id="upload-stage">
+            <div class='tool-header'>
+                <h2>Advance Scroll Mode (Teleprompter)</h2>
+                <p>Auto-scroll your PDF for presentations, music, or reading.</p>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept="application/pdf"/>
+            <div id="dropzone">
+                <i class="fa-solid fa-scroll"></i>
+                <p><strong>Click to Upload PDF</strong></p>
+            </div>
+        </div>
+
+        <!-- NAVIGATION BUTTONS (Added Below) -->
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn nav-back">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="index.html" class="nav-btn nav-dash">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <!-- VIEWER STAGE (Full Width - Hidden Initially) -->
+    <div id="viewer-stage" class="hidden">
+        <div id="guide-line"></div>
+        <div id="viewer-container"></div>
+        
+        <!-- Floating Controls -->
+        <div class="control-bar">
+            <!-- Play/Pause -->
+            <button class="c-btn play-btn" id="toggle-scroll" onclick="toggleScroll()">
+                <i class="fa-solid fa-play"></i>
+            </button>
+
+            <!-- Speed -->
+            <div class="control-group">
+                <i class="fa-solid fa-gauge-high" style="color:#aaa"></i>
+                <div style="display:flex; flex-direction:column;">
+                    <span class="label-text">Speed</span>
+                    <input type="range" id="speed-slider" min="1" max="100" value="20">
+                </div>
+            </div>
+
+            <div style="width:1px; height:30px; background:#ddd; margin:0 10px;"></div>
+
+            <!-- Zoom -->
+            <div class="control-group">
+                <i class="fa-solid fa-magnifying-glass" style="color:#aaa"></i>
+                <div style="display:flex; flex-direction:column;">
+                    <span class="label-text">Size</span>
+                    <input type="range" id="zoom-slider" min="50" max="150" value="100">
+                </div>
+            </div>
+
+            <div style="width:1px; height:30px; background:#ddd; margin:0 10px;"></div>
+
+            <!-- Toggles -->
+            <button class="c-btn" onclick="toggleFlip()" title="Mirror Mode (for Teleprompter Glass)">
+                <i class="fa-solid fa-right-left"></i>
+            </button>
+            <button class="c-btn" onclick="toggleDarkMode()" title="Night Mode">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button class="c-btn" onclick="toggleGuide()" title="Toggle Reading Line">
+                <i class="fa-solid fa-ruler-horizontal"></i>
+            </button>
+            
+            <!-- Exit (Reloads page to return to upload) -->
+            <button class="c-btn" style="color: #de350b;" onclick="location.reload()" title="Exit Viewer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:3rem; color:var(--primary-color); margin-bottom:1rem;"></i>
+        <h3 id="loading-text">Processing PDF...</h3>
+    </div>
+
+    <script>
+        // 1. SETUP
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const uploadContainer = document.getElementById('upload-container');
+        const viewerStage = document.getElementById('viewer-stage');
+        const viewerContainer = document.getElementById('viewer-container');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+
+        // Scroll State
+        let isScrolling = false;
+        let animationFrameId;
+        
+        // 2. UPLOAD LOGIC
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
+        fileInput.onchange = (e) => handleFiles(e.target.files);
+
+        function handleFiles(files) {
+            if (!files[0] || files[0].type !== 'application/pdf') return alert("Invalid PDF");
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                // Hide Upload Stage
+                uploadContainer.style.display = 'none';
+                loadingOverlay.classList.remove('hidden');
+                renderPages(e.target.result);
+            };
+            reader.readAsArrayBuffer(files[0]);
+        }
+
+        // 3. RENDER LOGIC
+        async function renderPages(buffer) {
+            try {
+                const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+                const numPages = pdf.numPages;
+
+                for (let i = 1; i <= numPages; i++) {
+                    loadingText.innerText = `Rendering Page ${i} of ${numPages}...`;
+                    
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: 1.5 }); 
+                    
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'pdf-page-canvas';
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    
+                    // Initial width set to 100% of container
+                    canvas.style.width = '100%';
+                    
+                    const ctx = canvas.getContext('2d');
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                    
+                    viewerContainer.appendChild(canvas);
+                }
+
+                loadingOverlay.classList.add('hidden');
+                viewerStage.classList.remove('hidden');
+
+            } catch (err) {
+                alert("Error rendering PDF: " + err.message);
+                location.reload();
+            }
+        }
+
+        // 4. SCROLL ENGINE
+        function toggleScroll() {
+            isScrolling = !isScrolling;
+            const btn = document.getElementById('toggle-scroll');
+            
+            if (isScrolling) {
+                btn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                btn.classList.add('active');
+                autoScroll();
+                
+                // Dim Header for immersion
+                document.getElementById('main-header').style.opacity = '0.1';
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                btn.classList.remove('active');
+                cancelAnimationFrame(animationFrameId);
+
+                document.getElementById('main-header').style.opacity = '1';
+            }
+        }
+
+        function autoScroll() {
+            if (!isScrolling) return;
+            
+            const rawVal = document.getElementById('speed-slider').value;
+            const speed = rawVal * 0.05; 
+
+            window.scrollBy(0, speed);
+            
+            // Infinite Loop until end of page
+            if ((window.innerHeight + window.scrollY) < document.body.offsetHeight) {
+                animationFrameId = requestAnimationFrame(autoScroll);
+            } else {
+                toggleScroll(); // Stop at bottom
+            }
+        }
+
+        // 5. TOOLS
+        const zoomSlider = document.getElementById('zoom-slider');
+        zoomSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            viewerContainer.style.maxWidth = (val * 9) + 'px'; 
+        });
+
+        function toggleFlip() { document.body.classList.toggle('mirror-mode-active'); }
+        function toggleDarkMode() { document.body.classList.toggle('dark-mode-active'); }
+        function toggleGuide() {
+            const guide = document.getElementById('guide-line');
+            guide.style.display = (guide.style.display === 'block') ? 'none' : 'block';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                toggleScroll();
+            }
+        });
+    </script>
+</body>
+</html>
