@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+
+    <title>Free Online Barcode Generator | JKM Edit</title>
+    <meta name="description" content="Generate high-quality custom barcodes (CODE128, EAN, UPC, etc.) instantly for free. Download as PNG."/>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Fonts & Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <!-- JsBarcode Library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+
+    <style>
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
+        }
+
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* --- Advertisement Box (728x90) --- */
+        .ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 0 1rem;
+        }
+
+        .ad-slot {
+            width: 728px;
+            height: 90px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 1000px; 
+            margin: auto; 
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); 
+            padding: 2rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+        }
+
+        /* --- Input Grid --- */
+        .config-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .config-grid { grid-template-columns: 1fr; }
+        }
+
+        .input-group { margin-bottom: 1rem; }
+        .input-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-color); }
+        
+        .text-input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background: #fff;
+        }
+        .text-input:focus, select:focus { outline: none; border-color: var(--primary-color); }
+
+        .options-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            user-select: none;
+        }
+        .checkbox-label input { width: 18px; height: 18px; cursor: pointer; }
+
+        /* --- Output Area --- */
+        .output-area {
+            border-top: 2px solid #f4f5f7;
+            padding-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+        }
+
+        .barcode-wrapper {
+            padding: 20px;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 150px;
+            min-width: 300px;
+        }
+
+        #barcode { max-width: 100%; height: auto; }
+
+        /* --- Buttons --- */
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; justify-content: center; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        .btn-success:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto; 
+            padding-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+
+        .nav-btn-fill {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        /* Error Message */
+        #error-msg {
+            color: #dc3545;
+            margin-top: 10px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* Responsive Ad */
+        @media (max-width: 768px) {
+            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <a href="../../" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h1 class="brand-title">JKM Edit</h1>
+        </a>
+    </header>
+
+    <!-- Advertisement Box (728x90) -->
+    <div class="ad-container">
+        <div class="ad-slot">
+            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
+            Advertisement (728 x 90)
+        </div>
+    </div>
+
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        <div class="tool-header">
+            <h2>Barcode Generator</h2>
+            <p>Create custom barcodes for your products, inventory, or links.</p>
+        </div>
+
+        <div class="tool-content-wrapper">
+            
+            <div class="config-grid">
+                <!-- Left Col: Input -->
+                <div>
+                    <div class="input-group">
+                        <label for="barcode-value">Data / Value</label>
+                        <input type="text" id="barcode-value" class="text-input" placeholder="e.g., 123456789 or Product-ID">
+                    </div>
+                    <div class="input-group">
+                        <label>Settings</label>
+                        <div class="options-row">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="opt-show-text" checked> Show Text
+                            </label>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <label for="bar-width" style="margin:0; font-weight:400;">Bar Width:</label>
+                                <input type="number" id="bar-width" value="2" min="1" max="4" style="width:60px; padding:0.4rem; border:1px solid #ccc; border-radius:4px;">
+                            </div>
+                             <div style="display:flex; align-items:center; gap:10px;">
+                                <label for="bar-height" style="margin:0; font-weight:400;">Height:</label>
+                                <input type="number" id="bar-height" value="100" min="50" max="200" style="width:70px; padding:0.4rem; border:1px solid #ccc; border-radius:4px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Col: Format & Action -->
+                <div>
+                    <div class="input-group">
+                        <label for="barcode-format">Format</label>
+                        <select id="barcode-format">
+                            <option value="CODE128">CODE128 (Auto)</option>
+                            <option value="CODE39">CODE39</option>
+                            <option value="EAN13">EAN-13</option>
+                            <option value="UPC">UPC</option>
+                            <option value="ITF14">ITF-14</option>
+                            <option value="MSI">MSI</option>
+                            <option value="pharmacode">Pharmacode</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="generate-btn">
+                        <i class="fa-solid fa-barcode"></i> Generate
+                    </button>
+                </div>
+            </div>
+
+            <!-- Output Area -->
+            <div class="output-area">
+                <div class="barcode-wrapper">
+                    <svg id="barcode"></svg>
+                    <p id="placeholder-text" style="color:#999; position:absolute;">Barcode Preview</p>
+                </div>
+                <p id="error-msg"></p>
+                <button class="btn btn-success" id="download-btn" disabled>
+                    <i class="fa-solid fa-download"></i> Download PNG
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="../../" class="nav-btn nav-btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const valueInput = document.getElementById('barcode-value');
+            const formatSelect = document.getElementById('barcode-format');
+            const showTextOpt = document.getElementById('opt-show-text');
+            const barWidthInput = document.getElementById('bar-width');
+            const barHeightInput = document.getElementById('bar-height');
+            
+            const generateBtn = document.getElementById('generate-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            const barcodeSvg = document.getElementById('barcode');
+            const placeholderText = document.getElementById('placeholder-text');
+            const errorMsg = document.getElementById('error-msg');
+
+            // Generate Logic
+            generateBtn.addEventListener('click', () => {
+                const text = valueInput.value.trim();
+                if (!text) {
+                    showError("Please enter a value to generate a barcode.");
+                    return;
+                }
+
+                errorMsg.style.display = 'none';
+                placeholderText.style.display = 'none';
+
+                try {
+                    JsBarcode("#barcode", text, {
+                        format: formatSelect.value,
+                        lineColor: "#000000",
+                        width: parseInt(barWidthInput.value),
+                        height: parseInt(barHeightInput.value),
+                        displayValue: showTextOpt.checked,
+                        background: "#ffffff", // Needed for clean PNG export
+                        margin: 10
+                    });
+                    downloadBtn.disabled = false;
+                } catch (e) {
+                    console.error(e);
+                    barcodeSvg.innerHTML = ''; // Clear invalid SVG
+                    downloadBtn.disabled = true;
+                    showError("Invalid input for selected barcode format (e.g., EAN-13 requires 13 digits).");
+                }
+            });
+
+            // Helper: Show Error
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.style.display = 'block';
+            }
+
+            // Download Logic (Convert SVG to PNG)
+            downloadBtn.addEventListener('click', () => {
+                const svgData = new XMLSerializer().serializeToString(barcodeSvg);
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+                const img = new Image();
+                
+                // SVG to Base64
+                img.setAttribute("src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))));
+
+                img.onload = function() {
+                    // Get dimensions from the SVG itself after rendering by JsBarcode
+                    const bbox = barcodeSvg.getBBox(); 
+                    // Use specific dimensions or fallback to natural size
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    
+                    // Fill white background (transparent SVGs look bad in some viewers)
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Trigger Download
+                    const link = document.createElement("a");
+                    link.download = `barcode-${valueInput.value}.png`;
+                    link.href = canvas.toDataURL("image/png");
+                    link.click();
+                };
+            });
+
+            // Trigger generation on Enter key
+            valueInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') generateBtn.click();
+            });
+        });
+    </script>
+</body>
+</html>

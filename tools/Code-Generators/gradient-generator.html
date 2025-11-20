@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+
+    <title>CSS Linear Gradient Generator | JKM Edit</title>
+    <meta name="description" content="Free online CSS Linear Gradient Generator. Create beautiful gradients, customize angles and colors, and copy CSS code instantly."/>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Fonts & Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <style>
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
+            --success-color: #28a745;
+        }
+
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* --- Advertisement Box (728x90) --- */
+        .ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 0 1rem;
+        }
+
+        .ad-slot {
+            width: 728px;
+            height: 90px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 1100px; 
+            margin: auto; 
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); 
+            padding: 2rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+        }
+
+        /* --- Generator Layout --- */
+        .generator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 850px) {
+            .generator-grid { grid-template-columns: 1fr; }
+            .tool-content-wrapper { padding: 1.5rem; }
+        }
+
+        /* --- Preview Box --- */
+        .preview-container {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 350px;
+        }
+
+        #gradient-preview {
+            width: 100%;
+            height: 350px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: background 0.1s linear;
+        }
+
+        /* --- Controls Panel --- */
+        .controls-panel {
+            background: #f9fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .control-group { margin-bottom: 1.5rem; }
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .label-row label { font-weight: 600; font-size: 0.95rem; color: var(--text-color); }
+        .value-display { font-size: 0.9rem; color: var(--primary-color); font-weight: 600; }
+
+        /* Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #dce3f1;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            transition: transform .15s ease;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+        /* Color Inputs */
+        .color-pickers {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .color-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 50px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+            -webkit-appearance: none;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
+
+        /* Buttons Row */
+        .buttons-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        
+        .btn-secondary { background-color: #e2e6ea; color: var(--text-color); border: 1px solid #ced4da; }
+        .btn-secondary:hover { background-color: #dbe0e5; }
+
+        /* Code Output */
+        .code-output-container {
+            margin-top: 1.5rem;
+            position: relative;
+            background: #282c34;
+            border-radius: 8px;
+            padding: 1.2rem;
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            color: #abb2bf;
+            display: block;
+            word-wrap: break-word;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+        
+        .property { color: #c678dd; }
+        .value { color: #98c379; }
+
+        /* --- Bottom Navigation Buttons --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto; 
+            padding-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+
+        .nav-btn-fill {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <a href="../../" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h1 class="brand-title">JKM Edit</h1>
+        </a>
+    </header>
+
+    <!-- Advertisement Box (728x90) -->
+    <div class="ad-container">
+        <div class="ad-slot">
+            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
+            Advertisement (728 x 90)
+        </div>
+    </div>
+
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        <div class="tool-header">
+            <h2>CSS Linear Gradient Generator</h2>
+            <p>Create stunning background gradients for your website with ease.</p>
+        </div>
+
+        <div class="tool-content-wrapper">
+            
+            <div class="generator-grid">
+                
+                <!-- Preview Area -->
+                <div class="preview-container">
+                    <div id="gradient-preview"></div>
+                </div>
+
+                <!-- Controls Area -->
+                <div class="controls-panel">
+                    
+                    <div class="control-group">
+                        <div class="label-row">
+                            <label>Angle / Direction</label>
+                            <span class="value-display" id="angle-val">90deg</span>
+                        </div>
+                        <input type="range" id="angle-input" min="0" max="360" value="90">
+                    </div>
+
+                    <div class="control-group">
+                        <label style="display:block; margin-bottom:0.8rem; font-weight:600;">Colors</label>
+                        <div class="color-pickers">
+                            <div class="color-wrapper">
+                                <input type="color" id="color-1" value="#0052cc">
+                            </div>
+                            <div class="color-wrapper">
+                                <input type="color" id="color-2" value="#00c6ff">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-output-container">
+                        <code id="css-code">
+                            <span class="property">background:</span> <span class="value">linear-gradient(90deg, #0052cc, #00c6ff);</span>
+                        </code>
+                    </div>
+
+                    <div class="buttons-row">
+                        <button class="btn btn-secondary" id="random-btn">
+                            <i class="fa-solid fa-shuffle"></i> Randomize
+                        </button>
+                        <button class="btn btn-primary" id="copy-btn">
+                            <i class="fa-regular fa-copy"></i> Copy CSS
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="../../" class="nav-btn nav-btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const preview = document.getElementById('gradient-preview');
+            const angleInput = document.getElementById('angle-input');
+            const angleVal = document.getElementById('angle-val');
+            const color1 = document.getElementById('color-1');
+            const color2 = document.getElementById('color-2');
+            const cssCode = document.getElementById('css-code');
+            
+            const randomBtn = document.getElementById('random-btn');
+            const copyBtn = document.getElementById('copy-btn');
+
+            // --- Update Logic ---
+            function updateGradient() {
+                const angle = angleInput.value;
+                const c1 = color1.value;
+                const c2 = color2.value;
+
+                // Update Display Text
+                angleVal.textContent = angle + 'deg';
+
+                // Construct CSS String
+                const gradientString = `linear-gradient(${angle}deg, ${c1}, ${c2})`;
+
+                // Apply to Preview
+                preview.style.background = gradientString;
+
+                // Update Code Block
+                cssCode.innerHTML = `<span class="property">background:</span> <span class="value">${gradientString};</span>`;
+            }
+
+            // --- Random Color Generator ---
+            function getRandomHex() {
+                const letters = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+            function randomize() {
+                color1.value = getRandomHex();
+                color2.value = getRandomHex();
+                angleInput.value = Math.floor(Math.random() * 360);
+                updateGradient();
+            }
+
+            // --- Copy to Clipboard ---
+            function copyCSS() {
+                const text = cssCode.innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalHTML = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+                    copyBtn.style.background = 'var(--success-color)';
+                    copyBtn.style.boxShadow = 'none';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalHTML;
+                        copyBtn.style.background = '';
+                        copyBtn.style.boxShadow = '';
+                    }, 1500);
+                });
+            }
+
+            // --- Event Listeners ---
+            angleInput.addEventListener('input', updateGradient);
+            color1.addEventListener('input', updateGradient);
+            color2.addEventListener('input', updateGradient);
+            
+            randomBtn.addEventListener('click', randomize);
+            copyBtn.addEventListener('click', copyCSS);
+
+            // Initial Run
+            updateGradient();
+        });
+    </script>
+</body>
+</html>

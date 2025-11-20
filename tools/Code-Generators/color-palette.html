@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+
+    <title>Color Palette Generator | JKM Edit</title>
+    <meta name="description" content="Free online Color Palette Generator. Create beautiful color schemes, lock colors, and copy hex codes instantly."/>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Fonts & Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <style>
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
+        }
+
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* --- Advertisement Box (728x90) --- */
+        .ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 0 1rem;
+        }
+
+        .ad-slot {
+            width: 728px;
+            height: 90px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 1200px; 
+            margin: auto; 
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-header { text-align: center; margin-bottom: 1.5rem; }
+        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        /* --- Palette Grid --- */
+        .palette-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .palette-display {
+            display: flex;
+            height: 400px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .color-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: flex 0.2s;
+        }
+
+        /* Hover Info Overlay */
+        .color-col:hover {
+            flex: 1.1; /* Slightly expand on hover */
+        }
+
+        /* Lock Button */
+        .lock-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            transition: all 0.2s;
+            padding: 10px;
+            border-radius: 50%;
+        }
+        .lock-btn:hover { opacity: 1; background: rgba(0,0,0,0.1); }
+        .lock-btn.locked { opacity: 1; color: var(--text-color); }
+
+        /* Hex Code */
+        .hex-code {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background 0.2s;
+            text-transform: uppercase;
+        }
+        .hex-code:hover {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(2px);
+        }
+
+        /* Controls Bar */
+        .controls-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 10%;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .hex-code:active + .tooltip, .hex-code:focus + .tooltip { opacity: 1; }
+
+        /* --- Buttons --- */
+        .btn {
+            padding: 0.8rem 2.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 15px rgba(0, 82, 204, 0.2); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 82, 204, 0.3); }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto; 
+            padding-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+
+        .nav-btn-fill {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .palette-display { flex-direction: column; height: 600px; }
+            .color-col { flex-direction: row; justify-content: space-between; padding: 0 2rem; }
+            .lock-btn { margin-bottom: 0; order: 2; }
+            .hex-code { order: 1; }
+            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <a href="../../" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h1 class="brand-title">JKM Edit</h1>
+        </a>
+    </header>
+
+    <!-- Advertisement Box (728x90) - Fixed Display -->
+    <div class="ad-container">
+        <div class="ad-slot">
+            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
+            Advertisement (728 x 90)
+        </div>
+    </div>
+
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        <div class="tool-header">
+            <h2>Color Palette Generator</h2>
+            <p>Press <strong>Spacebar</strong> to generate new palettes. Click lock icons to save colors.</p>
+        </div>
+
+        <div class="palette-wrapper">
+            
+            <!-- Color Columns Container -->
+            <div class="palette-display" id="palette-container">
+                <!-- Columns generated by JS -->
+            </div>
+
+            <!-- Controls -->
+            <div class="controls-bar">
+                <button class="btn btn-primary" id="generate-btn">
+                    <i class="fa-solid fa-shuffle"></i> Generate New Palette
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="../../" class="nav-btn nav-btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const paletteContainer = document.getElementById('palette-container');
+            const generateBtn = document.getElementById('generate-btn');
+            
+            // State to hold 5 colors
+            let colors = [
+                { hex: '', locked: false },
+                { hex: '', locked: false },
+                { hex: '', locked: false },
+                { hex: '', locked: false },
+                { hex: '', locked: false }
+            ];
+
+            // --- Helper: Generate Random Hex ---
+            function generateRandomHex() {
+                const chars = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += chars[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+            // --- Helper: Calculate Text Contrast (Black or White) ---
+            function getContrastColor(hex) {
+                // Convert hex to RGB
+                const r = parseInt(hex.substr(1, 2), 16);
+                const g = parseInt(hex.substr(3, 2), 16);
+                const b = parseInt(hex.substr(5, 2), 16);
+                // Calculate YIQ ratio
+                const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+                return (yiq >= 128) ? '#000000' : '#ffffff';
+            }
+
+            // --- Core: Create/Update Columns ---
+            function renderPalette() {
+                paletteContainer.innerHTML = '';
+
+                colors.forEach((colorObj, index) => {
+                    const col = document.createElement('div');
+                    col.className = 'color-col';
+                    col.style.backgroundColor = colorObj.hex;
+                    
+                    // Text color based on background brightness
+                    const textColor = getContrastColor(colorObj.hex);
+                    col.style.color = textColor;
+
+                    // Lock Button
+                    const lockBtn = document.createElement('button');
+                    lockBtn.className = `lock-btn ${colorObj.locked ? 'locked' : ''}`;
+                    lockBtn.innerHTML = colorObj.locked ? '<i class="fa-solid fa-lock"></i>' : '<i class="fa-solid fa-lock-open"></i>';
+                    lockBtn.style.color = textColor;
+                    lockBtn.onclick = (e) => {
+                        e.stopPropagation(); // Prevent triggering copy
+                        toggleLock(index);
+                    };
+
+                    // Hex Text
+                    const hexText = document.createElement('div');
+                    hexText.className = 'hex-code';
+                    hexText.innerText = colorObj.hex;
+                    hexText.onclick = () => copyToClipboard(colorObj.hex, hexText);
+
+                    // Tooltip for Copy
+                    const tooltip = document.createElement('span');
+                    tooltip.className = 'tooltip';
+                    tooltip.innerText = 'Copied!';
+
+                    col.appendChild(lockBtn);
+                    col.appendChild(hexText);
+                    col.appendChild(tooltip);
+                    paletteContainer.appendChild(col);
+                });
+            }
+
+            // --- Logic: Generate Palette ---
+            function generatePalette() {
+                colors = colors.map(color => {
+                    if (color.locked) return color;
+                    return { ...color, hex: generateRandomHex() };
+                });
+                renderPalette();
+            }
+
+            // --- Logic: Lock/Unlock ---
+            function toggleLock(index) {
+                colors[index].locked = !colors[index].locked;
+                renderPalette();
+            }
+
+            // --- Logic: Copy ---
+            function copyToClipboard(text, element) {
+                navigator.clipboard.writeText(text).then(() => {
+                    // Visual feedback specific to the element
+                    element.innerText = "COPIED!";
+                    setTimeout(() => {
+                        element.innerText = text;
+                    }, 1000);
+                });
+            }
+
+            // --- Event Listeners ---
+            generateBtn.addEventListener('click', generatePalette);
+
+            // Spacebar Shortcut
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    e.preventDefault(); // Stop page scroll
+                    generatePalette();
+                }
+            });
+
+            // Initial Load
+            generatePalette();
+        });
+    </script>
+</body>
+</html>
