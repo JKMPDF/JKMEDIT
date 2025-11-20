@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>Dark Mode PDF Converter | JKM Edit</title>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <!-- PDF LIBRARIES -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <style>
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* Header */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* Main Layout */
+        .tool-container { padding: 2rem 1rem; max-width: 1000px; margin: auto; width: 100%; flex: 1; }
+        
+        /* Ad Box */
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #e0e0e0; border: 1px dashed #999; 
+            margin: 0 auto 2rem auto; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        /* Header Text */
+        .tool-header h2 { font-size: 2rem; margin-bottom: 0.5rem; text-align: center; color: var(--primary-color); }
+        .tool-header p { text-align: center; margin-bottom: 2rem; color: #666; }
+
+        /* Upload Zone */
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
+            text-align: center; cursor: pointer; background-color: var(--surface-color); 
+            transition: 0.3s; 
+        }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+
+        /* Workspace */
+        .workspace {
+            display: flex; flex-wrap: wrap; gap: 2rem;
+            background: var(--surface-color); padding: 2rem;
+            border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .preview-area {
+            flex: 1; min-width: 300px; background: #222; 
+            padding: 20px; border-radius: 8px; 
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+        }
+        
+        .preview-label { color: #fff; margin-bottom: 10px; font-size: 0.9rem; opacity: 0.8; }
+        canvas { display: block; max-width: 100%; height: auto; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+
+        /* Controls */
+        .controls-area { flex: 1; min-width: 280px; display: flex; flex-direction: column; justify-content: center; gap: 1.5rem; }
+        
+        .info-box {
+            background: #f0f7ff; border-left: 4px solid var(--primary-color);
+            padding: 15px; border-radius: 4px; font-size: 0.9rem; color: #333;
+        }
+
+        .progress-container {
+            width: 100%; background-color: #e9ecef; border-radius: 5px; height: 10px; overflow: hidden; margin-top: 10px;
+            display: none;
+        }
+        .progress-bar { width: 0%; height: 100%; background: var(--gradient); transition: width 0.3s; }
+        .progress-text { text-align: center; font-size: 0.85rem; margin-top: 5px; color: #666; display: none;}
+
+        .btn {
+            width: 100%; padding: 15px; border: none; border-radius: 6px;
+            font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-primary { background: var(--gradient); color: white; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-secondary { background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); margin-top: 10px; }
+        
+        /* Navigation */
+        .navigation-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 3rem; }
+        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav-back { background: #e9ecef; color: #333; }
+        .nav-dash { background: var(--primary-color); color: white; }
+    </style>
+</head>
+<body>
+
+    <header class="branding-bar">
+        <a href='#' class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <main class='tool-container'>
+        <div class="ad-placeholder">Advertisement Space (728x90)</div>
+
+        <!-- STAGE 1: UPLOAD -->
+        <div id="upload-stage">
+            <div class='tool-header'>
+                <h2>Dark Mode PDF Converter</h2>
+                <p>Invert colors to make your PDF easy to read at night.</p>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept="application/pdf"/>
+            <div id="dropzone">
+                <i class="fa-solid fa-moon"></i>
+                <p><strong>Click to Upload PDF</strong><br>or drag and drop here</p>
+            </div>
+        </div>
+
+        <!-- STAGE 2: PREVIEW & CONVERT -->
+        <div id="edit-stage" class="hidden">
+            <div class="workspace">
+                
+                <!-- Preview -->
+                <div class="preview-area">
+                    <div class="preview-label">Dark Mode Preview (Page 1)</div>
+                    <canvas id="preview-canvas"></canvas>
+                </div>
+
+                <!-- Controls -->
+                <div class="controls-area">
+                    <div class="info-box">
+                        <i class="fa-solid fa-lightbulb"></i> <strong>How it works:</strong><br>
+                        We convert your PDF pages into high-quality images and invert the colors (White → Black). This creates a new PDF perfect for night reading.
+                    </div>
+
+                    <div>
+                        <button id="process-btn" class="btn btn-primary" onclick="convertPDF()">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Convert to Dark Mode
+                        </button>
+                        
+                        <!-- Progress Bar -->
+                        <div id="progress-container" class="progress-container">
+                            <div id="progress-bar" class="progress-bar"></div>
+                        </div>
+                        <div id="progress-text" class="progress-text">Processing page 0 of 0...</div>
+
+                        <button class="btn btn-secondary" onclick="location.reload()">
+                            <i class="fa-solid fa-rotate-left"></i> Start Over
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn nav-back"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="#" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+    </main>
+
+    <script>
+        // 1. SETUP LIBRARIES
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // 2. VARIABLES
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const previewCanvas = document.getElementById('preview-canvas');
+        const previewCtx = previewCanvas.getContext('2d');
+        
+        let currentFileBuffer = null;
+        let currentFileName = "document.pdf";
+
+        // 3. UPLOAD HANDLERS
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.borderColor = 'var(--primary-color)'; dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondragleave = () => { dropzone.style.borderColor = '#ccc'; dropzone.style.backgroundColor = 'var(--surface-color)'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
+        fileInput.onchange = (e) => handleFiles(e.target.files);
+
+        function handleFiles(files) {
+            if (!files[0] || files[0].type !== 'application/pdf') {
+                alert("Please upload a valid PDF file.");
+                return;
+            }
+            currentFileName = files[0].name;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentFileBuffer = e.target.result;
+                document.getElementById('upload-stage').classList.add('hidden');
+                document.getElementById('edit-stage').classList.remove('hidden');
+                generatePreview(currentFileBuffer.slice(0));
+            };
+            reader.readAsArrayBuffer(files[0]);
+        }
+
+        // 4. PREVIEW LOGIC (VISUAL ONLY)
+        async function generatePreview(buffer) {
+            try {
+                const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 0.8 });
+                
+                previewCanvas.width = viewport.width;
+                previewCanvas.height = viewport.height;
+
+                // Render original
+                await page.render({ canvasContext: previewCtx, viewport: viewport }).promise;
+
+                // Apply Invert Filter Immediately on Canvas for Preview
+                previewCtx.globalCompositeOperation = 'difference';
+                previewCtx.fillStyle = 'white';
+                previewCtx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+                previewCtx.globalCompositeOperation = 'source-over'; // Reset
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 5. CONVERSION LOGIC (HEAVY LIFTING)
+        async function convertPDF() {
+            if (!currentFileBuffer) return;
+
+            const btn = document.getElementById('process-btn');
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+
+            // UI Update
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            progressContainer.style.display = 'block';
+            progressText.style.display = 'block';
+
+            try {
+                const { PDFDocument } = PDFLib;
+                
+                // 1. Load Source PDF (via PDF.js for rendering)
+                const sourcePdf = await pdfjsLib.getDocument({ data: currentFileBuffer.slice(0) }).promise;
+                const numPages = sourcePdf.numPages;
+
+                // 2. Create New PDF (pdf-lib)
+                const newPdfDoc = await PDFDocument.create();
+
+                // 3. Loop Pages
+                for (let i = 1; i <= numPages; i++) {
+                    // Update Progress
+                    const percent = Math.round((i / numPages) * 100);
+                    progressBar.style.width = percent + "%";
+                    progressText.innerText = `Processing page ${i} of ${numPages}...`;
+
+                    // Render Page to Canvas
+                    const page = await sourcePdf.getPage(i);
+                    const scale = 1.5; // Good balance of quality vs file size
+                    const viewport = page.getViewport({ scale: scale });
+                    
+                    const canvas = document.createElement('canvas');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    const ctx = canvas.getContext('2d');
+
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+                    // --- THE MAGIC: INVERT COLORS ---
+                    // 'difference' with white effectively inverts the colors
+                    ctx.globalCompositeOperation = 'difference';
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Get Image Data (JPEG is smaller than PNG for full page scans)
+                    const imgData = canvas.toDataURL('image/jpeg', 0.8);
+
+                    // Embed into New PDF
+                    const jpgImage = await newPdfDoc.embedJpg(imgData);
+                    const newPage = newPdfDoc.addPage([viewport.width, viewport.height]);
+                    newPage.drawImage(jpgImage, {
+                        x: 0,
+                        y: 0,
+                        width: viewport.width,
+                        height: viewport.height,
+                    });
+                }
+
+                // 4. Save & Download
+                progressText.innerText = "Finalizing PDF...";
+                const pdfBytes = await newPdfDoc.save();
+                
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "DarkMode_" + currentFileName;
+                document.body.appendChild(a);
+                a.click();
+                
+                // Cleanup
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
+                    progressText.innerText = "Download Complete!";
+                }, 1000);
+
+            } catch (error) {
+                console.error(error);
+                alert("Error converting PDF: " + error.message);
+                btn.disabled = false;
+                btn.style.opacity = "1";
+            }
+        }
+    </script>
+</body>
+</html>
