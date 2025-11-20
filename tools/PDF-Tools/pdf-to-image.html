@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>PDF to JPG/PNG Converter | JKM Edit</title>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <!-- LIBRARIES -->
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+    <!-- JSZip (For zipping multiple images) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- FileSaver (For saving the zip) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <style>
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- HEADER --- */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- LAYOUT --- */
+        .tool-container { padding: 2rem 1rem; max-width: 900px; margin: auto; width: 100%; flex: 1; }
+        
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #e0e0e0; border: 1px dashed #999; 
+            margin: 0 auto 2rem auto; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        /* --- UPLOAD STAGE --- */
+        #upload-stage { text-align: center; }
+        .tool-header h2 { font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color); }
+        .tool-header p { margin-bottom: 2rem; color: #666; }
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
+            cursor: pointer; background-color: var(--surface-color); transition: 0.3s; margin-bottom: 20px;
+        }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+
+        /* --- SETTINGS STAGE --- */
+        #settings-stage {
+            background: var(--surface-color); padding: 2rem; border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); text-align: left;
+        }
+
+        .file-info {
+            background: #f0f7ff; padding: 15px; border-radius: 8px;
+            border-left: 4px solid var(--primary-color); margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .option-group { margin-bottom: 1.5rem; }
+        .option-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #333; }
+
+        /* Format Selector */
+        .format-selector { display: flex; gap: 10px; }
+        .format-btn {
+            flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 6px;
+            background: white; cursor: pointer; font-weight: 600; transition: 0.2s;
+            text-align: center;
+        }
+        .format-btn.active { border-color: var(--primary-color); background: #f0f7ff; color: var(--primary-color); }
+
+        /* Range Selector */
+        .radio-group { display: flex; flex-direction: column; gap: 10px; }
+        .radio-option {
+            display: flex; align-items: center; gap: 10px; padding: 10px;
+            border: 1px solid #eee; border-radius: 6px; cursor: pointer;
+        }
+        .radio-option:hover { background: #f9f9f9; }
+        
+        input[type="text"] {
+            padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;
+            width: 200px; font-family: inherit;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 25px; border: none; border-radius: 6px;
+            font-weight: 600; cursor: pointer; transition: 0.3s; width: 100%; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+        }
+        .btn-primary { background: var(--gradient); color: white; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-secondary { background: #e9ecef; color: #333; }
+
+        /* Progress Bar */
+        .progress-container { width: 100%; background: #eee; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 15px; display: none; }
+        .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.3s; }
+        .status-text { margin-top: 5px; font-size: 0.9rem; color: #666; text-align: center; display: none; }
+
+        /* Navigation */
+        .navigation-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }
+        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav-back { background: #e9ecef; color: #333; }
+        .nav-dash { background: var(--primary-color); color: white; }
+    </style>
+</head>
+<body>
+
+    <header class="branding-bar">
+        <a href="index.html" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <main class='tool-container'>
+        <div class="ad-placeholder">Advertisement Space (728x90)</div>
+
+        <!-- STAGE 1: UPLOAD -->
+        <div id="upload-stage">
+            <div class='tool-header'>
+                <h2>Convert PDF to JPG or PNG</h2>
+                <p>Extract pages as high-quality images instantly.</p>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept="application/pdf"/>
+            <div id="dropzone">
+                <i class="fa-solid fa-images"></i>
+                <p><strong>Click to Upload PDF</strong><br>or drag and drop here</p>
+            </div>
+        </div>
+
+        <!-- STAGE 2: SETTINGS -->
+        <div id="settings-stage" class="hidden">
+            <div class="file-info">
+                <span><i class="fa-solid fa-file-pdf"></i> <span id="filename-display">doc.pdf</span></span>
+                <span id="page-count-display" style="font-weight:bold; color:#666;">-- Pages</span>
+            </div>
+
+            <!-- 1. Choose Format -->
+            <div class="option-group">
+                <label>Output Format</label>
+                <div class="format-selector">
+                    <div class="format-btn" onclick="setFormat('jpg')" id="btn-jpg">
+                        JPG <span style="font-size:0.8em; font-weight:normal;">(Small Size)</span>
+                    </div>
+                    <div class="format-btn active" onclick="setFormat('png')" id="btn-png">
+                        PNG <span style="font-size:0.8em; font-weight:normal;">(High Quality)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Choose Pages -->
+            <div class="option-group">
+                <label>Pages to Convert</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="pageMode" value="all" checked onchange="toggleInputs()"> 
+                        Convert All Pages
+                    </label>
+                    
+                    <label class="radio-option">
+                        <input type="radio" name="pageMode" value="range" onchange="toggleInputs()"> 
+                        Range <input type="text" id="range-input" placeholder="e.g. 1-5" disabled>
+                    </label>
+                    
+                    <label class="radio-option">
+                        <input type="radio" name="pageMode" value="custom" onchange="toggleInputs()"> 
+                        Selected Pages <input type="text" id="custom-input" placeholder="e.g. 1, 3, 7" disabled>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Action -->
+            <button id="convert-btn" class="btn btn-primary" onclick="startConversion()">
+                <i class="fa-solid fa-gear"></i> Convert to Images
+            </button>
+
+            <!-- Progress -->
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="status-text" id="status-text">Processing...</div>
+
+            <button class="btn btn-secondary" onclick="location.reload()" style="margin-top: 15px;">
+                <i class="fa-solid fa-rotate-left"></i> Start Over
+            </button>
+        </div>
+
+        <!-- NAVIGATION -->
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn nav-back">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="index.html" class="nav-btn nav-dash">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        // DOM Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const uploadStage = document.getElementById('upload-stage');
+        const settingsStage = document.getElementById('settings-stage');
+        const rangeInput = document.getElementById('range-input');
+        const customInput = document.getElementById('custom-input');
+        const progressBar = document.getElementById('progress-bar');
+        const statusText = document.getElementById('status-text');
+        const progressContainer = document.getElementById('progress-container');
+        const convertBtn = document.getElementById('convert-btn');
+
+        // State
+        let currentFileBuffer = null;
+        let currentFileName = "";
+        let totalPages = 0;
+        let selectedFormat = "png"; // Default
+
+        // --- UPLOAD LOGIC ---
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
+        fileInput.onchange = (e) => handleFiles(e.target.files);
+
+        function handleFiles(files) {
+            if (!files[0] || files[0].type !== 'application/pdf') return alert("Invalid PDF");
+            
+            currentFileName = files[0].name.replace('.pdf', '');
+            const reader = new FileReader();
+            
+            reader.onload = async (e) => {
+                currentFileBuffer = e.target.result;
+                
+                // Load PDF to get page count
+                const pdf = await pdfjsLib.getDocument({ data: currentFileBuffer }).promise;
+                totalPages = pdf.numPages;
+
+                // Update UI
+                document.getElementById('filename-display').innerText = files[0].name;
+                document.getElementById('page-count-display').innerText = `${totalPages} Pages`;
+                
+                uploadStage.classList.add('hidden');
+                settingsStage.classList.remove('hidden');
+            };
+            reader.readAsArrayBuffer(files[0]);
+        }
+
+        // --- UI LOGIC ---
+        function setFormat(fmt) {
+            selectedFormat = fmt;
+            document.getElementById('btn-jpg').classList.toggle('active', fmt === 'jpg');
+            document.getElementById('btn-png').classList.toggle('active', fmt === 'png');
+        }
+
+        function toggleInputs() {
+            const mode = document.querySelector('input[name="pageMode"]:checked').value;
+            rangeInput.disabled = (mode !== 'range');
+            customInput.disabled = (mode !== 'custom');
+            if(mode === 'range') rangeInput.focus();
+            if(mode === 'custom') customInput.focus();
+        }
+
+        // --- CONVERSION LOGIC ---
+        async function startConversion() {
+            if (!currentFileBuffer) return;
+
+            // 1. Determine which pages to process
+            const mode = document.querySelector('input[name="pageMode"]:checked').value;
+            let pagesToProcess = [];
+
+            try {
+                if (mode === 'all') {
+                    for (let i = 1; i <= totalPages; i++) pagesToProcess.push(i);
+                } 
+                else if (mode === 'range') {
+                    const parts = rangeInput.value.split('-');
+                    if (parts.length !== 2) throw new Error("Invalid range format. Use '1-5'");
+                    const start = parseInt(parts[0]);
+                    const end = parseInt(parts[1]);
+                    if (isNaN(start) || isNaN(end) || start > end || end > totalPages) throw new Error("Invalid page range numbers");
+                    for (let i = start; i <= end; i++) pagesToProcess.push(i);
+                } 
+                else if (mode === 'custom') {
+                    const parts = customInput.value.split(',');
+                    parts.forEach(p => {
+                        const num = parseInt(p.trim());
+                        if (!isNaN(num) && num >= 1 && num <= totalPages) pagesToProcess.push(num);
+                    });
+                    if (pagesToProcess.length === 0) throw new Error("No valid pages entered");
+                }
+            } catch (err) {
+                alert(err.message);
+                return;
+            }
+
+            // 2. Start UI
+            convertBtn.disabled = true;
+            progressContainer.style.display = 'block';
+            statusText.style.display = 'block';
+
+            const pdf = await pdfjsLib.getDocument({ data: currentFileBuffer }).promise;
+            const zip = new JSZip();
+            const imgFolder = zip.folder("images");
+
+            // 3. Processing Loop
+            for (let i = 0; i < pagesToProcess.length; i++) {
+                const pageNum = pagesToProcess[i];
+                
+                // Update UI
+                const percent = Math.round(((i) / pagesToProcess.length) * 100);
+                progressBar.style.width = `${percent}%`;
+                statusText.innerText = `Rendering Page ${pageNum}...`;
+
+                // Render
+                const page = await pdf.getPage(pageNum);
+                const scale = 2; // High quality
+                const viewport = page.getViewport({ scale: scale });
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                const ctx = canvas.getContext('2d');
+
+                // If JPG, fill white background first (handle transparency)
+                if (selectedFormat === 'jpg') {
+                    ctx.fillStyle = "#FFFFFF";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+                // Convert to Blob
+                const mimeType = selectedFormat === 'png' ? 'image/png' : 'image/jpeg';
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, mimeType, 0.9));
+                
+                // Add to Zip
+                const imgName = `${currentFileName}_page_${pageNum}.${selectedFormat}`;
+                imgFolder.file(imgName, blob);
+            }
+
+            // 4. Finish
+            progressBar.style.width = `100%`;
+            statusText.innerText = "Zipping files...";
+
+            // If only 1 file, download directly? No, standardize on Zip for this tool to handle 'All' gracefully.
+            // Actually, if 1 file, standard UX is direct download, but Zip is safer for multiple.
+            // Let's just Zip everything for consistency in this "Converter" tool.
+            
+            const content = await zip.generateAsync({ type: "blob" });
+            saveAs(content, `${currentFileName}_images.zip`);
+
+            statusText.innerText = "Download Complete!";
+            convertBtn.disabled = false;
+        }
+    </script>
+</body>
+</html>
