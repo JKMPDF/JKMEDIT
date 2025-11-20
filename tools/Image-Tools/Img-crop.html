@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>Image Cropper | JKM Edit</title>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <!-- LIBRARY: Cropper.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+    <style>
+        /* --- VARIABLES --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- HEADER --- */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- MAIN LAYOUT --- */
+        .tool-container { padding: 2rem 1rem; max-width: 1100px; margin: 0 auto; width: 100%; flex: 1; }
+        
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #e0e0e0; border: 1px dashed #999; 
+            margin: 0 auto 2rem auto; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .tool-header p { color: #666; }
+
+        /* --- UPLOAD ZONE --- */
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
+            text-align: center; cursor: pointer; background-color: var(--surface-color); 
+            transition: 0.3s; margin-bottom: 20px;
+        }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+
+        /* --- CROPPER WORKSPACE --- */
+        #editor-stage {
+            display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
+        }
+
+        /* Left: Image Container */
+        .image-container {
+            flex: 1; min-width: 300px; max-width: 700px;
+            background: #333; border-radius: 8px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: 500px; /* Fixed height for cropper canvas */
+        }
+        
+        /* Limit image size to fit container */
+        #image-to-crop { display: block; max-width: 100%; }
+
+        /* Right: Controls */
+        .controls-panel {
+            flex: 0 0 300px;
+            background: var(--surface-color); padding: 20px;
+            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .control-group label { font-weight: 600; font-size: 0.9rem; margin-bottom: 5px; display: block; }
+        
+        .ratio-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+        .ratio-btn {
+            padding: 8px 12px; border: 1px solid #ddd; background: #f9f9f9;
+            border-radius: 4px; cursor: pointer; font-size: 0.85rem; flex: 1; text-align: center;
+        }
+        .ratio-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+        .action-row { display: flex; gap: 10px; }
+        .icon-btn {
+            flex: 1; padding: 10px; border: 1px solid #ccc; background: white;
+            border-radius: 6px; cursor: pointer; font-size: 1rem; transition: 0.2s;
+        }
+        .icon-btn:hover { background: #eee; color: var(--primary-color); }
+
+        /* Main Button */
+        .btn-primary {
+            width: 100%; padding: 12px; border: none; border-radius: 6px;
+            font-weight: 600; cursor: pointer; background: var(--gradient); color: white;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 1rem; margin-top: auto;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+
+        /* --- NAVIGATION --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; }
+        .nav-btn { padding: 10px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; background: #e9ecef; color: #333; display: inline-flex; align-items: center; gap: 5px;}
+        .nav-dash { background: var(--primary-color); color: white; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .image-container { height: 400px; }
+            .controls-panel { flex: 1; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="branding-bar">
+        <a href="index.html" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <main class="tool-container">
+        <div class="ad-placeholder">Advertisement Space (728x90)</div>
+
+        <!-- STAGE 1: UPLOAD -->
+        <div id="upload-stage">
+            <div class="tool-header">
+                <h2>Image Cropper</h2>
+                <p>Upload an image to crop, resize, or rotate instantly.</p>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept="image/*"/>
+            <div id="dropzone">
+                <i class="fa-solid fa-crop-simple"></i>
+                <p><strong>Click to Upload Image</strong><br>or drag and drop here</p>
+            </div>
+        </div>
+
+        <!-- STAGE 2: EDITOR -->
+        <div id="editor-stage" class="hidden">
+            
+            <!-- Editor Canvas -->
+            <div class="image-container">
+                <img id="image-to-crop" src="" alt="Image to crop">
+            </div>
+
+            <!-- Controls Sidebar -->
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label>Aspect Ratio</label>
+                    <div class="ratio-btns">
+                        <button class="ratio-btn active" onclick="setRatio(NaN, this)">Free</button>
+                        <button class="ratio-btn" onclick="setRatio(1, this)">1:1 (Square)</button>
+                        <button class="ratio-btn" onclick="setRatio(16/9, this)">16:9</button>
+                        <button class="ratio-btn" onclick="setRatio(4/3, this)">4:3</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Rotation</label>
+                    <div class="action-row">
+                        <button class="icon-btn" onclick="cropper.rotate(-90)" title="Rotate Left">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                        <button class="icon-btn" onclick="cropper.rotate(90)" title="Rotate Right">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Flip</label>
+                    <div class="action-row">
+                        <button class="icon-btn" onclick="flip('x')" title="Flip Horizontal">
+                            <i class="fa-solid fa-arrows-left-right"></i>
+                        </button>
+                        <button class="icon-btn" onclick="flip('y')" title="Flip Vertical">
+                            <i class="fa-solid fa-arrows-up-down"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Zoom</label>
+                    <div class="action-row">
+                        <button class="icon-btn" onclick="cropper.zoom(0.1)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                        <button class="icon-btn" onclick="cropper.zoom(-0.1)"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="cropAndDownload()">
+                    <i class="fa-solid fa-download"></i> Download Cropped Image
+                </button>
+                
+                <button onclick="location.reload()" style="background:none; border:none; cursor:pointer; color:#666; text-align:center; margin-top:10px; text-decoration:underline;">Start Over</button>
+            </div>
+        </div>
+
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="index.html" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+    </main>
+
+    <script>
+        // Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const uploadStage = document.getElementById('upload-stage');
+        const editorStage = document.getElementById('editor-stage');
+        const imageEl = document.getElementById('image-to-crop');
+        
+        let cropper = null;
+        let scaleX = 1;
+        let scaleY = 1;
+
+        // --- UPLOAD LOGIC ---
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
+        fileInput.onchange = (e) => handleFile(e.target.files[0]);
+
+        function handleFile(file) {
+            if (!file || !file.type.startsWith('image/')) return alert("Please upload an image file.");
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imageEl.src = e.target.result;
+                uploadStage.classList.add('hidden');
+                editorStage.classList.remove('hidden');
+                initCropper();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- CROPPER INITIALIZATION ---
+        function initCropper() {
+            if(cropper) cropper.destroy();
+            
+            cropper = new Cropper(imageEl, {
+                viewMode: 2, // Restrict crop box within image
+                dragMode: 'move',
+                autoCropArea: 0.8,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                cropBoxMovable: true,
+                cropBoxResizable: true,
+                toggleDragModeOnDblclick: false,
+            });
+        }
+
+        // --- CONTROLS ---
+        function setRatio(ratio, btn) {
+            cropper.setAspectRatio(ratio);
+            // Update UI
+            document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function flip(axis) {
+            if (axis === 'x') {
+                scaleX = -scaleX;
+                cropper.scaleX(scaleX);
+            } else {
+                scaleY = -scaleY;
+                cropper.scaleY(scaleY);
+            }
+        }
+
+        // --- DOWNLOAD ---
+        function cropAndDownload() {
+            if(!cropper) return;
+
+            // Get cropped canvas
+            const canvas = cropper.getCroppedCanvas({
+                fillColor: '#fff', // Fill transparent areas with white (optional, good for JPG)
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+            });
+
+            // Convert to Blob and Download
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'jkm-cropped-image.jpg';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/jpeg', 0.95); // 95% Quality JPG
+        }
+
+    </script>
+</body>
+</html>
