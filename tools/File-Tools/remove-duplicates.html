@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+
+    <title>Remove Duplicate Lines | JKM Edit</title>
+    <meta name="description" content="Instantly remove duplicate lines from your text. Features include sorting, case sensitivity, and whitespace trimming."/>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- Fonts & Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <style>
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
+        }
+
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+            margin-bottom: 2rem;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 1200px; /* Wider for text editors */
+            margin: auto; 
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); 
+            padding: 2rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+        }
+
+        /* --- Text Editor Grid --- */
+        .editor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .editor-grid { grid-template-columns: 1fr; }
+        }
+
+        .editor-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            resize: vertical;
+            background-color: #f9fafc;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+        }
+
+        /* --- Controls & Options --- */
+        .controls-area {
+            background-color: #f4f5f7;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .options-group {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-wrapper input {
+            margin-right: 0.5rem;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+
+        .btn-secondary {
+            background-color: #e2e6ea;
+            color: var(--text-color);
+        }
+        .btn-secondary:hover { background-color: #dbe0e5; }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-success:hover { background-color: #218838; }
+
+        .btn-danger {
+            background-color: transparent;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+        }
+        .btn-danger:hover { background-color: #dc3545; color: white; }
+
+        /* --- Stats Bar --- */
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #e3f2fd;
+            border-radius: 6px;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+            justify-content: center;
+        }
+
+        /* --- Bottom Navigation Buttons --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto; 
+            padding-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .btn-outline:hover {
+            background: rgba(0, 82, 204, 0.05);
+        }
+
+        .btn-fill {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <a href="../../" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h1 class="brand-title">JKM Edit</h1>
+        </a>
+    </header>
+
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        <div class="tool-header">
+            <h2>Remove Duplicate Lines</h2>
+            <p>Clean up your lists by removing repeated lines. Fast, secure, and browser-based.</p>
+        </div>
+
+        <div class="tool-content-wrapper">
+            
+            <!-- Controls & Options -->
+            <div class="controls-area">
+                <div class="options-group">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="opt-case-sensitive"> Case Sensitive
+                    </label>
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="opt-remove-empty" checked> Remove Empty Lines
+                    </label>
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="opt-trim" checked> Trim Whitespace
+                    </label>
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="opt-sort"> Sort Alphabetically
+                    </label>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="clear-btn">Clear</button>
+                    <button class="btn btn-primary" id="process-btn">
+                        <i class="fa-solid fa-filter"></i> Remove Duplicates
+                    </button>
+                </div>
+            </div>
+
+            <!-- Text Editors -->
+            <div class="editor-grid">
+                <div class="editor-column">
+                    <div class="editor-label">
+                        <span>Original Text</span>
+                        <span id="input-count" style="font-weight: 400; font-size: 0.9em; color: #666;">0 lines</span>
+                    </div>
+                    <textarea id="input-text" placeholder="Paste your text here..."></textarea>
+                </div>
+
+                <div class="editor-column">
+                    <div class="editor-label">
+                        <span>Unique Lines (Result)</span>
+                        <button class="btn-danger" id="copy-btn" style="display:none;">
+                            <i class="fa-regular fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <textarea id="output-text" readonly placeholder="Result will appear here..."></textarea>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-bar" id="stats-bar" style="display: none;">
+                <span>Original: <span id="stat-original">0</span></span>
+                <span>New: <span id="stat-new">0</span></span>
+                <span>Removed: <span id="stat-removed">0</span></span>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="../../" class="nav-btn btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputText = document.getElementById('input-text');
+            const outputText = document.getElementById('output-text');
+            const processBtn = document.getElementById('process-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            
+            const optCaseSensitive = document.getElementById('opt-case-sensitive');
+            const optRemoveEmpty = document.getElementById('opt-remove-empty');
+            const optTrim = document.getElementById('opt-trim');
+            const optSort = document.getElementById('opt-sort');
+            
+            const inputCount = document.getElementById('input-count');
+            const statsBar = document.getElementById('stats-bar');
+            const statOriginal = document.getElementById('stat-original');
+            const statNew = document.getElementById('stat-new');
+            const statRemoved = document.getElementById('stat-removed');
+
+            // Update line count on input
+            inputText.addEventListener('input', () => {
+                const lines = inputText.value.split(/\n/).length;
+                inputCount.textContent = `${inputText.value ? lines : 0} lines`;
+            });
+
+            // Process Logic
+            processBtn.addEventListener('click', () => {
+                const rawText = inputText.value;
+                if (!rawText) return;
+
+                let lines = rawText.split(/\n/);
+                const originalCount = lines.length;
+
+                // 1. Trim Whitespace (per line)
+                if (optTrim.checked) {
+                    lines = lines.map(line => line.trim());
+                }
+
+                // 2. Remove Empty Lines
+                if (optRemoveEmpty.checked) {
+                    lines = lines.filter(line => line !== '');
+                }
+
+                // 3. Deduplicate
+                const isCaseSensitive = optCaseSensitive.checked;
+                const uniqueLines = [];
+                const seen = new Set();
+
+                lines.forEach(line => {
+                    // Create a key for comparison (lower case if not sensitive)
+                    const key = isCaseSensitive ? line : line.toLowerCase();
+                    
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        uniqueLines.push(line);
+                    }
+                });
+
+                // 4. Sort
+                if (optSort.checked) {
+                    uniqueLines.sort((a, b) => {
+                        return isCaseSensitive 
+                            ? a.localeCompare(b) 
+                            : a.toLowerCase().localeCompare(b.toLowerCase());
+                    });
+                }
+
+                // Output results
+                const finalCount = uniqueLines.length;
+                const removedCount = originalCount - finalCount; // Note: this includes empty lines removed
+
+                outputText.value = uniqueLines.join('\n');
+                
+                // Show stats and copy button
+                statOriginal.textContent = originalCount;
+                statNew.textContent = finalCount;
+                statRemoved.textContent = removedCount;
+                statsBar.style.display = 'flex';
+                copyBtn.style.display = 'inline-flex';
+                
+                // Change copy button style back to normal (red outline)
+                copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+                copyBtn.className = 'btn-danger';
+            });
+
+            // Copy Functionality
+            copyBtn.addEventListener('click', () => {
+                outputText.select();
+                document.execCommand('copy');
+                
+                // Visual feedback
+                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                copyBtn.className = 'btn-success'; // Make it green temporarily
+                copyBtn.style.padding = '0.4rem 0.8rem'; // Keep size consistent
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+                    copyBtn.className = 'btn-danger';
+                }, 2000);
+            });
+
+            // Clear Functionality
+            clearBtn.addEventListener('click', () => {
+                inputText.value = '';
+                outputText.value = '';
+                inputCount.textContent = '0 lines';
+                statsBar.style.display = 'none';
+                copyBtn.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
