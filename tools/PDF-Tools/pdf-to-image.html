@@ -1,381 +1,420 @@
 <!DOCTYPE html>
-<html lang='en' data-theme='corporate-blue'>
+<html lang='en'>
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>PDF to JPG/PNG Converter | JKM Edit</title>
+
+    <title>Free PDF to JPG/PNG Converter | JKM Edit</title>
+    <meta name="description" content="Convert your PDF pages to high-quality JPG or PNG images for free."/>
     
-    <!-- BRANDING ASSETS -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
 
-    <!-- FONTS & ICONS -->
+    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
-    <!-- LIBRARIES -->
-    <!-- PDF.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
-    <!-- JSZip (For zipping multiple images) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <!-- FileSaver (For saving the zip) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- PDF.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script>
+        // Set worker source for PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+    </script>
 
     <style>
+        /* --- Corporate Blue Theme Variables --- */
         :root { 
             font-family: 'Poppins', sans-serif; 
             --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
             --bg-color: #f4f5f7; 
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
-            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
         }
-        
-        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
         *, *::before, *::after { box-sizing: border-box; }
-        .hidden { display: none !important; }
 
-        /* --- HEADER --- */
-        .branding-bar {
-            display: flex; align-items: center; padding: 1rem 2rem;
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* Aligns content to the left */
+            padding: 1rem 2rem;
             background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             border-bottom: 3px solid var(--primary-color);
+            margin-bottom: 2rem;
         }
-        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
-        .logo-image { height: 50px; width: auto; object-fit: contain; }
-        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
-
-        /* --- LAYOUT --- */
-        .tool-container { padding: 2rem 1rem; max-width: 900px; margin: auto; width: 100%; flex: 1; }
         
-        .ad-placeholder { 
-            max-width: 728px; width: 100%; height: 90px; 
-            background-color: #e0e0e0; border: 1px dashed #999; 
-            margin: 0 auto 2rem auto; 
-            display: flex; align-items: center; justify-content: center; 
-            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none; /* Remove underline from link if wrapping */
         }
 
-        /* --- UPLOAD STAGE --- */
-        #upload-stage { text-align: center; }
-        .tool-header h2 { font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color); }
-        .tool-header p { margin-bottom: 2rem; color: #666; }
-        #dropzone { 
-            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
-            cursor: pointer; background-color: var(--surface-color); transition: 0.3s; margin-bottom: 20px;
-        }
-        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
-        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
-
-        /* --- SETTINGS STAGE --- */
-        #settings-stage {
-            background: var(--surface-color); padding: 2rem; border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); text-align: left;
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
         }
 
-        .file-info {
-            background: #f0f7ff; padding: 15px; border-radius: 8px;
-            border-left: 4px solid var(--primary-color); margin-bottom: 20px;
-            display: flex; justify-content: space-between; align-items: center;
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
         }
 
-        .option-group { margin-bottom: 1.5rem; }
-        .option-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #333; }
-
-        /* Format Selector */
-        .format-selector { display: flex; gap: 10px; }
-        .format-btn {
-            flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 6px;
-            background: white; cursor: pointer; font-weight: 600; transition: 0.2s;
-            text-align: center;
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 1000px; 
+            margin: auto; 
+            min-height: 80vh; /* Ensure content takes up space */
+            display: flex;
+            flex-direction: column;
         }
-        .format-btn.active { border-color: var(--primary-color); background: #f0f7ff; color: var(--primary-color); }
-
-        /* Range Selector */
-        .radio-group { display: flex; flex-direction: column; gap: 10px; }
-        .radio-option {
-            display: flex; align-items: center; gap: 10px; padding: 10px;
-            border: 1px solid #eee; border-radius: 6px; cursor: pointer;
-        }
-        .radio-option:hover { background: #f9f9f9; }
         
-        input[type="text"] {
-            padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;
-            width: 200px; font-family: inherit;
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); 
+            padding: 2.5rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            text-align: center; 
         }
 
-        /* Buttons */
-        .btn {
-            padding: 12px 25px; border: none; border-radius: 6px;
-            font-weight: 600; cursor: pointer; transition: 0.3s; width: 100%; font-size: 1rem;
-            display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+        /* --- Upload Area --- */
+        .upload-area { 
+            border: 3px dashed var(--primary-color); 
+            border-radius: 10px; 
+            padding: 3rem 1.5rem; 
+            margin-bottom: 2rem; 
+            cursor: pointer; 
+            transition: background-color var(--transition-speed); 
+            background-color: #f9fafc;
         }
-        .btn-primary { background: var(--gradient); color: white; }
-        .btn-primary:hover { opacity: 0.9; }
-        .btn-secondary { background: #e9ecef; color: #333; }
+        .upload-area:hover, .upload-area.drag-over { 
+            background-color: rgba(0, 82, 204, 0.05); 
+        }
+        .upload-icon { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .upload-text { font-size: 1.1rem; font-weight: 600; }
+        .upload-text p { margin: 0.5rem 0; }
+        #pdf-upload { display: none; }
 
-        /* Progress Bar */
-        .progress-container { width: 100%; background: #eee; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 15px; display: none; }
-        .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.3s; }
-        .status-text { margin-top: 5px; font-size: 0.9rem; color: #666; text-align: center; display: none; }
+        /* --- Options & Action --- */
+        .options-container { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 2rem; 
+            margin-bottom: 2rem; 
+        }
+        .format-selector label { font-weight: 600; margin-right: 0.5rem; cursor: pointer; }
+        .format-selector input[type="radio"] { margin-right: 0.25rem; cursor: pointer; }
+        
+        .convert-btn { 
+            display: inline-block; 
+            padding: 0.85rem 3rem; 
+            background: var(--gradient); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: 700; 
+            font-size: 1.2rem; 
+            transition: transform 0.2s ease, box-shadow 0.2s ease; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            cursor: pointer; 
+        }
+        .convert-btn:disabled { background: #aaa; cursor: not-allowed; box-shadow: none; transform: none; }
+        .convert-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        
+        #status-message { margin-top: 1.5rem; font-weight: 600; color: var(--secondary-color); min-height: 1.5em; }
 
-        /* Navigation */
-        .navigation-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }
-        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .nav-back { background: #e9ecef; color: #333; }
-        .nav-dash { background: var(--primary-color); color: white; }
+        /* --- Results Grid --- */
+        .results-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 1.5rem; 
+            margin-top: 3rem; 
+            margin-bottom: 3rem; /* Space before bottom buttons */
+        }
+        .result-card { 
+            background: var(--surface-color); 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07); 
+            overflow: hidden; 
+            text-align: center; 
+            border: 1px solid #eee;
+        }
+        .result-card img { 
+            max-width: 100%; 
+            height: auto; 
+            display: block; 
+            border-bottom: 1px solid #eee;
+        }
+        .result-card-footer { padding: 1rem; }
+        .result-card-footer p { margin: 0 0 0.75rem; font-weight: 600; font-size: 0.9rem; color: var(--text-color); }
+        
+        .download-btn { 
+            display: inline-block; 
+            width: 100%; 
+            padding: 0.6rem 1rem; 
+            background-color: var(--primary-color); 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-weight: 600; 
+            font-size: 0.9rem;
+            transition: background-color var(--transition-speed); 
+        }
+        .download-btn:hover { background-color: var(--secondary-color); }
+
+        /* --- Bottom Navigation Buttons --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto; /* Pushes to bottom if container is flex column */
+            padding-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .btn-outline:hover {
+            background: rgba(0, 82, 204, 0.05);
+        }
+
+        .btn-fill {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 600px) {
+            .main-header { padding: 1rem; }
+            .dashboard-container { padding: 0 1rem 2rem 1rem; }
+            .tool-content-wrapper { padding: 1.5rem; }
+            .bottom-nav { flex-direction: column; align-items: center; gap: 1rem; }
+            .nav-btn { width: 100%; justify-content: center; }
+        }
     </style>
 </head>
 <body>
 
-    <header class="branding-bar">
-        <a href="index.html" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
-            <h1>JKM Edit</h1>
-        </a>
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <div class="logo-container">
+            <!-- Logo Image from Assets -->
+            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h1 class="brand-title">JKM Edit</h1>
+        </div>
     </header>
 
-    <main class='tool-container'>
-        <div class="ad-placeholder">Advertisement Space (728x90)</div>
-
-        <!-- STAGE 1: UPLOAD -->
-        <div id="upload-stage">
-            <div class='tool-header'>
-                <h2>Convert PDF to JPG or PNG</h2>
-                <p>Extract pages as high-quality images instantly.</p>
-            </div>
-            <input type="file" id="file-input" class="hidden" accept="application/pdf"/>
-            <div id="dropzone">
-                <i class="fa-solid fa-images"></i>
-                <p><strong>Click to Upload PDF</strong><br>or drag and drop here</p>
-            </div>
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        <div class="tool-header">
+            <h2>PDF to JPG/PNG</h2>
+            <p>Convert each page of your PDF into a separate high-quality image.</p>
         </div>
 
-        <!-- STAGE 2: SETTINGS -->
-        <div id="settings-stage" class="hidden">
-            <div class="file-info">
-                <span><i class="fa-solid fa-file-pdf"></i> <span id="filename-display">doc.pdf</span></span>
-                <span id="page-count-display" style="font-weight:bold; color:#666;">-- Pages</span>
+        <div class="tool-content-wrapper">
+            <div class="upload-area" id="upload-area">
+                <input type="file" id="pdf-upload" accept=".pdf">
+                <div class="upload-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
+                <div class="upload-text">
+                    <p><strong>Drag & Drop your PDF here</strong></p>
+                    <p>or click to select a file</p>
+                </div>
             </div>
 
-            <!-- 1. Choose Format -->
-            <div class="option-group">
-                <label>Output Format</label>
+            <div class="options-container">
                 <div class="format-selector">
-                    <div class="format-btn" onclick="setFormat('jpg')" id="btn-jpg">
-                        JPG <span style="font-size:0.8em; font-weight:normal;">(Small Size)</span>
-                    </div>
-                    <div class="format-btn active" onclick="setFormat('png')" id="btn-png">
-                        PNG <span style="font-size:0.8em; font-weight:normal;">(High Quality)</span>
-                    </div>
+                    <label>Convert to:</label>
+                    <input type="radio" id="format-jpg" name="image-format" value="jpeg" checked>
+                    <label for="format-jpg">JPG</label>
+                    
+                    <input type="radio" id="format-png" name="image-format" value="png" style="margin-left: 15px;">
+                    <label for="format-png">PNG</label>
                 </div>
             </div>
 
-            <!-- 2. Choose Pages -->
-            <div class="option-group">
-                <label>Pages to Convert</label>
-                <div class="radio-group">
-                    <label class="radio-option">
-                        <input type="radio" name="pageMode" value="all" checked onchange="toggleInputs()"> 
-                        Convert All Pages
-                    </label>
-                    
-                    <label class="radio-option">
-                        <input type="radio" name="pageMode" value="range" onchange="toggleInputs()"> 
-                        Range <input type="text" id="range-input" placeholder="e.g. 1-5" disabled>
-                    </label>
-                    
-                    <label class="radio-option">
-                        <input type="radio" name="pageMode" value="custom" onchange="toggleInputs()"> 
-                        Selected Pages <input type="text" id="custom-input" placeholder="e.g. 1, 3, 7" disabled>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Action -->
-            <button id="convert-btn" class="btn btn-primary" onclick="startConversion()">
-                <i class="fa-solid fa-gear"></i> Convert to Images
-            </button>
-
-            <!-- Progress -->
-            <div class="progress-container" id="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
-            <div class="status-text" id="status-text">Processing...</div>
-
-            <button class="btn btn-secondary" onclick="location.reload()" style="margin-top: 15px;">
-                <i class="fa-solid fa-rotate-left"></i> Start Over
-            </button>
+            <button class="convert-btn" id="convert-btn" disabled>Convert to Image</button>
+            <p id="status-message"></p>
         </div>
 
-        <!-- NAVIGATION -->
-        <div class="navigation-buttons">
-            <a href="javascript:history.back()" class="nav-btn nav-back">
+        <!-- Results Grid -->
+        <div class="results-grid" id="results-grid"></div>
+
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="index.html" class="nav-btn nav-dash">
+            <a href="../../" class="nav-btn btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
     </main>
 
     <script>
-        // DOM Elements
-        const dropzone = document.getElementById('dropzone');
-        const fileInput = document.getElementById('file-input');
-        const uploadStage = document.getElementById('upload-stage');
-        const settingsStage = document.getElementById('settings-stage');
-        const rangeInput = document.getElementById('range-input');
-        const customInput = document.getElementById('custom-input');
-        const progressBar = document.getElementById('progress-bar');
-        const statusText = document.getElementById('status-text');
-        const progressContainer = document.getElementById('progress-container');
-        const convertBtn = document.getElementById('convert-btn');
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadArea = document.getElementById('upload-area');
+            const pdfUpload = document.getElementById('pdf-upload');
+            const convertBtn = document.getElementById('convert-btn');
+            const statusMessage = document.getElementById('status-message');
+            const resultsGrid = document.getElementById('results-grid');
+            let selectedPdfFile = null;
 
-        // State
-        let currentFileBuffer = null;
-        let currentFileName = "";
-        let totalPages = 0;
-        let selectedFormat = "png"; // Default
-
-        // --- UPLOAD LOGIC ---
-        dropzone.onclick = () => fileInput.click();
-        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
-        dropzone.ondrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
-        fileInput.onchange = (e) => handleFiles(e.target.files);
-
-        function handleFiles(files) {
-            if (!files[0] || files[0].type !== 'application/pdf') return alert("Invalid PDF");
+            // Drag and Drop Events
+            uploadArea.addEventListener('click', () => pdfUpload.click());
             
-            currentFileName = files[0].name.replace('.pdf', '');
-            const reader = new FileReader();
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
             
-            reader.onload = async (e) => {
-                currentFileBuffer = e.target.result;
-                
-                // Load PDF to get page count
-                const pdf = await pdfjsLib.getDocument({ data: currentFileBuffer }).promise;
-                totalPages = pdf.numPages;
-
-                // Update UI
-                document.getElementById('filename-display').innerText = files[0].name;
-                document.getElementById('page-count-display').innerText = `${totalPages} Pages`;
-                
-                uploadStage.classList.add('hidden');
-                settingsStage.classList.remove('hidden');
-            };
-            reader.readAsArrayBuffer(files[0]);
-        }
-
-        // --- UI LOGIC ---
-        function setFormat(fmt) {
-            selectedFormat = fmt;
-            document.getElementById('btn-jpg').classList.toggle('active', fmt === 'jpg');
-            document.getElementById('btn-png').classList.toggle('active', fmt === 'png');
-        }
-
-        function toggleInputs() {
-            const mode = document.querySelector('input[name="pageMode"]:checked').value;
-            rangeInput.disabled = (mode !== 'range');
-            customInput.disabled = (mode !== 'custom');
-            if(mode === 'range') rangeInput.focus();
-            if(mode === 'custom') customInput.focus();
-        }
-
-        // --- CONVERSION LOGIC ---
-        async function startConversion() {
-            if (!currentFileBuffer) return;
-
-            // 1. Determine which pages to process
-            const mode = document.querySelector('input[name="pageMode"]:checked').value;
-            let pagesToProcess = [];
-
-            try {
-                if (mode === 'all') {
-                    for (let i = 1; i <= totalPages; i++) pagesToProcess.push(i);
-                } 
-                else if (mode === 'range') {
-                    const parts = rangeInput.value.split('-');
-                    if (parts.length !== 2) throw new Error("Invalid range format. Use '1-5'");
-                    const start = parseInt(parts[0]);
-                    const end = parseInt(parts[1]);
-                    if (isNaN(start) || isNaN(end) || start > end || end > totalPages) throw new Error("Invalid page range numbers");
-                    for (let i = start; i <= end; i++) pagesToProcess.push(i);
-                } 
-                else if (mode === 'custom') {
-                    const parts = customInput.value.split(',');
-                    parts.forEach(p => {
-                        const num = parseInt(p.trim());
-                        if (!isNaN(num) && num >= 1 && num <= totalPages) pagesToProcess.push(num);
-                    });
-                    if (pagesToProcess.length === 0) throw new Error("No valid pages entered");
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type === 'application/pdf') {
+                    handleFile(files[0]);
                 }
-            } catch (err) {
-                alert(err.message);
-                return;
+            });
+
+            // File Input Change Event
+            pdfUpload.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFile(e.target.files[0]);
+                }
+            });
+
+            function handleFile(file) {
+                selectedPdfFile = file;
+                statusMessage.textContent = `File selected: ${file.name}`;
+                statusMessage.style.color = 'var(--text-color)';
+                convertBtn.disabled = false;
+                resultsGrid.innerHTML = ''; // Clear previous results
             }
 
-            // 2. Start UI
-            convertBtn.disabled = true;
-            progressContainer.style.display = 'block';
-            statusText.style.display = 'block';
-
-            const pdf = await pdfjsLib.getDocument({ data: currentFileBuffer }).promise;
-            const zip = new JSZip();
-            const imgFolder = zip.folder("images");
-
-            // 3. Processing Loop
-            for (let i = 0; i < pagesToProcess.length; i++) {
-                const pageNum = pagesToProcess[i];
-                
-                // Update UI
-                const percent = Math.round(((i) / pagesToProcess.length) * 100);
-                progressBar.style.width = `${percent}%`;
-                statusText.innerText = `Rendering Page ${pageNum}...`;
-
-                // Render
-                const page = await pdf.getPage(pageNum);
-                const scale = 2; // High quality
-                const viewport = page.getViewport({ scale: scale });
-                
-                const canvas = document.createElement('canvas');
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
-                const ctx = canvas.getContext('2d');
-
-                // If JPG, fill white background first (handle transparency)
-                if (selectedFormat === 'jpg') {
-                    ctx.fillStyle = "#FFFFFF";
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Conversion Logic
+            convertBtn.addEventListener('click', async () => {
+                if (!selectedPdfFile) {
+                    statusMessage.textContent = 'Please select a PDF file first.';
+                    return;
                 }
 
-                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                convertBtn.disabled = true;
+                statusMessage.textContent = 'Initializing conversion...';
+                statusMessage.style.color = 'var(--secondary-color)';
+                resultsGrid.innerHTML = '';
 
-                // Convert to Blob
-                const mimeType = selectedFormat === 'png' ? 'image/png' : 'image/jpeg';
-                const blob = await new Promise(resolve => canvas.toBlob(resolve, mimeType, 0.9));
+                const fileReader = new FileReader();
+                fileReader.readAsArrayBuffer(selectedPdfFile);
+
+                fileReader.onload = async (event) => {
+                    try {
+                        const pdfData = new Uint8Array(event.target.result);
+                        // Load PDF document
+                        const pdfDoc = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                        const numPages = pdfDoc.numPages;
+                        statusMessage.textContent = `Converting ${numPages} page(s)...`;
+                        
+                        const format = document.querySelector('input[name="image-format"]:checked').value;
+                        const mimeType = `image/${format}`;
+                        const fileExtension = format === 'jpeg' ? 'jpg' : 'png';
+
+                        // Loop through pages
+                        for (let i = 1; i <= numPages; i++) {
+                            statusMessage.textContent = `Processing page ${i} of ${numPages}...`;
+                            const page = await pdfDoc.getPage(i);
+                            
+                            // Scale 2.0 for better quality
+                            const viewport = page.getViewport({ scale: 2.0 });
+                            const canvas = document.createElement('canvas');
+                            const context = canvas.getContext('2d');
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+
+                            // Render page to canvas
+                            await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                            // Convert canvas to image URL
+                            const imageDataUrl = canvas.toDataURL(mimeType, 0.9);
+                            createResultCard(i, imageDataUrl, fileExtension);
+                        }
+                        statusMessage.textContent = 'Conversion complete!';
+                        statusMessage.style.color = 'var(--primary-color)';
+                    } catch (error) {
+                        console.error('Error converting PDF:', error);
+                        statusMessage.textContent = 'An error occurred. Please try a valid PDF file.';
+                        statusMessage.style.color = 'red';
+                    } finally {
+                        convertBtn.disabled = false;
+                    }
+                };
+            });
+
+            function createResultCard(pageNum, imageDataUrl, extension) {
+                const card = document.createElement('div');
+                card.className = 'result-card';
+
+                const img = document.createElement('img');
+                img.src = imageDataUrl;
+                img.alt = `Page ${pageNum}`;
+
+                const footer = document.createElement('div');
+                footer.className = 'result-card-footer';
                 
-                // Add to Zip
-                const imgName = `${currentFileName}_page_${pageNum}.${selectedFormat}`;
-                imgFolder.file(imgName, blob);
+                const pageText = document.createElement('p');
+                pageText.textContent = `Page ${pageNum}`;
+
+                const downloadLink = document.createElement('a');
+                downloadLink.href = imageDataUrl;
+                downloadLink.textContent = 'Download Image';
+                downloadLink.className = 'download-btn';
+                downloadLink.download = `page_${pageNum}.${extension}`;
+
+                footer.appendChild(pageText);
+                footer.appendChild(downloadLink);
+                card.appendChild(img);
+                card.appendChild(footer);
+                resultsGrid.appendChild(card);
             }
-
-            // 4. Finish
-            progressBar.style.width = `100%`;
-            statusText.innerText = "Zipping files...";
-
-            // If only 1 file, download directly? No, standardize on Zip for this tool to handle 'All' gracefully.
-            // Actually, if 1 file, standard UX is direct download, but Zip is safer for multiple.
-            // Let's just Zip everything for consistency in this "Converter" tool.
-            
-            const content = await zip.generateAsync({ type: "blob" });
-            saveAs(content, `${currentFileName}_images.zip`);
-
-            statusText.innerText = "Download Complete!";
-            convertBtn.disabled = false;
-        }
+        });
     </script>
 </body>
 </html>
