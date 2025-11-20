@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>Brightness & Contrast Adjuster | JKM Edit</title>
+    
+    <!-- BRANDING ASSETS -->
+    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
+
+    <!-- FONTS & ICONS -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- HEADER --- */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- MAIN LAYOUT --- */
+        .tool-container { padding: 2rem 1rem; max-width: 1200px; margin: 0 auto; width: 100%; flex: 1; }
+        
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #e0e0e0; border: 1px dashed #999; 
+            margin: 0 auto 2rem auto; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #555; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .tool-header p { color: #666; }
+
+        /* --- UPLOAD ZONE --- */
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
+            text-align: center; cursor: pointer; background-color: var(--surface-color); 
+            transition: 0.3s; margin-bottom: 20px;
+        }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+
+        /* --- EDITOR WORKSPACE --- */
+        .editor-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* Image Preview Area */
+        .canvas-wrapper {
+            background: #222;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        canvas {
+            max-width: 100%;
+            max-height: 600px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* Compare Button Overlay */
+        .compare-btn {
+            position: absolute;
+            bottom: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            user-select: none;
+            transition: 0.2s;
+        }
+        .compare-btn:hover { background: rgba(255, 255, 255, 0.4); }
+        .compare-btn:active { transform: scale(0.95); }
+
+        /* Controls Sidebar */
+        .controls-panel {
+            background: var(--surface-color);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .panel-title { font-size: 1.1rem; font-weight: 700; color: var(--text-color); border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 5px; }
+
+        /* Sliders */
+        .slider-group {
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .slider-header {
+            display: flex; justify-content: space-between;
+            font-size: 0.9rem; font-weight: 600; color: #555;
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none; width: 100%; height: 6px;
+            background: #e0e0e0; border-radius: 5px; outline: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px;
+            background: var(--primary-color); border-radius: 50%;
+            cursor: pointer; transition: 0.2s; border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+
+        /* Buttons */
+        .btn {
+            width: 100%; padding: 12px; border: none; border-radius: 6px;
+            font-weight: 600; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 1rem;
+        }
+        .btn-primary { background: var(--gradient); color: white; margin-top: 10px; }
+        .btn-primary:hover { opacity: 0.9; box-shadow: 0 5px 15px rgba(0, 82, 204, 0.3); }
+
+        .reset-btn {
+            background: none; border: 1px solid #ddd; color: #666;
+            margin-top: 10px;
+        }
+        .reset-btn:hover { background: #f9f9f9; color: var(--text-color); }
+
+        /* Navigation */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; }
+        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; background: #e9ecef; color: #333; display: inline-flex; align-items: center; gap: 5px; }
+        .nav-dash { background: var(--primary-color); color: white; }
+
+        @media (max-width: 900px) {
+            .editor-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="branding-bar">
+        <a href="index.html" class="logo-container">
+            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit</h1>
+        </a>
+    </header>
+
+    <main class="tool-container">
+        <div class="ad-placeholder">Advertisement Space (728x90)</div>
+
+        <!-- STAGE 1: UPLOAD -->
+        <div id="upload-stage">
+            <div class="tool-header">
+                <h2>Brightness & Contrast Adjuster</h2>
+                <p>Enhance your photos instantly with professional precision.</p>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept="image/*"/>
+            <div id="dropzone">
+                <i class="fa-solid fa-sun"></i>
+                <p><strong>Click to Upload Image</strong><br>or drag and drop here</p>
+            </div>
+        </div>
+
+        <!-- STAGE 2: EDITOR -->
+        <div id="editor-stage" class="hidden">
+            <div class="editor-grid">
+                
+                <!-- Canvas Wrapper -->
+                <div class="canvas-wrapper">
+                    <canvas id="editor-canvas"></canvas>
+                    <button class="compare-btn" id="compare-btn" 
+                        onmousedown="showOriginal()" onmouseup="showEdited()" 
+                        ontouchstart="showOriginal()" ontouchend="showEdited()">
+                        <i class="fa-regular fa-eye"></i> Hold to Compare
+                    </button>
+                </div>
+
+                <!-- Controls -->
+                <div class="controls-panel">
+                    <div class="panel-title">Adjustments</div>
+
+                    <!-- Brightness Slider -->
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <label><i class="fa-regular fa-sun"></i> Brightness</label>
+                            <span id="val-bright">0</span>
+                        </div>
+                        <input type="range" id="range-bright" min="-100" max="100" value="0">
+                    </div>
+
+                    <!-- Contrast Slider -->
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <label><i class="fa-solid fa-circle-half-stroke"></i> Contrast</label>
+                            <span id="val-contrast">0</span>
+                        </div>
+                        <input type="range" id="range-contrast" min="-100" max="100" value="0">
+                    </div>
+
+                    <button class="btn reset-btn" onclick="resetValues()">
+                        <i class="fa-solid fa-arrow-rotate-left"></i> Reset
+                    </button>
+
+                    <button class="btn btn-primary" onclick="downloadImage()">
+                        <i class="fa-solid fa-download"></i> Download Image
+                    </button>
+                    
+                    <div style="text-align:center; margin-top:10px;">
+                        <a href="javascript:location.reload()" style="color:#666; font-size:0.9rem; text-decoration:underline;">Open New Image</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="index.html" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+    </main>
+
+    <script>
+        // Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const uploadStage = document.getElementById('upload-stage');
+        const editorStage = document.getElementById('editor-stage');
+        const canvas = document.getElementById('editor-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Inputs
+        const rangeBright = document.getElementById('range-bright');
+        const rangeContrast = document.getElementById('range-contrast');
+        const valBright = document.getElementById('val-bright');
+        const valContrast = document.getElementById('val-contrast');
+
+        // State
+        let originalImg = new Image();
+        let fileName = "image";
+
+        // --- UPLOAD LOGIC ---
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
+        fileInput.onchange = (e) => handleFile(e.target.files[0]);
+
+        function handleFile(file) {
+            if (!file || !file.type.startsWith('image/')) return alert("Please upload an image.");
+            fileName = file.name.replace(/\.[^/.]+$/, "");
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalImg.src = e.target.result;
+                originalImg.onload = () => {
+                    // Set canvas size to match image resolution
+                    canvas.width = originalImg.width;
+                    canvas.height = originalImg.height;
+                    
+                    render(); // Initial draw
+                    uploadStage.classList.add('hidden');
+                    editorStage.classList.remove('hidden');
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- RENDER LOGIC ---
+        function render() {
+            const brightness = parseInt(rangeBright.value);
+            const contrast = parseInt(rangeContrast.value);
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Use Canvas Filter API (Fast & Hardware Accelerated)
+            // Brightness: 100% is normal. Range input is -100 to 100. So map to 0% - 200%.
+            // Contrast: 100% is normal. Range input is -100 to 100. So map to 0% - 200%.
+            
+            const bVal = 100 + brightness;
+            const cVal = 100 + contrast;
+
+            ctx.filter = `brightness(${bVal}%) contrast(${cVal}%)`;
+            
+            ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
+
+            // Update labels
+            valBright.innerText = (brightness > 0 ? "+" : "") + brightness;
+            valContrast.innerText = (contrast > 0 ? "+" : "") + contrast;
+        }
+
+        // --- EVENT LISTENERS ---
+        rangeBright.addEventListener('input', render);
+        rangeContrast.addEventListener('input', render);
+
+        // --- COMPARE FEATURE ---
+        // Temporarily removes filters to show original
+        function showOriginal() {
+            ctx.filter = "none";
+            ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
+        }
+
+        function showEdited() {
+            render(); // Re-apply filters
+        }
+
+        // --- RESET ---
+        function resetValues() {
+            rangeBright.value = 0;
+            rangeContrast.value = 0;
+            render();
+        }
+
+        // --- DOWNLOAD ---
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = fileName + '_adjusted.jpg';
+            link.href = canvas.toDataURL('image/jpeg', 0.95); // High quality JPG
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+    </script>
+</body>
+</html>
