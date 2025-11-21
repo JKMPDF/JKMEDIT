@@ -19,6 +19,10 @@ COPY . .
 
 # Expose port 3000
 EXPOSE 3000
+# ... existing lines ...
+
+# Disable YTDL Update Check to reduce errors
+ENV YTDL_NO_UPDATE=1
 
 # Start the server
 CMD ["node", "index.js"]

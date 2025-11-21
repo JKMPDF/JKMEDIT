@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs'); // Module to read the cookie file
 const ytdl = require('@distube/ytdl-core');
-// UPDATED PLAYLIST LIBRARY:
 const ytpl = require('@distube/ytpl');
 
 const app = express();
@@ -9,22 +9,34 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
+// --- SETUP YOUTUBE AGENT WITH COOKIES ---
+let agent;
+try {
+    // Look for cookies.json in the same folder
+    if (fs.existsSync('./cookies.json')) {
+        const cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
+        agent = ytdl.createAgent(cookies);
+        console.log("✅ Cookies loaded successfully!");
+    } else {
+        console.log("⚠️ No cookies.json found. You might get 'Bot' errors from YouTube.");
+    }
+} catch (err) {
+    console.error("❌ Error loading cookies:", err.message);
+}
+
+// --- ROUTES ---
+
 app.get('/', (req, res) => {
-    res.send('JKM Backend is Running Successfully!');
+    res.send('JKM Backend is Running!');
 });
 
-// --- API: GET VIDEO/PLAYLIST INFO ---
 app.get('/api/info', async (req, res) => {
     const url = req.query.url;
-
     if (!url) return res.status(400).json({ success: false, error: 'No URL provided' });
 
     try {
-        // 1. Check if it is a Playlist
-        // @distube/ytpl doesn't always have validateID exposed the same way, 
-        // so we try-catch the playlist fetch directly.
+        // 1. Try Playlist
         try {
-            // Try to fetch as playlist first
             const playlist = await ytpl(url, { limit: 50 });
             const info = playlist.items.map(item => ({
                 title: item.title,
@@ -33,13 +45,11 @@ app.get('/api/info', async (req, res) => {
                 author: item.author.name
             }));
             return res.json({ success: true, isPlaylist: true, info: info });
-        } catch (e) {
-            // If it fails, it's likely not a playlist, so we proceed to check if it's a video
-        }
+        } catch (e) { /* Not a playlist, continue */ }
         
-        // 2. Check if it is a Single Video
+        // 2. Try Single Video (With Agent/Cookies)
         if (ytdl.validateURL(url)) {
-            const info = await ytdl.getBasicInfo(url);
+            const info = await ytdl.getBasicInfo(url, { agent });
             const videoDetails = {
                 title: info.videoDetails.title,
                 thumbnail: info.videoDetails.thumbnails[0].url,
@@ -53,11 +63,10 @@ app.get('/api/info', async (req, res) => {
 
     } catch (err) {
         console.error("Info Error:", err.message);
-        return res.status(500).json({ success: false, error: 'Could not fetch details.' });
+        return res.status(500).json({ success: false, error: 'YouTube blocked the request. Check server logs.' });
     }
 });
 
-// --- API: DOWNLOAD MP3 ---
 app.get('/api/download', (req, res) => {
     const url = req.query.url;
     const title = req.query.title || 'audio';
@@ -69,7 +78,9 @@ app.get('/api/download', (req, res) => {
         res.header('Content-Disposition', `attachment; filename="${safeTitle}.mp3"`);
         res.header('Content-Type', 'audio/mpeg');
 
+        // Pass the agent (cookies) to the download stream
         ytdl(url, { 
+            agent,
             quality: 'highestaudio', 
             filter: 'audioonly' 
         }).pipe(res);
