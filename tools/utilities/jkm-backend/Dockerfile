@@ -4,11 +4,12 @@ FROM node:18-alpine
 # Set working folder inside the container
 WORKDIR /app
 
-# Install system dependencies (FFmpeg is required for audio processing)
+# Install system dependencies
 RUN apk add --no-cache ffmpeg python3
 
-# Copy package files first (to cache dependencies)
-COPY package*.json ./
+# --- CRITICAL CHANGE HERE ---
+# Only copy package.json (Ignore package-lock.json to prevent errors)
+COPY package.json ./
 
 # Install dependencies
 RUN npm install --production
