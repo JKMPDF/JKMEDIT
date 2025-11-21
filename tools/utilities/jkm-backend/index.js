@@ -9,17 +9,20 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send('JKM Backend (yt-dlp version) is Running!');
+    res.send('JKM Backend (Fixed Audio) is Running!');
 });
 
 // --- HELPER: RUN YT-DLP COMMAND ---
-const runYtDlp = (args, res) => {
-    // If cookies.txt exists, use it
+const runYtDlp = (args) => {
+    // Force IPv4 to prevent network blocking
+    args.unshift('--force-ipv4');
+
+    // Use cookies if they exist
     if (fs.existsSync('./cookies.txt')) {
         args.push('--cookies', './cookies.txt');
     }
 
-    // Use a generic user agent to look like a regular browser
+    // Use a generic user agent
     args.push('--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
 
     return spawn('yt-dlp', args);
@@ -30,7 +33,7 @@ app.get('/api/info', (req, res) => {
     const url = req.query.url;
     if (!url) return res.status(400).json({ success: false, error: 'No URL provided' });
 
-    // Arguments: Dump JSON data, flat playlist (fast), no warnings
+    // -J: Dump JSON, --flat-playlist: Fast playlist scan
     const args = ['-J', '--flat-playlist', '--no-warnings', url];
     
     const process = runYtDlp(args);
@@ -43,8 +46,8 @@ app.get('/api/info', (req, res) => {
 
     process.on('close', (code) => {
         if (code !== 0) {
-            console.error("yt-dlp error:", error);
-            return res.status(500).json({ success: false, error: 'Failed to fetch info. Video might be restricted.' });
+            console.error("Info Error:", error);
+            return res.status(500).json({ success: false, error: 'Failed to fetch info.' });
         }
 
         try {
@@ -54,7 +57,7 @@ app.get('/api/info', (req, res) => {
             if (json._type === 'playlist') {
                 const info = json.entries.map(item => ({
                     title: item.title,
-                    thumbnail: item.thumbnails ? item.thumbnails[0].url : '', // Sometimes thumbnails are missing in flat-playlist
+                    thumbnail: item.thumbnails ? item.thumbnails[0].url : '',
                     url: item.url || `https://www.youtube.com/watch?v=${item.id}`,
                     author: item.uploader || 'Unknown'
                 }));
@@ -83,26 +86,30 @@ app.get('/api/download', (req, res) => {
     const title = req.query.title || 'audio';
 
     const safeTitle = title.replace(/[^a-z0-9]/gi, '_').substring(0, 60);
+    
+    // We will send it as .mp3 filename, but the browser will handle the container
     res.header('Content-Disposition', `attachment; filename="${safeTitle}.mp3"`);
     res.header('Content-Type', 'audio/mpeg');
 
-    // Arguments: Output to stdout (-), extract audio, format mp3 (best quality)
+    // UPDATED ARGS: 
+    // 1. Output to stdout (-)
+    // 2. Try getting M4A audio first (most stable), then any audio, then any best stream.
     const args = [
         '-o', '-', 
-        '-f', 'bestaudio', 
+        '-f', 'bestaudio[ext=m4a]/bestaudio/best', 
         '--no-warnings',
         url
     ];
 
     const process = runYtDlp(args);
 
-    // Pipe the audio stream directly to the user
+    // Pipe audio to user
     process.stdout.pipe(res);
 
     process.stderr.on('data', (data) => {
-        // Log errors but don't crash (yt-dlp outputs progress to stderr sometimes)
         const msg = data.toString();
-        if(msg.includes('ERROR')) console.error(msg);
+        // Only log real errors, ignore standard progress info
+        if(msg.includes('ERROR')) console.error("Download Stream Error:", msg);
     });
 });
 
