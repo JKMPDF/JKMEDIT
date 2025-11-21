@@ -1,17 +1,14 @@
 const express = require('express');
 const cors = require('cors');
-// UPDATED LIBRARY NAME BELOW:
 const ytdl = require('@distube/ytdl-core');
-const ytpl = require('ytpl');
+// UPDATED PLAYLIST LIBRARY:
+const ytpl = require('@distube/ytpl');
 
 const app = express();
-// Use the Render assigned port or fallback to 3000
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS
 app.use(cors());
 
-// Root Route
 app.get('/', (req, res) => {
     res.send('JKM Backend is Running Successfully!');
 });
@@ -20,13 +17,14 @@ app.get('/', (req, res) => {
 app.get('/api/info', async (req, res) => {
     const url = req.query.url;
 
-    if (!url) {
-        return res.status(400).json({ success: false, error: 'No URL provided' });
-    }
+    if (!url) return res.status(400).json({ success: false, error: 'No URL provided' });
 
     try {
         // 1. Check if it is a Playlist
-        if (ytpl.validateID(url)) {
+        // @distube/ytpl doesn't always have validateID exposed the same way, 
+        // so we try-catch the playlist fetch directly.
+        try {
+            // Try to fetch as playlist first
             const playlist = await ytpl(url, { limit: 50 });
             const info = playlist.items.map(item => ({
                 title: item.title,
@@ -35,10 +33,12 @@ app.get('/api/info', async (req, res) => {
                 author: item.author.name
             }));
             return res.json({ success: true, isPlaylist: true, info: info });
-        } 
+        } catch (e) {
+            // If it fails, it's likely not a playlist, so we proceed to check if it's a video
+        }
         
         // 2. Check if it is a Single Video
-        else if (ytdl.validateURL(url)) {
+        if (ytdl.validateURL(url)) {
             const info = await ytdl.getBasicInfo(url);
             const videoDetails = {
                 title: info.videoDetails.title,
@@ -53,7 +53,7 @@ app.get('/api/info', async (req, res) => {
 
     } catch (err) {
         console.error("Info Error:", err.message);
-        return res.status(500).json({ success: false, error: 'Could not fetch details. Video might be private or restricted.' });
+        return res.status(500).json({ success: false, error: 'Could not fetch details.' });
     }
 });
 
@@ -62,17 +62,13 @@ app.get('/api/download', (req, res) => {
     const url = req.query.url;
     const title = req.query.title || 'audio';
 
-    if (!ytdl.validateURL(url)) {
-        return res.status(400).send('Invalid URL');
-    }
+    if (!ytdl.validateURL(url)) return res.status(400).send('Invalid URL');
 
     try {
         const safeTitle = title.replace(/[^a-z0-9]/gi, '_').substring(0, 60);
-
         res.header('Content-Disposition', `attachment; filename="${safeTitle}.mp3"`);
         res.header('Content-Type', 'audio/mpeg');
 
-        // Stream audio
         ytdl(url, { 
             quality: 'highestaudio', 
             filter: 'audioonly' 
