@@ -1,17 +1,22 @@
-# Use Node Alpine (Lightweight)
+# Use Node Alpine
 FROM node:18-alpine
 
-# Set working folder inside the container
+# Set working folder
 WORKDIR /app
 
-# Install system dependencies
-RUN apk add --no-cache ffmpeg python3
+# Install Python3 (Required for yt-dlp) and FFmpeg
+RUN apk add --no-cache python3 ffmpeg curl
 
-# --- CRITICAL CHANGE HERE ---
-# Only copy package.json (Ignore package-lock.json to prevent errors)
+# Download the latest yt-dlp binary
+RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+
+# Make it executable
+RUN chmod a+rx /usr/local/bin/yt-dlp
+
+# Copy package.json
 COPY package.json ./
 
-# Install dependencies
+# Install Node dependencies
 RUN npm install --production
 
 # Copy the rest of the code
@@ -19,10 +24,6 @@ COPY . .
 
 # Expose port 3000
 EXPOSE 3000
-# ... existing lines ...
-
-# Disable YTDL Update Check to reduce errors
-ENV YTDL_NO_UPDATE=1
 
 # Start the server
 CMD ["node", "index.js"]

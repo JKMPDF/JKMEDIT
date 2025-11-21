@@ -1,94 +1,109 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs'); // Module to read the cookie file
-const ytdl = require('@distube/ytdl-core');
-const ytpl = require('@distube/ytpl');
+const { spawn } = require('child_process');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
-// --- SETUP YOUTUBE AGENT WITH COOKIES ---
-let agent;
-try {
-    // Look for cookies.json in the same folder
-    if (fs.existsSync('./cookies.json')) {
-        const cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
-        agent = ytdl.createAgent(cookies);
-        console.log("✅ Cookies loaded successfully!");
-    } else {
-        console.log("⚠️ No cookies.json found. You might get 'Bot' errors from YouTube.");
-    }
-} catch (err) {
-    console.error("❌ Error loading cookies:", err.message);
-}
-
-// --- ROUTES ---
-
 app.get('/', (req, res) => {
-    res.send('JKM Backend is Running!');
+    res.send('JKM Backend (yt-dlp version) is Running!');
 });
 
-app.get('/api/info', async (req, res) => {
+// --- HELPER: RUN YT-DLP COMMAND ---
+const runYtDlp = (args, res) => {
+    // If cookies.txt exists, use it
+    if (fs.existsSync('./cookies.txt')) {
+        args.push('--cookies', './cookies.txt');
+    }
+
+    // Use a generic user agent to look like a regular browser
+    args.push('--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+
+    return spawn('yt-dlp', args);
+};
+
+// --- ROUTE 1: GET INFO ---
+app.get('/api/info', (req, res) => {
     const url = req.query.url;
     if (!url) return res.status(400).json({ success: false, error: 'No URL provided' });
 
-    try {
-        // 1. Try Playlist
-        try {
-            const playlist = await ytpl(url, { limit: 50 });
-            const info = playlist.items.map(item => ({
-                title: item.title,
-                thumbnail: item.bestThumbnail.url,
-                url: item.shortUrl,
-                author: item.author.name
-            }));
-            return res.json({ success: true, isPlaylist: true, info: info });
-        } catch (e) { /* Not a playlist, continue */ }
-        
-        // 2. Try Single Video (With Agent/Cookies)
-        if (ytdl.validateURL(url)) {
-            const info = await ytdl.getBasicInfo(url, { agent });
-            const videoDetails = {
-                title: info.videoDetails.title,
-                thumbnail: info.videoDetails.thumbnails[0].url,
-                url: info.videoDetails.video_url,
-                author: info.videoDetails.author.name
-            };
-            return res.json({ success: true, isPlaylist: false, info: videoDetails });
-        } else {
-            return res.status(400).json({ success: false, error: 'Invalid YouTube URL' });
+    // Arguments: Dump JSON data, flat playlist (fast), no warnings
+    const args = ['-J', '--flat-playlist', '--no-warnings', url];
+    
+    const process = runYtDlp(args);
+    
+    let data = '';
+    let error = '';
+
+    process.stdout.on('data', (chunk) => data += chunk);
+    process.stderr.on('data', (chunk) => error += chunk);
+
+    process.on('close', (code) => {
+        if (code !== 0) {
+            console.error("yt-dlp error:", error);
+            return res.status(500).json({ success: false, error: 'Failed to fetch info. Video might be restricted.' });
         }
 
-    } catch (err) {
-        console.error("Info Error:", err.message);
-        return res.status(500).json({ success: false, error: 'YouTube blocked the request. Check server logs.' });
-    }
+        try {
+            const json = JSON.parse(data);
+            
+            // Handle Playlist
+            if (json._type === 'playlist') {
+                const info = json.entries.map(item => ({
+                    title: item.title,
+                    thumbnail: item.thumbnails ? item.thumbnails[0].url : '', // Sometimes thumbnails are missing in flat-playlist
+                    url: item.url || `https://www.youtube.com/watch?v=${item.id}`,
+                    author: item.uploader || 'Unknown'
+                }));
+                return res.json({ success: true, isPlaylist: true, info });
+            } 
+            
+            // Handle Single Video
+            else {
+                const videoDetails = {
+                    title: json.title,
+                    thumbnail: json.thumbnail,
+                    url: json.webpage_url,
+                    author: json.uploader
+                };
+                return res.json({ success: true, isPlaylist: false, info: videoDetails });
+            }
+        } catch (e) {
+            return res.status(500).json({ success: false, error: 'Error parsing YouTube data' });
+        }
+    });
 });
 
+// --- ROUTE 2: DOWNLOAD MP3 ---
 app.get('/api/download', (req, res) => {
     const url = req.query.url;
     const title = req.query.title || 'audio';
 
-    if (!ytdl.validateURL(url)) return res.status(400).send('Invalid URL');
+    const safeTitle = title.replace(/[^a-z0-9]/gi, '_').substring(0, 60);
+    res.header('Content-Disposition', `attachment; filename="${safeTitle}.mp3"`);
+    res.header('Content-Type', 'audio/mpeg');
 
-    try {
-        const safeTitle = title.replace(/[^a-z0-9]/gi, '_').substring(0, 60);
-        res.header('Content-Disposition', `attachment; filename="${safeTitle}.mp3"`);
-        res.header('Content-Type', 'audio/mpeg');
+    // Arguments: Output to stdout (-), extract audio, format mp3 (best quality)
+    const args = [
+        '-o', '-', 
+        '-f', 'bestaudio', 
+        '--no-warnings',
+        url
+    ];
 
-        // Pass the agent (cookies) to the download stream
-        ytdl(url, { 
-            agent,
-            quality: 'highestaudio', 
-            filter: 'audioonly' 
-        }).pipe(res);
+    const process = runYtDlp(args);
 
-    } catch (err) {
-        console.error("Download Error:", err.message);
-        res.status(500).send('Server Error');
-    }
+    // Pipe the audio stream directly to the user
+    process.stdout.pipe(res);
+
+    process.stderr.on('data', (data) => {
+        // Log errors but don't crash (yt-dlp outputs progress to stderr sometimes)
+        const msg = data.toString();
+        if(msg.includes('ERROR')) console.error(msg);
+    });
 });
 
 app.listen(PORT, () => {
