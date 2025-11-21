@@ -1,15 +1,17 @@
 const express = require('express');
 const cors = require('cors');
-const ytdl = require('distube-ytdl-core');
+// UPDATED LIBRARY NAME BELOW:
+const ytdl = require('@distube/ytdl-core');
 const ytpl = require('ytpl');
 
 const app = express();
+// Use the Render assigned port or fallback to 3000
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS so your website can talk to this server
+// Enable CORS
 app.use(cors());
 
-// Home Route (To check if server is alive)
+// Root Route
 app.get('/', (req, res) => {
     res.send('JKM Backend is Running Successfully!');
 });
@@ -25,7 +27,7 @@ app.get('/api/info', async (req, res) => {
     try {
         // 1. Check if it is a Playlist
         if (ytpl.validateID(url)) {
-            const playlist = await ytpl(url, { limit: 50 }); // Fetch first 50 videos
+            const playlist = await ytpl(url, { limit: 50 });
             const info = playlist.items.map(item => ({
                 title: item.title,
                 thumbnail: item.bestThumbnail.url,
@@ -50,8 +52,8 @@ app.get('/api/info', async (req, res) => {
         }
 
     } catch (err) {
-        console.error(err);
-        return res.status(500).json({ success: false, error: 'Could not fetch details. Video might be private or age-restricted.' });
+        console.error("Info Error:", err.message);
+        return res.status(500).json({ success: false, error: 'Could not fetch details. Video might be private or restricted.' });
     }
 });
 
@@ -65,21 +67,19 @@ app.get('/api/download', (req, res) => {
     }
 
     try {
-        // Clean the filename to remove special characters
         const safeTitle = title.replace(/[^a-z0-9]/gi, '_').substring(0, 60);
 
-        // Set Headers to force download
         res.header('Content-Disposition', `attachment; filename="${safeTitle}.mp3"`);
         res.header('Content-Type', 'audio/mpeg');
 
-        // Stream audio directly to user
+        // Stream audio
         ytdl(url, { 
             quality: 'highestaudio', 
             filter: 'audioonly' 
         }).pipe(res);
 
     } catch (err) {
-        console.error(err);
+        console.error("Download Error:", err.message);
         res.status(500).send('Server Error');
     }
 });
