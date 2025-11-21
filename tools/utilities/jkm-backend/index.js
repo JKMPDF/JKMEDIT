@@ -10,28 +10,18 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send('JKM Backend (Debug Version) is Running!');
+    res.send('JKM Backend (MP3 Conversion Fixed) is Running!');
 });
 
 // --- HELPER: RUN YT-DLP COMMAND ---
 const runYtDlp = (args) => {
-    // 1. Force IPv4 (Helps with blocking)
+    // 1. Force IPv4
     args.unshift('--force-ipv4');
 
     // 2. Check for Cookies
-    // We check for cookies.txt (Netscape) or cookies.json (EditThisCookie)
     const txtPath = path.resolve(__dirname, 'cookies.txt');
-    const jsonPath = path.resolve(__dirname, 'cookies.json');
-
     if (fs.existsSync(txtPath)) {
-        console.log("✅ Found cookies.txt (Netscape format)");
         args.push('--cookies', txtPath);
-    } else if (fs.existsSync(jsonPath)) {
-        console.log("⚠️ Found cookies.json - YT-DLP prefers .txt but we will try.");
-        // yt-dlp can sometimes read json, but txt is better
-        args.push('--cookies', jsonPath);
-    } else {
-        console.log("❌ NO COOKIE FILE FOUND! YouTube will likely block this.");
     }
 
     // 3. User Agent
@@ -47,7 +37,6 @@ app.get('/api/info', (req, res) => {
 
     const args = ['-J', '--flat-playlist', '--no-warnings', url];
     
-    console.log(`Fetching Info for: ${url}`);
     const process = runYtDlp(args);
     
     let data = '';
@@ -58,10 +47,10 @@ app.get('/api/info', (req, res) => {
 
     process.on('close', (code) => {
         if (code !== 0) {
-            console.error("YT-DLP Error Log:", error);
-            // Send the actual error back to frontend so we can see it
+            console.error("Info Error:", error);
+            // Check for bot error
             if (error.includes("Sign in")) {
-                return res.status(403).json({ success: false, error: 'Server needs fresh cookies. Please update cookies.txt.' });
+                return res.status(403).json({ success: false, error: 'Cookies expired. Please update cookies.txt.' });
             }
             return res.status(500).json({ success: false, error: 'Failed to fetch info.' });
         }
@@ -91,7 +80,7 @@ app.get('/api/info', (req, res) => {
     });
 });
 
-// --- ROUTE 2: DOWNLOAD MP3 ---
+// --- ROUTE 2: DOWNLOAD MP3 (FIXED) ---
 app.get('/api/download', (req, res) => {
     const url = req.query.url;
     const title = req.query.title || 'audio';
@@ -100,17 +89,24 @@ app.get('/api/download', (req, res) => {
     res.header('Content-Disposition', `attachment; filename="${safeTitle}.mp3"`);
     res.header('Content-Type', 'audio/mpeg');
 
+    // --- NEW CONVERSION ARGUMENTS ---
     const args = [
-        '-o', '-', 
-        '-f', 'bestaudio[ext=m4a]/bestaudio/best', 
-        '--no-warnings',
+        '-x',                     // Extract audio
+        '--audio-format', 'mp3',  // Convert to MP3 container
+        '--audio-quality', '128K', // Compress to 128kbps (Standard MP3 size)
+        '-o', '-',                // Output to Stdout (Stream to user)
+        '--no-warnings',          // Silence errors
         url
     ];
 
     const process = runYtDlp(args);
+
+    // Pipe the converted MP3 data to the user
     process.stdout.pipe(res);
+
     process.stderr.on('data', (data) => {
         const msg = data.toString();
+        // Log only critical errors
         if(msg.includes('ERROR')) console.error("Download Error:", msg);
     });
 });
