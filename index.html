@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
-    <!-- Meta Tags and SEO -->
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <title>JKM Edit - Free Online PDF, Image, Web & File Tools</title>
@@ -10,51 +9,58 @@
     <meta name="robots" content="index, follow"/>
     <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/"/>
     <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676"
-     crossorigin="anonymous"></script>
 
-    <!-- Pre-load theme to prevent flash of unstyled content -->
+    <!-- Performance: Preconnect to Font Origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Async Ads -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+
+    <!-- Pre-load theme script (Blocking but tiny, necessary to prevent flash) -->
     <script>
         (function() {
             try {
                 if (localStorage.getItem('jkm-edit-mode') === 'dark') {
                     document.documentElement.classList.add('dark-mode');
                 }
-            } catch (e) { console.error("Error applying initial theme:", e); }
+            } catch (e) {}
         })();
     </script>
 
-    <!-- Fonts and Icons -->
+    <!-- Fonts: Display Swap for FCP -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap' rel='stylesheet'/>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <!-- Icons: Load non-blocking -->
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet' media="print" onload="this.media='all'"/>
+    <noscript><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'></noscript>
 
-    <!-- Main Stylesheet -->
     <style>
         :root {
             font-family: 'Poppins', sans-serif;
             --sidebar-width: 280px;
             --transition-speed: 0.25s;
         }
-
-        /* --- THEME DEFINITIONS --- */
-        html { /* Light Mode Variables */
+        html {
             --primary-color: #0052cc; --bg-color: #f4f5f7; --surface-color: #ffffff;
             --text-color: #172b4d; --text-secondary-color: #6b778c; --border-color: #dfe1e6;
             --primary-faded-color: #e6efff; --shadow-color: rgba(0, 0, 0, 0.1);
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff);
+            --accent-color: #ccc;
         }
-        html.dark-mode { /* Dark Mode Variables */
+        html.dark-mode {
             --primary-color: #4c9aff; --bg-color: #0d1117; --surface-color: #161b22;
             --text-color: #c9d1d9; --text-secondary-color: #8b949e; --border-color: #30363d;
             --primary-faded-color: #1f2d47; --shadow-color: rgba(0, 0, 0, 0.3);
+            --accent-color: #444;
         }
 
-        /* --- BASE & LAYOUT --- */
+        /* Layout */
         body { margin: 0; background-color: var(--bg-color); color: var(--text-color); }
         *, *::before, *::after { box-sizing: border-box; }
         #app-container { display: grid; grid-template-columns: var(--sidebar-width) 1fr; height: 100vh; }
 
-        /* --- SIDEBAR STRUCTURE --- */
+        /* Sidebar */
         #static-sidebar {
             background-color: var(--surface-color); border-right: 1px solid var(--border-color);
             z-index: 1000; transition: transform var(--transition-speed) ease-in-out;
@@ -62,14 +68,10 @@
         }
         .sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
         .logo-container { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; }
-        .site-logo { height: 2.5rem; }
+        .site-logo { height: 2.5rem; width: auto; }
         .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; }
 
         .sidebar-nav-container { flex-grow: 1; overflow-y: auto; padding: 1rem 0; }
-        .sidebar-nav-container::-webkit-scrollbar { width: 6px; }
-        .sidebar-nav-container::-webkit-scrollbar-track { background: transparent; }
-        .sidebar-nav-container::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 6px; }
-
         .sidebar-nav { list-style: none; padding: 0 1rem; margin: 0; }
         .sidebar-nav-item { position: relative; margin-bottom: 0.25rem; }
         .sidebar-nav-link {
@@ -78,38 +80,33 @@
             text-decoration: none; transition: all 0.2s; border-left: 3px solid transparent; cursor: pointer;
         }
         .sidebar-nav-link .link-content { display: flex; align-items: center; gap: 0.85rem; }
-        .sidebar-nav-link i { width: 20px; text-align: center; font-size: 1.1em; } /* Icon Style */
-
+        .sidebar-nav-link i { width: 20px; text-align: center; font-size: 1.1em; }
         .sidebar-nav-link:hover { color: var(--text-color); background-color: var(--primary-faded-color); }
         .sidebar-nav-link.active {
             color: var(--primary-color); background-color: var(--primary-faded-color);
             border-left: 3px solid var(--primary-color); font-weight: 600;
         }
 
-        /* --- SIDEBAR FOOTER --- */
+        /* Sidebar Footer */
         .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; }
         .sidebar-footer-controls { display: flex; justify-content: space-around; align-items: center; }
         .footer-btn {
             background: none; border: none; color: var(--text-secondary-color); font-size: 1.25rem; cursor: pointer; padding: 0.5rem;
-            border-radius: 50%; width: 40px; height: 40px; line-height: 1; transition: all 0.2s;
+            border-radius: 50%; width: 40px; height: 40px; line-height: 1; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
         }
         .footer-btn:hover { color: var(--primary-color); background-color: var(--primary-faded-color); }
         #dark-mode-toggle .fa-sun { display: none; }
         html.dark-mode #dark-mode-toggle .fa-sun { display: inline-block; }
         html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
 
-        /* --- MAIN CONTENT AREA --- */
-        #main-content {
-            position: relative;
-            height: 100vh;
-            overflow-y: auto;
-        }
+        /* Main Content */
+        #main-content { position: relative; height: 100vh; overflow-y: auto; scroll-behavior: smooth; }
         #menu-toggle {
             display: none; position: fixed; top: 15px; left: 15px; z-index: 1001; background: var(--surface-color); border: 1px solid var(--border-color);
             border-radius: 8px; width: 40px; height: 40px; font-size: 1.2rem; box-shadow: 0 4px 10px var(--shadow-color);
         }
 
-        /* --- JAVASCRIPT-CONTROLLED HOVER FLYOUT MENU --- */
+        /* Flyout & Submenus */
         #sidebar-flyout-menu {
             display: none; position: fixed; background-color: var(--surface-color); box-shadow: 0 10px 30px var(--shadow-color);
             border-radius: 8px; min-width: 250px; z-index: 2000; padding: 0.5rem; border: 1px solid var(--border-color);
@@ -120,15 +117,14 @@
             display: block; padding: 0.6rem 1rem; color: var(--text-secondary-color); text-decoration: none; border-radius: 5px; font-size: 0.9rem; transition: all 0.2s;
         }
         #sidebar-flyout-menu a:hover { background-color: var(--primary-faded-color); color: var(--primary-color); }
-
-        /* --- MOBILE-ONLY ACCORDION SUBMENU --- */
+        
         .sidebar-accordion-submenu { display: none; max-height: 450px; overflow-y: auto; border-left: 1px solid var(--border-color); margin: 0.5rem 0 0.5rem 1.7rem; padding-left: 1rem; }
         .sidebar-accordion-submenu a { display: block; padding: 0.5rem 0; color: var(--text-secondary-color); text-decoration: none; font-size: 0.9rem; transition: all 0.2s; }
         .sidebar-accordion-submenu a:hover { color: var(--primary-color); }
         .sidebar-nav-link .chevron { transition: transform var(--transition-speed); }
         .sidebar-nav-item.is-open > .sidebar-nav-link .chevron { transform: rotate(90deg); }
 
-        /* --- MODAL STYLES --- */
+        /* Modals */
         .modal {
             display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
@@ -144,366 +140,331 @@
             font-size: 28px; font-weight: bold; cursor: pointer;
         }
 
-        /* --- HOMEPAGE CONTENT STYLES --- */
-        .content-wrapper{padding:2rem 4rem;max-width:1400px;margin:auto}@media(max-width:768px){.content-wrapper{padding:2rem 1.5rem}}.dashboard-header{text-align:center;margin-bottom:3rem}.dashboard-header h2{font-size:2.5rem;margin-bottom:.5rem}.dashboard-header p{font-size:1.1rem;color:var(--text-secondary-color)}.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem}.tool-card{display:flex;flex-direction:column;justify-content:center;background:var(--surface-color);border-radius:10px;padding:2rem;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,.05);border-bottom:4px solid var(--primary-color);transition:transform .3s,box-shadow .3s;text-decoration:none;color:var(--text-color);min-height:250px;min-width:280px}.tool-card:hover{transform:translateY(-10px);box-shadow:0 10px 25px rgba(0,0,0,.1)}.tool-icon{font-size:3rem;margin-bottom:1rem;background-image:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-fill-color:transparent}.tool-card h3{margin:.5rem 0;font-size:1.5rem}.tool-card p{font-size:.9rem;line-height:1.5;color:var(--text-secondary-color)}.ad-card{border:2px dashed var(--accent-color);background-color:color-mix(in srgb,var(--surface-color) 95%,var(--accent-color) 5%);justify-content:center;align-items:center;display:flex;flex-direction:column;min-height:250px;min-width:280px;padding:1rem;border-radius:10px}html.dark-mode .ad-card{background-color:color-mix(in srgb,var(--surface-color) 90%,var(--accent-color) 10%)}.ad-placeholder-text{color:var(--text-color);opacity:.6;font-style:italic}.services-section{padding:4rem 2rem;background-color:var(--surface-color);margin-top:4rem}.services-container{max-width:1100px;margin:auto;text-align:center}.services-container h2{font-size:2.2rem;margin-bottom:.5rem;color:var(--primary-color)}.services-container > p{font-size:1.1rem;color:var(--text-secondary-color);margin-bottom:3rem;}.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2.5rem;text-align:left}.service-item{display:flex;align-items:flex-start;gap:1rem}.service-item i{font-size:1.5rem;color:var(--primary-color);margin-top:5px;min-width:25px}.service-item h4{margin:0 0 .25rem;font-size:1.1rem}.service-item p{margin:0;font-size:.9rem;color:var(--text-secondary-color)}.image-gallery-section{padding:4rem 2rem;background-color:var(--bg-color);text-align:center}.image-gallery-section h2{font-size:2.2rem;margin-bottom:2rem;color:var(--primary-color)}.gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;}.gallery-item{background-color:var(--surface-color);border-radius:10px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.05);}
+        /* Dashboard Styles */
+        .content-wrapper { padding: 2rem 4rem; max-width: 1400px; margin: auto; }
+        .dashboard-header { text-align: center; margin-bottom: 3rem; }
+        .dashboard-header h2 { font-size: 2.5rem; margin-bottom: .5rem; margin-top: 0; }
+        .dashboard-header p { font-size: 1.1rem; color: var(--text-secondary-color); }
         
-        /* THIS IS THE KEY RULE: It targets both images and videos inside a gallery item. */
-        .gallery-item img, .gallery-item video {
-            width: 100%;
-            height: 150px;
-            object-fit: cover; /* This makes the media fill the box without changing its size or aspect ratio. */
-            display: block;
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .tool-card {
+            display: flex; flex-direction: column; justify-content: center; background: var(--surface-color);
+            border-radius: 10px; padding: 2rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,.05);
+            border-bottom: 4px solid var(--primary-color); transition: transform .3s, box-shadow .3s;
+            text-decoration: none; color: var(--text-color); min-height: 250px;
         }
+        .tool-card:hover { transform: translateY(-10px); box-shadow: 0 10px 25px rgba(0,0,0,.1); }
+        .tool-icon { font-size: 3rem; margin-bottom: 1rem; background-image: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .tool-card h3 { margin: .5rem 0; font-size: 1.5rem; }
+        .tool-card p { font-size: .9rem; line-height: 1.5; color: var(--text-secondary-color); }
+        
+        .ad-card { border: 2px dashed var(--accent-color); background-color: color-mix(in srgb,var(--surface-color) 95%,var(--accent-color) 5%); align-items: center; }
+        html.dark-mode .ad-card { background-color: color-mix(in srgb,var(--surface-color) 90%,var(--accent-color) 10%); }
+        .ad-placeholder-text { color: var(--text-color); opacity: .6; font-style: italic; }
 
-        .gallery-item h4{margin:1rem;font-size:1.2rem;color:var(--text-color)}.functions-section{padding:4rem 2rem;background-color:var(--surface-color)}.functions-container{max-width:1100px;margin:auto}.function-category{margin-bottom:3rem}.function-category h2{text-align:center;font-size:2.2rem;color:var(--primary-color);margin-bottom:2rem}.function-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}.function-item{background-color:var(--bg-color);padding:1.5rem;border-radius:8px;border-left:4px solid var(--primary-color)}.function-item h3{margin-top:0;font-size:1.1rem}.function-item a{text-decoration:none;color:var(--primary-color);font-weight:600}.function-item a:hover{text-decoration:underline}.function-item p{color:var(--text-secondary-color);margin-bottom:0;font-size:.9rem}
+        .services-section { padding: 4rem 2rem; background-color: var(--surface-color); margin-top: 4rem; }
+        .services-container { max-width: 1100px; margin: auto; text-align: center; }
+        .services-container h2 { font-size: 2.2rem; margin-bottom: .5rem; color: var(--primary-color); }
+        .services-container > p { font-size: 1.1rem; color: var(--text-secondary-color); margin-bottom: 3rem; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; text-align: left; }
+        .service-item { display: flex; align-items: flex-start; gap: 1rem; }
+        .service-item i { font-size: 1.5rem; color: var(--primary-color); margin-top: 5px; min-width: 25px; }
+        .service-item h4 { margin: 0 0 .25rem; font-size: 1.1rem; }
+        .service-item p { margin: 0; font-size: .9rem; color: var(--text-secondary-color); }
 
-        /* --- RESPONSIVE BREAKPOINTS --- */
+        .image-gallery-section { padding: 4rem 2rem; background-color: var(--bg-color); text-align: center; }
+        .image-gallery-section h2 { font-size: 2.2rem; margin-bottom: 2rem; color: var(--primary-color); }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .gallery-item { background-color: var(--surface-color); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,.05); }
+        .gallery-item img, .gallery-item video { width: 100%; height: 150px; object-fit: cover; display: block; }
+        .gallery-item h4 { margin: 1rem; font-size: 1.2rem; color: var(--text-color); }
+
+        .functions-section { padding: 4rem 2rem; background-color: var(--surface-color); }
+        .functions-container { max-width: 1100px; margin: auto; }
+        .function-category { margin-bottom: 3rem; }
+        .function-category h2 { text-align: center; font-size: 2.2rem; color: var(--primary-color); margin-bottom: 2rem; }
+        .function-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .function-item { background-color: var(--bg-color); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color); }
+        .function-item h3 { margin-top: 0; font-size: 1.1rem; }
+        .function-item a { text-decoration: none; color: var(--primary-color); font-weight: 600; }
+        .function-item a:hover { text-decoration: underline; }
+        .function-item p { color: var(--text-secondary-color); margin-bottom: 0; font-size: .9rem; }
+
+        /* Responsive */
         @media (max-width: 1024px) {
             #app-container { grid-template-columns: 1fr; }
-            #static-sidebar { 
-                position: fixed; 
-                top: 0; 
-                left: 0; 
-                width: var(--sidebar-width); /* Fixed: ensure width is set */
-                height: 100%; 
-                transform: translateX(-100%); 
-                box-shadow: 5px 0 25px var(--shadow-color); 
-            }
+            #static-sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100%; transform: translateX(-100%); box-shadow: 5px 0 25px var(--shadow-color); }
             #app-container.sidebar-open #static-sidebar { transform: translateX(0); }
             #menu-toggle { display: block; }
             .sidebar-nav-item.is-open > .sidebar-accordion-submenu { display: block; }
-            @media (min-width: 1025px) { .sidebar-nav-link .chevron { display: none; } }
+            .content-wrapper { padding: 2rem 1.5rem; }
         }
-    /* --- MOBILE SLIDER FIX (Final Version) --- */
-@media (max-width: 768px) {
-    .gallery-grid {
-        /* 1. Layout ko Flex mein badlein */
-        display: flex;
-        
-        /* 2. Horizontal scrolling on karein */
-        overflow-x: auto;
-        
-        /* 3. Puraani grid settings ko reset karein */
-        grid-template-columns: none;
-        gap: 0; /* Grid gap ko band karein */
+        @media (min-width: 1025px) { .sidebar-nav-link .chevron { display: none; } }
 
-        /* 4. Scrollbar ko chupa dein (Optional) */
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* IE */
-    }
-
-    .gallery-grid::-webkit-scrollbar {
-        display: none; /* Chrome, Safari */
-    }
-
-    .gallery-item {
-        /* 1. Har item ki width 80% set karein */
-        /* Yeh shrink ya grow nahi hoga */
-        flex: 0 0 80%;
-        
-        /* 2. Items ke beech gap ke liye margin ka istemal karein */
-        margin-right: 1rem; /* 16px gap */
-    }
-
-    /* 3. Aakhri item se margin hata dein */
-    .gallery-item:last-child {
-        margin-right: 0;
-    }
-}
+        @media (max-width: 768px) {
+            .gallery-grid { display: flex; overflow-x: auto; grid-template-columns: none; gap: 0; scrollbar-width: none; -ms-overflow-style: none; }
+            .gallery-grid::-webkit-scrollbar { display: none; }
+            .gallery-item { flex: 0 0 80%; margin-right: 1rem; }
+            .gallery-item:last-child { margin-right: 0; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="app-container">
-        <!-- Sidebar -->
-        <aside id="static-sidebar">
-            <div class="sidebar-header">
-                <a href="index.html" class='logo-container'>
-                    <img src='assets/jkm-edit-logo.png' alt='JKM Edit Logo' class='site-logo'>
-                    <h1>JKM Edit</h1>
-                </a>
+<div id="app-container">
+    <!-- Sidebar -->
+    <aside id="static-sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class='logo-container'>
+                <img src='assets/jkm-edit-logo.png' alt='JKM Edit Logo' class='site-logo' width="150" height="50">
+                <h1>JKM Edit</h1>
+            </a>
+        </div>
+        <div class="sidebar-nav-container">
+            <ul class='sidebar-nav' id="sidebar-nav-list">
+                <!-- Navigation inserted via JS -->
+            </ul>
+        </div>
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-controls">
+                <button id='about-btn' class='footer-btn' aria-label="About"><i class="fa-solid fa-circle-info"></i></button>
+                <button id='contact-btn' class='footer-btn' aria-label="Contact Us"><i class="fa-solid fa-envelope"></i></button>
+                <button id='dark-mode-toggle' class='footer-btn' aria-label="Toggle Dark Mode">
+                    <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
+                </button>
             </div>
-            <div class="sidebar-nav-container">
-                <ul class='sidebar-nav' id="sidebar-nav-list">
-                    <!-- Navigation items are dynamically inserted here -->
-                </ul>
+        </div>
+    </aside>
+
+    <!-- Main content area -->
+    <main id="main-content">
+        <button id="menu-toggle" aria-label="Open Menu"><i class="fa-solid fa-bars"></i></button>
+        
+        <!-- STATIC CONTENT FOR LCP/FCP OPTIMIZATION -->
+        <div class='content-wrapper'>
+            <div class='dashboard-header'>
+                <h2>Your All-in-One Online Toolkit</h2>
+                <p>Select a tool category from the sidebar or explore our functions below.</p>
             </div>
-            <div class="sidebar-footer">
-                <div class="sidebar-footer-controls">
-                    <button id='about-btn' class='footer-btn' aria-label="About"><i class="fa-solid fa-circle-info"></i></button>
-                    <button id='contact-btn' class='footer-btn' aria-label="Contact Us"><i class="fa-solid fa-envelope"></i></button>
-                    <button id='dark-mode-toggle' class='footer-btn' aria-label="Toggle Dark Mode">
-                        <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
-                    </button>
+            <div class='tools-grid'>
+                <a href='tools/pdf-tools.html' class='tool-card'><i class='fa-solid fa-file-pdf tool-icon'></i><h3>PDF Tools</h3><p>Merge, split, compress, and convert your PDF files with ease.</p></a>
+                <a href='tools/image-tools.html' class='tool-card'><i class='fa-solid fa-image tool-icon'></i><h3>Image Tools</h3><p>Crop, resize, compress, and convert images in various formats.</p></a>
+                <a href='https://jkmpdf.github.io/ACCT/' target='_blank' class='tool-card'><i class='fa-solid fa-file-invoice-dollar tool-icon'></i><h3>Accounting Software</h3><p>Calculate loans, taxes, and investments for financial planning.</p></a>
+                
+                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+
+                <a href='tools/file-tools.html' class='tool-card'><i class='fa-solid fa-folder-open tool-icon'></i><h3>File Tools</h3><p>Compress, convert, and manage various file types securely.</p></a>
+                <a href='tools/code-generators.html' class='tool-card'><i class='fa-solid fa-qrcode tool-icon'></i><h3>Code Generators</h3><p>Create QR codes, barcodes, passwords, and other data snippets.</p></a>
+                <a href='tools/time-date.html' class='tool-card'><i class='fa-solid fa-clock tool-icon'></i><h3>Time & Date Tools</h3><p>Convert timezones, use timers, and calculate date durations.</p></a>
+                
+                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+
+                <a href='tools/unit-converters.html' class='tool-card'><i class='fa-solid fa-exchange-alt tool-icon'></i><h3>Unit Convertor</h3><p>Convert units of length, weight, temperature, and more.</p></a>
+                <a href='tools/web-tools.html' class='tool-card'><i class='fa-solid fa-palette tool-icon'></i><h3>Web & UI Tools</h3><p>Tools for developers like minifiers, color pickers, and encoders.</p></a>
+                <a href='tools/utilities.html' class='tool-card'><i class='fa-solid fa-screwdriver-wrench tool-icon'></i><h3>Utilities Tools</h3><p>A collection of helpful utilities for various daily tasks.</p></a>
+            </div>
+        </div>
+
+        <section class='services-section'>
+            <div class='services-container'>
+                <h2>A Full Suite of Powerful Tools</h2>
+                <p>JKM Edit provides everything you need in one place. Fast, secure, and always free.</p>
+                <div class='services-grid'>
+                    <div class='service-item'><i class='fa-solid fa-shield-halved'></i><div><h4>Secure & Private</h4><p>Your files are processed securely and deleted from our servers automatically.</p></div></div>
+                    <div class='service-item'><i class='fa-solid fa-bolt-lightning'></i><div><h4>Blazing Fast</h4><p>Our tools are optimized for speed, so you can get your work done quickly.</p></div></div>
+                    <div class='service-item'><i class='fa-solid fa-cloud'></i><div><h4>Cloud-Based</h4><p>No installation needed. Access all tools directly from your web browser.</p></div></div>
+                    <div class='service-item'><i class='fa-solid fa-mobile-screen-button'></i><div><h4>Works Everywhere</h4><p>JKM Edit is fully responsive and works on desktop, tablet, and mobile devices.</p></div></div>
                 </div>
             </div>
-        </aside>
+        </section>
 
-        <!-- Main content area -->
-        <main id="main-content">
-            <button id="menu-toggle" aria-label="Open Menu"><i class="fa-solid fa-bars"></i></button>
-            <!-- Content will be loaded here by JavaScript -->
-        </main>
-    </div>
-
-    <!-- Flyout menu -->
-    <div id="sidebar-flyout-menu"></div>
-
-    <!-- Modals -->
-    <div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation, conversion, and utility tools. Our mission is to provide fast, free, and secure tools that are accessible to everyone, everywhere.</p></div></div>
-    <div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>Contact Us</h2><p>For any questions or feedback, please email us at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email' style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s;">Mpurohit2414@gmail.com</a></div></div>
-
-    <script>
-    // =================================================================================
-    // JAVASCRIPT LOGIC
-    // =================================================================================
-
-    // DATA SOURCE with icons
-    const navData = [
-        { name: "PDF Tools", icon: "fa-file-pdf", link: "tools/pdf-tools.html", sub: [
-            { name: "Merge PDF", link: "tools/pdf-tools/merge-pdf.html" }, { name: "Split PDF", link: "tools/pdf-tools/split-pdf.html" }, { name: "Compress PDF", link: "tools/pdf-tools/compress-pdf.html" },
-            { name: "PDF to WORD", link: "tools/pdf-tools/pdf-to-word.html" }, { name: "Add Watermark", link: "tools/pdf-tools/Watermark.html" }, { name: "View PDF", link: "tools/pdf-tools/View-PDF.html" },
-            { name: "PDF to JPG/PNG", link: "tools/pdf-tools/pdf-to-image.html" }, { name: "JPG/PNG to PDF", link: "tools/pdf-tools/PNG-to-pdf.html" }, { name: "Dark Mode", link: "tools/pdf-tools/Dark-Mode.html" },
-            { name: "PDF Auto Scroll", link: "tools/pdf-tools/PDF-auto.html" }, { name: "PDF Notepad", link: "tools/pdf-tools/PDF-Notepad.html" }, { name: "Sign PDF", link: "tools/pdf-tools/sign-pdf.html" }, { name: "Add page number", link: "tools/pdf-tools/add-page-number.html" },
-            { name: "Rotate PDF", link: "tools/pdf-tools/rotate-pdf.html" }, { name: "Protect PDF", link: "tools/pdf-tools/protect-pdf.html" }
-        ]},
-        { name: "Image Tools", icon: "fa-image", link: "tools/image-tools.html", sub: [
-            { name: "Image Cropper", link: "tools/image-tools/Img-crop.html" }, { name: "Image Resizer", link: "tools/image-tools/image-resizer.html" }, { name: "JPG/PNG Converter", link: "tools/image-tools/Jpg-Png.html" },
-            { name: "Background Remover", link: "tools/image-tools/BG-remove.html" }, { name: "Grayscale Filter", link: "tools/image-tools/grayscale-filter.html" }, { name: "Rotate & Flip", link: "tools/image-tools/rotate-flip.html" },
-            { name: "Color Picker/Inverter", link: "tools/image-tools/Color-Picker.html" }, { name: "Brightness/Contrast Adjuster", link: "tools/image-tools/brightness-contrast.html" },
-            { name: "Add Text Overlay", link: "tools/image-tools/add-text.html" }, { name: "EXIF Data Viewer", link: "tools/image-tools/exif-viewer.html" }
-        ]},
-        { name: "Accounting", icon: "fa-calculator", link: "https://jkmpdf.github.io/ACCT/", target: "_blank", sub: [
-            { name: "Accounting Software", link: "https://jkmpdf.github.io/ACCT/", target: "_blank" }
-        ]},
-        { name: "File Tools", icon: "fa-folder-open", link: "tools/file-tools.html", sub: [
-            { name: "CSV to JSON Converter", link: "tools/file-tools/csv-to-json.html" }, { name: "JSON Formatter/Minifier", link: "tools/file-tools/json-formatter.html" },
-            { name: "Base64 Encoder/Decoder", link: "tools/file-tools/base64-tool.html" }, { name: "Text Case Converter", link: "tools/file-tools/Text-Case-Converter.html" },
-            { name: "Remove Duplicate Lines", link: "tools/file-tools/remove-duplicates.html" }, { name: "Find/Replace in Text", link: "tools/file-tools/find-replace.html" },
-            { name: "Calculate Text Hash (SHA-256)", link: "tools/file-tools/hash-calculator.html" }, { name: "File Reader/Viewer", link: "tools/file-tools/file-viewer.html" },
-            { name: "Line Sorter", link: "tools/file-tools/line-sorter.html" }, { name: "File Splitter (By Size)", link: "tools/file-tools/file-splitter.html" }
-        ]},
-        { name: "Code Generators", icon: "fa-qrcode", link: "tools/code-generators.html", sub: [
-            { name: "QR Code Generator", link: "tools/code-generators/Qr-Code.html" }, { name: "Barcode Generator", link: "tools/code-generators/barcode-generator.html" }, { name: "Password Generator", link: "tools/code-generators/password-generator.html" },
-            { name: "UUID/GUID Generator", link: "tools/code-generators/uuid-generator.html" }, { name: "Color Palette Generator", link: "tools/code-generators/color-palette.html" }, { name: "Lorem Ipsum Generator", link: "tools/code-generators/lorem-ipsum.html" },
-            { name: "Favicon Preview/Generator", link: "tools/code-generators/favicon-generator.html" }, { name: "CSS Box Shadow Generator", link: "tools/code-generators/box-shadow.html" },
-            { name: "CSS Linear Gradient Generator", link: "tools/code-generators/gradient-generator.html" }, { name: "HTML Entities Converter", link: "tools/code-generators/html-entities.html" }
-        ]},
-        { name: "Time & Date", icon: "fa-clock", link: "tools/time-date.html", sub: [
-            { name: "Timestamp Converter", link: "tools/time-date/timestamp-converter.html" }, { name: "Date Difference Calculator", link: "tools/time-date/date-difference.html" }, { name: "Countdown Timer", link: "tools/time-date/countdown.html" },
-            { name: "Stopwatch", link: "tools/time-date/Stopwatch.html" }, { name: "Time Zone Converter", link: "tools/time-date/timezone.html" }, { name: "Leap Year Checker", link: "tools/time-date/leap-year.html" },
-            { name: "Day of the Week Calculator", link: "tools/time-date/day-of-week.html" }, { name: "Age Calculator", link: "tools/time-date/age-calculator.html" },
-            { name: "Time Adder/Subtracter", link: "tools/time-date/time-adder.html" }, { name: "Calendar Generator", link: "tools/time-date/calendar.html" }
-        ]},
-        { name: "Unit Converters", icon: "fa-ruler-combined", link: "tools/unit-converters.html", sub: [
-            { name: "Length Converter", link: "tools/unit-convertors/length-converter.html" }, { name: "Mass/Weight Converter", link: "tools/unit-convertors/weight-converter.html" }, { name: "Temperature Converter", link: "tools/unit-convertors/temp-converter.html" },
-            { name: "Area Converter", link: "tools/unit-convertors/area-converter.html" }, { name: "Volume Converter", link: "tools/unit-convertors/volume-converter.html" }, { name: "Speed Converter", link: "tools/unit-convertors/speed-converter.html" },
-            { name: "Base Converter", link: "tools/unit-convertors/base-converter.html" }, { name: "Hex-RGB-HSL Converter", link: "tools/unit-convertors/color-code-converter.html" },
-            { name: "Scientific Calculator", link: "tools/unit-convertors/sci-calculator.html" }, { name: "Simple Interest Calculator", link: "tools/unit-convertors/interest-calculator.html" }
-        ]},
-        { name: "Web & UI Tools", icon: "fa-palette", link: "pages/web-tools.html", sub: [
-            { name: "Function 1", link: "pages/web-tool-1.html" }, { name: "Function 2", link: "pages/web-tool-2.html" }, { name: "Function 3", link: "pages/web-tool-3.html" },
-            { name: "Function 4", link: "pages/web-tool-4.html" }, { name: "Function 5", link: "pages/web-tool-5.html" }, { name: "Function 6", link: "pages/web-tool-6.html" },
-            { name: "Function 7", link: "pages/web-tool-7.html" }, { name: "Function 8", link: "pages/web-tool-8.html" }, { name: "Function 9", link: "pages/web-tool-9.html" }
-        ]},
-        { name: "utilities", icon: "fa-screwdriver-wrench", link: "tools/utilities.html", sub: [
-            { name: "Screen Recorder", link: "tools/utilities/screen-recorder.html" }, { name: "EMI Calculator", link: "tools/utilities/EMI-Calculator.html" }, { name: "Chat", link: "tools/utilities/Chat.html" },
-            { name: "Function 4", link: "pages/utility-4.html" }, { name: "Function 5", link: "pages/utility-5.html" }, { name: "Function 6", link: "pages/utility-6.html" },
-            { name: "Function 7", link: "pages/utility-7.html" }, { name: "Function 8", link: "pages/utility-8.html" }, { name: "Function 9", link: "pages/utility-9.html" }
-        ]}
-    ];
-
-    // FUNCTION: Generate homepage markup
-    function generateHomePageMarkup() {
-        const allMainTools = [
-            {icon: 'fa-file-pdf', name: 'PDF Tools', desc: 'Merge, split, compress, and convert your PDF files with ease.', link: 'tools/pdf-tools.html'},
-            {icon: 'fa-image', name: 'Image Tools', desc: 'Crop, resize, compress, and convert images in various formats.', link: 'tools/image-tools.html'},
-            {icon: 'fa-file-invoice-dollar', name: 'Accounting Software', desc: 'Calculate loans, taxes, and investments for financial planning.', link: 'https://jkmpdf.github.io/ACCT/', target: '_blank'},
-            {icon: 'fa-folder-open', name: 'File Tools', desc: 'Compress, convert, and manage various file types securely.', link: 'tools/file-tools.html'},
-            {icon: 'fa-qrcode', name: 'Code Generators', desc: 'Create QR codes, barcodes, passwords, and other data snippets.', link: 'tools/code-generators.html'},
-            {icon: 'fa-clock', name: 'Time & Date Tools', desc: 'Convert timezones, use timers, and calculate date durations.', link: 'tools/time-date.html'},
-            {icon: 'fa-exchange-alt', name: 'Unit Convertor', desc: 'Convert units of length, weight, temperature, and more.', link: 'tools/unit-converters.html'},
-            {icon: 'fa-palette', name: 'Web & UI Tools', desc: 'Tools for developers like minifiers, color pickers, and encoders.', link: 'tools/web-tools.html'},
-            {icon: 'fa-screwdriver-wrench', name: 'Utilities Tools', desc: 'A collection of helpful utilities for various daily tasks.', link: 'tools/utilities.html'}
-        ];
-        const adCardHtml = `<div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>`;
-
-        let toolsGridHtml = "";
-        for (let i = 0; i < allMainTools.length; i++) {
-            const tool = allMainTools[i];
-            const target = tool.target || '_self';
-            toolsGridHtml += `<a href='${tool.link}' target='${target}' class='tool-card'><i class='fa-solid ${tool.icon} tool-icon'></i><h3>${tool.name}</h3><p>${tool.desc}</p></a>`;
-            if ((i + 1) % 3 === 0) {
-                toolsGridHtml += adCardHtml + adCardHtml + adCardHtml;
-            }
-        }
-
-        const functionsHtml = navData.map(category => `
-            <div class='function-category'>
-                <h2>${category.name}</h2>
-                <div class='function-list'>
-                    ${category.sub.map(tool => {
-                        const target = tool.target || '_self';
-                        return `<div class='function-item'>
-                            <h3><a href='${tool.link}' target='${target}'>${tool.name}</a></h3>
-                            <p>A helpful description for the ${tool.name} tool. It's powerful and easy to use.</p>
-                        </div>`;
-                    }).join('')}
+        <section class='image-gallery-section'>
+            <h2>Make your Work Superfast</h2>
+            <div class='gallery-grid'>
+                <div class='gallery-item'><img src='assets/Tool1.jpg' loading="lazy" alt='Photo 1'><h4>Make It Easy</h4></div>
+                <div class='gallery-item'>
+                    <video autoplay loop muted playsinline>
+                        <source src="assets/Vid1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <h4>JKMEDIT.IN</h4>
                 </div>
+                <div class='gallery-item'><img src='assets/Tool2.jpg' loading="lazy" alt='Photo 3'><h4>Using AI</h4></div>
             </div>
-        `).join('');
+        </section>
+    </main>
+</div>
 
-        return `
-            <div class='content-wrapper'>
-                <div class='dashboard-header'><h2>Your All-in-One Online Toolkit</h2><p>Select a tool category from the sidebar or explore our functions below.</p></div>
-                <div class='tools-grid'>${toolsGridHtml}</div>
-            </div>
-            <section class='services-section'>
-                <div class='services-container'>
-                    <h2>A Full Suite of Powerful Tools</h2>
-                    <p>JKM Edit provides everything you need in one place. Fast, secure, and always free.</p>
-                    <div class='services-grid'>
-                        <div class='service-item'><i class='fa-solid fa-shield-halved'></i><div><h4>Secure & Private</h4><p>Your files are processed securely and deleted from our servers automatically.</p></div></div>
-                        <div class='service-item'><i class='fa-solid fa-bolt-lightning'></i><div><h4>Blazing Fast</h4><p>Our tools are optimized for speed, so you can get your work done quickly.</p></div></div>
-                        <div class='service-item'><i class='fa-solid fa-cloud'></i><div><h4>Cloud-Based</h4><p>No installation needed. Access all tools directly from your web browser.</p></div></div>
-                        <div class='service-item'><i class='fa-solid fa-mobile-screen-button'></i><div><h4>Works Everywhere</h4><p>JKM Edit is fully responsive and works on desktop, tablet, and mobile devices.</p></div></div>
-                    </div>
-                </div>
-            </section>
-            <section class='image-gallery-section'>
-                <h2>Make your Work Superfast</h2>
-                <div class='gallery-grid'>
-                    <div class='gallery-item'><img src='assets/Tool1.jpg' alt='Photo 1'><h4>Make It Easy</h4></div>
-                    <div class='gallery-item'>
-                        <video autoplay loop muted playsinline>
-                            <source src="assets/Vid1.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <h4>JKMEDIT.IN</h4>
-                    </div>
-                    <div class='gallery-item'><img src='assets/Tool2.jpg' alt='Photo 3'><h4>Using AI</h4></div>
-                </div>
-            </section>
-            <section class='functions-section'>
-                <div class='functions-container'>${functionsHtml}</div>
-            </section>
+<!-- Flyout menu -->
+<div id="sidebar-flyout-menu"></div>
+
+<!-- Modals -->
+<div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation, conversion, and utility tools. Our mission is to provide fast, free, and secure tools that are accessible to everyone, everywhere.</p></div></div>
+<div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>Contact Us</h2><p>For any questions or feedback, please email us at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email' style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s;">Mpurohit2414@gmail.com</a></div></div>
+
+<script>
+const navData = [
+    { name: "PDF Tools", icon: "fa-file-pdf", link: "tools/pdf-tools.html", sub: [
+        { name: "Merge PDF", link: "tools/pdf-tools/merge-pdf.html" }, { name: "Split PDF", link: "tools/pdf-tools/split-pdf.html" }, { name: "Compress PDF", link: "tools/pdf-tools/compress-pdf.html" },
+        { name: "PDF to WORD", link: "tools/pdf-tools/pdf-to-word.html" }, { name: "Add Watermark", link: "tools/pdf-tools/Watermark.html" }, { name: "View PDF", link: "tools/pdf-tools/View-PDF.html" },
+        { name: "PDF to JPG/PNG", link: "tools/pdf-tools/pdf-to-image.html" }, { name: "JPG/PNG to PDF", link: "tools/pdf-tools/PNG-to-pdf.html" }, { name: "Dark Mode", link: "tools/pdf-tools/Dark-Mode.html" },
+        { name: "PDF Auto Scroll", link: "tools/pdf-tools/PDF-auto.html" }, { name: "PDF Notepad", link: "tools/pdf-tools/PDF-Notepad.html" }, { name: "Sign PDF", link: "tools/pdf-tools/sign-pdf.html" }, { name: "Add page number", link: "tools/pdf-tools/add-page-number.html" },
+        { name: "Rotate PDF", link: "tools/pdf-tools/rotate-pdf.html" }, { name: "Protect PDF", link: "tools/pdf-tools/protect-pdf.html" }
+    ]},
+    { name: "Image Tools", icon: "fa-image", link: "tools/image-tools.html", sub: [
+        { name: "Image Cropper", link: "tools/image-tools/Img-crop.html" }, { name: "Image Resizer", link: "tools/image-tools/image-resizer.html" }, { name: "JPG/PNG Converter", link: "tools/image-tools/Jpg-Png.html" },
+        { name: "Background Remover", link: "tools/image-tools/BG-remove.html" }, { name: "Grayscale Filter", link: "tools/image-tools/grayscale-filter.html" }, { name: "Rotate & Flip", link: "tools/image-tools/rotate-flip.html" },
+        { name: "Color Picker/Inverter", link: "tools/image-tools/Color-Picker.html" }, { name: "Brightness/Contrast Adjuster", link: "tools/image-tools/brightness-contrast.html" },
+        { name: "Add Text Overlay", link: "tools/image-tools/add-text.html" }, { name: "EXIF Data Viewer", link: "tools/image-tools/exif-viewer.html" }
+    ]},
+    { name: "Accounting", icon: "fa-calculator", link: "https://jkmpdf.github.io/ACCT/", target: "_blank", sub: [
+        { name: "Accounting Software", link: "https://jkmpdf.github.io/ACCT/", target: "_blank" }
+    ]},
+    { name: "File Tools", icon: "fa-folder-open", link: "tools/file-tools.html", sub: [
+        { name: "CSV to JSON Converter", link: "tools/file-tools/csv-to-json.html" }, { name: "JSON Formatter/Minifier", link: "tools/file-tools/json-formatter.html" },
+        { name: "Base64 Encoder/Decoder", link: "tools/file-tools/base64-tool.html" }, { name: "Text Case Converter", link: "tools/file-tools/Text-Case-Converter.html" },
+        { name: "Remove Duplicate Lines", link: "tools/file-tools/remove-duplicates.html" }, { name: "Find/Replace in Text", link: "tools/file-tools/find-replace.html" },
+        { name: "Calculate Text Hash (SHA-256)", link: "tools/file-tools/hash-calculator.html" }, { name: "File Reader/Viewer", link: "tools/file-tools/file-viewer.html" },
+        { name: "Line Sorter", link: "tools/file-tools/line-sorter.html" }, { name: "File Splitter (By Size)", link: "tools/file-tools/file-splitter.html" }
+    ]},
+    { name: "Code Generators", icon: "fa-qrcode", link: "tools/code-generators.html", sub: [
+        { name: "QR Code Generator", link: "tools/code-generators/Qr-Code.html" }, { name: "Barcode Generator", link: "tools/code-generators/barcode-generator.html" }, { name: "Password Generator", link: "tools/code-generators/password-generator.html" },
+        { name: "UUID/GUID Generator", link: "tools/code-generators/uuid-generator.html" }, { name: "Color Palette Generator", link: "tools/code-generators/color-palette.html" }, { name: "Lorem Ipsum Generator", link: "tools/code-generators/lorem-ipsum.html" },
+        { name: "Favicon Preview/Generator", link: "tools/code-generators/favicon-generator.html" }, { name: "CSS Box Shadow Generator", link: "tools/code-generators/box-shadow.html" },
+        { name: "CSS Linear Gradient Generator", link: "tools/code-generators/gradient-generator.html" }, { name: "HTML Entities Converter", link: "tools/code-generators/html-entities.html" }
+    ]},
+    { name: "Time & Date", icon: "fa-clock", link: "tools/time-date.html", sub: [
+        { name: "Timestamp Converter", link: "tools/time-date/timestamp-converter.html" }, { name: "Date Difference Calculator", link: "tools/time-date/date-difference.html" }, { name: "Countdown Timer", link: "tools/time-date/countdown.html" },
+        { name: "Stopwatch", link: "tools/time-date/Stopwatch.html" }, { name: "Time Zone Converter", link: "tools/time-date/timezone.html" }, { name: "Leap Year Checker", link: "tools/time-date/leap-year.html" },
+        { name: "Day of the Week Calculator", link: "tools/time-date/day-of-week.html" }, { name: "Age Calculator", link: "tools/time-date/age-calculator.html" },
+        { name: "Time Adder/Subtracter", link: "tools/time-date/time-adder.html" }, { name: "Calendar Generator", link: "tools/time-date/calendar.html" }
+    ]},
+    { name: "Unit Converters", icon: "fa-ruler-combined", link: "tools/unit-converters.html", sub: [
+        { name: "Length Converter", link: "tools/unit-convertors/length-converter.html" }, { name: "Mass/Weight Converter", link: "tools/unit-convertors/weight-converter.html" }, { name: "Temperature Converter", link: "tools/unit-convertors/temp-converter.html" },
+        { name: "Area Converter", link: "tools/unit-convertors/area-converter.html" }, { name: "Volume Converter", link: "tools/unit-convertors/volume-converter.html" }, { name: "Speed Converter", link: "tools/unit-convertors/speed-converter.html" },
+        { name: "Base Converter", link: "tools/unit-convertors/base-converter.html" }, { name: "Hex-RGB-HSL Converter", link: "tools/unit-convertors/color-code-converter.html" },
+        { name: "Scientific Calculator", link: "tools/unit-convertors/sci-calculator.html" }, { name: "Simple Interest Calculator", link: "tools/unit-convertors/interest-calculator.html" }
+    ]},
+    { name: "Web & UI Tools", icon: "fa-palette", link: "pages/web-tools.html", sub: [
+        { name: "Function 1", link: "pages/web-tool-1.html" }, { name: "Function 2", link: "pages/web-tool-2.html" }, { name: "Function 3", link: "pages/web-tool-3.html" },
+        { name: "Function 4", link: "pages/web-tool-4.html" }, { name: "Function 5", link: "pages/web-tool-5.html" }, { name: "Function 6", link: "pages/web-tool-6.html" },
+        { name: "Function 7", link: "pages/web-tool-7.html" }, { name: "Function 8", link: "pages/web-tool-8.html" }, { name: "Function 9", link: "pages/web-tool-9.html" }
+    ]},
+    { name: "utilities", icon: "fa-screwdriver-wrench", link: "tools/utilities.html", sub: [
+        { name: "Screen Recorder", link: "tools/utilities/screen-recorder.html" }, { name: "EMI Calculator", link: "tools/utilities/EMI-Calculator.html" }, { name: "Chat", link: "tools/utilities/Chat.html" },
+        { name: "Function 4", link: "pages/utility-4.html" }, { name: "Function 5", link: "pages/utility-5.html" }, { name: "Function 6", link: "pages/utility-6.html" },
+        { name: "Function 7", link: "pages/utility-7.html" }, { name: "Function 8", link: "pages/utility-8.html" }, { name: "Function 9", link: "pages/utility-9.html" }
+    ]}
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+    const appContainer = document.getElementById('app-container');
+    const menuToggle = document.getElementById('menu-toggle');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const htmlElement = document.documentElement;
+    const navList = document.getElementById('sidebar-nav-list');
+    const flyoutMenu = document.getElementById('sidebar-flyout-menu');
+
+    // Build Sidebar
+    navData.forEach((item, index) => {
+        const listItem = document.createElement('li');
+        listItem.className = 'sidebar-nav-item';
+        listItem.dataset.index = index;
+        const hasSub = item.sub && item.sub.length > 0;
+        const target = item.target || '_self';
+
+        listItem.innerHTML = `
+            <a href="${item.link}" target="${target}" class="sidebar-nav-link">
+                <div class="link-content"><i class="fa-solid ${item.icon}"></i> ${item.name}</div>
+                ${hasSub ? '<i class="fa-solid fa-chevron-right chevron"></i>' : ''}
+            </a>
+            ${hasSub ? `<div class="sidebar-accordion-submenu">${item.sub.map(s => {
+                const subTarget = s.target || '_self';
+                return `<a href="${s.link}" target="${subTarget}">${s.name}</a>`;
+            }).join('')}</div>` : ''}
         `;
-    }
-
-    // MAIN SCRIPT
-    document.addEventListener('DOMContentLoaded', () => {
-
-        const appContainer = document.getElementById('app-container');
-        const mainContent = document.getElementById('main-content');
-        const menuToggle = document.getElementById('menu-toggle');
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const htmlElement = document.documentElement;
-        const navList = document.getElementById('sidebar-nav-list');
-        const flyoutMenu = document.getElementById('sidebar-flyout-menu');
-
-        // Dynamically build sidebar navigation
-        navData.forEach((item, index) => {
-            const listItem = document.createElement('li');
-            listItem.className = 'sidebar-nav-item';
-            listItem.dataset.index = index;
-            const hasSub = item.sub && item.sub.length > 0;
-            const target = item.target || '_self';
-
-            listItem.innerHTML = `
-                <a href="${item.link}" target="${target}" class="sidebar-nav-link">
-                    <div class="link-content"><i class="fa-solid ${item.icon}"></i> ${item.name}</div>
-                    ${hasSub ? '<i class="fa-solid fa-chevron-right chevron"></i>' : ''}
-                </a>
-                ${hasSub ? `<div class="sidebar-accordion-submenu">${item.sub.map(s => {
-                    const subTarget = s.target || '_self';
-                    return `<a href="${s.link}" target="${subTarget}">${s.name}</a>`;
-                }).join('')}</div>` : ''}
-            `;
-            navList.appendChild(listItem);
-        });
-
-        // Load homepage content (FIXED: Using insertAdjacentHTML to preserve existing buttons)
-        if (mainContent.children.length <= 1) { 
-             mainContent.insertAdjacentHTML('beforeend', generateHomePageMarkup());
-        }
-
-        // --- EVENT LISTENERS ---
-        let flyoutTimeout;
-        navList.addEventListener('mouseover', (e) => {
-            if (window.innerWidth <= 1024) return;
-            const navItem = e.target.closest('.sidebar-nav-item');
-            if (navItem) {
-                clearTimeout(flyoutTimeout);
-                const itemIndex = parseInt(navItem.dataset.index, 10);
-                const data = navData[itemIndex];
-                if (data && data.sub) {
-                    flyoutMenu.innerHTML = data.sub.map(s => {
-                         const subTarget = s.target || '_self';
-                         return `<a href="${s.link}" target="${subTarget}">${s.name}</a>`
-                    }).join('');
-                    const rect = navItem.getBoundingClientRect();
-                    flyoutMenu.classList.add('is-visible');
-                    const menuHeight = flyoutMenu.offsetHeight;
-                    const viewportHeight = window.innerHeight;
-                    flyoutMenu.style.bottom = 'auto';
-                    if ((rect.top + menuHeight) > viewportHeight - 10) {
-                        flyoutMenu.style.top = 'auto';
-                        flyoutMenu.style.bottom = '10px';
-                    } else {
-                        flyoutMenu.style.top = `${rect.top}px`;
-                    }
-                    flyoutMenu.style.left = `${rect.right}px`;
-                }
-            }
-        });
-
-        const hideFlyout = () => {
-             if (window.innerWidth <= 1024) return;
-             flyoutTimeout = setTimeout(() => flyoutMenu.classList.remove('is-visible'), 150);
-        };
-
-        navList.addEventListener('mouseout', hideFlyout);
-        flyoutMenu.addEventListener('mouseover', () => clearTimeout(flyoutTimeout));
-        flyoutMenu.addEventListener('mouseout', hideFlyout);
-
-        document.body.addEventListener('click', (e) => {
-            const clickedLink = e.target.closest('a');
-            if (!clickedLink) return;
-
-            const isSidebarLink = clickedLink.closest('#static-sidebar, #sidebar-flyout-menu');
-            if (isSidebarLink) {
-                const parentItem = clickedLink.closest('.sidebar-nav-item');
-                if (window.innerWidth <= 1024 && clickedLink.classList.contains('sidebar-nav-link') && parentItem && parentItem.querySelector('.sidebar-accordion-submenu')) {
-                    e.preventDefault();
-                    parentItem.classList.toggle('is-open');
-                    return;
-                }
-                if (window.innerWidth <= 1024) appContainer.classList.remove('sidebar-open');
-                flyoutMenu.classList.remove('is-visible');
-            }
-        });
-
-        // General App Controls
-        menuToggle.addEventListener('click', () => appContainer.classList.toggle('sidebar-open'));
-
-        const setDarkMode = (isDark) => {
-            htmlElement.classList.toggle('dark-mode', isDark);
-            localStorage.setItem('jkm-edit-mode', isDark ? 'dark' : 'light');
-        };
-
-        if (localStorage.getItem('jkm-edit-mode') === 'dark') setDarkMode(true);
-        darkModeToggle.addEventListener('click', () => setDarkMode(!htmlElement.classList.contains('dark-mode')));
-
-        // Modal Logic
-        const aboutModal = document.getElementById('about-modal');
-        const contactModal = document.getElementById('contact-modal');
-        const openModal = (modal) => modal.style.display = 'flex';
-        const closeModal = (modal) => modal.style.display = 'none';
-        document.getElementById('about-btn').addEventListener('click', () => openModal(aboutModal));
-        document.getElementById('contact-btn').addEventListener('click', () => openModal(contactModal));
-        document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal'))));
-        window.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) closeModal(e.target); });
+        navList.appendChild(listItem);
     });
-    </script>
+
+    // Hover Flyout Logic
+    let flyoutTimeout;
+    navList.addEventListener('mouseover', (e) => {
+        if (window.innerWidth <= 1024) return;
+        const navItem = e.target.closest('.sidebar-nav-item');
+        if (navItem) {
+            clearTimeout(flyoutTimeout);
+            const itemIndex = parseInt(navItem.dataset.index, 10);
+            const data = navData[itemIndex];
+            if (data && data.sub) {
+                flyoutMenu.innerHTML = data.sub.map(s => {
+                     const subTarget = s.target || '_self';
+                     return `<a href="${s.link}" target="${subTarget}">${s.name}</a>`
+                }).join('');
+                const rect = navItem.getBoundingClientRect();
+                flyoutMenu.classList.add('is-visible');
+                const menuHeight = flyoutMenu.offsetHeight;
+                const viewportHeight = window.innerHeight;
+                flyoutMenu.style.bottom = 'auto';
+                if ((rect.top + menuHeight) > viewportHeight - 10) {
+                    flyoutMenu.style.top = 'auto';
+                    flyoutMenu.style.bottom = '10px';
+                } else {
+                    flyoutMenu.style.top = `${rect.top}px`;
+                }
+                flyoutMenu.style.left = `${rect.right}px`;
+            }
+        }
+    });
+
+    const hideFlyout = () => {
+         if (window.innerWidth <= 1024) return;
+         flyoutTimeout = setTimeout(() => flyoutMenu.classList.remove('is-visible'), 150);
+    };
+
+    navList.addEventListener('mouseout', hideFlyout);
+    flyoutMenu.addEventListener('mouseover', () => clearTimeout(flyoutTimeout));
+    flyoutMenu.addEventListener('mouseout', hideFlyout);
+
+    document.body.addEventListener('click', (e) => {
+        const clickedLink = e.target.closest('a');
+        if (!clickedLink) return;
+
+        const isSidebarLink = clickedLink.closest('#static-sidebar, #sidebar-flyout-menu');
+        if (isSidebarLink) {
+            const parentItem = clickedLink.closest('.sidebar-nav-item');
+            if (window.innerWidth <= 1024 && clickedLink.classList.contains('sidebar-nav-link') && parentItem && parentItem.querySelector('.sidebar-accordion-submenu')) {
+                e.preventDefault();
+                parentItem.classList.toggle('is-open');
+                return;
+            }
+            if (window.innerWidth <= 1024) appContainer.classList.remove('sidebar-open');
+            flyoutMenu.classList.remove('is-visible');
+        }
+    });
+
+    menuToggle.addEventListener('click', () => appContainer.classList.toggle('sidebar-open'));
+
+    // Dark Mode
+    const setDarkMode = (isDark) => {
+        htmlElement.classList.toggle('dark-mode', isDark);
+        localStorage.setItem('jkm-edit-mode', isDark ? 'dark' : 'light');
+    };
+    darkModeToggle.addEventListener('click', () => setDarkMode(!htmlElement.classList.contains('dark-mode')));
+
+    // Modals
+    const aboutModal = document.getElementById('about-modal');
+    const contactModal = document.getElementById('contact-modal');
+    const openModal = (modal) => modal.style.display = 'flex';
+    const closeModal = (modal) => modal.style.display = 'none';
+    document.getElementById('about-btn').addEventListener('click', () => openModal(aboutModal));
+    document.getElementById('contact-btn').addEventListener('click', () => openModal(contactModal));
+    document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal'))));
+    window.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) closeModal(e.target); });
+});
+</script>
 </body>
 </html>
