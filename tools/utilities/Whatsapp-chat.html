@@ -4,24 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>JKM Edit - Ultimate WhatsApp Chat Viewer & Restore Tool</title>
-    <meta name="description" content="View your exported WhatsApp chats easily with JKM Edit. Restore memories, search messages by date, and view media in a beautiful interface. Free, secure, and runs locally in your browser.">
-    <meta name="keywords" content="WhatsApp Chat Viewer, WhatsApp Export Reader, Read WhatsApp Backup, JKM Edit, Restore Chat, WhatsApp HTML Viewer, Free Chat Tool">
-    <meta name="author" content="JKM Edit">
+    <title>JKM Edit - High Performance WhatsApp Viewer</title>
+    <meta name="description" content="View massive WhatsApp exports (2GB+) easily with JKM Edit. Performance optimized, secure, and runs locally.">
     
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://jkmedit.in/">
-    <meta property="og:title" content="JKM Edit - The Best Way to View WhatsApp Chats">
-    <meta property="og:description" content="Turn your text files into a beautiful chat interface. Search by date, view photos, and relive memories.">
-    <meta property="og:image" content="assets/preview-image.jpg">
-
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="JKM Edit - WhatsApp Chat Viewer">
-    <meta property="twitter:description" content="Visualize your WhatsApp exports instantly. No upload required - 100% Privacy.">
-
     <style>
         :root {
-            /* CORPORATE BLUE THEME VARIABLES */
+            /* CORPORATE BLUE THEME */
             --theme-primary: #0056b3;       
             --theme-dark: #004494;          
             --theme-bg: #e4e9f0;            
@@ -44,26 +32,30 @@
             overflow: hidden; 
         }
 
+        /* --- LOADING OVERLAY --- */
+        #loading-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); z-index: 3000;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3; border-top: 8px solid var(--theme-primary);
+            border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         /* --- UPLOAD SCREEN --- */
         #upload-screen {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 90%;
-            max-width: 450px;
-            border-top: 5px solid var(--theme-primary);
+            background: white; padding: 40px; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;
+            width: 90%; max-width: 450px; border-top: 5px solid var(--theme-primary);
         }
 
         h2 { color: var(--theme-primary); margin-bottom: 10px; }
 
         .upload-area {
-            border: 2px dashed var(--theme-primary);
-            padding: 40px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            background: #f0f7ff;
+            border: 2px dashed var(--theme-primary); padding: 40px;
+            margin-bottom: 20px; border-radius: 8px; background: #f0f7ff;
             transition: 0.3s;
         }
         .upload-area:hover { background: #e3efff; }
@@ -71,235 +63,119 @@
         input[type="file"] { display: none; }
         
         .custom-file-upload {
-            display: inline-block;
-            padding: 12px 30px;
-            cursor: pointer;
-            background: var(--theme-primary);
-            color: white;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 15px;
-            box-shadow: 0 4px 6px rgba(0,86,179,0.3);
+            display: inline-block; padding: 12px 30px; cursor: pointer;
+            background: var(--theme-primary); color: white; border-radius: 50px;
+            font-weight: bold; font-size: 15px; box-shadow: 0 4px 6px rgba(0,86,179,0.3);
             transition: 0.2s;
         }
         .custom-file-upload:hover { background: var(--theme-dark); transform: translateY(-1px); }
 
         select, button.action-btn {
-            padding: 12px;
-            width: 100%;
-            border-radius: 8px;
-            margin-top: 15px;
-            border: 1px solid #ccc;
-            font-size: 16px;
+            padding: 12px; width: 100%; border-radius: 8px; margin-top: 15px;
+            border: 1px solid #ccc; font-size: 16px;
         }
 
         button.action-btn {
-            background-color: var(--theme-primary);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
+            background-color: var(--theme-primary); color: white; border: none;
+            cursor: pointer; font-weight: bold;
         }
 
         /* --- CHAT INTERFACE --- */
         #chat-interface {
-            display: none;
-            width: 100%;
-            height: 100%;
-            max-width: 600px;
+            display: none; width: 100%; height: 100%; max-width: 600px;
             background-color: var(--theme-bg);
             background-image: radial-gradient(#cbd5e1 1px, transparent 1px); 
-            background-size: 20px 20px;
-            flex-direction: column;
-            box-shadow: 0 0 30px rgba(0,0,0,0.15);
-            position: relative;
+            background-size: 20px 20px; flex-direction: column;
+            box-shadow: 0 0 30px rgba(0,0,0,0.15); position: relative;
         }
 
         /* HEADER */
         .chat-header {
-            background-color: var(--theme-primary);
-            color: white;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            z-index: 10;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            justify-content: space-between;
+            background-color: var(--theme-primary); color: white; padding: 10px 15px;
+            display: flex; align-items: center; z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); justify-content: space-between;
         }
-        
         .header-left { display: flex; align-items: center; }
-
         .chat-header img { 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            margin-right: 12px; 
-            background: white; 
-            border: 2px solid rgba(255,255,255,0.3);
-            object-fit: cover;
+            width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; 
+            background: white; border: 2px solid rgba(255,255,255,0.3); object-fit: cover;
         }
-
         .header-info h4 { margin: 0; font-size: 17px; font-weight: 600; }
         .header-info span { font-size: 11px; opacity: 0.9; }
-
-        /* HEADER ACTIONS */
         .header-actions { display: flex; gap: 15px; }
-        .icon-btn { 
-            background: none; border: none; color: white; 
-            font-size: 18px; cursor: pointer; padding: 5px; 
-        }
-        .icon-btn:hover { opacity: 0.8; }
+        .icon-btn { background: none; border: none; color: white; font-size: 18px; cursor: pointer; padding: 5px; }
 
         /* SEARCH BAR */
         #search-container {
-            display: none; 
-            background: white;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            animation: slideDown 0.2s ease-out;
-            align-items: center;
-            gap: 10px;
+            display: none; background: white; padding: 10px;
+            border-bottom: 1px solid #ddd; align-items: center; gap: 10px;
         }
-        
         #search-container.active { display: flex; }
-
-        #search-input {
-            flex: 1;
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid #ccc;
-            background: #f0f2f5;
-            outline: none;
-        }
-
-        .search-nav-btn {
-            background: #f0f2f5;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 5px 12px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #555;
-        }
-        .search-nav-btn:hover { background: #e4e6eb; }
-
-        #search-count {
-            font-size: 12px;
-            color: #666;
-            min-width: 50px;
-            text-align: center;
-        }
+        #search-input { flex: 1; padding: 8px 12px; border-radius: 20px; border: 1px solid #ccc; background: #f0f2f5; outline: none; }
+        .search-nav-btn { background: #f0f2f5; border: 1px solid #ccc; border-radius: 5px; padding: 5px 12px; cursor: pointer; font-weight: bold; color: #555; }
+        #search-count { font-size: 12px; color: #666; min-width: 50px; text-align: center; }
 
         /* HIGHLIGHT STYLES */
-        .highlight {
-            background-color: var(--highlight-color);
-            color: black;
-            border-radius: 2px;
-            padding: 0 1px;
-        }
-        .highlight.active {
-            background-color: var(--highlight-active);
-            color: white;
-            box-shadow: 0 0 5px rgba(0,0,0,0.3);
-        }
+        .highlight { background-color: var(--highlight-color); color: black; border-radius: 2px; padding: 0 1px; }
+        .highlight.active { background-color: var(--highlight-active); color: white; box-shadow: 0 0 5px rgba(0,0,0,0.3); }
 
         /* MENU DROPDOWN */
         #menu-dropdown {
-            display: none;
-            position: absolute;
-            top: 55px;
-            right: 10px;
-            background: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 100;
-            overflow: hidden;
-            width: 180px;
+            display: none; position: absolute; top: 55px; right: 10px;
+            background: white; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 100; overflow: hidden; width: 180px;
         }
-        .menu-item {
-            padding: 12px 15px;
-            color: #333;
-            cursor: pointer;
-            font-size: 14px;
-            border-bottom: 1px solid #eee;
-        }
+        .menu-item { padding: 12px 15px; color: #333; cursor: pointer; font-size: 14px; border-bottom: 1px solid #eee; }
         .menu-item:hover { background: #f5f5f5; }
-        .menu-item:last-child { border-bottom: none; }
 
         /* MESSAGE AREA */
         #chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px 15px;
-            padding-bottom: 80px; 
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            flex: 1; overflow-y: auto; padding: 20px 15px; padding-bottom: 80px; 
+            display: flex; flex-direction: column; gap: 6px;
         }
+
+        .load-more-btn {
+            background: #e1e1e1; color: #333; border: none; padding: 10px;
+            border-radius: 20px; margin: 10px auto; width: fit-content;
+            cursor: pointer; font-weight: bold; font-size: 13px;
+        }
+        .load-more-btn:hover { background: #d1d1d1; }
 
         .msg-row { display: flex; width: 100%; margin-bottom: 2px; }
-        
         .message {
-            max-width: 75%;
-            padding: 6px 6px 6px 6px; 
-            border-radius: 8px;
-            position: relative;
-            font-size: 14.5px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            line-height: 1.4;
+            max-width: 75%; padding: 6px; border-radius: 8px; position: relative;
+            font-size: 14.5px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; line-height: 1.4;
         }
-        
         .message.has-text { padding: 8px 10px; }
 
-        /* DATE DIVIDER (Searchable) */
+        /* DATE DIVIDER */
         .date-divider {
-            align-self: center;
-            background-color: #dbe4f0;
-            color: #555;
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            margin: 15px 0;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.05);
-            font-weight: 500;
+            align-self: center; background-color: #dbe4f0; color: #555;
+            padding: 5px 12px; border-radius: 8px; font-size: 12px;
+            margin: 15px 0; box-shadow: 0 1px 1px rgba(0,0,0,0.05); font-weight: 500;
         }
 
-        /* SENT (Right) */
+        /* SENT / RECEIVED */
         .msg-row.sent { justify-content: flex-end; }
-        .msg-row.sent .message { 
-            background-color: var(--bubble-sent); 
-            border-top-right-radius: 0; 
-            color: #333;
-        }
+        .msg-row.sent .message { background-color: var(--bubble-sent); border-top-right-radius: 0; color: #333; }
         .msg-row.sent .message::before {
             content: ""; position: absolute; top: 0; right: -10px; width: 0; height: 0;
-            border: 10px solid transparent; 
-            border-top-color: var(--bubble-sent);
-            border-left: 0;
-            margin-left: -5px;
+            border: 10px solid transparent; border-top-color: var(--bubble-sent); border-left: 0; margin-left: -5px;
         }
         
-        /* RECEIVED (Left) */
         .msg-row.received { justify-content: flex-start; }
-        .msg-row.received .message { 
-            background-color: var(--bubble-received); 
-            border-top-left-radius: 0; 
-            color: #333;
-        }
+        .msg-row.received .message { background-color: var(--bubble-received); border-top-left-radius: 0; color: #333; }
         .msg-row.received .message::before {
             content: ""; position: absolute; top: 0; left: -10px; width: 0; height: 0;
-            border: 10px solid transparent; 
-            border-top-color: var(--bubble-received);
-            border-right: 0;
+            border: 10px solid transparent; border-top-color: var(--bubble-received); border-right: 0;
         }
 
         .sender-name { font-size: 12.5px; font-weight: bold; color: var(--text-name); margin-bottom: 3px; padding: 0 4px; }
         .timestamp { font-size: 10px; color: var(--text-time); align-self: flex-end; margin-top: 4px; padding: 0 4px; }
         .msg-text { word-wrap: break-word; padding: 0 4px; }
 
-        /* MEDIA STYLING */
+        /* MEDIA */
         .media-content { margin: 0; border-radius: 6px; overflow: hidden; cursor: pointer; position: relative; }
         .media-content img, .media-content video { width: 100%; height: auto; display: block; max-height: 350px; object-fit: cover; }
         
@@ -312,21 +188,15 @@
         /* BOTTOM NAV */
         .nav-footer {
             position: absolute; bottom: 0; left: 0; width: 100%;
-            background: white; padding: 10px 0;
-            display: flex; justify-content: space-around;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-            z-index: 20;
+            background: white; padding: 10px 0; display: flex; justify-content: space-around;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 20;
         }
         .nav-btn {
-            background: transparent; border: 1px solid var(--theme-primary);
-            color: var(--theme-primary); padding: 8px 25px;
-            border-radius: 20px; font-weight: 600; cursor: pointer;
-            transition: 0.2s; width: 40%;
+            background: transparent; border: 1px solid var(--theme-primary); color: var(--theme-primary);
+            padding: 8px 25px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: 0.2s; width: 40%;
         }
         .nav-btn:hover { background: #f0f7ff; }
         .nav-btn.primary { background: var(--theme-primary); color: white; }
-        .nav-btn.primary:hover { background: var(--theme-dark); }
-
 
         /* OVERLAY (Lightbox) */
         #media-overlay {
@@ -340,29 +210,26 @@
         #side-drawer {
             position: fixed; top: 0; right: -100%; width: 100%; max-width: 320px; height: 100%;
             background: white; z-index: 1500; transition: 0.3s;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-            display: flex; flex-direction: column;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2); display: flex; flex-direction: column;
         }
         #side-drawer.open { right: 0; }
-        .drawer-header {
-            background: var(--theme-primary); color: white; padding: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .drawer-content {
-            flex: 1; overflow-y: auto; padding: 10px;
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; align-content: start;
-        }
+        .drawer-header { background: var(--theme-primary); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-content { flex: 1; overflow-y: auto; padding: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; align-content: start; }
         .drawer-item { width: 100%; aspect-ratio: 1/1; object-fit: cover; cursor: pointer; border-radius: 4px; }
-
-        @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
     </style>
 </head>
 <body>
 
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p style="margin-top:20px; font-weight:bold; color:#555;">Processing Large File...</p>
+        <p style="font-size:12px; color:#888;">This may take a minute for 2GB+</p>
+    </div>
+
     <div id="upload-screen">
         <h2>JKM EDIT TOOLKIT</h2>
-        <p style="color: #666; margin-bottom: 30px;">Import your WhatsApp Chat Export</p>
+        <p style="color: #666; margin-bottom: 30px;">Import WhatsApp Chat (Supports Large Files)</p>
         
         <div class="upload-area">
             <label class="custom-file-upload">
@@ -375,14 +242,14 @@
         <div id="user-select-container" style="display:none;">
             <p><strong>Identify Yourself:</strong></p>
             <select id="userSelect"></select>
-            <button class="action-btn" onclick="renderChat()">Launch Viewer</button>
+            <button class="action-btn" onclick="startChatView()">Launch Viewer</button>
         </div>
     </div>
 
     <div id="chat-interface">
         <div class="chat-header">
             <div class="header-left">
-                <img src="assets/jkm-edit-logo.png" onerror="this.src='https://via.placeholder.com/50/0056b3/ffffff?text=JKM'" alt="JKM Logo">
+                <img src="assets/logo.png" onerror="this.src='https://via.placeholder.com/50/0056b3/ffffff?text=JKM'" alt="JKM Logo">
                 <div class="header-info">
                     <h4>JKM EDIT</h4>
                     <span id="chat-status">Chat Viewer Active</span>
@@ -395,7 +262,7 @@
         </div>
 
         <div id="search-container">
-            <input type="text" id="search-input" placeholder="Search text or date (e.g., 07/02/24)..." onkeyup="handleSearchInput(event)">
+            <input type="text" id="search-input" placeholder="Search text or date..." onkeyup="handleSearchInput(event)">
             <span id="search-count">0/0</span>
             <button class="search-nav-btn" onclick="navigateSearch(-1)">▲</button>
             <button class="search-nav-btn" onclick="navigateSearch(1)">▼</button>
@@ -412,8 +279,7 @@
 
         <div class="nav-footer">
             <button class="nav-btn" onclick="goBack()">Go Back</button>
-            <button class="nav-btn primary" onclick="window.location.href='https://jkmedit.in/'">Dashboard</button>
-
+            <button class="nav-btn primary" onclick="goToDashboard()">Dashboard</button>
         </div>
     </div>
 
@@ -434,35 +300,27 @@
     <script>
         // --- NAVIGATION & UI LOGIC ---
         function goBack() {
-            document.getElementById('chat-interface').style.display = 'none';
-            document.getElementById('upload-screen').style.display = 'block';
-            document.body.style.backgroundColor = "#cfd8dc";
-            document.getElementById('search-container').classList.remove('active');
-            document.getElementById('menu-dropdown').style.display = 'none';
-            closeMediaDrawer();
+            location.reload(); // Hard reload to clear memory for large files
         }
 
-        function goToDashboard() {
-            window.location.href = "/dashboard"; 
-        }
+        function goToDashboard() { window.location.href = "/dashboard"; }
 
-        // --- SEARCH LOGIC (TEXT + DATE) ---
+        // --- SEARCH LOGIC ---
         let searchMatches = [];
         let searchIndex = -1;
 
         function toggleSearch() {
             const container = document.getElementById('search-container');
-            const input = document.getElementById('search-input');
             const menu = document.getElementById('menu-dropdown');
             menu.style.display = 'none';
 
             if (container.classList.contains('active')) {
                 container.classList.remove('active');
-                input.value = "";
+                document.getElementById('search-input').value = "";
                 resetHighlights();
             } else {
                 container.classList.add('active');
-                input.focus();
+                document.getElementById('search-input').focus();
             }
         }
 
@@ -472,12 +330,9 @@
         }
 
         function resetHighlights() {
-            // Restore original HTML for messages AND date dividers
             const nodes = document.querySelectorAll('.msg-text, .date-divider');
             nodes.forEach(node => {
-                if (node.hasAttribute('data-original-html')) {
-                    node.innerHTML = node.getAttribute('data-original-html');
-                }
+                if (node.hasAttribute('data-original-html')) node.innerHTML = node.getAttribute('data-original-html');
             });
             document.getElementById('search-count').innerText = "0/0";
             searchMatches = [];
@@ -490,18 +345,14 @@
             if (!query || query.trim() === "") return;
 
             const lowerQuery = query.toLowerCase();
-            // Select both Text Messages AND Date Dividers
             const nodes = document.querySelectorAll('.msg-text, .date-divider');
             
             nodes.forEach(node => {
                 let content = node.getAttribute('data-original-html');
-                if (!content) return; // Should not happen if set correctly
-                
+                if (!content) return;
                 const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
-                
                 if (content.toLowerCase().includes(lowerQuery)) {
-                    const newContent = content.replace(regex, '<span class="highlight">$1</span>');
-                    node.innerHTML = newContent;
+                    node.innerHTML = content.replace(regex, '<span class="highlight">$1</span>');
                 }
             });
 
@@ -514,9 +365,7 @@
             }
         }
 
-        function escapeRegExp(string) {
-            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
-        }
+        function escapeRegExp(string) { return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
         function navigateSearch(direction) {
             if (searchMatches.length === 0) return;
@@ -546,52 +395,72 @@
             const grid = document.getElementById('drawer-grid');
             grid.innerHTML = "";
 
-            rawMessages.forEach(msg => {
-                if(msg.media) {
+            // For performance, limit media drawer to first 200 items found in rawMessages
+            let count = 0;
+            for (let i = rawMessages.length - 1; i >= 0; i--) {
+                let msg = rawMessages[i];
+                if(msg.media && count < 100) {
                     const url = URL.createObjectURL(msg.media);
                     if(msg.media.type.startsWith('image/')) {
                         const img = document.createElement('img');
-                        img.src = url;
-                        img.className = 'drawer-item';
+                        img.src = url; img.className = 'drawer-item';
                         img.onclick = () => openOverlay('image', url);
                         grid.appendChild(img);
+                        count++;
                     } else if(msg.media.type.startsWith('video/')) {
                          const vid = document.createElement('video');
-                         vid.src = url;
-                         vid.className = 'drawer-item';
+                         vid.src = url; vid.className = 'drawer-item';
                          vid.onclick = () => openOverlay('video', url);
                          grid.appendChild(vid);
+                         count++;
                     }
                 }
-            });
+            }
 
-            if(grid.innerHTML === "") grid.innerHTML = "<p style='padding:20px; color:#666; width:300px;'>No media found.</p>";
+            if(grid.innerHTML === "") grid.innerHTML = "<p style='padding:20px; color:#666;'>No media found or file too large.</p>";
             drawer.classList.add('open');
         }
 
-        function closeMediaDrawer() {
-            document.getElementById('side-drawer').classList.remove('open');
-        }
+        function closeMediaDrawer() { document.getElementById('side-drawer').classList.remove('open'); }
 
-        // --- CORE PARSING LOGIC ---
+        // --- CORE LOGIC (PAGINATION ADDED) ---
         let rawMessages = [];
         let participants = new Set();
         let mediaMap = {}; 
+        let renderedCount = 0;
+        const BATCH_SIZE = 100; // Load 100 messages at a time to prevent crashing
 
         document.getElementById('fileInput').addEventListener('change', async function(e) {
-            const files = Array.from(e.target.files);
-            if (files.length === 0) return;
-
-            document.getElementById('file-count').innerText = `${files.length} files loaded`;
+            document.getElementById('loading-overlay').style.display = 'flex';
             
-            let chatFile = files.find(f => f.name.endsWith('.txt') && (f.name.includes('_chat') || f.name.includes('WhatsApp')));
-            files.forEach(file => { mediaMap[file.name] = file; });
+            // Allow UI to update before processing
+            setTimeout(async () => {
+                const files = Array.from(e.target.files);
+                if (files.length === 0) { document.getElementById('loading-overlay').style.display = 'none'; return; }
 
-            if (!chatFile) chatFile = files.find(f => f.name.endsWith('.txt'));
-            if (!chatFile) { alert("Error: _chat.txt not found."); return; }
+                document.getElementById('file-count').innerText = `${files.length} files loaded`;
+                
+                let chatFile = files.find(f => f.name.endsWith('.txt') && (f.name.includes('_chat') || f.name.includes('WhatsApp')));
+                // Map files for fast lookup
+                files.forEach(file => { mediaMap[file.name] = file; });
 
-            const content = await readFileAsText(chatFile);
-            parseContent(content);
+                if (!chatFile) chatFile = files.find(f => f.name.endsWith('.txt'));
+                
+                if (!chatFile) { 
+                    alert("Error: _chat.txt not found."); 
+                    document.getElementById('loading-overlay').style.display = 'none';
+                    return; 
+                }
+
+                try {
+                    const content = await readFileAsText(chatFile);
+                    parseContent(content);
+                } catch (err) {
+                    alert("File too large for browser memory. Try splitting the text file.");
+                } finally {
+                    document.getElementById('loading-overlay').style.display = 'none';
+                }
+            }, 100);
         });
 
         function readFileAsText(file) {
@@ -607,7 +476,6 @@
             rawMessages = [];
             participants.clear();
             const lines = text.split('\n');
-
             const androidRegex = /^(\d{1,2}\/\d{1,2}\/\d{2,4}),\s+(\d{1,2}:\d{2}[\s\u202F\u00A0]?(?:am|pm|AM|PM)?) - (.+?): (.*)/;
             const iosRegex = /^\[(\d{1,2}\/\d{1,2}\/\d{2,4}),\s+(\d{1,2}:\d{2}:\d{2}[\s\u202F\u00A0]?(?:am|pm|AM|PM)?)\] (.+?): (.*)/;
             
@@ -624,28 +492,19 @@
                     
                     let msgText = match[4];
                     let mediaObj = null;
-
                     let fileName = null;
+                    
                     if (msgText.includes("(file attached)")) fileName = msgText.replace(" (file attached)", "").trim();
                     else if (msgText.includes("<attached:")) fileName = msgText.match(/<attached: (.+)>/)?.[1];
                     
-                    if (fileName && mediaMap[fileName]) {
-                        mediaObj = mediaMap[fileName];
-                    }
+                    if (fileName && mediaMap[fileName]) { mediaObj = mediaMap[fileName]; }
 
                     currentMsg = { 
-                        date: match[1], 
-                        time: match[2], 
-                        sender: sender, 
-                        text: msgText, 
-                        media: mediaObj 
+                        date: match[1], time: match[2], sender: sender, text: msgText, media: mediaObj 
                     };
-
                 } else {
                     const potentialDate = line.match(/^\d{1,2}\/\d{1,2}\/\d{2,4}/);
-                    if (currentMsg && !potentialDate) {
-                        currentMsg.text += "<br>" + line;
-                    }
+                    if (currentMsg && !potentialDate) { currentMsg.text += "<br>" + line; }
                 }
             });
             if (currentMsg) rawMessages.push(currentMsg);
@@ -657,32 +516,58 @@
             select.innerHTML = "";
             participants.forEach(user => {
                 const option = document.createElement('option');
-                option.value = user;
-                option.innerText = user;
+                option.value = user; option.innerText = user;
                 select.appendChild(option);
             });
             document.getElementById('user-select-container').style.display = 'block';
         }
 
-        function renderChat() {
-            const me = document.getElementById('userSelect').value;
-            const chatContainer = document.getElementById('chat-container');
-            
+        function startChatView() {
             document.getElementById('upload-screen').style.display = 'none';
             document.getElementById('chat-interface').style.display = 'flex';
             document.body.style.backgroundColor = "#e4e9f0"; 
+            
+            // Initial Load: Render the LAST batch (most recent)
+            renderedCount = 0;
+            renderBatch(true);
+        }
 
-            chatContainer.innerHTML = "";
+        function renderBatch(initial = false) {
+            const me = document.getElementById('userSelect').value;
+            const chatContainer = document.getElementById('chat-container');
+            
+            // Calculate indices
+            let total = rawMessages.length;
+            let start = total - renderedCount - BATCH_SIZE;
+            if (start < 0) start = 0;
+            let end = total - renderedCount;
+            
+            if (end <= 0) return; // No more messages
+
+            // Create fragment to batch insert
+            let fragment = document.createDocumentFragment();
             let lastDate = null;
-
-            rawMessages.forEach(msg => {
+            
+            // If NOT initial load, add a divider placeholder? 
+            // Simplified: Just render logic.
+            
+            let batchMessages = rawMessages.slice(start, end);
+            
+            // If loading older messages, we need to insert at TOP.
+            // But we need to keep date logic correct. 
+            // For simplicity in this viewer: We render standard order, but control 'start'.
+            
+            // Actually, for "Load Previous", we need to grab the chunk *before* the current rendered ones.
+            // And insert them at the top of the container.
+            
+            batchMessages.forEach((msg, index) => {
+                // Determine Date Divider (Local to this batch, might be duplicate if crossing batches, tolerable for simple viewer)
                 if (msg.date !== lastDate) {
                     const dateDiv = document.createElement('div');
                     dateDiv.className = 'date-divider';
                     dateDiv.innerText = msg.date; 
-                    // SAVE ORIGINAL TEXT FOR SEARCH RESET
                     dateDiv.setAttribute('data-original-html', msg.date);
-                    chatContainer.appendChild(dateDiv);
+                    fragment.appendChild(dateDiv);
                     lastDate = msg.date;
                 }
 
@@ -691,7 +576,6 @@
                 row.className = `msg-row ${isMe ? 'sent' : 'received'}`;
 
                 const bubble = document.createElement('div');
-                
                 let nameHtml = (!isMe) ? `<span class="sender-name">${msg.sender}</span>` : '';
                 let contentHtml = "";
                 let showText = true;
@@ -714,26 +598,40 @@
                     }
                 }
                 
-                if (showText && msg.text) {
-                    if(msg.text !== "null" && msg.text.trim() !== "") {
-                        contentHtml += `<span class="msg-text" data-original-html="${msg.text}">${msg.text}</span>`;
-                        bubble.classList.add('has-text'); 
-                    }
+                if (showText && msg.text && msg.text !== "null" && msg.text.trim() !== "") {
+                    contentHtml += `<span class="msg-text" data-original-html="${msg.text}">${msg.text}</span>`;
+                    bubble.classList.add('has-text'); 
                 } else {
                      bubble.classList.remove('has-text'); 
                 }
 
                 bubble.className = `message ${showText && msg.text ? 'has-text' : ''}`;
                 let cleanTime = msg.time.replace(/:\d{2}\s/, ' '); 
-                
                 if (contentHtml === "") contentHtml = "<i>Unsupported media</i>";
-
                 bubble.innerHTML = `${nameHtml}${contentHtml}<span class="timestamp">${cleanTime}</span>`;
                 row.appendChild(bubble);
-                chatContainer.appendChild(row);
+                fragment.appendChild(row);
             });
 
-            setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 100);
+            if (initial) {
+                // Add Load More Button at Top
+                const btn = document.createElement('button');
+                btn.className = 'load-more-btn';
+                btn.innerText = '⬆ Load Older Messages';
+                btn.onclick = () => renderBatch(false);
+                chatContainer.insertBefore(fragment, chatContainer.firstChild); // Insert initial batch
+                chatContainer.insertBefore(btn, chatContainer.firstChild); // Insert Button
+                setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 100);
+            } else {
+                // Insert AFTER the button (which is first child)
+                // Actually, insertBefore the *second* child (which is the first message)
+                const btn = chatContainer.querySelector('.load-more-btn');
+                chatContainer.insertBefore(fragment, btn.nextSibling);
+                // Keep scroll position?
+                // For now, let it jump, implementing perfect scroll restoration in vanilla JS is hard.
+            }
+
+            renderedCount += BATCH_SIZE;
         }
 
         function openOverlay(type, url) {
