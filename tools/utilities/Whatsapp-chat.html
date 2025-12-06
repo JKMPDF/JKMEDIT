@@ -3,17 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JKM Edit - Chat Viewer</title>
+    
+    <title>JKM Edit - Ultimate WhatsApp Chat Viewer & Restore Tool</title>
+    <meta name="description" content="View your exported WhatsApp chats easily with JKM Edit. Restore memories, search messages by date, and view media in a beautiful interface. Free, secure, and runs locally in your browser.">
+    <meta name="keywords" content="WhatsApp Chat Viewer, WhatsApp Export Reader, Read WhatsApp Backup, JKM Edit, Restore Chat, WhatsApp HTML Viewer, Free Chat Tool">
+    <meta name="author" content="JKM Edit">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jkmedit.in/">
+    <meta property="og:title" content="JKM Edit - The Best Way to View WhatsApp Chats">
+    <meta property="og:description" content="Turn your text files into a beautiful chat interface. Search by date, view photos, and relive memories.">
+    <meta property="og:image" content="assets/preview-image.jpg">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="JKM Edit - WhatsApp Chat Viewer">
+    <meta property="twitter:description" content="Visualize your WhatsApp exports instantly. No upload required - 100% Privacy.">
+
     <style>
         :root {
             /* CORPORATE BLUE THEME VARIABLES */
-            --theme-primary: #0056b3;       /* Main Corporate Blue */
-            --theme-dark: #004494;          /* Darker Blue for hover */
-            --theme-bg: #e4e9f0;            /* Light Grey-Blue Background */
-            --bubble-sent: #e3f2fd;         /* Light Blue Bubble for Me */
-            --bubble-received: #ffffff;     /* White Bubble for Others */
-            --text-name: #0056b3;           /* Name Color */
-            --text-time: #8899a6;           /* Time Color */
+            --theme-primary: #0056b3;       
+            --theme-dark: #004494;          
+            --theme-bg: #e4e9f0;            
+            --bubble-sent: #e3f2fd;         
+            --bubble-received: #ffffff;     
+            --text-name: #0056b3;           
+            --text-time: #8899a6;           
+            --highlight-color: #ffe082; 
+            --highlight-active: #ff9800; 
         }
 
         body {
@@ -24,6 +41,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden; 
         }
 
         /* --- UPLOAD SCREEN --- */
@@ -90,7 +108,6 @@
             height: 100%;
             max-width: 600px;
             background-color: var(--theme-bg);
-            /* Optional: Subtle pattern overlay */
             background-image: radial-gradient(#cbd5e1 1px, transparent 1px); 
             background-size: 20px 20px;
             flex-direction: column;
@@ -102,17 +119,19 @@
         .chat-header {
             background-color: var(--theme-primary);
             color: white;
-            padding: 12px 15px;
+            padding: 10px 15px;
             display: flex;
             align-items: center;
             z-index: 10;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            justify-content: space-between;
         }
         
-        /* Profile Photo from Assets */
+        .header-left { display: flex; align-items: center; }
+
         .chat-header img { 
-            width: 45px; 
-            height: 45px; 
+            width: 40px; 
+            height: 40px; 
             border-radius: 50%; 
             margin-right: 12px; 
             background: white; 
@@ -120,25 +139,109 @@
             object-fit: cover;
         }
 
-        .header-info h4 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
-        .header-info span { font-size: 12px; opacity: 0.9; }
+        .header-info h4 { margin: 0; font-size: 17px; font-weight: 600; }
+        .header-info span { font-size: 11px; opacity: 0.9; }
+
+        /* HEADER ACTIONS */
+        .header-actions { display: flex; gap: 15px; }
+        .icon-btn { 
+            background: none; border: none; color: white; 
+            font-size: 18px; cursor: pointer; padding: 5px; 
+        }
+        .icon-btn:hover { opacity: 0.8; }
+
+        /* SEARCH BAR */
+        #search-container {
+            display: none; 
+            background: white;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            animation: slideDown 0.2s ease-out;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        #search-container.active { display: flex; }
+
+        #search-input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            background: #f0f2f5;
+            outline: none;
+        }
+
+        .search-nav-btn {
+            background: #f0f2f5;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #555;
+        }
+        .search-nav-btn:hover { background: #e4e6eb; }
+
+        #search-count {
+            font-size: 12px;
+            color: #666;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* HIGHLIGHT STYLES */
+        .highlight {
+            background-color: var(--highlight-color);
+            color: black;
+            border-radius: 2px;
+            padding: 0 1px;
+        }
+        .highlight.active {
+            background-color: var(--highlight-active);
+            color: white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        /* MENU DROPDOWN */
+        #menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 55px;
+            right: 10px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            overflow: hidden;
+            width: 180px;
+        }
+        .menu-item {
+            padding: 12px 15px;
+            color: #333;
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+        }
+        .menu-item:hover { background: #f5f5f5; }
+        .menu-item:last-child { border-bottom: none; }
 
         /* MESSAGE AREA */
         #chat-container {
             flex: 1;
             overflow-y: auto;
             padding: 20px 15px;
-            padding-bottom: 80px; /* Space for footer buttons */
+            padding-bottom: 80px; 
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
 
-        .msg-row { display: flex; width: 100%; margin-bottom: 5px; }
+        .msg-row { display: flex; width: 100%; margin-bottom: 2px; }
         
         .message {
             max-width: 75%;
-            padding: 8px 10px 8px 10px;
+            padding: 6px 6px 6px 6px; 
             border-radius: 8px;
             position: relative;
             font-size: 14.5px;
@@ -147,15 +250,29 @@
             flex-direction: column;
             line-height: 1.4;
         }
+        
+        .message.has-text { padding: 8px 10px; }
 
-        /* SENT (Right - Light Blue) */
+        /* DATE DIVIDER (Searchable) */
+        .date-divider {
+            align-self: center;
+            background-color: #dbe4f0;
+            color: #555;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin: 15px 0;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+            font-weight: 500;
+        }
+
+        /* SENT (Right) */
         .msg-row.sent { justify-content: flex-end; }
         .msg-row.sent .message { 
             background-color: var(--bubble-sent); 
             border-top-right-radius: 0; 
             color: #333;
         }
-        /* Tail Right */
         .msg-row.sent .message::before {
             content: ""; position: absolute; top: 0; right: -10px; width: 0; height: 0;
             border: 10px solid transparent; 
@@ -164,14 +281,13 @@
             margin-left: -5px;
         }
         
-        /* RECEIVED (Left - White) */
+        /* RECEIVED (Left) */
         .msg-row.received { justify-content: flex-start; }
         .msg-row.received .message { 
             background-color: var(--bubble-received); 
             border-top-left-radius: 0; 
             color: #333;
         }
-        /* Tail Left */
         .msg-row.received .message::before {
             content: ""; position: absolute; top: 0; left: -10px; width: 0; height: 0;
             border: 10px solid transparent; 
@@ -179,12 +295,13 @@
             border-right: 0;
         }
 
-        .sender-name { font-size: 12.5px; font-weight: bold; color: var(--text-name); margin-bottom: 3px; }
-        .timestamp { font-size: 10px; color: var(--text-time); align-self: flex-end; margin-top: 4px; }
+        .sender-name { font-size: 12.5px; font-weight: bold; color: var(--text-name); margin-bottom: 3px; padding: 0 4px; }
+        .timestamp { font-size: 10px; color: var(--text-time); align-self: flex-end; margin-top: 4px; padding: 0 4px; }
+        .msg-text { word-wrap: break-word; padding: 0 4px; }
 
         /* MEDIA STYLING */
-        .media-content { margin: 2px 0 5px 0; border-radius: 6px; overflow: hidden; cursor: pointer; position: relative; }
-        .media-content img, .media-content video { width: 100%; height: auto; display: block; max-height: 300px; object-fit: cover; }
+        .media-content { margin: 0; border-radius: 6px; overflow: hidden; cursor: pointer; position: relative; }
+        .media-content img, .media-content video { width: 100%; height: auto; display: block; max-height: 350px; object-fit: cover; }
         
         .video-thumbnail-overlay::after {
             content: "▶"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -192,48 +309,52 @@
             display: flex; align-items: center; justify-content: center; font-size: 20px; pointer-events: none;
         }
 
-        /* BOTTOM NAVIGATION BAR */
+        /* BOTTOM NAV */
         .nav-footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: white;
-            padding: 10px 0;
-            display: flex;
-            justify-content: space-around;
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: white; padding: 10px 0;
+            display: flex; justify-content: space-around;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
             z-index: 20;
         }
-
         .nav-btn {
-            background: transparent;
-            border: 1px solid var(--theme-primary);
-            color: var(--theme-primary);
-            padding: 8px 25px;
-            border-radius: 20px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            width: 40%;
+            background: transparent; border: 1px solid var(--theme-primary);
+            color: var(--theme-primary); padding: 8px 25px;
+            border-radius: 20px; font-weight: 600; cursor: pointer;
+            transition: 0.2s; width: 40%;
         }
-
         .nav-btn:hover { background: #f0f7ff; }
-        
-        .nav-btn.primary {
-            background: var(--theme-primary);
-            color: white;
-        }
+        .nav-btn.primary { background: var(--theme-primary); color: white; }
         .nav-btn.primary:hover { background: var(--theme-dark); }
 
 
-        /* OVERLAY */
+        /* OVERLAY (Lightbox) */
         #media-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center;
         }
         #media-overlay img, #media-overlay video { max-width: 95%; max-height: 85%; }
         .close-btn { position: absolute; top: 20px; right: 20px; color: white; font-size: 30px; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); }
+
+        /* SIDE DRAWER */
+        #side-drawer {
+            position: fixed; top: 0; right: -100%; width: 100%; max-width: 320px; height: 100%;
+            background: white; z-index: 1500; transition: 0.3s;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column;
+        }
+        #side-drawer.open { right: 0; }
+        .drawer-header {
+            background: var(--theme-primary); color: white; padding: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .drawer-content {
+            flex: 1; overflow-y: auto; padding: 10px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; align-content: start;
+        }
+        .drawer-item { width: 100%; aspect-ratio: 1/1; object-fit: cover; cursor: pointer; border-radius: 4px; }
+
+        @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
     </style>
 </head>
@@ -260,11 +381,31 @@
 
     <div id="chat-interface">
         <div class="chat-header">
-            <img src="assets/logo.png" onerror="this.src='https://via.placeholder.com/50/0056b3/ffffff?text=JKM'" alt="JKM Logo">
-            <div class="header-info">
-                <h4>JKM EDIT</h4>
-                <span>Chat Viewer Active</span>
+            <div class="header-left">
+                <img src="assets/jkm-edit-logo.png" onerror="this.src='https://via.placeholder.com/50/0056b3/ffffff?text=JKM'" alt="JKM Logo">
+                <div class="header-info">
+                    <h4>JKM EDIT</h4>
+                    <span id="chat-status">Chat Viewer Active</span>
+                </div>
             </div>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleSearch()" title="Search">🔍</button>
+                <button class="icon-btn" onclick="toggleMenu()" title="Menu">⋮</button>
+            </div>
+        </div>
+
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="Search text or date (e.g., 07/02/24)..." onkeyup="handleSearchInput(event)">
+            <span id="search-count">0/0</span>
+            <button class="search-nav-btn" onclick="navigateSearch(-1)">▲</button>
+            <button class="search-nav-btn" onclick="navigateSearch(1)">▼</button>
+            <button class="icon-btn" style="color:#666; margin-left:5px;" onclick="toggleSearch()">×</button>
+        </div>
+
+        <div id="menu-dropdown">
+            <div class="menu-item" onclick="openMediaDrawer()">Media, Links & Docs</div>
+            <div class="menu-item" onclick="toggleSearch()">Search</div>
+            <div class="menu-item" onclick="goBack()">Close Chat</div>
         </div>
 
         <div id="chat-container"></div>
@@ -281,21 +422,157 @@
         <video id="overlay-video" style="display:none;" controls></video>
     </div>
 
+    <div id="side-drawer">
+        <div class="drawer-header">
+            <span>Media Gallery</span>
+            <span style="cursor:pointer; font-size:20px;" onclick="closeMediaDrawer()">×</span>
+        </div>
+        <div class="drawer-content" id="drawer-grid"></div>
+    </div>
+
     <script>
-        // --- NAVIGATION LOGIC ---
+        // --- NAVIGATION & UI LOGIC ---
         function goBack() {
-            // Hides chat, shows upload screen again (Reset)
             document.getElementById('chat-interface').style.display = 'none';
             document.getElementById('upload-screen').style.display = 'block';
             document.body.style.backgroundColor = "#cfd8dc";
+            document.getElementById('search-container').classList.remove('active');
+            document.getElementById('menu-dropdown').style.display = 'none';
+            closeMediaDrawer();
         }
 
         function goToDashboard() {
-            // Redirects to Dashboard URL
-            window.location.href = "/dashboard"; // Change this URL if your dashboard is elsewhere
+            window.location.href = "/dashboard"; 
         }
 
-        // --- CORE LOGIC (SAME AS BEFORE) ---
+        // --- SEARCH LOGIC (TEXT + DATE) ---
+        let searchMatches = [];
+        let searchIndex = -1;
+
+        function toggleSearch() {
+            const container = document.getElementById('search-container');
+            const input = document.getElementById('search-input');
+            const menu = document.getElementById('menu-dropdown');
+            menu.style.display = 'none';
+
+            if (container.classList.contains('active')) {
+                container.classList.remove('active');
+                input.value = "";
+                resetHighlights();
+            } else {
+                container.classList.add('active');
+                input.focus();
+            }
+        }
+
+        function handleSearchInput(event) {
+            if (event.key === "Enter") navigateSearch(1);
+            else performStrictSearch();
+        }
+
+        function resetHighlights() {
+            // Restore original HTML for messages AND date dividers
+            const nodes = document.querySelectorAll('.msg-text, .date-divider');
+            nodes.forEach(node => {
+                if (node.hasAttribute('data-original-html')) {
+                    node.innerHTML = node.getAttribute('data-original-html');
+                }
+            });
+            document.getElementById('search-count').innerText = "0/0";
+            searchMatches = [];
+            searchIndex = -1;
+        }
+
+        function performStrictSearch() {
+            const query = document.getElementById('search-input').value;
+            resetHighlights();
+            if (!query || query.trim() === "") return;
+
+            const lowerQuery = query.toLowerCase();
+            // Select both Text Messages AND Date Dividers
+            const nodes = document.querySelectorAll('.msg-text, .date-divider');
+            
+            nodes.forEach(node => {
+                let content = node.getAttribute('data-original-html');
+                if (!content) return; // Should not happen if set correctly
+                
+                const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+                
+                if (content.toLowerCase().includes(lowerQuery)) {
+                    const newContent = content.replace(regex, '<span class="highlight">$1</span>');
+                    node.innerHTML = newContent;
+                }
+            });
+
+            searchMatches = document.querySelectorAll('.highlight');
+            document.getElementById('search-count').innerText = searchMatches.length > 0 ? `1 of ${searchMatches.length}` : "0/0";
+
+            if (searchMatches.length > 0) {
+                searchIndex = 0;
+                highlightCurrent();
+            }
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+        }
+
+        function navigateSearch(direction) {
+            if (searchMatches.length === 0) return;
+            searchIndex += direction;
+            if (searchIndex >= searchMatches.length) searchIndex = 0;
+            if (searchIndex < 0) searchIndex = searchMatches.length - 1;
+            highlightCurrent();
+        }
+
+        function highlightCurrent() {
+            searchMatches.forEach(m => m.classList.remove('active'));
+            const current = searchMatches[searchIndex];
+            current.classList.add('active');
+            current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('search-count').innerText = `${searchIndex + 1} of ${searchMatches.length}`;
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('menu-dropdown');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // --- MEDIA DRAWER ---
+        function openMediaDrawer() {
+            document.getElementById('menu-dropdown').style.display = 'none';
+            const drawer = document.getElementById('side-drawer');
+            const grid = document.getElementById('drawer-grid');
+            grid.innerHTML = "";
+
+            rawMessages.forEach(msg => {
+                if(msg.media) {
+                    const url = URL.createObjectURL(msg.media);
+                    if(msg.media.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = url;
+                        img.className = 'drawer-item';
+                        img.onclick = () => openOverlay('image', url);
+                        grid.appendChild(img);
+                    } else if(msg.media.type.startsWith('video/')) {
+                         const vid = document.createElement('video');
+                         vid.src = url;
+                         vid.className = 'drawer-item';
+                         vid.onclick = () => openOverlay('video', url);
+                         grid.appendChild(vid);
+                    }
+                }
+            });
+
+            if(grid.innerHTML === "") grid.innerHTML = "<p style='padding:20px; color:#666; width:300px;'>No media found.</p>";
+            drawer.classList.add('open');
+        }
+
+        function closeMediaDrawer() {
+            document.getElementById('side-drawer').classList.remove('open');
+        }
+
+        // --- CORE PARSING LOGIC ---
         let rawMessages = [];
         let participants = new Set();
         let mediaMap = {}; 
@@ -310,11 +587,7 @@
             files.forEach(file => { mediaMap[file.name] = file; });
 
             if (!chatFile) chatFile = files.find(f => f.name.endsWith('.txt'));
-
-            if (!chatFile) {
-                alert("Error: _chat.txt not found in folder.");
-                return;
-            }
+            if (!chatFile) { alert("Error: _chat.txt not found."); return; }
 
             const content = await readFileAsText(chatFile);
             parseContent(content);
@@ -334,8 +607,8 @@
             participants.clear();
             const lines = text.split('\n');
 
-            const androidRegex = /^(\d{1,2}\/\d{1,2}\/\d{2,4}, \d{1,2}:\d{2}\s?(?:am|pm|AM|PM)?) - (.+?): (.*)/;
-            const iosRegex = /^\[(\d{1,2}\/\d{1,2}\/\d{2,4}, \d{1,2}:\d{2}:\d{2}\s?(?:am|pm|AM|PM)?)\] (.+?): (.*)/;
+            const androidRegex = /^(\d{1,2}\/\d{1,2}\/\d{2,4}),\s+(\d{1,2}:\d{2}[\s\u202F\u00A0]?(?:am|pm|AM|PM)?) - (.+?): (.*)/;
+            const iosRegex = /^\[(\d{1,2}\/\d{1,2}\/\d{2,4}),\s+(\d{1,2}:\d{2}:\d{2}[\s\u202F\u00A0]?(?:am|pm|AM|PM)?)\] (.+?): (.*)/;
             
             let currentMsg = null;
 
@@ -345,20 +618,33 @@
 
                 if (match) {
                     if (currentMsg) rawMessages.push(currentMsg);
-                    const sender = match[2];
+                    const sender = match[3];
                     participants.add(sender);
-                    currentMsg = { time: match[1].split(',')[1] || match[1], sender: sender, text: match[3], media: null };
+                    
+                    let msgText = match[4];
+                    let mediaObj = null;
 
                     let fileName = null;
-                    if (match[3].includes("(file attached)")) fileName = match[3].replace(" (file attached)", "").trim();
-                    else if (match[3].includes("<attached:")) fileName = match[3].match(/<attached: (.+)>/)?.[1];
-
+                    if (msgText.includes("(file attached)")) fileName = msgText.replace(" (file attached)", "").trim();
+                    else if (msgText.includes("<attached:")) fileName = msgText.match(/<attached: (.+)>/)?.[1];
+                    
                     if (fileName && mediaMap[fileName]) {
-                        currentMsg.media = mediaMap[fileName];
-                        currentMsg.text = ""; 
+                        mediaObj = mediaMap[fileName];
                     }
+
+                    currentMsg = { 
+                        date: match[1], 
+                        time: match[2], 
+                        sender: sender, 
+                        text: msgText, 
+                        media: mediaObj 
+                    };
+
                 } else {
-                    if (currentMsg) currentMsg.text += "<br>" + line;
+                    const potentialDate = line.match(/^\d{1,2}\/\d{1,2}\/\d{2,4}/);
+                    if (currentMsg && !potentialDate) {
+                        currentMsg.text += "<br>" + line;
+                    }
                 }
             });
             if (currentMsg) rawMessages.push(currentMsg);
@@ -383,38 +669,65 @@
             
             document.getElementById('upload-screen').style.display = 'none';
             document.getElementById('chat-interface').style.display = 'flex';
-            document.body.style.backgroundColor = "#e4e9f0"; // Theme BG
+            document.body.style.backgroundColor = "#e4e9f0"; 
 
             chatContainer.innerHTML = "";
+            let lastDate = null;
 
             rawMessages.forEach(msg => {
+                if (msg.date !== lastDate) {
+                    const dateDiv = document.createElement('div');
+                    dateDiv.className = 'date-divider';
+                    dateDiv.innerText = msg.date; 
+                    // SAVE ORIGINAL TEXT FOR SEARCH RESET
+                    dateDiv.setAttribute('data-original-html', msg.date);
+                    chatContainer.appendChild(dateDiv);
+                    lastDate = msg.date;
+                }
+
                 const isMe = msg.sender === me;
                 const row = document.createElement('div');
                 row.className = `msg-row ${isMe ? 'sent' : 'received'}`;
 
                 const bubble = document.createElement('div');
-                bubble.className = 'message';
-
+                
                 let nameHtml = (!isMe) ? `<span class="sender-name">${msg.sender}</span>` : '';
                 let contentHtml = "";
+                let showText = true;
 
                 if (msg.media) {
                     const url = URL.createObjectURL(msg.media);
                     const type = msg.media.type;
                     if (type.startsWith('image/')) {
                         contentHtml = `<div class="media-content" onclick="openOverlay('image', '${url}')"><img src="${url}"></div>`;
+                        showText = false; 
                     } else if (type.startsWith('video/')) {
                         contentHtml = `<div class="media-content video-thumbnail-overlay" onclick="openOverlay('video', '${url}')"><video src="${url}"></video></div>`;
+                        showText = false; 
                     } else if (type.startsWith('audio/')) {
-                        contentHtml = `<audio controls src="${url}"></audio>`;
+                        contentHtml = `<audio controls src="${url}" style="width:200px;"></audio>`;
+                        showText = false; 
                     } else {
-                        contentHtml = `<div style="padding:10px; background:rgba(0,0,0,0.05); border-radius:5px;">📄 ${msg.media.name}</div>`;
+                        contentHtml = `<div style="padding:10px; background:rgba(0,0,0,0.05); border-radius:5px; display:flex; align-items:center;">📄 <span style="margin-left:5px;">${msg.media.name}</span></div>`;
+                        showText = false; 
                     }
                 }
                 
-                if (msg.text) contentHtml += `<span>${msg.text}</span>`;
+                if (showText && msg.text) {
+                    if(msg.text !== "null" && msg.text.trim() !== "") {
+                        contentHtml += `<span class="msg-text" data-original-html="${msg.text}">${msg.text}</span>`;
+                        bubble.classList.add('has-text'); 
+                    }
+                } else {
+                     bubble.classList.remove('has-text'); 
+                }
 
-                bubble.innerHTML = `${nameHtml}${contentHtml}<span class="timestamp">${msg.time.trim()}</span>`;
+                bubble.className = `message ${showText && msg.text ? 'has-text' : ''}`;
+                let cleanTime = msg.time.replace(/:\d{2}\s/, ' '); 
+                
+                if (contentHtml === "") contentHtml = "<i>Unsupported media</i>";
+
+                bubble.innerHTML = `${nameHtml}${contentHtml}<span class="timestamp">${cleanTime}</span>`;
                 row.appendChild(bubble);
                 chatContainer.appendChild(row);
             });
