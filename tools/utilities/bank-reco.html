@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Transaction Ledger Pro</title>
+    <title>JKM Edit - Bank Analysis</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -46,14 +46,29 @@
 <body class="h-screen flex flex-col overflow-hidden">
 
     <!-- HEADER -->
-    <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm z-10">
-        <div class="flex items-center gap-3">
-            <div class="bg-indigo-600 text-white p-2 rounded-lg">
+    <header class="relative bg-white border-b border-gray-200 px-6 py-3 flex justify-between items-center shadow-sm z-20">
+        
+        <!-- LEFT SIDE: Logo + JKM Edit -->
+        <div class="flex items-center gap-3 z-10">
+            <!-- Logo from assets folder -->
+            <img src="assets/jkm-edit-logo.png" alt="Logo" class="h-10 w-auto object-contain" 
+                 onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='block'">
+            
+            <!-- Fallback Icon (shows if image is missing) -->
+            <div id="fallback-icon" class="bg-indigo-600 text-white p-2 rounded-lg hidden">
                 <i class="ph ph-bank text-xl"></i>
             </div>
-            <h1 class="text-xl font-bold text-gray-800">JKM Bank Analysis</h1>
+            
+            <h1 class="text-xl font-bold text-gray-800 tracking-wide">JKM Edit</h1>
         </div>
-        <div class="flex gap-3">
+
+        <!-- MIDDLE: BANK Analysis (Centered) -->
+        <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <h2 class="text-2xl font-extrabold text-indigo-700 tracking-tight uppercase">BANK Analysis</h2>
+        </div>
+
+        <!-- RIGHT SIDE: Action Buttons -->
+        <div class="flex gap-3 z-10">
             <button onclick="downloadTemplate()" class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                 <i class="ph ph-file-xls mr-2"></i>Template
             </button>
@@ -85,10 +100,10 @@
                 <p class="text-2xl font-bold text-gray-800 mt-1" id="netFlow">0.00</p>
             </div>
             <div class="mt-auto bg-blue-50 p-4 rounded-lg text-sm text-blue-800">
-                <p class="font-bold mb-1">New Features:</p>
+                <p class="font-bold mb-1">Controls:</p>
                 <ul class="list-disc pl-4 space-y-1 text-xs">
                     <li><strong>Add to Existing:</strong> Select items -> click button -> choose group.</li>
-                    <li><strong>Dissolve Group:</strong> Click <i class="ph ph-trash"></i> on a group row to ungroup all.</li>
+                    <li><strong>Dissolve Group:</strong> Click <i class="ph ph-trash"></i> on a group row.</li>
                 </ul>
             </div>
         </aside>
@@ -108,12 +123,12 @@
                 
                 <!-- NEW: Add to Existing Group Button -->
                 <button onclick="openAddToGroupModal()" class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
-                    <i class="ph ph-plus-circle"></i> Add to Existing Group
+                    <i class="ph ph-plus-circle"></i> Add to Existing
                 </button>
 
                 <!-- Merge New Button -->
                 <button onclick="mergeSelected()" class="flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 font-medium rounded-lg hover:bg-indigo-200 transition">
-                    <i class="ph ph-arrows-merge"></i> Merge as New Group
+                    <i class="ph ph-arrows-merge"></i> Merge New Group
                 </button>
             </div>
 
@@ -276,7 +291,6 @@
                 tr.className = "main-row border-b border-gray-100 transition-colors";
                 if(isMerged) tr.style.cursor = "pointer";
                 
-                // Toggle Expansion on Row Click
                 tr.onclick = (e) => {
                     if(e.target.type === 'checkbox' || e.target.closest('button')) return;
                     if(isMerged) toggleSubRow(group.groupId);
@@ -308,7 +322,6 @@
                 `;
                 tbody.appendChild(tr);
 
-                // Sub-Row (Expanded)
                 if (isMerged) {
                     const subTr = document.createElement('tr');
                     subTr.innerHTML = `
@@ -378,8 +391,6 @@
             document.querySelectorAll('.row-select').forEach(cb => cb.checked = source.checked);
         }
 
-        // --- MERGE / GROUPING LOGIC ---
-
         function mergeSelected() {
             const checkboxes = document.querySelectorAll('.row-select:checked');
             const groupIds = Array.from(checkboxes).map(cb => cb.value);
@@ -399,16 +410,12 @@
             renderUI();
         }
 
-        // FEATURE 1: ADD TO EXISTING GROUP
         function openAddToGroupModal() {
             const checkboxes = document.querySelectorAll('.row-select:checked');
             if (checkboxes.length === 0) return alert("Please select items to move first.");
             
-            // Get unique existing groups (exclude single items)
             const uniqueGroups = new Map();
             transactions.forEach(tx => {
-                // If it's a real group (not a single item disguised as group ID)
-                // We check if multiple items share this ID
                 if(tx.groupId !== tx.id) { 
                     uniqueGroups.set(tx.groupId, tx.groupName);
                 }
@@ -418,7 +425,7 @@
             select.innerHTML = '<option value="">-- Select a Group --</option>';
             
             if(uniqueGroups.size === 0) {
-                alert("No existing groups found! Use 'Merge as New Group' first.");
+                alert("No existing groups found! Use 'Merge New Group' first.");
                 return;
             }
 
@@ -433,14 +440,12 @@
             const targetGroupId = document.getElementById('groupSelectDropdown').value;
             if(!targetGroupId) return alert("Please select a group.");
 
-            // Find name of target
             const targetTx = transactions.find(t => t.groupId === targetGroupId);
             if(!targetTx) return;
 
             const checkboxes = document.querySelectorAll('.row-select:checked');
             const selectedOldGroupIds = Array.from(checkboxes).map(cb => cb.value);
 
-            // Move items
             transactions.forEach(tx => {
                 if(selectedOldGroupIds.includes(tx.groupId)) {
                     tx.groupId = targetGroupId;
@@ -456,14 +461,12 @@
             document.getElementById('groupSelectionModal').style.display = 'none';
         }
 
-        // FEATURE 2: DISSOLVE GROUP
         function dissolveGroup(groupId) {
             if(!confirm("Are you sure you want to ungroup all items in this group?")) return;
-            
             transactions.forEach(tx => {
                 if(tx.groupId === groupId) {
-                    tx.groupId = tx.id; // Revert to unique ID
-                    tx.groupName = tx.originalName; // Revert name
+                    tx.groupId = tx.id;
+                    tx.groupName = tx.originalName;
                 }
             });
             renderUI();
