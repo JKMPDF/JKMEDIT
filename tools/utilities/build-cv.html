@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Studio v7 | JKM Edit</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Merriweather:wght@300;400;700&family=Montserrat:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&family=Oswald:wght@300;400;500&family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;700&family=Raleway:wght@300;400;700&family=Roboto+Slab:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --text-main: #2c3e50;
+            --text-muted: #555;
+            --bg-body: #eef2f5;
+            --font-head: 'Montserrat', sans-serif;
+            --font-body: 'Lato', sans-serif;
+            --sidebar-w: 440px;
+        }
+
+        * { box-sizing: border-box; }
+        body { margin: 0; height: 100vh; display: flex; font-family: 'Poppins', sans-serif; background: var(--bg-body); overflow: hidden; }
+
+        /* --- SIDEBAR --- */
+        aside {
+            width: var(--sidebar-w); background: #fff; border-right: 1px solid #ddd;
+            display: flex; flex-direction: column; z-index: 20; box-shadow: 2px 0 15px rgba(0,0,0,0.05);
+        }
+        .brand { padding: 15px 20px; background: #1a1a1a; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .tabs { display: flex; border-bottom: 1px solid #eee; background: #f8f9fa; }
+        .tab { flex: 1; padding: 12px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #666; transition: 0.2s; border-bottom: 3px solid transparent; }
+        .tab.active { color: var(--accent); border-bottom-color: var(--accent); background: white; }
+        
+        .panel-container { flex: 1; overflow-y: auto; padding: 20px; }
+        .panel { display: none; }
+        .panel.active { display: block; animation: fade 0.3s; }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Controls */
+        .group { margin-bottom: 18px; position: relative; }
+        .group label { display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 5px; color: #444; text-transform: uppercase; }
+        .control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; font-family: inherit; }
+        .control:focus { border-color: var(--accent); outline: none; }
+        textarea.control { resize: vertical; min-height: 80px; }
+
+        /* Draggable Styles */
+        .handle { cursor: grab; color: #aaa; padding: 5px; margin-right: 10px; }
+        .handle:hover { color: var(--accent); }
+        .manage-item { display: flex; align-items: center; padding: 10px; background: white; border: 1px solid #eee; margin-bottom: 5px; border-radius: 4px; }
+        .manage-item.sortable-ghost { background: #f0f7fc; border-color: var(--accent); }
+
+        /* Photo Adjuster */
+        .photo-controls { background: #f0f7fc; padding: 10px; border-radius: 5px; margin-top: 10px; border: 1px solid #d6eaf8; display: none; }
+        .photo-controls.visible { display: block; }
+        .range-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+        .range-wrap i { width: 20px; text-align: center; color: var(--accent); }
+        input[type=range] { flex: 1; }
+
+        /* Grid Select */
+        .grid-select { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .opt-btn { padding: 10px; border: 2px solid #eee; background: white; cursor: pointer; border-radius: 6px; text-align: center; font-size: 0.85rem; font-weight: 500; transition: 0.2s; }
+        .opt-btn:hover { border-color: #ccc; }
+        .opt-btn.selected { border-color: var(--accent); background: #f0f7fc; color: var(--accent); font-weight: 700; }
+        
+        /* Dynamic Lists */
+        .section-block { background: #fff; border: 1px solid #eee; border-left: 3px solid var(--accent); border-radius: 4px; padding: 15px; margin-bottom: 10px; position: relative; transition: box-shadow 0.2s; }
+        .section-block:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .section-block.is-heading { border-left-color: #2c3e50; background: #f8f9fa; }
+
+        .btn-row { display: flex; gap: 5px; margin-top: 5px; }
+        .btn-add { flex: 1; padding: 8px; background: white; border: 1px dashed var(--accent); color: var(--accent); font-weight: 600; cursor: pointer; border-radius: 4px; font-size: 0.85rem; }
+        .btn-add:hover { background: var(--accent); color: white; }
+        .btn-add-head { flex: 1; padding: 8px; background: white; border: 1px dashed #555; color: #555; font-weight: 600; cursor: pointer; border-radius: 4px; font-size: 0.85rem; }
+        .btn-add-head:hover { background: #555; color: white; }
+
+        .btn-icon { cursor: pointer; color: #888; transition: 0.2s; }
+        .btn-icon:hover { color: #e74c3c; }
+        .item-header { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center; }
+
+        /* Footer */
+        .footer { padding: 15px; border-top: 1px solid #ddd; background: white; display: flex; gap: 10px; }
+        .btn-main { flex: 1; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 4px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        /* --- PREVIEW AREA --- */
+        main { flex: 1; background: #525659; overflow: hidden; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .preview-scroll { width: 100%; height: 100%; overflow: auto; display: flex; justify-content: center; padding: 40px; }
+        
+        .zoom-controls { position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.8); padding: 5px 15px; border-radius: 20px; color: white; display: flex; align-items: center; gap: 10px; z-index: 50; }
+
+        /* --- RESUME PAPER (Smart A4) --- */
+        #resume-page {
+            /* STRICT A4 DIMENSIONS */
+            width: 210mm; 
+            min-height: 297mm; /* Allows growth but starts at A4 */
+            background: white; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative; 
+            
+            /* CRITICAL FIX: Overflow Hidden forces content to wrap instead of expanding the paper width */
+            overflow: hidden; 
+            
+            transform-origin: top center; 
+            color: var(--text-main); 
+            font-family: var(--font-body);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            margin: 0 auto; /* Centers the page in the viewer */
+        }
+
+        /* Page Break Visual Guide */
+        .page-break-marker {
+            position: absolute; top: 297mm; left: 0; width: 100%;
+            border-bottom: 2px dashed red; opacity: 0.5; pointer-events: none; z-index: 100;
+        }
+
+        /* ========================================= */
+        /* === CORE RESUME CSS === */
+        /* ========================================= */
+        
+        .r-photo-container {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            overflow: hidden; 
+            margin-right: 25px;
+            position: relative;
+            flex-shrink: 0;
+            display: none; 
+        }
+        .r-photo-container.has-photo { display: block; }
+        .r-photo-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transform: scale(var(--p-scale, 1)) translate(var(--p-x, 0px), var(--p-y, 0px));
+        }
+
+        .r-name { font-family: var(--font-head); font-size: 2.2rem; font-weight: 700; text-transform: uppercase; margin: 0; line-height: 1.1; color: var(--primary); word-break: break-word; }
+        .r-role { font-size: 1.1rem; color: var(--accent); margin-top: 5px; font-weight: 600; letter-spacing: 1px; }
+        
+        .r-contact { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); }
+        .r-contact span { display: flex; align-items: center; gap: 6px; white-space: nowrap; } 
+        .r-contact i { color: var(--accent); }
+
+        .r-sec-title { 
+            font-family: var(--font-head); font-size: 1rem; font-weight: 700; text-transform: uppercase; 
+            border-bottom: 2px solid #eee; padding-bottom: 5px; margin-bottom: 15px; margin-top: 25px;
+            color: var(--primary); letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;
+            page-break-after: avoid; 
+        }
+        .r-sec-title i { color: var(--accent); font-size: 0.9rem; }
+
+        .r-item { margin-bottom: 15px; page-break-inside: avoid; break-inside: avoid; }
+        
+        /* Custom Heading Item */
+        .r-sub-heading {
+            font-weight: 700; color: var(--primary); 
+            margin-top: 15px; margin-bottom: 8px; 
+            font-size: 0.95rem; border-bottom: 1px dashed #eee;
+            padding-bottom: 2px;
+        }
+
+        .r-row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; }
+        .r-job-title { font-weight: 700; font-size: 0.95rem; color: #222; }
+        .r-date { font-size: 0.8rem; color: #666; font-style: italic; white-space: nowrap; }
+        .r-company { font-size: 0.9rem; color: var(--accent); font-weight: 600; width: 100%; }
+        .r-desc { font-size: 0.85rem; line-height: 1.5; color: #444; margin-top: 4px; white-space: pre-wrap; overflow-wrap: break-word; text-align: justify; }
+
+        /* SKILLS: Vertical list, no border */
+        .r-tags-list { display: block; }
+        .r-tag-line { 
+            display: block; 
+            color: #444;
+            font-size: 0.9rem;
+            margin-bottom: 4px; 
+            border: none;
+            background: transparent;
+            padding: 0;
+            font-weight: 500;
+        }
+        .r-tag-line::before {
+            content: "•"; color: var(--accent); margin-right: 8px; font-weight: bold;
+        }
+
+        /* LAYOUT LOGIC */
+        
+        /* MODERN */
+        .layout-modern .r-header { display: flex; align-items: center; padding: 40px 40px 0 40px; flex-wrap: wrap; }
+        .layout-modern .r-body { padding: 30px 40px 40px 40px; }
+
+        /* CLASSIC */
+        .layout-classic .r-header { flex-direction: column; text-align: center; padding: 40px 40px 20px 40px; border-bottom: 1px solid #ddd; }
+        .layout-classic .r-photo-container { margin: 0 auto 15px auto; }
+        .layout-classic .r-contact { justify-content: center; }
+        .layout-classic .r-body { padding: 30px 40px; }
+        .layout-classic .r-row { flex-direction: column; align-items: center; text-align: center; } 
+        .layout-classic .r-company { text-align: center; }
+        .layout-classic .r-desc { text-align: center; }
+
+        /* SPLIT */
+        .layout-split { display: flex; height: 100%; min-height: 297mm; }
+        .layout-split .side-col { 
+            width: 32%; background: var(--primary); color: white; padding: 30px 20px; 
+            flex-shrink: 0; /* Prevents sidebar from shrinking */
+            overflow: hidden; /* Keeps text inside */
+        }
+        .layout-split .main-col { 
+            width: 68%; padding: 30px; background: white; 
+            flex-grow: 1; 
+            overflow: hidden; /* Keeps text inside */
+        }
+        .layout-split .r-photo-container { margin: 0 auto 20px auto; border-color: white; }
+        .layout-split .r-name { color: white; font-size: 1.8rem; text-align: center; }
+        .layout-split .r-role { color: rgba(255,255,255,0.8); text-align: center; font-size: 1rem; }
+        .layout-split .r-sec-title { color: white; border-color: rgba(255,255,255,0.2); margin-top: 30px; }
+        .layout-split .r-sec-title i { color: white; }
+        .layout-split .r-contact { flex-direction: column; color: rgba(255,255,255,0.8); }
+        .layout-split .r-contact i { color: white; width: 20px; text-align: center; }
+        .layout-split .r-tag-line { color: white; } 
+        .layout-split .r-tag-line::before { color: rgba(255,255,255,0.5); }
+        .layout-split .main-col .r-sec-title { color: var(--primary); border-color: #eee; }
+        .layout-split .main-col .r-sec-title i { color: var(--accent); }
+
+        /* CREATIVE */
+        .layout-creative .r-header { background: var(--accent); padding: 40px; color: white; margin-bottom: 20px; }
+        .layout-creative .r-name { color: white; }
+        .layout-creative .r-role { color: white; opacity: 0.9; }
+        .layout-creative .r-contact { color: white; opacity: 0.9; }
+        .layout-creative .r-contact i { color: var(--primary); background: white; padding: 5px; border-radius: 50%; }
+        .layout-creative .r-photo-container { border-color: white; }
+        .layout-creative .r-body { padding: 0 40px 40px 40px; }
+
+        @media print {
+            body, main, aside { background: white; display: block; height: auto; overflow: visible; }
+            aside, .zoom-controls, .page-break-marker { display: none !important; }
+            main { padding: 0; margin: 0; }
+            .preview-scroll { display: block; padding: 0; overflow: visible; width: 100%; height: auto; }
+            #resume-page { 
+                box-shadow: none; margin: 0; width: 210mm; height: 297mm; /* Strict print size */
+                overflow: hidden; /* Cuts off extra content cleanly */
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+            }
+            @page { margin: 0; size: A4; }
+        }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; overflow-y: auto; }
+            aside { width: 100%; height: auto; }
+            main { height: 600px; }
+            #resume-page { transform: scale(0.6); transform-origin: top left; margin: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="brand">
+            <div>
+                <h2 style="margin:0;"><i class="fa-solid fa-file-pen"></i> CV Studio v7</h2>
+                <small style="opacity:0.7;">Fixed A4 Format</small>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('content')">Content</button>
+            <button class="tab" onclick="switchTab('design')">Design</button>
+            <button class="tab" onclick="switchTab('sections')">Manage</button>
+        </div>
+
+        <div id="panel-content" class="panel active panel-container">
+            
+            <div class="group" style="background:white; padding:15px; border:1px solid #eee; border-radius:6px;">
+                <label>Profile Photo</label>
+                <input type="file" id="inp-photo" accept="image/*" class="control" onchange="handlePhoto(this)">
+                
+                <div id="photo-tools" class="photo-controls">
+                    <label style="margin-bottom:8px; border-bottom:1px solid #ddd; padding-bottom:5px;">Photo Adjuster</label>
+                    <div class="range-wrap" title="Zoom">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        <input type="range" min="1" max="3" step="0.1" value="1" oninput="updatePhoto('scale', this.value)">
+                    </div>
+                    <div class="range-wrap" title="Move Horizontal">
+                        <i class="fa-solid fa-arrows-left-right"></i>
+                        <input type="range" min="-60" max="60" value="0" oninput="updatePhoto('x', this.value)">
+                    </div>
+                    <div class="range-wrap" title="Move Vertical">
+                        <i class="fa-solid fa-arrows-up-down"></i>
+                        <input type="range" min="-60" max="60" value="0" oninput="updatePhoto('y', this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="group"><label>Full Name</label><input type="text" class="control" id="inp-name" value="Alex Johnson" oninput="render()"></div>
+            <div class="group"><label>Current Role</label><input type="text" class="control" id="inp-role" value="Marketing Specialist" oninput="render()"></div>
+            
+            <div class="group">
+                <label>Contact Info</label>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+                    <input type="text" class="control" id="inp-email" value="alex@example.com" placeholder="Email" oninput="render()">
+                    <input type="text" class="control" id="inp-phone" value="+1 555-0199" placeholder="Phone" oninput="render()">
+                </div>
+                <input type="text" class="control" id="inp-loc" value="London, UK" placeholder="City, Country" style="margin-top:5px;" oninput="render()">
+            </div>
+
+            <div class="group">
+                <label>Profile Summary</label>
+                <textarea class="control" id="inp-summary" oninput="render()">Creative marketing professional with 5+ years of experience...</textarea>
+            </div>
+
+            <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+
+            <div id="dynamic-editor"></div>
+
+        </div>
+
+        <div id="panel-design" class="panel panel-container">
+            <div class="group">
+                <label>Layout Template</label>
+                <div class="grid-select">
+                    <div class="opt-btn selected" onclick="setLayout('modern', this)">Modern Clean</div>
+                    <div class="opt-btn" onclick="setLayout('classic', this)">Classic Center</div>
+                    <div class="opt-btn" onclick="setLayout('split', this)">Sidebar Split</div>
+                    <div class="opt-btn" onclick="setLayout('creative', this)">Creative Head</div>
+                </div>
+            </div>
+
+            <div class="group">
+                <label>Accent Color</label>
+                <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                    <button onclick="setColor('#2c3e50', '#3498db')" style="width:30px; height:30px; background:#3498db; border:none; border-radius:50%; cursor:pointer;"></button>
+                    <button onclick="setColor('#16a085', '#1abc9c')" style="width:30px; height:30px; background:#1abc9c; border:none; border-radius:50%; cursor:pointer;"></button>
+                    <button onclick="setColor('#c0392b', '#e74c3c')" style="width:30px; height:30px; background:#e74c3c; border:none; border-radius:50%; cursor:pointer;"></button>
+                    <button onclick="setColor('#2c3e50', '#e67e22')" style="width:30px; height:30px; background:#e67e22; border:none; border-radius:50%; cursor:pointer;"></button>
+                    <button onclick="setColor('#000', '#555')" style="width:30px; height:30px; background:#555; border:none; border-radius:50%; cursor:pointer;"></button>
+                </div>
+            </div>
+
+            <div class="group">
+                <label>Font Pairing</label>
+                <select class="control" onchange="setFonts(this.value)">
+                    <option value="Montserrat,Lato">Montserrat + Lato (Default)</option>
+                    <option value="Merriweather,Open Sans">Merriweather + Open Sans</option>
+                    <option value="Oswald,Roboto">Oswald + Roboto</option>
+                    <option value="Playfair Display,Raleway">Playfair + Raleway</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="panel-sections" class="panel panel-container">
+            <p style="font-size:0.85rem; color:#666; margin-bottom:15px;">Drag to reorder sections.</p>
+            
+            <div id="section-toggles"></div>
+
+            <div class="group" style="margin-top:20px; background:#f0f7fc; padding:15px; border-radius:6px;">
+                <label>Add Custom Section</label>
+                <input type="text" class="control" id="new-sec-name" placeholder="e.g. Certifications, Projects">
+                <button class="btn-add" style="background:#3498db; color:white; border:none; margin-top:5px; width:100%;" onclick="addCustomSection()">Create Section</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="btn-main" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+        </div>
+    </aside>
+
+    <main>
+        <div class="preview-scroll">
+            <div id="resume-page" class="layout-modern">
+                <div class="page-break-marker"></div> </div>
+        </div>
+
+        <div class="zoom-controls">
+            <i class="fa-solid fa-magnifying-glass-minus"></i>
+            <input type="range" min="0.4" max="1.5" step="0.1" value="1" oninput="document.getElementById('resume-page').style.transform = `scale(${this.value})`">
+            <i class="fa-solid fa-magnifying-glass-plus"></i>
+        </div>
+    </main>
+
+    <script>
+        // --- DATA MODEL ---
+        let cvData = {
+            photo: null, 
+            sections: [
+                { id: 'work', title: 'Work Experience', icon: 'fa-briefcase', type: 'list', visible: true, items: [{ type:'item', title: 'Senior Manager', company: 'Tech Corp Inc.', date: '2020 - Present', desc: 'Managed team of 10. Implemented new strategies for growth.' }] },
+                { id: 'edu', title: 'Education', icon: 'fa-graduation-cap', type: 'list', visible: true, items: [{ type:'item', title: 'B.Sc Computer Science', company: 'University of NY', date: '2016 - 2020', desc: '' }] },
+                { id: 'skills', title: 'Skills', icon: 'fa-rocket', type: 'tags', visible: true, content: 'Management, Leadership, Public Speaking, HTML, CSS' }
+            ]
+        };
+
+        let currentLayout = 'modern';
+
+        // --- RENDER ENGINE ---
+        function render() {
+            // Base Info
+            const name = document.getElementById('inp-name').value;
+            const role = document.getElementById('inp-role').value;
+            const email = document.getElementById('inp-email').value;
+            const phone = document.getElementById('inp-phone').value;
+            const loc = document.getElementById('inp-loc').value;
+            const summary = document.getElementById('inp-summary').value;
+
+            // Photo
+            const photoHTML = `
+                <div class="r-photo-container ${cvData.photo ? 'has-photo' : ''}">
+                    <img src="${cvData.photo || ''}" class="r-photo-img" id="live-photo">
+                </div>`;
+
+            // Contact
+            const contactHTML = `
+                <div class="r-contact">
+                    ${email ? `<span><i class="fa-solid fa-envelope"></i> ${email}</span>` : ''}
+                    ${phone ? `<span><i class="fa-solid fa-phone"></i> ${phone}</span>` : ''}
+                    ${loc ? `<span><i class="fa-solid fa-location-dot"></i> ${loc}</span>` : ''}
+                </div>`;
+
+            // Generate Sections
+            const generateSections = (filterFn) => {
+                return cvData.sections.filter(s => s.visible).filter(filterFn || (()=>true)).map(sec => {
+                    let inner = '';
+                    if (sec.type === 'tags') {
+                        // NEW SKILLS RENDER: Vertical list, no border
+                        const tags = sec.content.split(',').map(t => t.trim()).filter(t=>t).map(t => `<div class="r-tag-line">${t}</div>`).join('');
+                        inner = `<div class="r-tags-list">${tags}</div>`;
+                    } else {
+                        inner = sec.items.map(item => {
+                            if(item.type === 'heading') {
+                                return `<div class="r-sub-heading">${item.title}</div>`;
+                            } else {
+                                return `
+                                <div class="r-item">
+                                    <div class="r-row">
+                                        <div class="r-job-title">${item.title}</div>
+                                        <div class="r-date">${item.date}</div>
+                                    </div>
+                                    <div class="r-company">${item.company}</div>
+                                    ${item.desc ? `<div class="r-desc">${item.desc}</div>` : ''}
+                                </div>`;
+                            }
+                        }).join('');
+                    }
+                    return `
+                        <div class="r-section">
+                            <div class="r-sec-title"><i class="fa-solid ${sec.icon}"></i> ${sec.title}</div>
+                            ${inner}
+                        </div>`;
+                }).join('');
+            };
+
+            const page = document.getElementById('resume-page');
+            page.className = `layout-${currentLayout}`; 
+
+            const marker = `<div class="page-break-marker"></div>`;
+
+            // Layout HTML Construction
+            if (currentLayout === 'split') {
+                page.innerHTML = `
+                    <div class="layout-split">
+                        <aside class="side-col">
+                            ${photoHTML}
+                            <h1 class="r-name">${name}</h1>
+                            <div class="r-role">${role}</div>
+                            <div style="margin-top:20px; border-bottom:1px solid rgba(255,255,255,0.2); margin-bottom:20px;"></div>
+                            
+                            <div class="r-sec-title">Contact</div>
+                            ${contactHTML}
+
+                            ${generateSections(s => s.type === 'tags')} 
+                        </aside>
+                        <div class="main-col">
+                            <div class="r-section">
+                                <div class="r-sec-title"><i class="fa-solid fa-user"></i> Profile</div>
+                                <div class="r-desc">${summary}</div>
+                            </div>
+                            ${generateSections(s => s.type === 'list')}
+                        </div>
+                    </div>
+                    ${marker}
+                `;
+            } else {
+                page.innerHTML = `
+                    <div class="r-header">
+                        ${photoHTML}
+                        <div style="flex:1">
+                            <h1 class="r-name">${name}</h1>
+                            <div class="r-role">${role}</div>
+                            ${contactHTML}
+                        </div>
+                    </div>
+                    <div class="r-body">
+                        ${summary ? `
+                        <div class="r-section">
+                            <div class="r-sec-title"><i class="fa-solid fa-user"></i> Profile</div>
+                            <div class="r-desc">${summary}</div>
+                        </div>` : ''}
+                        
+                        ${generateSections()}
+                    </div>
+                    ${marker}
+                `;
+            }
+        }
+
+        // --- EDITOR LOGIC ---
+        
+        function handlePhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    cvData.photo = e.target.result;
+                    document.getElementById('photo-tools').classList.add('visible');
+                    render();
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function updatePhoto(prop, val) {
+            const img = document.getElementById('live-photo');
+            if(img) {
+                if(prop === 'scale') img.style.setProperty('--p-scale', val);
+                if(prop === 'x') img.style.setProperty('--p-x', val + 'px');
+                if(prop === 'y') img.style.setProperty('--p-y', val + 'px');
+            }
+        }
+
+        function renderEditor() {
+            const container = document.getElementById('dynamic-editor');
+            const toggles = document.getElementById('section-toggles');
+            
+            container.innerHTML = '';
+            toggles.innerHTML = '';
+
+            // RENDER "MANAGE" TAB LIST (Sortable)
+            cvData.sections.forEach((sec, idx) => {
+                const div = document.createElement('div');
+                div.className = 'manage-item';
+                div.innerHTML = `
+                    <i class="fa-solid fa-grip-lines handle" style="cursor:grab; margin-right:10px;"></i>
+                    <span style="flex:1; font-weight:600;">${sec.title}</span>
+                    <input type="checkbox" ${sec.visible ? 'checked' : ''} onchange="toggleVis(${idx})">
+                `;
+                toggles.appendChild(div);
+            });
+
+            // Initialize Sortable for Sections
+            new Sortable(toggles, {
+                handle: '.handle',
+                animation: 150,
+                onEnd: function (evt) {
+                    const item = cvData.sections.splice(evt.oldIndex, 1)[0];
+                    cvData.sections.splice(evt.newIndex, 0, item);
+                    render(); 
+                    renderEditor();
+                }
+            });
+
+            // RENDER "CONTENT" TAB
+            cvData.sections.forEach((sec, idx) => {
+                if (!sec.visible) return;
+
+                let contentHTML = '';
+                
+                if (sec.type === 'tags') {
+                    contentHTML = `<p style="font-size:0.8rem; color:#666; margin-bottom:5px;">Comma separated values (e.g. Word, Excel)</p>
+                                   <textarea class="control" oninput="updateSec(${idx}, null, 'content', this.value)">${sec.content}</textarea>`;
+                } else {
+                    const itemsContainerId = `sec-items-${idx}`;
+                    let itemsHTML = `<div id="${itemsContainerId}">`;
+                    
+                    itemsHTML += sec.items.map((item, iIdx) => {
+                        if(item.type === 'heading') {
+                            return `
+                            <div class="section-block is-heading">
+                                <div class="item-header">
+                                    <span><i class="fa-solid fa-grip-lines handle"></i> <strong>Sub-Heading</strong></span>
+                                    <i class="fa-solid fa-trash btn-icon" onclick="delItem(${idx}, ${iIdx})"></i>
+                                </div>
+                                <input class="control" placeholder="Heading Title (e.g. Certifications)" value="${item.title}" oninput="updateItem(${idx}, ${iIdx}, 'title', this.value)">
+                            </div>`;
+                        } else {
+                            return `
+                            <div class="section-block">
+                                <div class="item-header">
+                                    <i class="fa-solid fa-grip-lines handle"></i>
+                                    <i class="fa-solid fa-trash btn-icon" onclick="delItem(${idx}, ${iIdx})"></i>
+                                </div>
+                                <input class="control" placeholder="Title / Role" value="${item.title}" oninput="updateItem(${idx}, ${iIdx}, 'title', this.value)" style="margin-bottom:5px;">
+                                <input class="control" placeholder="Company / Institution" value="${item.company}" oninput="updateItem(${idx}, ${iIdx}, 'company', this.value)" style="margin-bottom:5px;">
+                                <input class="control" placeholder="Date (e.g. 2020 - Present)" value="${item.date}" oninput="updateItem(${idx}, ${iIdx}, 'date', this.value)" style="margin-bottom:5px;">
+                                <textarea class="control" placeholder="Description..." oninput="updateItem(${idx}, ${iIdx}, 'desc', this.value)" style="min-height:60px;">${item.desc}</textarea>
+                            </div>
+                        `;
+                        }
+                    }).join('');
+                    
+                    itemsHTML += `</div>
+                        <div class="btn-row">
+                            <button class="btn-add" onclick="addItem(${idx}, 'item')">+ Add Item</button>
+                            <button class="btn-add-head" onclick="addItem(${idx}, 'heading')">+ Add Heading</button>
+                        </div>
+                    `;
+                    contentHTML = itemsHTML;
+                }
+
+                const sectionWrapper = document.createElement('div');
+                sectionWrapper.className = 'group';
+                sectionWrapper.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                        <label style="margin:0; font-size:1rem; color:var(--accent);">${sec.title}</label>
+                        <i class="fa-solid fa-trash btn-icon" title="Delete Section" onclick="delSection(${idx})"></i>
+                    </div>
+                    ${contentHTML}
+                    <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+                `;
+                container.appendChild(sectionWrapper);
+
+                if (sec.type !== 'tags') {
+                    const el = document.getElementById(`sec-items-${idx}`);
+                    new Sortable(el, {
+                        handle: '.handle',
+                        animation: 150,
+                        onEnd: function (evt) {
+                            const item = cvData.sections[idx].items.splice(evt.oldIndex, 1)[0];
+                            cvData.sections[idx].items.splice(evt.newIndex, 0, item);
+                            render();
+                            renderEditor();
+                        }
+                    });
+                }
+            });
+        }
+
+        // --- HELPERS ---
+        function toggleVis(idx) { cvData.sections[idx].visible = !cvData.sections[idx].visible; renderEditor(); render(); }
+        function updateSec(idx, _, field, val) { cvData.sections[idx][field] = val; render(); }
+        function updateItem(secIdx, itemIdx, field, val) { cvData.sections[secIdx].items[itemIdx][field] = val; render(); }
+        
+        function addItem(idx, type) { 
+            if(type === 'heading') {
+                cvData.sections[idx].items.push({ type: 'heading', title: 'New Sub-Heading', company:'', date:'', desc:'' });
+            } else {
+                cvData.sections[idx].items.push({ type: 'item', title:'', company:'', date:'', desc:'' });
+            }
+            renderEditor(); render(); 
+        }
+
+        function delItem(secIdx, itemIdx) { cvData.sections[secIdx].items.splice(itemIdx, 1); renderEditor(); render(); }
+        function delSection(idx) { if(confirm('Delete section?')) { cvData.sections.splice(idx, 1); renderEditor(); render(); } }
+        
+        function addCustomSection() {
+            const name = document.getElementById('new-sec-name').value;
+            if(!name) return;
+            cvData.sections.push({ id: Date.now(), title: name, icon: 'fa-star', type: 'list', visible: true, items: [{type:'item', title:'Title', company:'', date:'', desc:''}] });
+            document.getElementById('new-sec-name').value = '';
+            renderEditor(); render();
+            switchTab('content'); 
+        }
+
+        function setLayout(l, btn) {
+            currentLayout = l;
+            document.querySelectorAll('.grid-select .opt-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            render();
+        }
+        function setColor(p, a) {
+            document.documentElement.style.setProperty('--primary', p);
+            document.documentElement.style.setProperty('--accent', a);
+        }
+        function setFonts(val) {
+            const [h, b] = val.split(',');
+            document.documentElement.style.setProperty('--font-head', h);
+            document.documentElement.style.setProperty('--font-body', b);
+        }
+        function switchTab(t) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+            document.getElementById('panel-'+t).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        renderEditor();
+        render();
+
+    </script>
+</body>
+</html>
