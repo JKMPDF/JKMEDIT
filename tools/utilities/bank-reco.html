@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Transaction Ledger</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Custom Tweaks on top of Tailwind */
+        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        .numeric { font-family: 'Courier New', monospace; text-align: right; }
+        
+        /* Smooth transitions for Accordion */
+        .sub-row {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+            background-color: #f8fafc;
+        }
+        .sub-row.open {
+            opacity: 1;
+        }
+        
+        /* Checkbox custom style */
+        .custom-checkbox {
+            width: 18px; height: 18px; cursor: pointer;
+            accent-color: #4f46e5;
+        }
+
+        /* Hover effects */
+        .main-row:hover { background-color: #f1f5f9; }
+        .action-btn { visibility: hidden; }
+        .sub-row-content:hover .action-btn { visibility: visible; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- HEADER -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm z-10">
+        <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                <i class="ph ph-bank text-xl"></i>
+            </div>
+            <h1 class="text-xl font-bold text-gray-800">JKM EDIT</h1>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="downloadTemplate()" class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                <i class="ph ph-file-xls mr-2"></i>Template
+            </button>
+            <button onclick="document.getElementById('fileInput').click()" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition shadow-sm">
+                <i class="ph ph-upload-simple mr-2"></i>Upload Excel
+            </button>
+            <button onclick="exportData()" id="exportBtn" class="hidden px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition shadow-sm">
+                <i class="ph ph-download-simple mr-2"></i>Export
+            </button>
+            <input type="file" id="fileInput" hidden accept=".xlsx, .xls">
+        </div>
+    </header>
+
+    <!-- MAIN LAYOUT -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- SIDEBAR METRICS -->
+        <aside class="w-64 bg-white border-r border-gray-200 p-6 flex flex-col gap-6">
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Inflow (Credit)</p>
+                <p class="text-2xl font-bold text-emerald-600 mt-1" id="totalCredit">0.00</p>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Outflow (Debit)</p>
+                <p class="text-2xl font-bold text-red-600 mt-1" id="totalDebit">0.00</p>
+            </div>
+            <div class="pt-4 border-t border-gray-100">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Net Balance</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1" id="netFlow">0.00</p>
+            </div>
+            
+            <div class="mt-auto bg-blue-50 p-4 rounded-lg border border-blue-100 text-sm text-blue-800">
+                <p class="font-bold mb-1"><i class="ph ph-info"></i> How to use:</p>
+                <ul class="list-disc pl-4 space-y-1 text-xs">
+                    <li>Search to find related items.</li>
+                    <li>Select checkboxes.</li>
+                    <li>Click <strong>Merge</strong>.</li>
+                    <li>Click a row to expand & edit.</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- CONTENT AREA -->
+        <main class="flex-1 flex flex-col bg-gray-50">
+            
+            <!-- TOOLBAR -->
+            <div id="toolbar" class="hidden px-6 py-4 flex gap-4 items-center border-b border-gray-200 bg-white">
+                <div class="relative flex-1 max-w-md">
+                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" oninput="filterData()" placeholder="Search names, amounts..." 
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                
+                <div class="h-8 w-px bg-gray-300 mx-2"></div>
+                
+                <button onclick="mergeSelected()" class="flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 font-medium rounded-lg hover:bg-indigo-200 transition">
+                    <i class="ph ph-arrows-merge"></i> Merge Selected
+                </button>
+            </div>
+
+            <!-- TABLE CONTAINER -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <div id="emptyState" class="flex flex-col items-center justify-center h-full text-gray-400">
+                    <i class="ph ph-table text-6xl mb-4 text-gray-300"></i>
+                    <p class="text-lg">Upload an Excel file to start analyzing</p>
+                </div>
+
+                <div id="tableWrapper" class="hidden bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gray-50 text-gray-500 font-semibold text-sm border-b border-gray-200">
+                            <tr>
+                                <th class="p-4 w-12 text-center"><input type="checkbox" onclick="toggleSelectAll(this)" class="custom-checkbox"></th>
+                                <th class="p-4">Description / Group Name</th>
+                                <th class="p-4 text-center">Count</th>
+                                <th class="p-4 text-right">Debit</th>
+                                <th class="p-4 text-right">Credit</th>
+                                <th class="p-4 text-right">Net</th>
+                                <th class="p-4 w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="text-sm divide-y divide-gray-100">
+                            <!-- Rows injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- STATE MANAGEMENT ---
+        // We keep every single transaction as an object.
+        // If it belongs to a group, 'groupId' matches a group key.
+        // If it is standalone, 'groupId' is its own unique ID.
+        let transactions = []; 
+        let currentFilter = "";
+
+        // --- 1. SETUP & UTILS ---
+        document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                initializeData(json);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function downloadTemplate() {
+            const ws = XLSX.utils.aoa_to_sheet([["Date", "Narration/Particular", "Transaction ID", "Debit", "Credit"]]);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Template");
+            XLSX.writeFile(wb, "Template.xlsx");
+        }
+
+        function formatCurrency(num) {
+            return num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // --- 2. DATA PROCESSING ---
+        function initializeData(rawData) {
+            transactions = rawData.map((row, index) => {
+                // Auto-cleanup name for initial grouping suggestions
+                let rawName = row["Narration/Particular"] || "Unknown";
+                
+                return {
+                    id: "tx_" + index + "_" + Date.now(), // Unique ID for every row
+                    date: row["Date"] || "",
+                    originalName: rawName,
+                    cleanName: cleanName(rawName), // Helper to strip UPI/IMPS
+                    debit: parseFloat(row["Debit"]) || 0,
+                    credit: parseFloat(row["Credit"]) || 0,
+                    groupId: null, // Initially null
+                    groupName: null // Initially null
+                };
+            });
+
+            // Perform Initial Auto-Grouping
+            autoGroupData();
+            renderUI();
+        }
+
+        function cleanName(name) {
+            let str = String(name).toUpperCase();
+            ["UPI", "IMPS", "NEFT", "RTGS", "REF", "TRANSFER", "TO", "BY", "/", "-"].forEach(w => {
+                str = str.replace(w, "");
+            });
+            return str.replace(/[0-9]/g, "").replace(/\s+/g, " ").trim();
+        }
+
+        function autoGroupData() {
+            // Group by strict string match of cleanName
+            const groups = {};
+            transactions.forEach(tx => {
+                const key = tx.cleanName || "Others";
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(tx);
+            });
+
+            // Assign Group IDs
+            Object.keys(groups).forEach(key => {
+                const groupTxns = groups[key];
+                if (groupTxns.length > 1) {
+                    const newGroupId = "grp_" + Math.random().toString(36).substr(2, 9);
+                    groupTxns.forEach(tx => {
+                        tx.groupId = newGroupId;
+                        tx.groupName = key; // Use the cleaned name as group name
+                    });
+                } else {
+                    // Single items remain individual (groupId = unique ID)
+                    groupTxns[0].groupId = groupTxns[0].id;
+                    groupTxns[0].groupName = groupTxns[0].originalName;
+                }
+            });
+        }
+
+        // --- 3. RENDERING (The Advanced Part) ---
+        function getAggregatedView() {
+            const map = {};
+            
+            transactions.forEach(tx => {
+                // If filtered, check if text matches
+                if (currentFilter) {
+                    const searchStr = (tx.originalName + " " + tx.groupName + " " + tx.debit + " " + tx.credit).toLowerCase();
+                    if (!searchStr.includes(currentFilter.toLowerCase())) return;
+                }
+
+                if (!map[tx.groupId]) {
+                    map[tx.groupId] = {
+                        groupId: tx.groupId,
+                        displayName: tx.groupName,
+                        items: [],
+                        totalDebit: 0,
+                        totalCredit: 0
+                    };
+                }
+                map[tx.groupId].items.push(tx);
+                map[tx.groupId].totalDebit += tx.debit;
+                map[tx.groupId].totalCredit += tx.credit;
+            });
+
+            // If a group matches filter, show ALL its items, even if item text doesn't match
+            // (Current logic filters items strictly, let's keep it simple for now)
+            
+            return Object.values(map).sort((a,b) => b.items.length - a.items.length); // Sort by count
+        }
+
+        function renderUI() {
+            const data = getAggregatedView();
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = "";
+            
+            let gd = 0, gc = 0; // Grand Totals
+
+            data.forEach(group => {
+                gd += group.totalDebit;
+                gc += group.totalCredit;
+                const net = group.totalDebit - group.totalCredit;
+                const isMerged = group.items.length > 1;
+
+                // MAIN ROW
+                const tr = document.createElement('tr');
+                tr.className = "main-row border-b border-gray-100 transition-colors";
+                if(isMerged) tr.style.cursor = "pointer";
+                
+                // Click to expand only if merged
+                if(isMerged) {
+                    tr.onclick = (e) => {
+                        if(e.target.type === 'checkbox') return; // Don't expand if clicking checkbox
+                        toggleSubRow(group.groupId);
+                    };
+                }
+
+                tr.innerHTML = `
+                    <td class="p-4 text-center">
+                        <input type="checkbox" class="custom-checkbox row-select" value="${group.groupId}">
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-2">
+                            ${isMerged ? `<i id="icon_${group.groupId}" class="ph ph-caret-right text-gray-400"></i>` : ''}
+                            <span class="font-medium text-gray-800">${group.displayName}</span>
+                            ${isMerged ? `<span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-full">Group</span>` : ''}
+                        </div>
+                    </td>
+                    <td class="p-4 text-center text-gray-500">${group.items.length}</td>
+                    <td class="p-4 numeric ${group.totalDebit > 0 ? 'text-red-600' : 'text-gray-300'}">${formatCurrency(group.totalDebit)}</td>
+                    <td class="p-4 numeric ${group.totalCredit > 0 ? 'text-emerald-600' : 'text-gray-300'}">${formatCurrency(group.totalCredit)}</td>
+                    <td class="p-4 numeric font-bold text-gray-700">${formatCurrency(net)}</td>
+                    <td class="p-4"></td>
+                `;
+                tbody.appendChild(tr);
+
+                // SUB ROW (Hidden by default)
+                if (isMerged) {
+                    const subTr = document.createElement('tr');
+                    subTr.innerHTML = `
+                        <td colspan="7" class="p-0 border-none">
+                            <div id="sub_${group.groupId}" class="sub-row bg-gray-50 shadow-inner">
+                                <table class="w-full">
+                                    ${group.items.map(item => `
+                                        <tr class="sub-row-content border-b border-gray-100 hover:bg-gray-100">
+                                            <td class="p-3 w-12"></td>
+                                            <td class="p-3 pl-12 text-sm text-gray-600 flex items-center gap-3">
+                                                <span class="text-xs text-gray-400 font-mono">${item.date || '-'}</span>
+                                                ${item.originalName}
+                                            </td>
+                                            <td class="p-3 text-center text-xs text-gray-400"></td>
+                                            <td class="p-3 text-right text-sm text-gray-500 font-mono">${item.debit ? formatCurrency(item.debit) : '-'}</td>
+                                            <td class="p-3 text-right text-sm text-gray-500 font-mono">${item.credit ? formatCurrency(item.credit) : '-'}</td>
+                                            <td class="p-3 text-right text-sm text-gray-400 font-mono"></td>
+                                            <td class="p-3 text-center">
+                                                <button onclick="detachItem('${item.id}', '${group.groupId}')" title="Remove from Group" 
+                                                    class="action-btn text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition">
+                                                    <i class="ph ph-link-break"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </table>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(subTr);
+                }
+            });
+
+            // Update Metrics & Visibility
+            document.getElementById('totalDebit').innerText = formatCurrency(gd);
+            document.getElementById('totalCredit').innerText = formatCurrency(gc);
+            document.getElementById('netFlow').innerText = formatCurrency(gd - gc);
+            
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('tableWrapper').classList.remove('hidden');
+            document.getElementById('toolbar').classList.remove('hidden');
+            document.getElementById('exportBtn').classList.remove('hidden');
+        }
+
+        // --- 4. INTERACTION LOGIC ---
+
+        function toggleSubRow(groupId) {
+            const subRow = document.getElementById(`sub_${groupId}`);
+            const icon = document.getElementById(`icon_${groupId}`);
+            
+            if (subRow.style.maxHeight) {
+                // Close
+                subRow.style.maxHeight = null;
+                subRow.classList.remove('open');
+                icon.classList.replace('ph-caret-down', 'ph-caret-right');
+            } else {
+                // Open
+                subRow.style.maxHeight = subRow.scrollHeight + "px";
+                subRow.classList.add('open');
+                icon.classList.replace('ph-caret-right', 'ph-caret-down');
+            }
+        }
+
+        function filterData() {
+            currentFilter = document.getElementById('searchInput').value;
+            renderUI();
+        }
+
+        function toggleSelectAll(source) {
+            document.querySelectorAll('.row-select').forEach(cb => cb.checked = source.checked);
+        }
+
+        // --- 5. MERGE & DETACH LOGIC (CRUD) ---
+
+        function mergeSelected() {
+            const checkboxes = document.querySelectorAll('.row-select:checked');
+            const groupIdsToMerge = Array.from(checkboxes).map(cb => cb.value);
+
+            if (groupIdsToMerge.length < 2) {
+                alert("Please select at least 2 rows to merge.");
+                return;
+            }
+
+            // Get default name from first selection
+            const firstGroup = transactions.find(t => t.groupId === groupIdsToMerge[0]);
+            const newName = prompt("Enter Name for Merged Group:", firstGroup.groupName);
+            if (!newName) return;
+
+            // Generate new Group ID
+            const newGroupId = "grp_" + Date.now();
+
+            // Update all transactions belonging to selected groups
+            transactions.forEach(tx => {
+                if (groupIdsToMerge.includes(tx.groupId)) {
+                    tx.groupId = newGroupId;
+                    tx.groupName = newName;
+                }
+            });
+
+            renderUI();
+        }
+
+        function detachItem(itemId, oldGroupId) {
+            // Find the transaction
+            const tx = transactions.find(t => t.id === itemId);
+            if (tx) {
+                // Revert to being its own group (unique ID)
+                tx.groupId = tx.id;
+                tx.groupName = tx.originalName;
+                
+                // Re-render
+                // We need to re-render to update totals of the old group and show the new single row
+                renderUI();
+                
+                // If the old group still exists (has items), try to keep it open? 
+                // A full render resets view, which is safer for consistent state.
+            }
+        }
+
+        // --- 6. EXPORT ---
+        function exportData() {
+            const exportRows = [];
+            const data = getAggregatedView();
+            
+            data.forEach(g => {
+                exportRows.push({
+                    "Group Name": g.displayName,
+                    "Total Debit": g.totalDebit,
+                    "Total Credit": g.totalCredit,
+                    "Net": g.totalDebit - g.totalCredit,
+                    "Count": g.items.length,
+                    "Details": g.items.map(i => `${i.date}: ${i.originalName} (${i.debit||i.credit})`).join('; ')
+                });
+            });
+
+            const ws = XLSX.utils.json_to_sheet(exportRows);
+            const wb = XLSX.utils.book_new();
+            ws['!cols'] = [{wch:40}, {wch:15}, {wch:15}, {wch:15}, {wch:10}, {wch:100}];
+            XLSX.utils.book_append_sheet(wb, ws, "Analysis");
+            XLSX.writeFile(wb, "Final_Analysis.xlsx");
+        }
+
+    </script>
+</body>
+</html>
