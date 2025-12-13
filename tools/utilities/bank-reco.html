@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Transaction Ledger</title>
+    <title>Advanced Transaction Ledger Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* Custom Tweaks on top of Tailwind */
         body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
         .numeric { font-family: 'Courier New', monospace; text-align: right; }
         
-        /* Smooth transitions for Accordion */
+        /* Accordion Animation */
         .sub-row {
             max-height: 0;
             overflow: hidden;
@@ -21,20 +20,27 @@
             opacity: 0;
             background-color: #f8fafc;
         }
-        .sub-row.open {
-            opacity: 1;
-        }
+        .sub-row.open { opacity: 1; }
         
-        /* Checkbox custom style */
-        .custom-checkbox {
-            width: 18px; height: 18px; cursor: pointer;
-            accent-color: #4f46e5;
-        }
-
-        /* Hover effects */
+        .custom-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: #4f46e5; }
         .main-row:hover { background-color: #f1f5f9; }
+        
+        /* Buttons visibility on hover */
         .action-btn { visibility: hidden; }
         .sub-row-content:hover .action-btn { visibility: visible; }
+        .group-action-btn { visibility: hidden; }
+        .main-row:hover .group-action-btn { visibility: visible; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none;
+            justify-content: center; align-items: center; z-index: 50;
+        }
+        .modal-box {
+            background: white; padding: 2rem; border-radius: 12px;
+            width: 90%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -45,7 +51,7 @@
             <div class="bg-indigo-600 text-white p-2 rounded-lg">
                 <i class="ph ph-bank text-xl"></i>
             </div>
-            <h1 class="text-xl font-bold text-gray-800">JKM EDIT</h1>
+            <h1 class="text-xl font-bold text-gray-800">Transaction Command Center</h1>
         </div>
         <div class="flex gap-3">
             <button onclick="downloadTemplate()" class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
@@ -64,7 +70,7 @@
     <!-- MAIN LAYOUT -->
     <div class="flex flex-1 overflow-hidden">
         
-        <!-- SIDEBAR METRICS -->
+        <!-- SIDEBAR -->
         <aside class="w-64 bg-white border-r border-gray-200 p-6 flex flex-col gap-6">
             <div>
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Inflow (Credit)</p>
@@ -78,41 +84,44 @@
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Net Balance</p>
                 <p class="text-2xl font-bold text-gray-800 mt-1" id="netFlow">0.00</p>
             </div>
-            
-            <div class="mt-auto bg-blue-50 p-4 rounded-lg border border-blue-100 text-sm text-blue-800">
-                <p class="font-bold mb-1"><i class="ph ph-info"></i> How to use:</p>
+            <div class="mt-auto bg-blue-50 p-4 rounded-lg text-sm text-blue-800">
+                <p class="font-bold mb-1">New Features:</p>
                 <ul class="list-disc pl-4 space-y-1 text-xs">
-                    <li>Search to find related items.</li>
-                    <li>Select checkboxes.</li>
-                    <li>Click <strong>Merge</strong>.</li>
-                    <li>Click a row to expand & edit.</li>
+                    <li><strong>Add to Existing:</strong> Select items -> click button -> choose group.</li>
+                    <li><strong>Dissolve Group:</strong> Click <i class="ph ph-trash"></i> on a group row to ungroup all.</li>
                 </ul>
             </div>
         </aside>
 
-        <!-- CONTENT AREA -->
+        <!-- CONTENT -->
         <main class="flex-1 flex flex-col bg-gray-50">
             
             <!-- TOOLBAR -->
             <div id="toolbar" class="hidden px-6 py-4 flex gap-4 items-center border-b border-gray-200 bg-white">
                 <div class="relative flex-1 max-w-md">
                     <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="searchInput" oninput="filterData()" placeholder="Search names, amounts..." 
-                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <input type="text" id="searchInput" oninput="filterData()" placeholder="Search..." 
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 
                 <div class="h-8 w-px bg-gray-300 mx-2"></div>
                 
+                <!-- NEW: Add to Existing Group Button -->
+                <button onclick="openAddToGroupModal()" class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
+                    <i class="ph ph-plus-circle"></i> Add to Existing Group
+                </button>
+
+                <!-- Merge New Button -->
                 <button onclick="mergeSelected()" class="flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 font-medium rounded-lg hover:bg-indigo-200 transition">
-                    <i class="ph ph-arrows-merge"></i> Merge Selected
+                    <i class="ph ph-arrows-merge"></i> Merge as New Group
                 </button>
             </div>
 
-            <!-- TABLE CONTAINER -->
+            <!-- TABLE -->
             <div class="flex-1 overflow-y-auto p-6">
                 <div id="emptyState" class="flex flex-col items-center justify-center h-full text-gray-400">
                     <i class="ph ph-table text-6xl mb-4 text-gray-300"></i>
-                    <p class="text-lg">Upload an Excel file to start analyzing</p>
+                    <p class="text-lg">Upload an Excel file to start</p>
                 </div>
 
                 <div id="tableWrapper" class="hidden bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -125,34 +134,41 @@
                                 <th class="p-4 text-right">Debit</th>
                                 <th class="p-4 text-right">Credit</th>
                                 <th class="p-4 text-right">Net</th>
-                                <th class="p-4 w-10"></th>
+                                <th class="p-4 w-16"></th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody" class="text-sm divide-y divide-gray-100">
-                            <!-- Rows injected via JS -->
-                        </tbody>
+                        <tbody id="tableBody" class="text-sm divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- MODAL: Add to Existing Group -->
+    <div id="groupSelectionModal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 class="text-xl font-bold mb-4">Select Target Group</h2>
+            <p class="text-gray-600 mb-4 text-sm">Choose an existing group to move the selected items into:</p>
+            
+            <select id="groupSelectDropdown" class="w-full p-2 border border-gray-300 rounded-lg mb-6 bg-white">
+                <!-- Options populated by JS -->
+            </select>
+
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
+                <button onclick="confirmAddToGroup()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Move Items</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- STATE MANAGEMENT ---
-        // We keep every single transaction as an object.
-        // If it belongs to a group, 'groupId' matches a group key.
-        // If it is standalone, 'groupId' is its own unique ID.
         let transactions = []; 
         let currentFilter = "";
 
-        // --- 1. SETUP & UTILS ---
-        document.getElementById('fileInput').addEventListener('change', handleFileUpload);
-
-        function handleFileUpload(e) {
+        // --- CORE FUNCTIONS ---
+        document.getElementById('fileInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = (e) => {
                 const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
@@ -160,7 +176,7 @@
                 initializeData(json);
             };
             reader.readAsArrayBuffer(file);
-        }
+        });
 
         function downloadTemplate() {
             const ws = XLSX.utils.aoa_to_sheet([["Date", "Narration/Particular", "Transaction ID", "Debit", "Credit"]]);
@@ -173,74 +189,61 @@
             return num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        // --- 2. DATA PROCESSING ---
         function initializeData(rawData) {
             transactions = rawData.map((row, index) => {
-                // Auto-cleanup name for initial grouping suggestions
                 let rawName = row["Narration/Particular"] || "Unknown";
-                
                 return {
-                    id: "tx_" + index + "_" + Date.now(), // Unique ID for every row
+                    id: "tx_" + index + "_" + Date.now(),
                     date: row["Date"] || "",
                     originalName: rawName,
-                    cleanName: cleanName(rawName), // Helper to strip UPI/IMPS
+                    cleanName: cleanName(rawName),
                     debit: parseFloat(row["Debit"]) || 0,
                     credit: parseFloat(row["Credit"]) || 0,
-                    groupId: null, // Initially null
-                    groupName: null // Initially null
+                    groupId: null, 
+                    groupName: null 
                 };
             });
-
-            // Perform Initial Auto-Grouping
             autoGroupData();
             renderUI();
         }
 
         function cleanName(name) {
             let str = String(name).toUpperCase();
-            ["UPI", "IMPS", "NEFT", "RTGS", "REF", "TRANSFER", "TO", "BY", "/", "-"].forEach(w => {
-                str = str.replace(w, "");
-            });
+            ["UPI", "IMPS", "NEFT", "RTGS", "REF", "TRANSFER", "TO", "BY", "/", "-"].forEach(w => str = str.replace(w, ""));
             return str.replace(/[0-9]/g, "").replace(/\s+/g, " ").trim();
         }
 
         function autoGroupData() {
-            // Group by strict string match of cleanName
             const groups = {};
             transactions.forEach(tx => {
                 const key = tx.cleanName || "Others";
                 if (!groups[key]) groups[key] = [];
                 groups[key].push(tx);
             });
-
-            // Assign Group IDs
             Object.keys(groups).forEach(key => {
                 const groupTxns = groups[key];
                 if (groupTxns.length > 1) {
                     const newGroupId = "grp_" + Math.random().toString(36).substr(2, 9);
                     groupTxns.forEach(tx => {
                         tx.groupId = newGroupId;
-                        tx.groupName = key; // Use the cleaned name as group name
+                        tx.groupName = key;
                     });
                 } else {
-                    // Single items remain individual (groupId = unique ID)
-                    groupTxns[0].groupId = groupTxns[0].id;
-                    groupTxns[0].groupName = groupTxns[0].originalName;
+                    tx = groupTxns[0];
+                    tx.groupId = tx.id;
+                    tx.groupName = tx.originalName;
                 }
             });
         }
 
-        // --- 3. RENDERING (The Advanced Part) ---
+        // --- RENDER LOGIC ---
         function getAggregatedView() {
             const map = {};
-            
             transactions.forEach(tx => {
-                // If filtered, check if text matches
                 if (currentFilter) {
-                    const searchStr = (tx.originalName + " " + tx.groupName + " " + tx.debit + " " + tx.credit).toLowerCase();
+                    const searchStr = (tx.originalName + " " + tx.groupName).toLowerCase();
                     if (!searchStr.includes(currentFilter.toLowerCase())) return;
                 }
-
                 if (!map[tx.groupId]) {
                     map[tx.groupId] = {
                         groupId: tx.groupId,
@@ -254,19 +257,14 @@
                 map[tx.groupId].totalDebit += tx.debit;
                 map[tx.groupId].totalCredit += tx.credit;
             });
-
-            // If a group matches filter, show ALL its items, even if item text doesn't match
-            // (Current logic filters items strictly, let's keep it simple for now)
-            
-            return Object.values(map).sort((a,b) => b.items.length - a.items.length); // Sort by count
+            return Object.values(map).sort((a,b) => b.items.length - a.items.length);
         }
 
         function renderUI() {
             const data = getAggregatedView();
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = "";
-            
-            let gd = 0, gc = 0; // Grand Totals
+            let gd = 0, gc = 0;
 
             data.forEach(group => {
                 gd += group.totalDebit;
@@ -274,18 +272,15 @@
                 const net = group.totalDebit - group.totalCredit;
                 const isMerged = group.items.length > 1;
 
-                // MAIN ROW
                 const tr = document.createElement('tr');
                 tr.className = "main-row border-b border-gray-100 transition-colors";
                 if(isMerged) tr.style.cursor = "pointer";
                 
-                // Click to expand only if merged
-                if(isMerged) {
-                    tr.onclick = (e) => {
-                        if(e.target.type === 'checkbox') return; // Don't expand if clicking checkbox
-                        toggleSubRow(group.groupId);
-                    };
-                }
+                // Toggle Expansion on Row Click
+                tr.onclick = (e) => {
+                    if(e.target.type === 'checkbox' || e.target.closest('button')) return;
+                    if(isMerged) toggleSubRow(group.groupId);
+                };
 
                 tr.innerHTML = `
                     <td class="p-4 text-center">
@@ -302,11 +297,18 @@
                     <td class="p-4 numeric ${group.totalDebit > 0 ? 'text-red-600' : 'text-gray-300'}">${formatCurrency(group.totalDebit)}</td>
                     <td class="p-4 numeric ${group.totalCredit > 0 ? 'text-emerald-600' : 'text-gray-300'}">${formatCurrency(group.totalCredit)}</td>
                     <td class="p-4 numeric font-bold text-gray-700">${formatCurrency(net)}</td>
-                    <td class="p-4"></td>
+                    <td class="p-4 text-right">
+                        ${isMerged ? 
+                            `<button onclick="dissolveGroup('${group.groupId}')" title="Dissolve Group (Remove all items)" 
+                              class="group-action-btn text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded transition">
+                              <i class="ph ph-trash"></i>
+                             </button>` 
+                            : ''}
+                    </td>
                 `;
                 tbody.appendChild(tr);
 
-                // SUB ROW (Hidden by default)
+                // Sub-Row (Expanded)
                 if (isMerged) {
                     const subTr = document.createElement('tr');
                     subTr.innerHTML = `
@@ -320,12 +322,12 @@
                                                 <span class="text-xs text-gray-400 font-mono">${item.date || '-'}</span>
                                                 ${item.originalName}
                                             </td>
-                                            <td class="p-3 text-center text-xs text-gray-400"></td>
-                                            <td class="p-3 text-right text-sm text-gray-500 font-mono">${item.debit ? formatCurrency(item.debit) : '-'}</td>
-                                            <td class="p-3 text-right text-sm text-gray-500 font-mono">${item.credit ? formatCurrency(item.credit) : '-'}</td>
-                                            <td class="p-3 text-right text-sm text-gray-400 font-mono"></td>
+                                            <td class="p-3"></td>
+                                            <td class="p-3 numeric text-sm text-gray-500">${item.debit ? formatCurrency(item.debit) : '-'}</td>
+                                            <td class="p-3 numeric text-sm text-gray-500">${item.credit ? formatCurrency(item.credit) : '-'}</td>
+                                            <td class="p-3"></td>
                                             <td class="p-3 text-center">
-                                                <button onclick="detachItem('${item.id}', '${group.groupId}')" title="Remove from Group" 
+                                                <button onclick="detachItem('${item.id}')" title="Remove from Group" 
                                                     class="action-btn text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition">
                                                     <i class="ph ph-link-break"></i>
                                                 </button>
@@ -340,7 +342,6 @@
                 }
             });
 
-            // Update Metrics & Visibility
             document.getElementById('totalDebit').innerText = formatCurrency(gd);
             document.getElementById('totalCredit').innerText = formatCurrency(gc);
             document.getElementById('netFlow').innerText = formatCurrency(gd - gc);
@@ -351,19 +352,17 @@
             document.getElementById('exportBtn').classList.remove('hidden');
         }
 
-        // --- 4. INTERACTION LOGIC ---
+        // --- ACTIONS ---
 
         function toggleSubRow(groupId) {
             const subRow = document.getElementById(`sub_${groupId}`);
             const icon = document.getElementById(`icon_${groupId}`);
-            
+            if(!subRow) return;
             if (subRow.style.maxHeight) {
-                // Close
                 subRow.style.maxHeight = null;
                 subRow.classList.remove('open');
                 icon.classList.replace('ph-caret-down', 'ph-caret-right');
             } else {
-                // Open
                 subRow.style.maxHeight = subRow.scrollHeight + "px";
                 subRow.classList.add('open');
                 icon.classList.replace('ph-caret-right', 'ph-caret-down');
@@ -379,58 +378,109 @@
             document.querySelectorAll('.row-select').forEach(cb => cb.checked = source.checked);
         }
 
-        // --- 5. MERGE & DETACH LOGIC (CRUD) ---
+        // --- MERGE / GROUPING LOGIC ---
 
         function mergeSelected() {
             const checkboxes = document.querySelectorAll('.row-select:checked');
-            const groupIdsToMerge = Array.from(checkboxes).map(cb => cb.value);
+            const groupIds = Array.from(checkboxes).map(cb => cb.value);
+            if (groupIds.length < 2) return alert("Select at least 2 items to merge.");
 
-            if (groupIdsToMerge.length < 2) {
-                alert("Please select at least 2 rows to merge.");
-                return;
-            }
-
-            // Get default name from first selection
-            const firstGroup = transactions.find(t => t.groupId === groupIdsToMerge[0]);
-            const newName = prompt("Enter Name for Merged Group:", firstGroup.groupName);
+            const firstTx = transactions.find(t => t.groupId === groupIds[0]);
+            const newName = prompt("Enter Name for Merged Group:", firstTx.groupName);
             if (!newName) return;
 
-            // Generate new Group ID
             const newGroupId = "grp_" + Date.now();
-
-            // Update all transactions belonging to selected groups
             transactions.forEach(tx => {
-                if (groupIdsToMerge.includes(tx.groupId)) {
+                if (groupIds.includes(tx.groupId)) {
                     tx.groupId = newGroupId;
                     tx.groupName = newName;
                 }
             });
-
             renderUI();
         }
 
-        function detachItem(itemId, oldGroupId) {
-            // Find the transaction
+        // FEATURE 1: ADD TO EXISTING GROUP
+        function openAddToGroupModal() {
+            const checkboxes = document.querySelectorAll('.row-select:checked');
+            if (checkboxes.length === 0) return alert("Please select items to move first.");
+            
+            // Get unique existing groups (exclude single items)
+            const uniqueGroups = new Map();
+            transactions.forEach(tx => {
+                // If it's a real group (not a single item disguised as group ID)
+                // We check if multiple items share this ID
+                if(tx.groupId !== tx.id) { 
+                    uniqueGroups.set(tx.groupId, tx.groupName);
+                }
+            });
+
+            const select = document.getElementById('groupSelectDropdown');
+            select.innerHTML = '<option value="">-- Select a Group --</option>';
+            
+            if(uniqueGroups.size === 0) {
+                alert("No existing groups found! Use 'Merge as New Group' first.");
+                return;
+            }
+
+            uniqueGroups.forEach((name, id) => {
+                select.innerHTML += `<option value="${id}">${name}</option>`;
+            });
+
+            document.getElementById('groupSelectionModal').style.display = 'flex';
+        }
+
+        function confirmAddToGroup() {
+            const targetGroupId = document.getElementById('groupSelectDropdown').value;
+            if(!targetGroupId) return alert("Please select a group.");
+
+            // Find name of target
+            const targetTx = transactions.find(t => t.groupId === targetGroupId);
+            if(!targetTx) return;
+
+            const checkboxes = document.querySelectorAll('.row-select:checked');
+            const selectedOldGroupIds = Array.from(checkboxes).map(cb => cb.value);
+
+            // Move items
+            transactions.forEach(tx => {
+                if(selectedOldGroupIds.includes(tx.groupId)) {
+                    tx.groupId = targetGroupId;
+                    tx.groupName = targetTx.groupName;
+                }
+            });
+
+            closeModal();
+            renderUI();
+        }
+
+        function closeModal() {
+            document.getElementById('groupSelectionModal').style.display = 'none';
+        }
+
+        // FEATURE 2: DISSOLVE GROUP
+        function dissolveGroup(groupId) {
+            if(!confirm("Are you sure you want to ungroup all items in this group?")) return;
+            
+            transactions.forEach(tx => {
+                if(tx.groupId === groupId) {
+                    tx.groupId = tx.id; // Revert to unique ID
+                    tx.groupName = tx.originalName; // Revert name
+                }
+            });
+            renderUI();
+        }
+
+        function detachItem(itemId) {
             const tx = transactions.find(t => t.id === itemId);
             if (tx) {
-                // Revert to being its own group (unique ID)
                 tx.groupId = tx.id;
                 tx.groupName = tx.originalName;
-                
-                // Re-render
-                // We need to re-render to update totals of the old group and show the new single row
                 renderUI();
-                
-                // If the old group still exists (has items), try to keep it open? 
-                // A full render resets view, which is safer for consistent state.
             }
         }
 
-        // --- 6. EXPORT ---
         function exportData() {
             const exportRows = [];
             const data = getAggregatedView();
-            
             data.forEach(g => {
                 exportRows.push({
                     "Group Name": g.displayName,
@@ -441,14 +491,12 @@
                     "Details": g.items.map(i => `${i.date}: ${i.originalName} (${i.debit||i.credit})`).join('; ')
                 });
             });
-
             const ws = XLSX.utils.json_to_sheet(exportRows);
             const wb = XLSX.utils.book_new();
             ws['!cols'] = [{wch:40}, {wch:15}, {wch:15}, {wch:15}, {wch:10}, {wch:100}];
             XLSX.utils.book_append_sheet(wb, ws, "Analysis");
             XLSX.writeFile(wb, "Final_Analysis.xlsx");
         }
-
     </script>
 </body>
 </html>
