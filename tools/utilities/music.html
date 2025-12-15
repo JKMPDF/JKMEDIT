@@ -3,56 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Emergency Fix</title>
+    <title>24/7 Radio Master</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #000; color: #0f0; font-family: monospace; padding: 20px; text-align: center; }
-        #status-box { border: 2px solid #fff; padding: 20px; margin: 20px auto; max-width: 600px; background: #222; }
-        h1 { color: white; }
-        .error { color: red; font-weight: bold; font-size: 1.2em; }
-        .success { color: #0f0; }
-        input { padding: 10px; width: 70%; }
-        button { padding: 10px 20px; cursor: pointer; font-weight: bold; }
+        :root { --primary: #ff0055; --accent: #00d2ff; --bg: #121212; --panel: #1e1e1e; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        
+        /* 1. STATUS BAR (Debug Info) */
+        #status-bar { position: fixed; top: 0; left: 0; width: 100%; background: #222; color: #888; padding: 5px; font-size: 12px; text-align: center; border-bottom: 1px solid #444; z-index: 900; }
+        .status-ok { color: var(--accent); }
+        .status-err { color: var(--primary); font-weight: bold; }
+
+        /* 2. MAIN PLAYER CARD */
+        .player-card { 
+            background: var(--panel); border: 1px solid #333; padding: 30px; 
+            border-radius: 15px; text-align: center; width: 90%; max-width: 500px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;
+        }
+        
+        .artwork { 
+            width: 100%; height: 250px; background: #000; border-radius: 10px; 
+            margin-bottom: 20px; overflow: hidden; position: relative; border: 2px solid #333;
+        }
+        
+        /* The YouTube Player is hidden visually but keeps playing */
+        #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8; pointer-events: none; }
+        
+        h1 { margin: 0; font-size: 1.8rem; letter-spacing: 1px; }
+        h3 { color: var(--accent); margin: 5px 0 20px 0; font-weight: normal; }
+        
+        /* Big Action Button */
+        #action-btn { 
+            padding: 15px 40px; font-size: 1.2rem; background: var(--primary); 
+            color: white; border: none; border-radius: 50px; cursor: pointer; 
+            transition: all 0.2s; box-shadow: 0 5px 15px rgba(255,0,85,0.3);
+        }
+        #action-btn:hover { transform: scale(1.05); }
+        #action-btn:disabled { background: #555; cursor: not-allowed; }
+
+        /* 3. ADMIN PANEL (Slide Out) */
+        .admin-trigger { position: fixed; bottom: 20px; right: 20px; color: #444; cursor: pointer; font-size: 1.5rem; z-index: 1000; transition: color 0.3s; }
+        .admin-trigger:hover { color: var(--accent); }
+
+        #admin-panel { 
+            position: fixed; top: 0; right: -400px; width: 320px; height: 100vh; 
+            background: #1a1a1a; border-left: 1px solid #333; transition: right 0.3s ease; 
+            z-index: 2000; padding: 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+            display: flex; flex-direction: column;
+        }
+        #admin-panel.open { right: 0; }
+        
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .admin-group { background: #252525; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        input, select { width: 100%; padding: 10px; margin-bottom: 10px; background: #111; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box; }
+        .btn-small { width: 100%; padding: 8px; background: #444; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        .btn-small:hover { background: #666; }
+        .btn-primary { background: var(--accent); color: black; font-weight: bold; }
+
+        /* Auth Modal */
+        #auth-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center; }
+        .auth-box { background: var(--panel); padding: 30px; border-radius: 10px; width: 300px; text-align: center; border: 1px solid #444; }
     </style>
 </head>
 <body>
 
-    <h1>📡 RADIO DIAGNOSTICS</h1>
+    <div id="status-bar">System initializing...</div>
 
-    <div id="status-box">
-        <p id="step-1">1. Loading Scripts... <span style="color:yellow">WAITING</span></p>
-        <p id="step-2">2. Firebase Connection... <span style="color:yellow">WAITING</span></p>
-        <p id="step-3">3. Database Read... <span style="color:yellow">WAITING</span></p>
-        <hr>
-        <p id="final-message" style="font-size: 1.2em;">Initializing...</p>
+    <div class="player-card">
+        <div class="artwork">
+            <div id="player"></div> <div style="position:absolute; top:0; left:0; width:100%; height:100%; background: transparent;"></div> </div>
+        
+        <h1 id="song-title">Connecting...</h1>
+        <h3 id="song-genre">Waiting for Signal</h3>
+        
+        <button id="action-btn" onclick="userInteract()">
+            <i class="fas fa-play"></i> JOIN RADIO
+        </button>
+        
+        <p style="color:#666; margin-top:15px; font-size:0.9rem;">
+            <i class="fas fa-signal"></i> <span id="listener-count">0</span> Listeners
+        </p>
     </div>
 
-    <div id="player-ui" style="display:none;">
-        <h2 id="now-playing">🎶 Song Title</h2>
-        <div id="player"></div>
+    <div class="admin-trigger" onclick="showAuth()"><i class="fas fa-lock"></i></div>
+
+    <div id="auth-modal">
+        <div class="auth-box">
+            <h2><i class="fas fa-user-astronaut"></i> DJ Access</h2>
+            <input type="email" id="email" placeholder="admin@radio.com">
+            <input type="password" id="password" placeholder="Password">
+            <button class="btn-small btn-primary" onclick="handleLogin()">Login</button>
+            <button class="btn-small" onclick="closeAuth()" style="margin-top:5px;">Cancel</button>
+        </div>
     </div>
 
-    <div id="init-area" style="display:none; margin-top:30px; border-top:1px solid #555; padding-top:20px;">
-        <h3 style="color:orange">⚠️ DATABASE IS EMPTY</h3>
-        <p>The radio works, but you have 0 songs saved.</p>
-        <button onclick="addDefaultSong()" style="background:orange;">CLICK TO ADD TEST SONG</button>
+    <div id="admin-panel">
+        <div class="panel-header">
+            <h2>DJ CONTROLS</h2>
+            <span onclick="toggleAdmin()" style="cursor:pointer; font-size:1.5rem;">&times;</span>
+        </div>
+
+        <div class="admin-group">
+            <label>📡 Station Genre</label>
+            <select id="genre-select" onchange="updateGenre()">
+                <option value="all">Global Mix (All)</option>
+                <option value="bollywood">Bollywood</option>
+                <option value="english">English Pop</option>
+                <option value="lofi">Lofi Beats</option>
+            </select>
+        </div>
+
+        <div class="admin-group">
+            <label>💾 Add New Song</label>
+            <input type="text" id="add-url" placeholder="YouTube Link">
+            <input type="text" id="add-title" placeholder="Song Title">
+            <input type="number" id="add-duration" placeholder="Duration (Seconds)">
+            <select id="add-genre">
+                <option value="bollywood">Bollywood</option>
+                <option value="english">English</option>
+                <option value="lofi">Lofi</option>
+            </select>
+            <button class="btn-small btn-primary" onclick="addSong()">➕ Add to Database</button>
+        </div>
+
+        <div class="admin-group">
+            <label>⚠️ Emergency</label>
+            <button class="btn-small" onclick="forceTestSong()" style="background:orange; color:black;">Force Add Test Song</button>
+            <p style="font-size:10px; color:#888; margin-top:5px;">Click this if "Database Empty"</p>
+        </div>
+
+        <button class="btn-small" onclick="handleLogout()" style="margin-top:auto;">Log Out</button>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
+    <script type="module">
+        // 1. IMPORT FIREBASE
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, update, set, increment, onDisconnect } 
+            from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } 
+            from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-    <script>
-        // === ERROR CATCHER ===
-        window.onerror = function(msg, url, line) {
-            document.getElementById('final-message').innerHTML = `<span class="error">❌ CODE CRASHED: ${msg} (Line ${line})</span>`;
-            return false;
-        };
-
-        // 1. UPDATE STATUS
-        document.getElementById('step-1').innerHTML = "1. Loading Scripts... <span class='success'>✅ OK</span>";
-
-        // ⬇️⬇️ PASTE YOUR FIREBASE CONFIG HERE ⬇️⬇️
-        // (Make sure you copy ONLY the keys, no script tags!)
+        // ⬇️⬇️ PASTE CONFIG HERE ⬇️⬇️
        const firebaseConfig = {
   apiKey: "AIzaSyDkhqOMIFrgs_obaub-YblXuBLnbaGlZXQ",
   authDomain: "jkm-music.firebaseapp.com",
@@ -61,105 +153,180 @@
   messagingSenderId: "622011433252",
   appId: "1:622011433252:web:6df9638a3d544b7c5fb3b1"
 };
-        // ⬆️⬆️ END PASTE ⬆️⬆️
+        // ⬆️⬆️ END CONFIG ⬆️⬆️
 
-        // 2. INITIALIZE FIREBASE
-        try {
-            firebase.initializeApp(firebaseConfig);
-            document.getElementById('step-2').innerHTML = "2. Firebase Connection... <span class='success'>✅ OK</span>";
-        } catch (e) {
-            document.getElementById('step-2').innerHTML = "2. Firebase Connection... <span class='error'>❌ FAILED (Check Config)</span>";
-            throw e;
-        }
+        // 2. INITIALIZE
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+        
+        // GLOBAL VARIABLES
+        let player;
+        let library = [];
+        let state = { genre: 'all' };
+        let syncInterval;
 
-        // 3. CHECK DATABASE
-        var db = firebase.database();
-        var library = [];
-        var player;
+        // UI HELPERS
+        const status = (msg, type) => {
+            const el = document.getElementById('status-bar');
+            el.innerHTML = msg;
+            el.className = type === 'err' ? 'status-err' : 'status-ok';
+        };
 
-        db.ref('radio/library').on('value', function(snapshot) {
-            document.getElementById('step-3').innerHTML = "3. Database Read... <span class='success'>✅ OK</span>";
-            var data = snapshot.val();
-
+        // --- 3. DATABASE CONNECTION ---
+        status("Connecting to Firebase...", "ok");
+        
+        const libRef = ref(db, 'radio/library');
+        onValue(libRef, (snap) => {
+            const data = snap.val();
             if (data) {
-                // SONGS FOUND!
                 library = Object.values(data);
-                document.getElementById('final-message').innerText = `✅ SUCCESS! Loaded ${library.length} songs. Starting Radio...`;
-                document.getElementById('player-ui').style.display = "block";
-                document.getElementById('init-area').style.display = "none";
-                startRadioLogic();
+                status(`✅ Connected. Library: ${library.length} songs.`, "ok");
+                document.getElementById('song-title').innerText = "Ready to Join";
+                document.getElementById('song-genre').innerText = "Click Button Below";
             } else {
-                // EMPTY DATABASE
-                document.getElementById('final-message').innerHTML = "<span class='error'>⚠️ CONNECTED BUT EMPTY</span>";
-                document.getElementById('init-area').style.display = "block";
+                status("⚠️ Database Connected but EMPTY.", "err");
+                document.getElementById('song-title').innerText = "No Songs Found";
+                document.getElementById('action-btn').innerText = "⚠️ DB EMPTY";
             }
-        }, function(error) {
-            // PERMISSION DENIED
-            document.getElementById('step-3').innerHTML = "3. Database Read... <span class='error'>❌ DENIED</span>";
-            document.getElementById('final-message').innerHTML = "Error: " + error.message + "<br>Check Firebase Console -> Realtime Database -> Rules";
+        }, (err) => {
+            status("❌ Permission Denied. Check Firebase Rules.", "err");
         });
 
-        // 4. ADD TEST SONG FUNCTION
-        window.addDefaultSong = function() {
-            db.ref('radio/library').push({
-                id: "jfKfPfyJRdk",
-                title: "Lofi Girl Radio",
-                duration: 3000,
-                genre: "lofi"
-            });
-            alert("Test Song Added! Radio should start in 2 seconds.");
-        }
+        // Sync State (Genre)
+        onValue(ref(db, 'radio/state'), (snap) => {
+            if(snap.val()) {
+                state = snap.val();
+                document.getElementById('genre-select').value = state.genre;
+                document.getElementById('song-genre').innerText = "Station Mode: " + state.genre.toUpperCase();
+                syncRadio(); // Resync immediately
+            }
+        });
 
-        // 5. RADIO LOGIC
-        function startRadioLogic() {
-            if (!window.YT) return; // Wait for YouTube API
-            
-            // Loop Logic
-            setInterval(function() {
-                if(!player || !player.loadVideoById) return;
+        // Listeners Count
+        const countRef = ref(db, 'radio/listeners');
+        set(countRef, increment(1));
+        onDisconnect(countRef).set(increment(-1));
+        onValue(countRef, (s) => document.getElementById('listener-count').innerText = s.val() || 0);
 
-                var now = Date.now();
-                var totalDuration = library.reduce((sum, s) => sum + parseInt(s.duration), 0);
-                var loopTime = (now / 1000) % totalDuration;
-
-                var currentSong = null;
-                for (var i = 0; i < library.length; i++) {
-                    var s = library[i];
-                    if (loopTime < s.duration) {
-                        currentSong = s;
-                        break;
-                    }
-                    loopTime -= s.duration;
-                }
-
-                if (currentSong) {
-                    document.getElementById('now-playing').innerText = "🎶 " + currentSong.title;
-                    
-                    var state = player.getPlayerState();
-                    // If not playing the right song
-                    try {
-                         if (player.getVideoData().video_id !== currentSong.id) {
-                            player.loadVideoById(currentSong.id, loopTime);
-                        } else if (Math.abs(player.getCurrentTime() - loopTime) > 4) {
-                            player.seekTo(loopTime, true);
-                        }
-                    } catch(e) {}
-                    
-                    if(state !== 1 && state !== 3) player.playVideo();
-                }
-            }, 1000);
-        }
-
-        // 6. YOUTUBE SETUP
-        window.onYouTubeIframeAPIReady = function() {
+        // --- 4. PLAYER LOGIC ---
+        window.onYouTubeIframeAPIReady = () => {
             player = new YT.Player('player', {
-                height: '360', width: '640',
-                playerVars: { 'autoplay': 1, 'controls': 1 },
-                events: {
-                    'onReady': function() { console.log("Player Ready"); }
-                }
+                height: '100%', width: '100%',
+                playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0 },
+                events: { 'onReady': () => console.log("YT Ready") }
             });
         };
+
+        // User must click this to start audio
+        window.userInteract = () => {
+            if(library.length === 0) return alert("Database is empty! Login to Admin and add a song.");
+            
+            document.getElementById('action-btn').style.display = 'none'; // Hide button
+            status("Starting Audio Engine...", "ok");
+            
+            // Start Sync Loop
+            if(syncInterval) clearInterval(syncInterval);
+            syncInterval = setInterval(syncRadio, 1000);
+            syncRadio(); // Run once immediately
+        };
+
+        function syncRadio() {
+            if (!library.length || !player || !player.loadVideoById) return;
+
+            const now = Date.now();
+            
+            // Filter Playlist
+            let playlist = library;
+            if (state.genre !== 'all') {
+                playlist = library.filter(s => s.genre === state.genre);
+            }
+            if (playlist.length === 0) playlist = library; // Fallback if filter empty
+
+            // Math: Infinite Loop
+            const totalDuration = playlist.reduce((acc, s) => acc + parseInt(s.duration), 0);
+            let loopTime = (now / 1000) % totalDuration;
+
+            // Find Current Song
+            let currentSong = null;
+            for (let song of playlist) {
+                if (loopTime < song.duration) {
+                    currentSong = song;
+                    break;
+                }
+                loopTime -= song.duration;
+            }
+
+            if (currentSong) {
+                document.getElementById('song-title').innerText = currentSong.title;
+                
+                // Update Player
+                let currentId = "";
+                try { currentId = player.getVideoData().video_id; } catch(e){}
+
+                if (currentId !== currentSong.id) {
+                    status(`Playing: ${currentSong.title}`, "ok");
+                    player.loadVideoById(currentSong.id, loopTime);
+                } else if (Math.abs(player.getCurrentTime() - loopTime) > 3) {
+                    player.seekTo(loopTime, true);
+                }
+
+                if (player.getPlayerState() !== 1) player.playVideo();
+            }
+        }
+
+        // --- 5. ADMIN FUNCTIONS ---
+        // Expose functions to window so HTML buttons can see them
+        window.showAuth = () => document.getElementById('auth-modal').style.display = 'flex';
+        window.closeAuth = () => document.getElementById('auth-modal').style.display = 'none';
+        window.toggleAdmin = () => document.getElementById('admin-panel').classList.toggle('open');
+
+        window.handleLogin = () => {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            signInWithEmailAndPassword(auth, e, p)
+                .then(() => { closeAuth(); window.toggleAdmin(); })
+                .catch(err => alert("Login Failed: " + err.message));
+        };
+
+        window.handleLogout = () => {
+            signOut(auth).then(() => window.toggleAdmin());
+        };
+
+        window.addSong = () => {
+            const url = document.getElementById('add-url').value;
+            let id = url.split('v=')[1] || url.split('/').pop();
+            if(id.indexOf('&') > -1) id = id.split('&')[0];
+
+            if(!id) return alert("Invalid URL");
+
+            push(libRef, {
+                id: id,
+                title: document.getElementById('add-title').value || "Unknown",
+                duration: document.getElementById('add-duration').value || 300,
+                genre: document.getElementById('add-genre').value
+            });
+            alert("Song Added!");
+            // Clear inputs
+            document.getElementById('add-url').value = "";
+            document.getElementById('add-title').value = "";
+        };
+
+        window.updateGenre = () => {
+            const newGenre = document.getElementById('genre-select').value;
+            update(ref(db, 'radio/state'), { genre: newGenre });
+        };
+        
+        window.forceTestSong = () => {
+             push(libRef, {
+                id: "jfKfPfyJRdk",
+                title: "Lofi Girl Radio (Test)",
+                duration: 3000,
+                genre: "all"
+            });
+            alert("Test Song Added!");
+        };
+
     </script>
 </body>
 </html>
