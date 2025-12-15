@@ -1,167 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>24×7 Admin Radio</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24/7 Multi-Genre Radio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #ff0055; --accent: #00d2ff; --bg: #000000; --panel: #1a1a1a; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        /* STATUS BAR */
+        #status-bar { position: fixed; top: 0; left: 0; width: 100%; background: #222; color: #aaa; padding: 5px; font-size: 12px; text-align: center; border-bottom: 1px solid #333; z-index: 900; }
+        
+        /* PLAYER CARD */
+        .player-card { 
+            background: var(--panel); border: 1px solid #333; padding: 0; 
+            border-radius: 15px; text-align: center; width: 95%; max-width: 600px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8); overflow: hidden;
+        }
+        
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-<style>
-body {
-    margin: 0;
-    height: 100vh;
-    background: #0d0d0d;
-    color: white;
-    font-family: Arial, sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.box {
-    background: #1c1c1c;
-    padding: 25px;
-    width: 320px;
-    border-radius: 14px;
-    text-align: center;
-}
-button {
-    background: #ff0055;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 25px;
-    cursor: pointer;
-}
-.admin {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    cursor: pointer;
-}
-.panel {
-    position: fixed;
-    top: 0;
-    right: -300px;
-    width: 260px;
-    height: 100vh;
-    background: #111;
-    padding: 20px;
-    transition: 0.3s;
-}
-.panel.open { right: 0; }
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    background: #222;
-    border: 1px solid #444;
-    color: white;
-}
-</style>
+        .info-area { padding: 20px; }
+        h1 { margin: 0; font-size: 1.4rem; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        h3 { color: var(--accent); margin: 5px 0 20px 0; font-size: 0.9rem; font-weight: bold; }
+        
+        #start-btn { 
+            padding: 15px 50px; font-size: 1.2rem; background: var(--primary); 
+            color: white; border: none; border-radius: 50px; cursor: pointer; 
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.4); animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(255,0,85,0.7);} 70% {box-shadow: 0 0 0 10px rgba(255,0,85,0);} 100% {box-shadow: 0 0 0 0 rgba(255,0,85,0);} }
+
+        /* ADMIN PANEL */
+        .admin-trigger { position: fixed; bottom: 20px; right: 20px; color: #333; cursor: pointer; font-size: 1.5rem; z-index: 1000; transition: color 0.3s; }
+        .admin-trigger:hover { color: var(--accent); }
+
+        #admin-panel { 
+            position: fixed; top: 0; right: -400px; width: 320px; height: 100vh; 
+            background: #111; border-left: 1px solid #333; transition: right 0.3s ease; 
+            z-index: 2000; padding: 25px; display: flex; flex-direction: column; overflow-y: auto;
+        }
+        #admin-panel.open { right: 0; }
+        
+        /* ADMIN CONTROLS */
+        .control-group { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; }
+        label { display: block; color: #888; font-size: 12px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box; }
+        button.admin-btn { width: 100%; padding: 10px; background: #333; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; margin-top: 5px; transition: background 0.2s; }
+        button.admin-btn:hover { background: #444; }
+        button.primary { background: var(--accent); color: black; }
+        button.danger { background: var(--primary); color: white; }
+
+        /* Current Genre Badge */
+        .genre-badge { display: inline-block; padding: 4px 12px; background: #333; border-radius: 20px; font-size: 12px; margin-bottom: 10px; border: 1px solid #444; }
+    </style>
 </head>
-
 <body>
 
-<div class="box">
-    <h2>JKM 24×7 Radio</h2>
-    <p id="now">Click to start</p>
-    <button onclick="startRadio()">▶ JOIN RADIO</button>
-    <audio id="audio"></audio>
-</div>
+    <div id="status-bar">Initializing System...</div>
 
-<div class="admin" onclick="toggleAdmin()">🔒</div>
-
-<div class="panel" id="panel">
-    <h3>Admin</h3>
-    <input type="password" id="pass" placeholder="Password">
-    <button onclick="login()">Login</button>
-
-    <div id="controls" style="display:none">
-        <hr>
-        <select onchange="setGenre(this.value)">
-            <option value="bollywood">Bollywood</option>
-            <option value="english">English</option>
-            <option value="lofi">Lofi</option>
-        </select>
-
-        <input id="songUrl" placeholder="MP3 URL">
-        <button onclick="forceSong()">Play Song</button>
+    <div class="player-card">
+        <div class="video-wrapper">
+            <div id="player"></div>
+        </div>
+        <div class="info-area">
+            <div id="genre-display" class="genre-badge">CHANNEL: GLOBAL</div>
+            <h1 id="song-title">Connecting...</h1>
+            <h3 id="debug-info">Waiting for Data</h3>
+            <button id="start-btn" onclick="startAudio()">JOIN RADIO</button>
+        </div>
     </div>
-</div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+    <div class="admin-trigger" onclick="toggleAdmin()"><i class="fas fa-cog"></i></div>
 
-/* 🔥 FIREBASE (FIXED) */
-const firebaseConfig = {
+    <div id="admin-panel">
+        <h2 style="margin-top:0">DJ CONTROLS <span onclick="toggleAdmin()" style="float:right; cursor:pointer;">&times;</span></h2>
+        
+        <div class="control-group" style="border-color: var(--accent);">
+            <label style="color:var(--accent);">📡 Live Channel Selector</label>
+            <select id="live-genre-select" onchange="changeLiveGenre()">
+                <option value="all">🌍 Global Mix (All)</option>
+                <option value="bollywood">🇮🇳 Bollywood</option>
+                <option value="english">🇺🇸 English Pop</option>
+                <option value="romantic">❤️ Romantic / Love</option>
+                <option value="travel">✈️ Travel / Vibe</option>
+                <option value="party">🎉 Party / Dance</option>
+            </select>
+            <p style="font-size:10px; color:#666;">Changing this updates everyone's radio instantly.</p>
+        </div>
+
+        <div class="control-group">
+            <label>💾 Add New Song</label>
+            <input type="text" id="add-url" placeholder="YouTube Link">
+            <input type="text" id="add-title" placeholder="Song Title">
+            <input type="number" id="add-duration" placeholder="Duration (Seconds)">
+            <label>Category</label>
+            <select id="add-category">
+                <option value="bollywood">Bollywood</option>
+                <option value="english">English</option>
+                <option value="romantic">Romantic</option>
+                <option value="travel">Travel</option>
+                <option value="party">Party</option>
+            </select>
+            <button class="admin-btn primary" onclick="addSong()">Add to Database</button>
+        </div>
+
+        <div class="control-group">
+            <label>⚠️ System Tools</label>
+            <button class="admin-btn danger" onclick="forceTestSong()">Force Test Song</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        // ⬇️⬇️ PASTE CONFIG HERE ⬇️⬇️
+       const firebaseConfig = {
   apiKey: "AIzaSyDkhqOMIFrgs_obaub-YblXuBLnbaGlZXQ",
   authDomain: "jkm-music.firebaseapp.com",
-  databaseURL: "https://jkm-music-default-rtdb.firebaseio.com",
   projectId: "jkm-music",
-  storageBucket: "jkm-music.appspot.com",
+  storageBucket: "jkm-music.firebasestorage.app",
   messagingSenderId: "622011433252",
   appId: "1:622011433252:web:6df9638a3d544b7c5fb3b1"
 };
+        // ⬆️⬆️ END CONFIG ⬆️⬆️
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+        // --- 1. INITIALIZE ---
+        try {
+            firebase.initializeApp(firebaseConfig);
+            var db = firebase.database();
+            document.getElementById('status-bar').innerText = "✅ System Connected";
+        } catch(e) {
+            document.getElementById('status-bar').innerText = "❌ Config Error";
+            document.getElementById('status-bar').style.background = "red";
+        }
 
-const audio = document.getElementById("audio");
-const now = document.getElementById("now");
+        var library = [];
+        var player;
+        var syncInterval;
+        var currentGenre = "all";
 
-let userStarted = false;
+        // --- 2. LISTEN TO DATABASE ---
+        
+        // A. Listen for Genre Changes (The "Remote Control")
+        db.ref('radio/state/currentGenre').on('value', function(snap) {
+            var val = snap.val();
+            if(val) {
+                currentGenre = val;
+                document.getElementById('live-genre-select').value = val;
+                document.getElementById('genre-display').innerText = "CHANNEL: " + val.toUpperCase();
+                console.log("Genre changed to:", val);
+                syncRadio(); // Force immediate update
+            }
+        });
 
-/* 🎧 USER START */
-window.startRadio = () => {
-    userStarted = true;
-    audio.play().catch(()=>{});
-};
+        // B. Listen for Song Library
+        db.ref('radio/library').on('value', function(snapshot) {
+            var data = snapshot.val();
+            if (data) {
+                library = Object.values(data);
+                document.getElementById('status-bar').innerText = `✅ Library Loaded (${library.length} songs)`;
+                document.getElementById('song-title').innerText = "Ready to Join";
+                document.getElementById('debug-info').innerText = "Click the button below";
+            } else {
+                document.getElementById('status-bar').innerText = "⚠️ Database Empty";
+                document.getElementById('song-title').innerText = "No Songs";
+            }
+        });
 
-/* 🔁 SYNC FROM ADMIN */
-onValue(ref(db, "radio"), snap => {
-    if (!snap.exists() || !userStarted) return;
+        // --- 3. YOUTUBE PLAYER ---
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '100%', width: '100%',
+                playerVars: { 'autoplay': 0, 'controls': 1, 'playsinline': 1 },
+                events: { 'onReady': function() { console.log("Player Ready"); } }
+            });
+        }
 
-    const data = snap.val();
-    audio.src = data.url;
-    audio.load();
-    audio.play();
-    now.innerText = data.title;
-});
+        // --- 4. START ENGINE ---
+        window.startAudio = function() {
+            if(library.length === 0) return alert("Database is empty! Use Admin Panel to add songs.");
+            
+            document.getElementById('start-btn').style.display = 'none';
+            
+            // Start the Loop
+            if(syncInterval) clearInterval(syncInterval);
+            syncInterval = setInterval(syncRadio, 1000);
+            syncRadio();
+        };
 
-/* 🔐 ADMIN */
-window.toggleAdmin = () => {
-    document.getElementById("panel").classList.toggle("open");
-};
+        // --- 5. THE SYNC LOGIC (FIXED TO PREVENT LOOPING) ---
+        function syncRadio() {
+            if (!library.length || !player || !player.loadVideoById) return;
 
-window.login = () => {
-    if (document.getElementById("pass").value === "admin123") {
-        document.getElementById("controls").style.display = "block";
-        alert("Admin logged in");
-    }
-};
+            // A. Filter Playlist by Genre
+            var activePlaylist = library;
+            if (currentGenre !== 'all') {
+                activePlaylist = library.filter(function(song) {
+                    // Safe check in case old songs don't have a genre tag
+                    var g = song.genre || "all"; 
+                    return g.toLowerCase() === currentGenre.toLowerCase();
+                });
+            }
 
-const playlist = {
-    bollywood: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    english: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-    lofi: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
-};
+            // If no songs match the genre, fall back to everything so silence doesn't happen
+            if (activePlaylist.length === 0) {
+                document.getElementById('song-title').innerText = "No songs in " + currentGenre;
+                return;
+            }
 
-window.setGenre = g => {
-    set(ref(db, "radio"), {
-        url: playlist[g],
-        title: g.toUpperCase() + " RADIO"
-    });
-};
+            // B. Calculate 24/7 Time
+            var now = Date.now();
+            var totalDuration = activePlaylist.reduce(function(sum, song) { 
+                return sum + parseInt(song.duration); 
+            }, 0);
+            
+            var loopTime = (now / 1000) % totalDuration;
 
-window.forceSong = () => {
-    const url = document.getElementById("songUrl").value;
-    if (!url) return alert("Enter MP3 URL");
-    set(ref(db, "radio"), {
-        url,
-        title: "Admin Selected Song"
-    });
-};
-</script>
+            // C. Find Current Song
+            var currentSong = null;
+            for (var i = 0; i < activePlaylist.length; i++) {
+                var s = activePlaylist[i];
+                if (loopTime < s.duration) {
+                    currentSong = s;
+                    break;
+                }
+                loopTime -= s.duration;
+            }
 
+            // D. Play / Update Player
+            if (currentSong) {
+                document.getElementById('song-title').innerText = currentSong.title;
+                document.getElementById('debug-info').innerText = "Time: " + Math.floor(loopTime) + "s / " + currentSong.duration + "s";
+
+                var currentId = "";
+                try { currentId = player.getVideoData().video_id; } catch(e){}
+
+                // FIX: Only load if it's a DIFFERENT song
+                if (currentId !== currentSong.id) {
+                    console.log("Loading new track:", currentSong.title);
+                    player.loadVideoById(currentSong.id, loopTime);
+                } 
+                // FIX: Only seek if we drifted more than 6 seconds (Prevents stutter)
+                else {
+                    var diff = Math.abs(player.getCurrentTime() - loopTime);
+                    if (diff > 6) {
+                        console.log("Resyncing time (Drift: " + diff + "s)");
+                        player.seekTo(loopTime, true);
+                    }
+                }
+                
+                // Ensure playing
+                var state = player.getPlayerState();
+                if (state !== 1 && state !== 3) {
+                    player.playVideo();
+                }
+            }
+        }
+
+        // --- 6. ADMIN FUNCTIONS ---
+        window.toggleAdmin = function() {
+            document.getElementById('admin-panel').classList.toggle('open');
+        };
+
+        // Change Genre for EVERYONE
+        window.changeLiveGenre = function() {
+            var g = document.getElementById('live-genre-select').value;
+            db.ref('radio/state/currentGenre').set(g);
+            alert("Channel changed to " + g.toUpperCase());
+        };
+
+        window.addSong = function() {
+            var url = document.getElementById('add-url').value;
+            var id = url.split('v=')[1] || url.split('/').pop();
+            if(id.indexOf('&') > -1) id = id.split('&')[0];
+            
+            if(!id) return alert("Invalid URL");
+
+            db.ref('radio/library').push({
+                id: id,
+                title: document.getElementById('add-title').value,
+                duration: document.getElementById('add-duration').value,
+                genre: document.getElementById('add-category').value // Saves genre
+            });
+            alert("Song Added Successfully!");
+            
+            // Clear inputs
+            document.getElementById('add-url').value = "";
+            document.getElementById('add-title').value = "";
+        };
+
+        window.forceTestSong = function() {
+            db.ref('radio/library').push({
+                id: "jfKfPfyJRdk",
+                title: "Lofi Girl (Test)",
+                duration: 3000,
+                genre: "all"
+            });
+            alert("Test song added!");
+        };
+
+    </script>
 </body>
 </html>
