@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24/7 Stream Station</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #ff0055; --dark: #121212; --panel: #1e1e1e; }
+        body { background: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        
+        /* Main Player UI */
+        .player-card { text-align: center; width: 90%; max-width: 600px; position: relative; z-index: 1; }
+        .video-box { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border: 2px solid var(--primary); border-radius: 12px; overflow: hidden; box-shadow: 0 0 30px rgba(255,0,85,0.2); }
+        #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        /* Cover overlay to prevent easy pausing */
+        .glass-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; } 
+
+        .info-area { margin-top: 20px; }
+        h1 { margin: 0; font-size: 2rem; letter-spacing: 1px; }
+        .status-badge { background: var(--primary); padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; vertical-align: middle; }
+        .genre-badge { background: #00d2ff; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; color: #000; font-weight: bold; margin-left: 10px; }
+        #track-title { font-size: 1.2rem; color: #ccc; margin-top: 10px; }
+        
+        #join-btn { margin-top: 30px; padding: 15px 40px; font-size: 1.2rem; background: var(--primary); color: white; border: none; border-radius: 50px; cursor: pointer; transition: transform 0.2s; }
+        #join-btn:hover { transform: scale(1.05); }
+
+        /* Admin Login Button (Hidden in plain sight) */
+        .admin-trigger { position: fixed; bottom: 20px; right: 20px; color: #333; cursor: pointer; font-size: 1.5rem; transition: color 0.3s; z-index: 100; }
+        .admin-trigger:hover { color: var(--primary); }
+
+        /* Admin Panel Overlay */
+        #admin-panel { 
+            position: fixed; top: 0; right: -400px; width: 350px; height: 100vh; 
+            background: var(--panel); border-left: 1px solid #333; 
+            transition: right 0.3s ease; z-index: 200; padding: 20px; overflow-y: auto;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5); display: flex; flex-direction: column;
+        }
+        #admin-panel.active { right: 0; }
+        
+        .admin-section { margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .admin-section h3 { color: var(--primary); margin-top: 0; }
+        input, select { width: 100%; padding: 10px; margin-bottom: 10px; background: #333; border: none; color: white; border-radius: 5px; }
+        .btn-admin { width: 100%; padding: 10px; background: #444; border: none; color: white; cursor: pointer; border-radius: 5px; margin-top: 5px; }
+        .btn-admin.primary { background: var(--primary); }
+        .btn-admin:hover { opacity: 0.9; }
+
+        /* Auth Modal */
+        #auth-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index: 300; justify-content: center; align-items: center; }
+        .auth-box { background: var(--panel); padding: 30px; border-radius: 10px; width: 300px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="player-card">
+        <h1>LIVE RADIO <span class="status-badge">ON AIR</span> <span id="current-genre-badge" class="genre-badge">ALL</span></h1>
+        <div id="track-title">Waiting to join...</div>
+        
+        <br>
+        <div class="video-box" id="video-container" style="display:none;">
+            <div id="player"></div>
+            <div class="glass-overlay"></div> </div>
+
+        <button id="join-btn" onclick="startRadio()">
+            <i class="fas fa-play"></i> Join Broadcast
+        </button>
+        
+        <p style="margin-top:20px; font-size:0.9rem; color:#666;">
+            <i class="fas fa-users"></i> <span id="listener-count">0</span> listening
+        </p>
+    </div>
+
+    <div class="admin-trigger" onclick="showAuth()"><i class="fas fa-lock"></i></div>
+
+    <div id="auth-modal">
+        <div class="auth-box">
+            <h2>DJ Login</h2>
+            <input type="email" id="email" placeholder="admin@radio.com">
+            <input type="password" id="password" placeholder="Password">
+            <button class="btn-admin primary" onclick="login()">Login</button>
+            <button class="btn-admin" onclick="closeAuth()">Cancel</button>
+        </div>
+    </div>
+
+    <div id="admin-panel">
+        <h2 style="display:flex; justify-content:space-between;">
+            DJ CONTROL <span onclick="toggleAdmin()" style="cursor:pointer;">&times;</span>
+        </h2>
+        
+        <div class="admin-section">
+            <h3>📡 Channel Genre</h3>
+            <p style="font-size:0.8rem; color:#aaa;">Auto-picks songs from this category.</p>
+            <select id="genre-select" onchange="changeGenre()">
+                <option value="all">All Genres</option>
+                <option value="bollywood">Bollywood</option>
+                <option value="english">English Pop</option>
+                <option value="lofi">Lofi / Chill</option>
+            </select>
+        </div>
+
+        <div class="admin-section">
+            <h3>🎛️ Manual Override</h3>
+            <p style="font-size:0.8rem; color:#aaa;">Forces this song to play NOW. When it ends, Auto resumes.</p>
+            <input type="text" id="manual-url" placeholder="Paste YouTube Link">
+            <button class="btn-admin primary" onclick="playManual()">▶ Play Immediately</button>
+            <button class="btn-admin" onclick="stopManual()" style="background:orange; color:black;">⏹ Resume Auto Mode</button>
+        </div>
+
+        <div class="admin-section">
+            <h3>💾 Add to Library</h3>
+            <p style="font-size:0.8rem; color:#aaa;">Build your auto-play database here.</p>
+            <input type="text" id="add-url" placeholder="YouTube Link">
+            <input type="text" id="add-title" placeholder="Song Title">
+            <input type="number" id="add-duration" placeholder="Duration (Seconds)">
+            <select id="add-genre">
+                <option value="bollywood">Bollywood</option>
+                <option value="english">English Pop</option>
+                <option value="lofi">Lofi</option>
+            </select>
+            <button class="btn-admin" onclick="addToLibrary()">➕ Save to Database</button>
+        </div>
+
+        <div style="margin-top:auto;">
+            <button class="btn-admin" onclick="logout()" style="background:#333;">Log Out</button>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set, push, update, increment, onDisconnect } 
+            from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } 
+            from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+        // 🔴🔴 REPLACE WITH YOUR CONFIG 🔴🔴
+        const firebaseConfig = {
+            apiKey: "AIzaSy...",
+            authDomain: "your-app.firebaseapp.com",
+            databaseURL: "https://your-app.firebaseio.com",
+            projectId: "your-app",
+            storageBucket: "your-app.appspot.com",
+            messagingSenderId: "...",
+            appId: "..."
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        // --- GLOBAL STATE ---
+        let player;
+        let stationState = { genre: 'all', manual: null };
+        let library = [];
+        let syncInterval;
+
+        // --- 1. ADMIN UI LOGIC ---
+        window.showAuth = () => document.getElementById('auth-modal').style.display = 'flex';
+        window.closeAuth = () => document.getElementById('auth-modal').style.display = 'none';
+        window.toggleAdmin = () => document.getElementById('admin-panel').classList.toggle('active');
+
+        window.login = () => {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            signInWithEmailAndPassword(auth, e, p)
+                .then(() => { closeAuth(); window.toggleAdmin(); })
+                .catch(err => alert("Error: " + err.message));
+        };
+        window.logout = () => signOut(auth).then(() => window.toggleAdmin());
+
+        // Listen for Login State to show/hide admin button
+        onAuthStateChanged(auth, (user) => {
+            if (user) document.querySelector('.admin-trigger').style.color = "#0f0";
+            else document.querySelector('.admin-trigger').style.color = "#333";
+        });
+
+        // --- 2. ADMIN ACTIONS (DATABASE WRITES) ---
+        window.addToLibrary = () => {
+            const url = document.getElementById('add-url').value;
+            const duration = parseInt(document.getElementById('add-duration').value);
+            const title = document.getElementById('add-title').value;
+            const genre = document.getElementById('add-genre').value;
+            
+            let videoId = url.split('v=')[1] || url.split('/').pop();
+            const ampIndex = videoId.indexOf('&');
+            if(ampIndex != -1) videoId = videoId.substring(0, ampIndex);
+
+            if(!videoId || !duration) return alert("Invalid Data");
+
+            push(ref(db, 'radio/library'), {
+                id: videoId, title, duration, genre
+            });
+            alert("Song Added!");
+        };
+
+        window.changeGenre = () => {
+            update(ref(db, 'radio/state'), { genre: document.getElementById('genre-select').value });
+        };
+
+        window.playManual = () => {
+            const url = document.getElementById('manual-url').value;
+            let videoId = url.split('v=')[1] || url.split('/').pop();
+            const ampIndex = videoId.indexOf('&');
+            if(ampIndex != -1) videoId = videoId.substring(0, ampIndex);
+
+            // Get song duration (Ideally you'd fetch this, but for now we set a long override or ask admin)
+            // For simplicity, we assume manual play overrides until stopped or 5 mins
+            update(ref(db, 'radio/state'), {
+                manual: {
+                    id: videoId,
+                    startTime: Date.now(),
+                    title: "👑 DJ Pick"
+                }
+            });
+        };
+
+        window.stopManual = () => {
+            set(ref(db, 'radio/state/manual'), null);
+        };
+
+        // --- 3. LISTENER LOGIC (READ ONLY) ---
+        
+        // Count Listeners
+        const listenersRef = ref(db, 'radio/listeners');
+        set(listenersRef, increment(1));
+        onDisconnect(listenersRef).set(increment(-1));
+        onValue(listenersRef, (s) => document.getElementById('listener-count').innerText = s.val() || 0);
+
+        // Fetch Library
+        onValue(ref(db, 'radio/library'), (snap) => {
+            const data = snap.val();
+            library = data ? Object.values(data) : [];
+        });
+
+        // Fetch State (Genre & Manual Status)
+        onValue(ref(db, 'radio/state'), (snap) => {
+            stationState = snap.val() || { genre: 'all', manual: null };
+            document.getElementById('current-genre-badge').innerText = stationState.genre;
+            document.getElementById('genre-select').value = stationState.genre; // Sync admin UI
+            syncRadio(); // Retrigger sync immediately on change
+        });
+
+        // --- 4. PLAYER & SYNC ENGINE ---
+        
+        window.onYouTubeIframeAPIReady = () => {
+            player = new YT.Player('player', {
+                height: '100%', width: '100%',
+                playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0, 'iv_load_policy': 3 },
+                events: { 'onReady': () => { /* Ready */ } }
+            });
+        };
+
+        window.startRadio = () => {
+            document.getElementById('join-btn').style.display = 'none';
+            document.getElementById('video-container').style.display = 'block';
+            if(syncInterval) clearInterval(syncInterval);
+            syncInterval = setInterval(syncRadio, 1000);
+            syncRadio();
+        };
+
+        function syncRadio() {
+            if(!player || !player.loadVideoById) return;
+
+            const now = Date.now();
+
+            // CHECK 1: IS THERE A MANUAL OVERRIDE?
+            if (stationState.manual) {
+                const man = stationState.manual;
+                const elapsed = (now - man.startTime) / 1000;
+                
+                // If the manual song is older than 10 mins (failsafe), ignore it
+                if (elapsed < 600) { 
+                    updatePlayer(man.id, elapsed, man.title + " (Live)");
+                    return;
+                }
+            }
+
+            // CHECK 2: AUTO DJ LOGIC
+            if (library.length === 0) return;
+
+            // Filter Library by Genre
+            let activePlaylist = library;
+            if (stationState.genre !== 'all') {
+                activePlaylist = library.filter(s => s.genre === stationState.genre);
+            }
+            
+            // If filtering leaves nothing, fall back to all
+            if (activePlaylist.length === 0) activePlaylist = library;
+
+            // Sort consistently so everyone has same order (by Title for example)
+            activePlaylist.sort((a, b) => a.title.localeCompare(b.title));
+
+            // Calculate "Global Loop Time"
+            const totalLoopDuration = activePlaylist.reduce((sum, s) => sum + s.duration, 0);
+            
+            // We use a fixed start date for the loop (e.g. timestamp 0)
+            // Current position in the infinite loop
+            let loopPosition = (now / 1000) % totalLoopDuration;
+
+            // Find the song
+            let currentSong = null;
+            for (let song of activePlaylist) {
+                if (loopPosition < song.duration) {
+                    currentSong = song;
+                    break;
+                }
+                loopPosition -= song.duration;
+            }
+
+            if (currentSong) {
+                updatePlayer(currentSong.id, loopPosition, currentSong.title);
+            }
+        }
+
+        function updatePlayer(videoId, seekTime, title) {
+            document.getElementById('track-title').innerText = "🎶 " + title;
+            
+            let currentState = player.getPlayerState();
+            let currentId = "";
+            try { currentId = player.getVideoData().video_id; } catch(e){}
+
+            // If song changed
+            if (currentId !== videoId) {
+                player.loadVideoById(videoId, seekTime);
+            } 
+            // If song same, check sync
+            else {
+                let time = player.getCurrentTime();
+                if (Math.abs(time - seekTime) > 3) {
+                    player.seekTo(seekTime, true);
+                }
+                if (currentState !== 1 && currentState !== 3) {
+                    player.playVideo();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
