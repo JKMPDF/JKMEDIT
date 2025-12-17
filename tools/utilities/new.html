@@ -95,9 +95,10 @@
         .btn-danger { background-color: var(--input-bg); color: var(--danger-color); font-weight: 500;} /* Ghost button style */
         .btn-outline { background-color: var(--input-bg); color: var(--primary-color); }
 
-        /* --- Row for Dropdown + Plus Button --- */
+        /* --- Row for Dropdown + Buttons --- */
         .input-row { display: flex; gap: 10px; align-items: flex-start; }
         .input-row select { flex: 1; }
+        
         .btn-icon { 
             width: 46px; 
             height: 43px; 
@@ -105,10 +106,18 @@
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            font-size: 24px; 
+            font-size: 20px; 
             border-radius: 8px;
             background: var(--input-bg);
             color: var(--primary-color);
+            border: none;
+            cursor: pointer;
+        }
+        
+        /* Specific style for delete category button */
+        .btn-icon.delete-cat {
+            color: var(--danger-color);
+            font-size: 18px;
         }
 
         /* --- Scanner --- */
@@ -179,7 +188,21 @@
             word-wrap: break-word;
         }
         .data-table tr:last-child td { border-bottom: none; }
-        .timestamp-col { color: var(--sub-text); font-size: 0.8rem; width: 80px; }
+        
+        .timestamp-col { color: var(--sub-text); font-size: 0.8rem; width: 75px; }
+        .action-col { width: 40px; text-align: right; vertical-align: middle !important; }
+
+        /* Delete row button */
+        .btn-delete-row {
+            background: transparent;
+            border: none;
+            color: #c7c7cc;
+            font-size: 20px;
+            line-height: 1;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .btn-delete-row:hover { color: var(--danger-color); }
 
         .footer-controls { margin-top: 40px; display: flex; flex-direction: column; gap: 10px; }
     </style>
@@ -187,7 +210,7 @@
 <body>
 
 <div class="container">
-    <h1>Inventory Scan</h1>
+    <h1>JKM SCAN</h1>
 
     <div class="card">
         <div id="reader"></div>
@@ -203,7 +226,10 @@
             <select id="item-select">
                 <option value="" disabled selected>Select Category</option>
             </select>
-            <button onclick="openModal()" class="btn btn-icon" title="Add New Category">+</button>
+            <button onclick="deleteCurrentCategory()" class="btn-icon delete-cat" title="Delete Selected Category">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+            <button onclick="openModal()" class="btn-icon" title="Add New Category">+</button>
         </div>
 
         <button onclick="saveEntry()" class="btn btn-success">Save Entry</button>
@@ -214,7 +240,7 @@
 
     <div class="footer-controls">
         <button onclick="downloadExcel()" class="btn btn-outline">Export to Excel</button>
-        <button onclick="clearAllData()" class="btn btn-danger">Clear History</button>
+        <button onclick="clearAllData()" class="btn btn-danger">Clear All History</button>
     </div>
 </div>
 
@@ -258,12 +284,11 @@
         modalInput.value = '';
     }
 
-    // Close modal if clicking outside the box
     modal.addEventListener('click', function(e) {
         if (e.target === modal) closeModal();
     });
 
-    /* --- ADD ITEM LOGIC --- */
+    /* --- CATEGORY MANAGEMENT --- */
     function addNewItem() {
         const itemName = modalInput.value.trim();
 
@@ -286,9 +311,36 @@
         document.getElementById('item-select').value = itemName;
     }
 
+    function deleteCurrentCategory() {
+        const select = document.getElementById('item-select');
+        const categoryToDelete = select.value;
+
+        if (!categoryToDelete) {
+            alert("Please select a category to delete.");
+            return;
+        }
+
+        // CONSTRAINT CHECK: Is this category used in any saved entry?
+        const isUsed = savedEntries.some(entry => entry.item === categoryToDelete);
+
+        if (isUsed) {
+            alert(`Cannot delete "${categoryToDelete}" because it contains saved entries. \n\nPlease delete the entries associated with this category first.`);
+            return;
+        }
+
+        if (confirm(`Are you sure you want to delete the category "${categoryToDelete}"?`)) {
+            // Remove from array
+            availableItems = availableItems.filter(item => item !== categoryToDelete);
+            localStorage.setItem(KEY_ITEMS, JSON.stringify(availableItems));
+            
+            updateDropdown();
+            // Reset selection
+            select.value = "";
+        }
+    }
+
     function updateDropdown() {
         const select = document.getElementById('item-select');
-        // Save current value to restore if valid
         const currentVal = select.value;
         
         select.innerHTML = '<option value="" disabled selected>Select Category</option>';
@@ -299,6 +351,11 @@
             option.textContent = item;
             select.appendChild(option);
         });
+
+        // Restore selection if it still exists
+        if (availableItems.includes(currentVal)) {
+            select.value = currentVal;
+        }
     }
 
     /* --- SCANNER LOGIC --- */
@@ -334,7 +391,7 @@
         });
     });
 
-    /* --- SAVE ENTRY LOGIC --- */
+    /* --- ENTRY MANAGEMENT --- */
     function saveEntry() {
         const qrInput = document.getElementById('qr-data');
         const itemSelect = document.getElementById('item-select');
@@ -364,9 +421,16 @@
 
         renderGroupedData();
         
-        // --- RESET FIELDS ---
         qrInput.value = '';        // Clear QR
-        itemSelect.value = "";     // Reset Dropdown to default
+        // We keep the selected category active for rapid scanning
+    }
+
+    function deleteEntry(id) {
+        if (confirm("Delete this entry?")) {
+            savedEntries = savedEntries.filter(entry => entry.id !== id);
+            localStorage.setItem(KEY_ENTRIES, JSON.stringify(savedEntries));
+            renderGroupedData();
+        }
     }
 
     /* --- RENDER DATA LOGIC --- */
@@ -379,7 +443,7 @@
             return;
         }
 
-        // We loop through available items to maintain order, plus handle any orphans
+        // Loop through available items to maintain order, plus handle orphans
         const uniqueItems = [...new Set([...availableItems, ...savedEntries.map(e=>e.item)])];
 
         uniqueItems.forEach(item => {
@@ -401,6 +465,9 @@
                     <tr>
                         <td class="timestamp-col">${e.timestamp}</td>
                         <td>${e.qr}</td>
+                        <td class="action-col">
+                            <button onclick="deleteEntry(${e.id})" class="btn-delete-row" title="Delete Entry">&times;</button>
+                        </td>
                     </tr>
                 `).join('');
                 
@@ -410,16 +477,14 @@
         });
     }
 
-    /* --- EXPORT LOGIC --- */
+    /* --- EXPORT/CLEAR LOGIC --- */
     function downloadExcel() {
         if (savedEntries.length === 0) {
             alert("No data to export.");
             return;
         }
 
-        // Sort by Item Name
         const sorted = savedEntries.slice().sort((a, b) => a.item.localeCompare(b.item));
-
         let csv = "data:text/csv;charset=utf-8,Category,Date Time,QR Content\n";
         
         sorted.forEach(e => {
