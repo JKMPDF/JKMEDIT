@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QR Asset Manager + Photos</title>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        /* ... Keeping your original CSS ... */
+        :root {
+            --bg-color: #f2f2f7;
+            --card-bg: #ffffff;
+            --primary-color: #007aff;
+            --danger-color: #ff3b30;
+            --text-color: #1d1d1f;
+            --sub-text: #86868b;
+            --border-radius: 12px;
+            --input-bg: #eef0f2;
+        }
+
+        body { font-family: -apple-system, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px 10px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { text-align: center; font-size: 1.5rem; }
+        .card { background: var(--card-bg); border-radius: var(--border-radius); padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--sub-text); margin-bottom: 6px; display: block; text-transform: uppercase; }
+        input[type="text"], select { width: 100%; padding: 12px; border: none; background: var(--input-bg); border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 15px; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-success { background-color: #34c759; color: white; margin-top: 5px; }
+        .btn-danger { background-color: var(--input-bg); color: var(--danger-color); }
+        .btn-outline { background-color: var(--input-bg); color: var(--primary-color); }
+        .input-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        #reader { width: 100%; border-radius: 10px; overflow: hidden; background: black; margin-bottom: 15px; }
+        
+        /* New Photo Preview Style */
+        .photo-preview { width: 50px; height: 50px; border-radius: 4px; object-fit: cover; background: #eee; }
+        .data-table td { padding: 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+        
+        /* Modal Styles */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
+        .modal { background: white; padding: 25px; border-radius: 16px; width: 85%; max-width: 320px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Inventory + Photo Capture</h1>
+
+    <div class="card">
+        <div id="reader"></div>
+        <canvas id="photo-canvas" style="display:none;"></canvas>
+        <button id="start-scan-btn" class="btn btn-primary">Start Camera</button>
+    </div>
+
+    <div class="card">
+        <label>Scanned Data</label>
+        <input type="text" id="qr-data" placeholder="Scan a QR code..." readonly>
+
+        <label>Select Item Category</label>
+        <div class="input-row">
+            <select id="item-select">
+                <option value="" disabled selected>Select Category</option>
+            </select>
+            <button onclick="openModal()" class="btn" style="width:50px; background:var(--input-bg); color:var(--primary-color)">+</button>
+        </div>
+
+        <button onclick="saveEntryWithPhoto()" class="btn btn-success">Save Entry & Photo</button>
+    </div>
+
+    <div id="grouped-data-area"></div>
+
+    <div class="footer-controls" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+        <button onclick="downloadZip()" class="btn btn-outline">Export All (CSV + Photos)</button>
+        <button onclick="clearAllData()" class="btn btn-danger">Clear All History</button>
+    </div>
+</div>
+
+<div id="modal-overlay" class="modal-overlay">
+    <div class="modal">
+        <h3>Add Category</h3>
+        <input type="text" id="new-category-input" placeholder="E.g. Box A...">
+        <div style="display:flex; gap:10px;">
+            <button onclick="closeModal()" class="btn" style="background:#eee;">Cancel</button>
+            <button onclick="addNewItem()" class="btn btn-primary">Add</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const KEY_ENTRIES = 'qr_pro_entries_v2';
+    const KEY_ITEMS = 'qr_pro_items_v2';
+    
+    let html5QrcodeScanner = null;
+    let savedEntries = JSON.parse(localStorage.getItem(KEY_ENTRIES)) || [];
+    let availableItems = JSON.parse(localStorage.getItem(KEY_ITEMS)) || [];
+
+    window.onload = () => { updateDropdown(); renderGroupedData(); };
+
+    /* --- CATEGORY LOGIC --- */
+    function openModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+    
+    function addNewItem() {
+        const val = document.getElementById('new-category-input').value.trim();
+        if(val && !availableItems.includes(val)) {
+            availableItems.push(val);
+            localStorage.setItem(KEY_ITEMS, JSON.stringify(availableItems));
+            updateDropdown();
+            closeModal();
+        }
+    }
+
+    function updateDropdown() {
+        const select = document.getElementById('item-select');
+        select.innerHTML = '<option value="" disabled selected>Select Category</option>';
+        availableItems.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = opt.textContent = item;
+            select.appendChild(opt);
+        });
+    }
+
+    /* --- CAMERA & SCANNER --- */
+    const startBtn = document.getElementById('start-scan-btn');
+    startBtn.addEventListener('click', () => {
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.stop().then(() => {
+                html5QrcodeScanner = null;
+                startBtn.textContent = "Start Camera";
+                startBtn.classList.replace('btn-danger', 'btn-primary');
+            });
+            return;
+        }
+        html5QrcodeScanner = new Html5Qrcode("reader");
+        html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, 
+        (text) => { document.getElementById('qr-data').value = text; });
+        startBtn.textContent = "Stop Camera";
+        startBtn.classList.replace('btn-primary', 'btn-danger');
+    });
+
+    /* --- PHOTO & SAVE LOGIC --- */
+    async function saveEntryWithPhoto() {
+        const qrData = document.getElementById('qr-data').value;
+        const itemType = document.getElementById('item-select').value;
+
+        if (!qrData || !itemType) return alert("Scan QR and Select Category first!");
+        if (!html5QrcodeScanner) return alert("Camera must be ON to take a photo.");
+
+        // Capture photo from video stream
+        const video = document.querySelector('#reader video');
+        const canvas = document.getElementById('photo-canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        
+        const photoBase64 = canvas.toDataURL('image/png');
+        const photoName = `img_${Date.now()}.png`;
+
+        const newEntry = {
+            id: Date.now(),
+            timestamp: new Date().toLocaleTimeString(),
+            fullTime: new Date().toLocaleString(),
+            qr: qrData,
+            item: itemType,
+            photoName: photoName,
+            photoData: photoBase64 // Storing in localStorage (Note: limited to ~5MB total)
+        };
+
+        savedEntries.push(newEntry);
+        localStorage.setItem(KEY_ENTRIES, JSON.stringify(savedEntries));
+        
+        document.getElementById('qr-data').value = '';
+        renderGroupedData();
+        alert("Saved with Photo!");
+    }
+
+    function renderGroupedData() {
+        const container = document.getElementById('grouped-data-area');
+        container.innerHTML = '';
+        const items = [...new Set(savedEntries.map(e => e.item))];
+
+        items.forEach(item => {
+            const entries = savedEntries.filter(e => e.item === item);
+            let rows = entries.map(e => `
+                <tr>
+                    <td><img src="${e.photoData}" class="photo-preview"></td>
+                    <td style="font-size:12px;">${e.photoName}</td>
+                    <td>${e.qr}</td>
+                    <td><button onclick="deleteEntry(${e.id})" style="border:none; background:none; color:red;">&times;</button></td>
+                </tr>
+            `).join('');
+
+            container.innerHTML += `
+                <div style="font-weight:bold; margin: 15px 0 5px;">${item} (${entries.length})</div>
+                <table style="width:100%; background:white; border-radius:8px; border-collapse:collapse;">
+                    ${rows}
+                </table>
+            `;
+        });
+    }
+
+    function deleteEntry(id) {
+        savedEntries = savedEntries.filter(e => e.id !== id);
+        localStorage.setItem(KEY_ENTRIES, JSON.stringify(savedEntries));
+        renderGroupedData();
+    }
+
+    /* --- ZIP EXPORT LOGIC --- */
+    async function downloadZip() {
+        if (savedEntries.length === 0) return alert("No data to export.");
+        
+        const zip = new JSZip();
+        const imgFolder = zip.folder("photos");
+        
+        // 1. Create CSV content
+        let csv = "Category,Date Time,QR Content,Photo Filename\n";
+        savedEntries.forEach(e => {
+            csv += `"${e.item}","${e.fullTime}","${e.qr}","${e.photoName}"\n`;
+            
+            // 2. Add Images to folder
+            const imageData = e.photoData.split(',')[1]; // Remove header
+            imgFolder.file(e.photoName, imageData, {base64: true});
+        });
+
+        zip.file("inventory_data.csv", csv);
+
+        // 3. Generate and Download ZIP
+        const content = await zip.generateAsync({type:"blob"});
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(content);
+        link.download = "inventory_export.zip";
+        link.click();
+    }
+
+    function clearAllData() {
+        if(confirm("Clear everything?")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+</script>
+</body>
+</html>
