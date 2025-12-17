@@ -227,7 +227,7 @@
 
 <script>
     // --- 1. CONFIGURATION ---
-    const DB_NAME = "AssetAuditorProV2"; // New DB name to ensure clean slate for new logic
+    const DB_NAME = "AssetAuditorProV2"; 
     const STORE_DATA = "entries";
     let db;
     let qrScanner = null;
@@ -245,8 +245,6 @@
     };
 
     // --- 3. DYNAMIC DROPDOWNS LOGIC ---
-    
-    // Config for standard lists (excluding Sub Location)
     const listConfig = {
         'f_floor': 'Floors',
         'f_category': 'Categories',
@@ -268,7 +266,6 @@
         renderOptions(elementId, currentList);
         document.getElementById(elementId).value = val;
         
-        // If floor changed, update sub locations
         if(elementId === 'f_floor') updateSubLocations();
     }
 
@@ -277,7 +274,6 @@
             const list = JSON.parse(localStorage.getItem(key) || "[]");
             renderOptions(id, list);
         }
-        // Initialize sub locs
         updateSubLocations();
     }
 
@@ -293,13 +289,12 @@
     }
 
     // --- SPECIAL LOGIC: FLOOR -> SUB LOCATION ---
-    const SUB_LOC_KEY = "SubLocationMap"; // Store as object { "Floor1": ["Loc1", "Loc2"], "Floor2": [] }
+    const SUB_LOC_KEY = "SubLocationMap";
 
     function updateSubLocations() {
         const floorVal = document.getElementById('f_floor').value;
         const subLocSelect = document.getElementById('f_sub_loc');
         
-        // clear current options
         subLocSelect.innerHTML = '<option value="">Select...</option>';
 
         if(!floorVal) {
@@ -307,7 +302,6 @@
             return;
         }
 
-        // Get map
         const map = JSON.parse(localStorage.getItem(SUB_LOC_KEY) || "{}");
         const locs = map[floorVal] || [];
 
@@ -337,8 +331,8 @@
         if(!map[floorVal].includes(newLoc)) {
             map[floorVal].push(newLoc);
             localStorage.setItem(SUB_LOC_KEY, JSON.stringify(map));
-            updateSubLocations(); // Refresh list
-            document.getElementById('f_sub_loc').value = newLoc; // Select it
+            updateSubLocations(); 
+            document.getElementById('f_sub_loc').value = newLoc;
         }
     }
 
@@ -478,7 +472,6 @@
         document.getElementById('prev_serial').style.display = 'none';
         document.getElementById('prev_asset').style.display = 'none';
         
-        // Reset Sub Loc
         updateSubLocations();
     }
 
@@ -509,21 +502,33 @@
             const imgFolder = zip.folder("Photos");
 
             // CSV Header
-            let csv = "Asset ID,Floor,Sub Location,Category,Nature,Description,Tagging,Make,Model,Serial No,Qty,Tag Type,Tag Location,Project,Person/Email,Department,Responsible,Date Time,Geo Code,Remarks,Barcode Photo Name,Serial Photo Name,Asset Photo Name\n";
+            let csv = "Asset ID,Floor,Sub Location,Category,Nature,Description,Tagging,Make,Model,Serial No,Qty,Tag Type,Tag Location,Project,Person/Email,Department,Responsible,Date Time,Geo Code,Remarks,Barcode Photo,Serial Photo,Asset Photo\n";
 
             data.forEach(item => {
-                // Prepare Paths for CSV: Photos/FileName.jpg
-                const pathBar = item.fNameBarcode ? `Photos/${item.fNameBarcode}` : "";
-                const pathSer = item.fNameSerial ? `Photos/${item.fNameSerial}` : "";
-                const pathAst = item.fNameAsset ? `Photos/${item.fNameAsset}` : "";
+                // EXCEL FORMULA TRICK: =HYPERLINK("Path", "Name")
+                // We use triple quotes to escape correctly in CSV
+                
+                const fmtLink = (fname) => {
+                    if(!fname) return "";
+                    // This creates a formula: =HYPERLINK("Photos/file.jpg", "file.jpg")
+                    return `"=HYPERLINK(""Photos/${fname}"", ""${fname}"")"`;
+                };
+
+                const linkBar = fmtLink(item.fNameBarcode);
+                const linkSer = fmtLink(item.fNameSerial);
+                const linkAst = fmtLink(item.fNameAsset);
 
                 // Add CSV Row
                 const row = [
                     item.assetId, item.floor, item.subLoc, item.category, item.nature, item.desc, item.tagging,
                     item.make, item.model, item.serial, item.quantity, item.tagType, item.tagLoc, item.project,
                     item.email, item.dept, item.responsible, item.datetime, item.geo, item.remarks,
-                    pathBar, pathSer, pathAst
-                ].map(f => `"${String(f).replace(/"/g, '""')}"`).join(","); 
+                    linkBar, linkSer, linkAst
+                ].map(f => {
+                    // Only wrap in quotes if it's NOT our special formula
+                    if(String(f).startsWith('=')) return f; 
+                    return `"${String(f).replace(/"/g, '""')}"`;
+                }).join(","); 
                 csv += row + "\n";
 
                 // Add Images to the 'Photos' folder
