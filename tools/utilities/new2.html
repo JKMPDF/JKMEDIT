@@ -47,8 +47,6 @@
         .btn-green { background: #34c759; color: white; }
         .btn-dark { background: #1c1c1e; color: white; }
         
-        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        
         /* Overlay */
         #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; color: white; flex-direction: column; align-items: center; justify-content: center; }
     </style>
@@ -78,19 +76,18 @@
     <div class="form-group">
         <label>2. Floor</label>
         <div class="input-group">
-            <select id="f_floor"><option value="">Select Floor...</option></select>
+            <select id="f_floor" onchange="updateSubLocations()"><option value="">Select Floor...</option></select>
             <button class="btn-add" onclick="addItem('f_floor')">+</button>
         </div>
     </div>
 
     <div class="form-group">
-        <label>3. Sub Location</label>
+        <label>3. Sub Location (Based on Floor)</label>
         <div class="input-group">
-            <select id="f_sub_loc"><option value="">Select Location...</option></select>
-            <button class="btn-add" onclick="addItem('f_sub_loc')">+</button>
+            <select id="f_sub_loc"><option value="">Select Floor First...</option></select>
+            <button class="btn-add" onclick="addSubLocationSpecial()">+</button>
         </div>
     </div>
-
     <div class="form-group">
         <label>4. Asset Category</label>
         <div class="input-group">
@@ -224,13 +221,13 @@
 <div class="card">
     <h3>Database Actions</h3>
     <p>Entries Saved: <b id="db-count">0</b></p>
-    <button class="btn btn-dark" onclick="exportData()">Download ZIP (Excel + 3 Folders)</button>
+    <button class="btn btn-dark" onclick="exportData()">Download ZIP (Excel + Photos)</button>
     <button class="btn" style="color:red; background:none; border:1px solid red;" onclick="clearDB()">⚠ Clear All Data</button>
 </div>
 
 <script>
     // --- 1. CONFIGURATION ---
-    const DB_NAME = "AssetAuditorPro";
+    const DB_NAME = "AssetAuditorProV2"; // New DB name to ensure clean slate for new logic
     const STORE_DATA = "entries";
     let db;
     let qrScanner = null;
@@ -244,14 +241,14 @@
     request.onsuccess = e => {
         db = e.target.result;
         updateCount();
-        loadListOptions(); // Load saved dropdown items
+        loadListOptions(); 
     };
 
-    // --- 3. DYNAMIC DROPDOWNS LOGIC (LocalStorage) ---
-    // We save the list options in localStorage so they persist
+    // --- 3. DYNAMIC DROPDOWNS LOGIC ---
+    
+    // Config for standard lists (excluding Sub Location)
     const listConfig = {
         'f_floor': 'Floors',
-        'f_sub_loc': 'SubLocations',
         'f_category': 'Categories',
         'f_email': 'EmailList',
         'f_dept': 'Departments'
@@ -263,11 +260,16 @@
         
         const storageKey = listConfig[elementId];
         let currentList = JSON.parse(localStorage.getItem(storageKey) || "[]");
-        currentList.push(val);
-        localStorage.setItem(storageKey, JSON.stringify(currentList));
+        if(!currentList.includes(val)) {
+            currentList.push(val);
+            localStorage.setItem(storageKey, JSON.stringify(currentList));
+        }
         
         renderOptions(elementId, currentList);
-        document.getElementById(elementId).value = val; // Select the new item
+        document.getElementById(elementId).value = val;
+        
+        // If floor changed, update sub locations
+        if(elementId === 'f_floor') updateSubLocations();
     }
 
     function loadListOptions() {
@@ -275,6 +277,8 @@
             const list = JSON.parse(localStorage.getItem(key) || "[]");
             renderOptions(id, list);
         }
+        // Initialize sub locs
+        updateSubLocations();
     }
 
     function renderOptions(elementId, list) {
@@ -286,6 +290,56 @@
             opt.innerText = item;
             select.appendChild(opt);
         });
+    }
+
+    // --- SPECIAL LOGIC: FLOOR -> SUB LOCATION ---
+    const SUB_LOC_KEY = "SubLocationMap"; // Store as object { "Floor1": ["Loc1", "Loc2"], "Floor2": [] }
+
+    function updateSubLocations() {
+        const floorVal = document.getElementById('f_floor').value;
+        const subLocSelect = document.getElementById('f_sub_loc');
+        
+        // clear current options
+        subLocSelect.innerHTML = '<option value="">Select...</option>';
+
+        if(!floorVal) {
+            subLocSelect.innerHTML = '<option value="">Select Floor First...</option>';
+            return;
+        }
+
+        // Get map
+        const map = JSON.parse(localStorage.getItem(SUB_LOC_KEY) || "{}");
+        const locs = map[floorVal] || [];
+
+        locs.forEach(loc => {
+            const opt = document.createElement('option');
+            opt.value = loc;
+            opt.innerText = loc;
+            subLocSelect.appendChild(opt);
+        });
+    }
+
+    function addSubLocationSpecial() {
+        const floorVal = document.getElementById('f_floor').value;
+        
+        if(!floorVal) {
+            alert("Please Select a Floor first!");
+            return;
+        }
+
+        const newLoc = prompt(`Add new Sub Location for Floor: ${floorVal}`);
+        if(!newLoc) return;
+
+        const map = JSON.parse(localStorage.getItem(SUB_LOC_KEY) || "{}");
+        
+        if(!map[floorVal]) map[floorVal] = [];
+        
+        if(!map[floorVal].includes(newLoc)) {
+            map[floorVal].push(newLoc);
+            localStorage.setItem(SUB_LOC_KEY, JSON.stringify(map));
+            updateSubLocations(); // Refresh list
+            document.getElementById('f_sub_loc').value = newLoc; // Select it
+        }
     }
 
     // --- 4. QR SCANNER ---
@@ -336,7 +390,18 @@
         }
     }
 
-    // --- 7. SAVE ENTRY ---
+    // --- 7. FILE NAMING & SAVING ---
+    function generateUniqueName(prefix, assetId) {
+        // Sanitize Asset ID
+        const safeId = (assetId || "unknown").replace(/[^a-z0-9]/gi, '_');
+        // Random 5 char string
+        const randomStr = Math.random().toString(36).substring(2, 7);
+        // Time in ms
+        const time = Date.now();
+        // Result: Prefix_AssetID_Timestamp_Random.jpg
+        return `${prefix}_${safeId}_${time}_${randomStr}.jpg`;
+    }
+
     function saveEntry() {
         const assetId = document.getElementById('f_asset_id').value;
         const barcodeFile = document.getElementById('img_barcode').files[0];
@@ -349,9 +414,8 @@
         document.getElementById('loading-overlay').style.display = 'flex';
         
         const timestamp = new Date().toLocaleString();
-        const entryId = Date.now(); // Unique ID for file naming
+        const entryId = Date.now(); 
 
-        // Helper to get value safely
         const v = (id) => document.getElementById(id).value || "";
 
         const entry = {
@@ -376,14 +440,16 @@
             datetime: timestamp,
             geo: v('f_geo'),
             remarks: v('f_remarks'),
+            
             // Files stored as Blobs
             imgBarcode: barcodeFile || null,
             imgSerial: serialFile || null,
             imgAsset: assetFile || null,
-            // Filenames for CSV
-            fNameBarcode: barcodeFile ? `Bar_${assetId}_${entryId}.jpg` : "",
-            fNameSerial: serialFile ? `Ser_${assetId}_${entryId}.jpg` : "",
-            fNameAsset: assetFile ? `Ast_${assetId}_${entryId}.jpg` : ""
+            
+            // Generate COMPLETELY UNIQUE filenames
+            fNameBarcode: barcodeFile ? generateUniqueName('Bar', assetId) : "",
+            fNameSerial: serialFile ? generateUniqueName('Ser', assetId) : "",
+            fNameAsset: assetFile ? generateUniqueName('Ast', assetId) : ""
         };
 
         const tx = db.transaction(STORE_DATA, "readwrite");
@@ -401,7 +467,6 @@
     }
 
     function resetForm() {
-        // Clear all inputs except lists logic
         document.querySelectorAll("input, textarea").forEach(el => el.value = "");
         document.querySelectorAll("select").forEach(el => el.selectedIndex = 0);
         document.getElementById('f_qty').value = "1";
@@ -412,6 +477,9 @@
         document.getElementById('prev_barcode').style.display = 'none';
         document.getElementById('prev_serial').style.display = 'none';
         document.getElementById('prev_asset').style.display = 'none';
+        
+        // Reset Sub Loc
+        updateSubLocations();
     }
 
     function updateCount() {
@@ -436,28 +504,32 @@
             }
 
             const zip = new JSZip();
-            // Create Folders
-            const f_bar = zip.folder("Barcode_Images");
-            const f_ser = zip.folder("Serial_Images");
-            const f_ast = zip.folder("Assets_Images");
+            
+            // ONE SINGLE FOLDER FOR PHOTOS
+            const imgFolder = zip.folder("Photos");
 
             // CSV Header
-            let csv = "Asset ID,Floor,Sub Location,Category,Nature,Description,Tagging,Make,Model,Serial No,Qty,Tag Type,Tag Location,Project,Person/Email,Department,Responsible,Date Time,Geo Code,Remarks,Barcode Image File,Serial Image File,Asset Image File\n";
+            let csv = "Asset ID,Floor,Sub Location,Category,Nature,Description,Tagging,Make,Model,Serial No,Qty,Tag Type,Tag Location,Project,Person/Email,Department,Responsible,Date Time,Geo Code,Remarks,Barcode Photo Name,Serial Photo Name,Asset Photo Name\n";
 
             data.forEach(item => {
+                // Prepare Paths for CSV: Photos/FileName.jpg
+                const pathBar = item.fNameBarcode ? `Photos/${item.fNameBarcode}` : "";
+                const pathSer = item.fNameSerial ? `Photos/${item.fNameSerial}` : "";
+                const pathAst = item.fNameAsset ? `Photos/${item.fNameAsset}` : "";
+
                 // Add CSV Row
                 const row = [
                     item.assetId, item.floor, item.subLoc, item.category, item.nature, item.desc, item.tagging,
                     item.make, item.model, item.serial, item.quantity, item.tagType, item.tagLoc, item.project,
                     item.email, item.dept, item.responsible, item.datetime, item.geo, item.remarks,
-                    item.fNameBarcode, item.fNameSerial, item.fNameAsset
-                ].map(f => `"${String(f).replace(/"/g, '""')}"`).join(","); // Escape CSV
+                    pathBar, pathSer, pathAst
+                ].map(f => `"${String(f).replace(/"/g, '""')}"`).join(","); 
                 csv += row + "\n";
 
-                // Add Images to Zip Folders
-                if(item.imgBarcode) f_bar.file(item.fNameBarcode, item.imgBarcode);
-                if(item.imgSerial) f_ser.file(item.fNameSerial, item.imgSerial);
-                if(item.imgAsset) f_ast.file(item.fNameAsset, item.imgAsset);
+                // Add Images to the 'Photos' folder
+                if(item.imgBarcode) imgFolder.file(item.fNameBarcode, item.imgBarcode);
+                if(item.imgSerial) imgFolder.file(item.fNameSerial, item.imgSerial);
+                if(item.imgAsset) imgFolder.file(item.fNameAsset, item.imgAsset);
             });
 
             zip.file("Master_Asset_List.csv", csv);
