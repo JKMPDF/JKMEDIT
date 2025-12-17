@@ -3,264 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro Asset Manager</title>
+    <title>Pro Asset Master</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
-        :root {
-            --bg-color: #f2f2f7; --card-bg: #ffffff; --primary-color: #007aff;
-            --danger-color: #ff3b30; --text-color: #1d1d1f; --border-radius: 12px;
+        :root { --primary: #007aff; --bg: #f4f4f4; --white: #ffffff; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); padding: 15px; margin: 0; }
+        
+        .card { background: var(--white); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        
+        h2 { margin: 0 0 10px 0; font-size: 18px; text-align: center; color: #333; }
+        label { font-size: 12px; font-weight: bold; color: #666; display: block; margin-top: 10px; text-transform: uppercase; }
+        
+        /* Inputs & Selects */
+        input[type="text"], select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        
+        /* Buttons */
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn-blue { background: var(--primary); color: white; }
+        .btn-green { background: #28cd41; color: white; }
+        .btn-red { background: #ff3b30; color: white; margin-top: 5px; }
+
+        /* Camera & File Inputs */
+        #qr-reader { width: 100%; border-radius: 10px; overflow: hidden; background: #000; display: none; margin-bottom: 10px; }
+        
+        .photo-upload-container { display: flex; gap: 10px; margin-top: 10px; }
+        .photo-box { flex: 1; text-align: center; }
+        
+        /* Hidden file input, styled label acts as button */
+        .custom-file-upload {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 2px dashed #ccc; border-radius: 8px; padding: 10px;
+            background: #fafafa; height: 80px; cursor: pointer;
         }
-        body { font-family: -apple-system, sans-serif; background: var(--bg-color); color: var(--text-color); padding: 15px; margin: 0; }
-        .card { background: var(--card-bg); border-radius: var(--border-radius); padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        h1 { font-size: 1.2rem; text-align: center; }
-        label { font-size: 0.75rem; font-weight: 700; color: #86868b; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; font-size: 16px; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
-        .btn-blue { background: var(--primary-color); color: white; }
-        .btn-green { background: #34c759; color: white; }
-        .btn-photo { background: #5856d6; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        #reader { width: 100%; border-radius: 10px; background: #000; overflow: hidden; margin-bottom: 10px; }
-        .preview-container { display: flex; gap: 10px; margin-bottom: 15px; }
-        .preview-box { flex: 1; text-align: center; font-size: 10px; }
-        .preview-box img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; background: #eee; }
-        .data-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; font-size: 12px; }
-        .data-table td { padding: 10px; border-bottom: 1px solid #eee; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 100; }
-        .modal-content { background: white; padding: 20px; border-radius: 15px; width: 80%; max-width: 300px; }
+        .custom-file-upload img { max-height: 60px; max-width: 100%; display: none; border-radius: 4px; }
+        .custom-file-upload span { font-size: 12px; color: #007aff; margin-top: 5px; }
+
+        /* Table */
+        .data-list { font-size: 12px; width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .data-list td { padding: 8px; border-bottom: 1px solid #eee; background: white; }
+        .status-msg { text-align: center; color: green; font-weight: bold; height: 20px; }
     </style>
 </head>
 <body>
 
-<h1>Asset Inventory Pro</h1>
+    <div class="card">
+        <h2>Asset Entry</h2>
+        
+        <div id="qr-reader"></div>
+        <button id="scan-btn" onclick="startScanner()" class="btn btn-blue">Start QR Scan</button>
+        
+        <label>Asset ID (from QR)</label>
+        <input type="text" id="asset-id" placeholder="Scan or type..." readonly style="background:#eef;">
 
-<div class="card">
-    <div id="reader"></div>
-    <button id="cam-toggle" class="btn btn-blue">Start Camera</button>
-</div>
-
-<div class="card">
-    <label>Asset ID (Scanned QR)</label>
-    <input type="text" id="asset-id" placeholder="Scan QR to fill..." readonly>
-
-    <label>Category</label>
-    <div style="display:flex; gap:5px;">
-        <select id="cat-select"><option value="">Select Category</option></select>
-        <button onclick="showModal()" style="width:50px; border-radius:8px; border:1px solid #ddd;">+</button>
-    </div>
-
-    <label>Capture Photos</label>
-    <div class="preview-container">
-        <div class="preview-box">
-            <img id="prev-asset" src="" alt="Pending">
-            <button onclick="takePhoto('asset')" class="btn btn-photo">📸 Asset</button>
+        <label>Category</label>
+        <div style="display:flex; gap:5px;">
+            <select id="category"><option value="">Select Category...</option></select>
+            <button onclick="addCategory()" style="width:50px; border:1px solid #ddd; border-radius:8px; font-weight:bold;">+</button>
         </div>
-        <div class="preview-box">
-            <img id="prev-qr" src="" alt="Pending">
-            <button onclick="takePhoto('qr')" class="btn btn-photo">📸 QR Label</button>
+
+        <label>Photos (High Quality)</label>
+        <div class="photo-upload-container">
+            <div class="photo-box">
+                <label for="file-asset" class="custom-file-upload" id="lbl-asset">
+                    <span id="txt-asset">📸 Asset Photo</span>
+                    <img id="prev-asset">
+                </label>
+                <input type="file" id="file-asset" accept="image/*" capture="environment" style="display:none" onchange="previewImage(this, 'prev-asset', 'txt-asset')">
+            </div>
+
+            <div class="photo-box">
+                <label for="file-qr" class="custom-file-upload" id="lbl-qr">
+                    <span id="txt-qr">📸 Label Photo</span>
+                    <img id="prev-qr">
+                </label>
+                <input type="file" id="file-qr" accept="image/*" capture="environment" style="display:none" onchange="previewImage(this, 'prev-qr', 'txt-qr')">
+            </div>
+        </div>
+
+        <button onclick="saveEntry()" class="btn btn-green">Save Entry</button>
+        <div id="msg" class="status-msg"></div>
+    </div>
+
+    <div class="card">
+        <h2>Database (<span id="count">0</span> items)</h2>
+        <button onclick="downloadZip()" class="btn" style="background:#333; color:white;">Download ZIP (Excel + Folders)</button>
+        <button onclick="clearDatabase()" class="btn btn-red" style="font-size:12px; padding:10px;">Reset System</button>
+        <div style="max-height: 200px; overflow-y: auto; margin-top:10px;">
+            <table class="data-list" id="entry-table"></table>
         </div>
     </div>
-
-    <button onclick="saveToDB()" class="btn btn-green">Save Full Entry</button>
-</div>
-
-<div id="list-area"></div>
-
-<div style="padding: 10px;">
-    <button onclick="exportZip()" class="btn btn-blue" style="background: #000;">Download ZIP (CSV + Folders)</button>
-    <button onclick="clearSystem()" class="btn" style="color:red; background:none;">Wipe All Data</button>
-</div>
-
-<div id="cat-modal" class="modal">
-    <div class="modal-content">
-        <h3>New Category</h3>
-        <input type="text" id="new-cat-name" placeholder="Name...">
-        <button onclick="addCat()" class="btn btn-blue">Add</button>
-        <button onclick="hideModal()" class="btn" style="background:#eee;">Cancel</button>
-    </div>
-</div>
-
-<canvas id="hidden-canvas" style="display:none;"></canvas>
 
 <script>
+    // --- CONFIGURATION ---
+    const DB_NAME = "ProAssetDB_v1";
+    const STORE_NAME = "assets";
+    const CAT_STORE = "categories";
+    
     let db;
-    let scanner = null;
-    let tempAssetPhoto = null;
-    let tempQrPhoto = null;
+    let html5QrCode;
 
-    // --- 1. Database Setup (IndexedDB) ---
-    const request = indexedDB.open("AssetTrackerDB", 1);
-    request.onupgradeneeded = e => {
-        db = e.target.result;
-        db.createObjectStore("entries", { keyPath: "id", autoIncrement: true });
-        db.createObjectStore("categories", { keyPath: "name" });
+    // --- 1. INITIALIZE DATABASE (IndexedDB) ---
+    // This allows storing 1000+ images without crashing the browser
+    const request = indexedDB.open(DB_NAME, 1);
+    
+    request.onupgradeneeded = (event) => {
+        db = event.target.result;
+        db.createObjectStore(STORE_NAME, { keyPath: "id" });
+        db.createObjectStore(CAT_STORE, { keyPath: "name" });
     };
-    request.onsuccess = e => {
-        db = e.target.result;
+
+    request.onsuccess = (event) => {
+        db = event.target.result;
         loadCategories();
-        renderEntries();
+        updateTable();
     };
 
-    // --- 2. Camera & Scanning ---
-    document.getElementById('cam-toggle').addEventListener('click', function() {
-        if(scanner) {
-            scanner.stop().then(() => { scanner = null; this.innerText = "Start Camera"; });
-            return;
-        }
-        scanner = new Html5Qrcode("reader");
-        scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, 
-        (text) => { 
-            document.getElementById('asset-id').value = text;
-            if(navigator.vibrate) navigator.vibrate(50);
-        });
-        this.innerText = "Stop Camera";
-    });
-
-    function takePhoto(type) {
-        if(!scanner) return alert("Open camera first!");
-        const video = document.querySelector("#reader video");
-        const canvas = document.getElementById("hidden-canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext("2d").drawImage(video, 0, 0);
-        const data = canvas.toDataURL("image/png");
+    // --- 2. QR CODE LOGIC ---
+    function startScanner() {
+        document.getElementById('qr-reader').style.display = "block";
+        document.getElementById('scan-btn').style.display = "none";
         
-        if(type === 'asset') {
-            tempAssetPhoto = data;
-            document.getElementById('prev-asset').src = data;
-        } else {
-            tempQrPhoto = data;
-            document.getElementById('prev-qr').src = data;
+        html5QrCode = new Html5Qrcode("qr-reader");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            onScanSuccess,
+            onScanFailure
+        );
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        // 1. Alert User
+        alert("QR Code Scanned Successfully!\nID: " + decodedText);
+        
+        // 2. Fill Data
+        document.getElementById('asset-id').value = decodedText;
+        
+        // 3. Stop Camera Immediately
+        html5QrCode.stop().then(() => {
+            document.getElementById('qr-reader').style.display = "none";
+            document.getElementById('scan-btn').style.display = "block";
+            document.getElementById('scan-btn').innerText = "Rescan QR";
+        });
+    }
+
+    function onScanFailure(error) {
+        // no-op to keep console clean
+    }
+
+    // --- 3. PHOTO HANDLING (Native Camera) ---
+    function previewImage(input, imgId, textId) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById(imgId);
+                img.src = e.target.result;
+                img.style.display = "block";
+                document.getElementById(textId).style.display = "none";
+            }
+            reader.readAsDataURL(input.files[0]);
         }
     }
 
-    // --- 3. Save Entry ---
-    function saveToDB() {
+    // --- 4. SAVE LOGIC ---
+    function saveEntry() {
         const id = document.getElementById('asset-id').value;
-        const cat = document.getElementById('cat-select').value;
-        
-        if(!id || !cat || !tempAssetPhoto || !tempQrPhoto) {
-            return alert("Missing Data! Scan QR, select Category, and take BOTH photos.");
-        }
+        const cat = document.getElementById('category').value;
+        const fileAsset = document.getElementById('file-asset').files[0];
+        const fileQr = document.getElementById('file-qr').files[0];
 
-        const timestamp = Date.now();
+        if (!id || !cat) return alert("Please Scan QR and select Category.");
+        if (!fileAsset || !fileQr) return alert("Please take BOTH photos.");
+
+        // Create short filenames
+        const ext = fileAsset.name.split('.').pop() || 'jpg';
+        const assetName = `AST_${id}.${ext}`;
+        const qrName = `LBL_${id}.${ext}`;
+
         const entry = {
-            assetId: id,
+            id: id,
             category: cat,
-            assetPhotoName: `Asset_${id}_${timestamp}.png`,
-            qrPhotoName: `QR_${id}_${timestamp}.png`,
-            assetPhotoData: tempAssetPhoto,
-            qrPhotoData: tempQrPhoto,
-            date: new Date().toLocaleString()
+            timestamp: new Date().toLocaleString(),
+            assetBlob: fileAsset, // Store the raw file (efficient)
+            qrBlob: fileQr,       // Store the raw file
+            assetFileName: assetName,
+            qrFileName: qrName
         };
 
-        const tx = db.transaction("entries", "readwrite");
-        tx.objectStore("entries").add(entry);
+        const tx = db.transaction(STORE_NAME, "readwrite");
+        tx.objectStore(STORE_NAME).put(entry);
+        
         tx.oncomplete = () => {
-            alert("Saved Successfully!");
+            document.getElementById('msg').innerText = "Saved: " + id;
+            setTimeout(() => document.getElementById('msg').innerText = "", 2000);
             resetForm();
-            renderEntries();
+            updateTable();
         };
+        
+        tx.onerror = () => alert("Error saving. ID might be duplicate.");
     }
 
     function resetForm() {
         document.getElementById('asset-id').value = "";
-        tempAssetPhoto = null; tempQrPhoto = null;
-        document.getElementById('prev-asset').src = "";
-        document.getElementById('prev-qr').src = "";
+        document.getElementById('file-asset').value = "";
+        document.getElementById('file-qr').value = "";
+        document.getElementById('prev-asset').style.display = "none";
+        document.getElementById('prev-qr').style.display = "none";
+        document.getElementById('txt-asset').style.display = "block";
+        document.getElementById('txt-qr').style.display = "block";
+        document.getElementById('scan-btn').innerText = "Start QR Scan";
     }
 
-    // --- 4. Categories ---
-    function showModal() { document.getElementById('cat-modal').style.display='flex'; }
-    function hideModal() { document.getElementById('cat-modal').style.display='none'; }
-    
-    function addCat() {
-        const name = document.getElementById('new-cat-name').value.trim();
-        if(!name) return;
-        const tx = db.transaction("categories", "readwrite");
-        tx.objectStore("categories").put({name: name});
-        tx.oncomplete = () => {
-            loadCategories();
-            hideModal();
-            document.getElementById('new-cat-name').value = "";
-        };
-    }
-
-    function loadCategories() {
-        const select = document.getElementById('cat-select');
-        select.innerHTML = '<option value="">Select Category</option>';
-        db.transaction("categories").objectStore("categories").getAll().onsuccess = e => {
-            e.target.result.forEach(c => {
-                select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
-            });
-        };
-    }
-
-    // --- 5. Export Logic (ZIP with Folders) ---
-    async function exportZip() {
-        const zip = new JSZip();
-        const assetFolder = zip.folder("assets");
-        const qrFolder = zip.folder("qr_codes");
-        
-        let csv = "Asset ID,Category,Date,Asset Photo File,QR Photo File\n";
-        
-        db.transaction("entries").objectStore("entries").getAll().onsuccess = async e => {
-            const data = e.target.result;
-            if(data.length === 0) return alert("No data to export");
-
-            data.forEach(item => {
-                csv += `"${item.assetId}","${item.category}","${item.date}","${item.assetPhotoName}","${item.qrPhotoName}"\n`;
-                
-                // Add images to respective folders
-                assetFolder.file(item.assetPhotoName, item.assetPhotoData.split(',')[1], {base64: true});
-                qrFolder.file(item.qrPhotoName, item.qrPhotoData.split(',')[1], {base64: true});
-            });
-
-            zip.file("Inventory_Data.csv", csv);
-            const blob = await zip.generateAsync({type:"blob"});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `Inventory_Export_${Date.now()}.zip`;
-            a.click();
-        };
-    }
-
-    // --- 6. UI Render ---
-    function renderEntries() {
-        const area = document.getElementById('list-area');
-        area.innerHTML = "";
-        db.transaction("entries").objectStore("entries").getAll().onsuccess = e => {
-            const data = e.target.result.reverse();
-            data.forEach(item => {
-                area.innerHTML += `
-                    <div class="card" style="padding:10px;">
-                        <table class="data-table">
-                            <tr>
-                                <td rowspan="2" style="width:60px"><img src="${item.assetPhotoData}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;"></td>
-                                <td><b>ID: ${item.assetId}</b></td>
-                                <td style="text-align:right"><button onclick="deleteEntry(${item.id})" style="color:red;border:none;background:none;">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="color:#666">${item.category} | ${item.date}</td>
-                            </tr>
-                        </table>
-                    </div>
-                `;
-            });
-        };
-    }
-
-    function deleteEntry(id) {
-        if(confirm("Delete this?")) {
-            db.transaction("entries", "readwrite").objectStore("entries").delete(id).onsuccess = renderEntries;
+    // --- 5. CATEGORIES ---
+    function addCategory() {
+        const name = prompt("Enter new category name:");
+        if (name) {
+            const tx = db.transaction(CAT_STORE, "readwrite");
+            tx.objectStore(CAT_STORE).put({ name: name });
+            tx.oncomplete = loadCategories;
         }
     }
 
-    function clearSystem() {
-        if(confirm("Wipe everything permanently?")) {
-            indexedDB.deleteDatabase("AssetTrackerDB");
-            location.reload();
+    function loadCategories() {
+        const select = document.getElementById('category');
+        select.innerHTML = '<option value="">Select Category...</option>';
+        db.transaction(CAT_STORE).objectStore(CAT_STORE).getAll().onsuccess = (e) => {
+            e.target.result.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.name;
+                opt.innerText = c.name;
+                select.appendChild(opt);
+            });
+        };
+    }
+
+    // --- 6. EXPORT / DOWNLOAD ZIP ---
+    async function downloadZip() {
+        const zip = new JSZip();
+        const assetFolder = zip.folder("Asset_Photos");
+        const labelFolder = zip.folder("Label_Photos");
+        
+        let csvContent = "Asset ID,Category,Date,Asset Photo Name,Label Photo Name\n";
+        
+        // Get all data
+        const tx = db.transaction(STORE_NAME, "readonly");
+        const store = tx.objectStore(STORE_NAME);
+        
+        store.getAll().onsuccess = async (event) => {
+            const records = event.target.result;
+            if(records.length === 0) return alert("No data to download.");
+
+            document.getElementById('msg').innerText = "Generating ZIP... Please wait.";
+
+            records.forEach(rec => {
+                // Add to CSV (Short names only)
+                csvContent += `${rec.id},${rec.category},"${rec.timestamp}",${rec.assetFileName},${rec.qrFileName}\n`;
+                
+                // Add Blobs to Zip Folders
+                assetFolder.file(rec.assetFileName, rec.assetBlob);
+                labelFolder.file(rec.qrFileName, rec.qrBlob);
+            });
+
+            zip.file("Master_Inventory.csv", csvContent);
+            
+            const content = await zip.generateAsync({type:"blob"});
+            const url = URL.createObjectURL(content);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Inventory_Backup_${Date.now()}.zip`;
+            a.click();
+            document.getElementById('msg').innerText = "Download Started!";
+        };
+    }
+
+    // --- 7. UI UTILS ---
+    function updateTable() {
+        const tbody = document.getElementById('entry-table');
+        tbody.innerHTML = "";
+        
+        db.transaction(STORE_NAME).objectStore(STORE_NAME).getAll().onsuccess = (e) => {
+            const data = e.target.result;
+            document.getElementById('count').innerText = data.length;
+            
+            // Show last 10 entries only for performance
+            data.slice(-10).reverse().forEach(item => {
+                const row = `<tr>
+                    <td><b>${item.id}</b><br><span style="color:#666">${item.category}</span></td>
+                    <td style="text-align:right;">Saved</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        };
+    }
+
+    function clearDatabase() {
+        if(confirm("DANGER: This will delete all scanned data permanently. Continue?")) {
+            const req = indexedDB.deleteDatabase(DB_NAME);
+            req.onsuccess = () => location.reload();
         }
     }
 </script>
