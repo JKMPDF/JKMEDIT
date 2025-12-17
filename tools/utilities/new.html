@@ -3,243 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile QR Inventory</title>
+    <title>QR Asset Manager</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
-        /* --- Mobile-First Base Styles --- */
+        /* --- Apple/Professional Theme Variables --- */
+        :root {
+            --bg-color: #f2f2f7;
+            --card-bg: #ffffff;
+            --primary-color: #007aff; /* Apple Blue */
+            --danger-color: #ff3b30;  /* Apple Red */
+            --text-color: #1d1d1f;
+            --sub-text: #86868b;
+            --border-radius: 12px;
+            --input-bg: #eef0f2;
+        }
+
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            padding: 10px; 
-            background-color: #f4f4f9; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color); 
+            color: var(--text-color);
             margin: 0;
-            color: #333;
+            padding: 20px 10px;
+            -webkit-font-smoothing: antialiased;
         }
-        
+
         .container { 
-            max-width: 900px; 
+            max-width: 600px; 
             margin: 0 auto; 
-            background: white; 
-            padding: 15px; 
-            border-radius: 8px; 
-            box-shadow: 0 1px 5px rgba(0,0,0,0.1); 
         }
         
-        h2 { text-align: center; margin-top: 0; font-size: 1.5rem; }
-        h3 { font-size: 1.2rem; margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
-
-        /* Input Areas */
-        .section-box { 
-            background: #f8f9fa; 
-            padding: 15px; 
-            border-radius: 8px; 
+        h1 { 
+            text-align: center; 
+            font-weight: 700; 
+            font-size: 1.5rem; 
             margin-bottom: 20px; 
-            border: 1px solid #e9ecef; 
+            color: #000;
         }
 
+        /* --- Cards --- */
+        .card { 
+            background: var(--card-bg); 
+            border-radius: var(--border-radius); 
+            padding: 20px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+            margin-bottom: 20px; 
+        }
+
+        /* --- Inputs & Labels --- */
         label { 
+            font-size: 0.85rem; 
             font-weight: 600; 
-            font-size: 0.9rem; 
-            margin-bottom: 5px; 
+            color: var(--sub-text); 
+            margin-bottom: 6px; 
             display: block; 
-            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Inputs: 16px font prevents iOS zoom on focus */
         input[type="text"], select { 
             width: 100%; 
-            padding: 12px; 
-            border: 1px solid #ccc; 
-            border-radius: 6px; 
-            font-size: 16px; 
+            padding: 12px 14px; 
+            border: none;
+            background: var(--input-bg);
+            border-radius: 8px; 
+            font-size: 16px; /* Prevents zoom on iOS */
+            color: var(--text-color);
             box-sizing: border-box; 
-            margin-bottom: 12px;
-            background-color: #fff;
+            margin-bottom: 15px;
+            outline: none;
+            transition: background 0.2s;
+        }
+        input[type="text"]:focus, select:focus {
+            background: #e0e0e0;
         }
 
-        /* Buttons */
+        /* --- Buttons --- */
         .btn { 
             width: 100%; 
-            padding: 12px; 
+            padding: 14px; 
             border: none; 
-            border-radius: 6px; 
+            border-radius: 10px; 
             font-size: 16px; 
-            font-weight: bold; 
+            font-weight: 600; 
             cursor: pointer; 
-            color: white; 
-            margin-bottom: 5px;
-            text-align: center;
+            transition: opacity 0.2s;
         }
+        .btn:active { opacity: 0.7; }
         
-        .btn-primary { background-color: #007bff; }
-        .btn-add { background-color: #17a2b8; width: auto; padding: 10px 20px; }
-        .btn-success { background-color: #28a745; font-size: 18px; } /* Larger for main action */
-        .btn-danger { background-color: #dc3545; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-success { background-color: #34c759; color: white; margin-top: 5px; } /* Apple Green */
+        .btn-danger { background-color: var(--input-bg); color: var(--danger-color); font-weight: 500;} /* Ghost button style */
+        .btn-outline { background-color: var(--input-bg); color: var(--primary-color); }
 
-        .add-item-row { 
+        /* --- Row for Dropdown + Plus Button --- */
+        .input-row { display: flex; gap: 10px; align-items: flex-start; }
+        .input-row select { flex: 1; }
+        .btn-icon { 
+            width: 46px; 
+            height: 43px; 
+            padding: 0; 
             display: flex; 
-            gap: 8px; 
-            align-items: flex-start;
+            align-items: center; 
+            justify-content: center; 
+            font-size: 24px; 
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--primary-color);
         }
-        .add-item-row input { flex: 1; }
 
-        /* Scanner Area */
+        /* --- Scanner --- */
         #reader { 
             width: 100%; 
-            background: #000; 
-            border-radius: 6px; 
+            border-radius: 10px; 
             overflow: hidden; 
-            margin-bottom: 10px; 
-        }
-        #scan-status { text-align: center; font-size: 0.9rem; margin-bottom: 10px; color: #666; }
-
-        /* --- Grouped Tables (Mobile Optimized) --- */
-        .group-container { 
-            margin-bottom: 20px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            overflow: hidden; 
-            background: #fff;
+            background: black;
+            margin-bottom: 15px;
         }
         
+        /* --- Modal (Popup) --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            width: 85%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .modal h3 { margin-top: 0; margin-bottom: 15px; }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 10px; }
+
+        /* --- Grouped Tables --- */
         .group-header { 
-            background-color: #343a40; 
-            color: white; 
-            padding: 10px 15px; 
-            font-size: 1rem; 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            margin: 25px 0 10px 5px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center;
         }
-
-        /* The Magic for Table wrapping */
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            table-layout: fixed; /* Forces table to obey width */
+        .badge {
+            background: #e5e5ea; 
+            color: #8e8e93; 
+            font-size: 0.8rem; 
+            padding: 2px 8px; 
+            border-radius: 6px;
         }
-        
-        th, td { 
-            padding: 10px; 
-            text-align: left; 
-            font-size: 0.9rem; 
+
+        .data-table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            table-layout: fixed;
+        }
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
             vertical-align: top;
-            border-bottom: 1px solid #eee;
+            word-wrap: break-word;
         }
+        .data-table tr:last-child td { border-bottom: none; }
+        .timestamp-col { color: var(--sub-text); font-size: 0.8rem; width: 80px; }
 
-        /* Ensure content doesn't overflow */
-        td {
-            word-wrap: break-word;      /* Break long words */
-            overflow-wrap: break-word;  /* Modern browser support */
-            word-break: break-word;     /* Ensure URL strings break */
-            white-space: normal;        /* Allow wrapping */
-        }
-
-        th { background-color: #f1f1f1; color: #555; font-size: 0.8rem; text-transform: uppercase; }
-
-        /* Controls Footer */
-        .controls { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-            margin-top: 30px; 
-            padding-top: 20px; 
-            border-top: 1px solid #ddd; 
-        }
-
-        /* Desktop Adjustments (if opened on PC) */
-        @media (min-width: 600px) {
-            .controls { flex-direction: row; }
-            .btn { width: auto; flex: 1; }
-        }
+        .footer-controls { margin-top: 40px; display: flex; flex-direction: column; gap: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>QR Inventory</h2>
+    <h1>Inventory Scan</h1>
 
-    <div class="section-box">
-        <h3>1. Create Item List</h3>
-        <label>New Item Name:</label>
-        <div class="add-item-row">
-            <input type="text" id="new-item-name" placeholder="E.g., Box A">
-            <button onclick="addNewItem()" class="btn btn-add">Add</button>
-        </div>
-        <p style="font-size: 0.8rem; color: #777; margin: 5px 0 0 0;">Available Items: <strong id="item-count">0</strong></p>
-    </div>
-
-    <div class="section-box">
-        <h3>2. Scan & Save</h3>
+    <div class="card">
         <div id="reader"></div>
-        <div id="scan-status">Camera is off</div>
         <button id="start-scan-btn" class="btn btn-primary">Start Camera</button>
+    </div>
 
-        <div style="margin-top: 15px;">
-            <label>Scanned Data:</label>
-            <input type="text" id="qr-data" placeholder="Result appears here..." readonly style="background-color: #e9ecef;">
-            
-            <label>Select Item Category:</label>
+    <div class="card">
+        <label>Scanned Data</label>
+        <input type="text" id="qr-data" placeholder="Scan a QR code..." readonly>
+
+        <label>Select Item Category</label>
+        <div class="input-row">
             <select id="item-select">
-                <option value="" disabled selected>-- Create item above first --</option>
+                <option value="" disabled selected>Select Category</option>
             </select>
-            
-            <button onclick="saveEntry()" class="btn btn-success">Save Entry</button>
+            <button onclick="openModal()" class="btn btn-icon" title="Add New Category">+</button>
         </div>
+
+        <button onclick="saveEntry()" class="btn btn-success">Save Entry</button>
     </div>
 
-    <h3>Saved History</h3>
     <div id="grouped-data-area">
-        <p style="text-align: center; color: #999; padding: 20px;">No scans yet.</p>
-    </div>
+        </div>
 
-    <div class="controls">
-        <button onclick="downloadExcel()" class="btn btn-primary">Download Excel</button>
-        <button onclick="clearAllData()" class="btn btn-danger">Clear All</button>
+    <div class="footer-controls">
+        <button onclick="downloadExcel()" class="btn btn-outline">Export to Excel</button>
+        <button onclick="clearAllData()" class="btn btn-danger">Clear History</button>
+    </div>
+</div>
+
+<div id="modal-overlay" class="modal-overlay">
+    <div class="modal">
+        <h3>Add Category</h3>
+        <input type="text" id="new-category-input" placeholder="E.g. Box A, Shelf 1..." autofocus>
+        <div class="modal-buttons">
+            <button onclick="closeModal()" class="btn" style="background:#e5e5ea; color:#333;">Cancel</button>
+            <button onclick="addNewItem()" class="btn btn-primary">Add</button>
+        </div>
     </div>
 </div>
 
 <script>
-    // --- Logic is identical, just slight tweaks for robustness ---
-    const KEY_ENTRIES = 'qr_grouped_entries';
-    const KEY_ITEMS = 'qr_grouped_items';
+    /* --- CONFIG --- */
+    const KEY_ENTRIES = 'qr_pro_entries';
+    const KEY_ITEMS = 'qr_pro_items';
     
     let html5QrcodeScanner = null;
     let savedEntries = JSON.parse(localStorage.getItem(KEY_ENTRIES)) || [];
     let availableItems = JSON.parse(localStorage.getItem(KEY_ITEMS)) || [];
 
+    /* --- INITIALIZATION --- */
     window.onload = function() {
         updateDropdown();
         renderGroupedData();
     };
 
+    /* --- MODAL LOGIC --- */
+    const modal = document.getElementById('modal-overlay');
+    const modalInput = document.getElementById('new-category-input');
+
+    function openModal() {
+        modal.style.display = 'flex';
+        modalInput.focus();
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+        modalInput.value = '';
+    }
+
+    // Close modal if clicking outside the box
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    /* --- ADD ITEM LOGIC --- */
     function addNewItem() {
-        const input = document.getElementById('new-item-name');
-        const itemName = input.value.trim();
+        const itemName = modalInput.value.trim();
 
         if (!itemName) {
-            alert("Please enter an item name.");
+            alert("Please enter a name.");
             return;
         }
         if (availableItems.includes(itemName)) {
-            alert("Item already exists.");
+            alert("This category already exists.");
             return;
         }
 
         availableItems.push(itemName);
         localStorage.setItem(KEY_ITEMS, JSON.stringify(availableItems));
         
-        input.value = '';
         updateDropdown();
+        closeModal();
+        
+        // Auto-select the newly created item
+        document.getElementById('item-select').value = itemName;
     }
 
     function updateDropdown() {
         const select = document.getElementById('item-select');
-        const countSpan = document.getElementById('item-count');
+        // Save current value to restore if valid
+        const currentVal = select.value;
         
-        // Save current selection if any
-        const currentSelection = select.value;
-
-        select.innerHTML = '<option value="" disabled selected>-- Select Item --</option>';
+        select.innerHTML = '<option value="" disabled selected>Select Category</option>';
         
         availableItems.forEach(item => {
             const option = document.createElement('option');
@@ -247,35 +299,24 @@
             option.textContent = item;
             select.appendChild(option);
         });
-
-        // Restore selection if it still exists
-        if (availableItems.includes(currentSelection)) {
-            select.value = currentSelection;
-        }
-
-        countSpan.textContent = availableItems.length;
     }
 
-    // --- Scanning ---
+    /* --- SCANNER LOGIC --- */
     const startBtn = document.getElementById('start-scan-btn');
     
     startBtn.addEventListener('click', () => {
-        const statusText = document.getElementById('scan-status');
-        
         if (html5QrcodeScanner) {
             html5QrcodeScanner.stop().then(() => {
                 html5QrcodeScanner.clear();
                 html5QrcodeScanner = null;
                 startBtn.textContent = "Start Camera";
-                startBtn.classList.remove('btn-danger'); // reset color
+                startBtn.classList.remove('btn-danger');
                 startBtn.classList.add('btn-primary');
-                statusText.textContent = "Camera is off";
             }).catch(err => console.error(err));
             return;
         }
 
         html5QrcodeScanner = new Html5Qrcode("reader");
-        // QR Box size adapted for mobile screens
         const qrBoxSize = Math.min(250, window.innerWidth - 60);
 
         html5QrcodeScanner.start(
@@ -283,37 +324,37 @@
             { fps: 10, qrbox: { width: qrBoxSize, height: qrBoxSize } },
             (decodedText) => {
                 document.getElementById('qr-data').value = decodedText;
-                if(navigator.vibrate) navigator.vibrate(100); // Haptic feedback
-                
-                // Optional: Scroll down to the save button
-                // document.getElementById('item-select').scrollIntoView({behavior: "smooth"});
+                if(navigator.vibrate) navigator.vibrate(50);
             },
             (error) => { }
         ).then(() => {
             startBtn.textContent = "Stop Camera";
             startBtn.classList.remove('btn-primary');
-            startBtn.classList.add('btn-danger'); // Change color to red when active
-            statusText.textContent = "Scanning...";
+            startBtn.classList.add('btn-danger'); // Red when active
         });
     });
 
+    /* --- SAVE ENTRY LOGIC --- */
     function saveEntry() {
-        const qrData = document.getElementById('qr-data').value;
-        const itemType = document.getElementById('item-select').value;
+        const qrInput = document.getElementById('qr-data');
+        const itemSelect = document.getElementById('item-select');
+        
+        const qrData = qrInput.value;
+        const itemType = itemSelect.value;
 
         if (!qrData) {
-            alert("Scan a QR code first.");
+            alert("Please scan a code first.");
             return;
         }
         if (!itemType) {
-            alert("Select an item category.");
+            alert("Please select a category.");
             return;
         }
 
         const newEntry = {
             id: Date.now(),
-            timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), // Shorter time format for mobile
-            fullTimestamp: new Date().toLocaleString(),
+            timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            fullTime: new Date().toLocaleString(),
             qr: qrData,
             item: itemType
         };
@@ -323,94 +364,84 @@
 
         renderGroupedData();
         
-        // Clear QR data so user knows it was saved, but keep item selected for rapid scanning
-        document.getElementById('qr-data').value = ''; 
+        // --- RESET FIELDS ---
+        qrInput.value = '';        // Clear QR
+        itemSelect.value = "";     // Reset Dropdown to default
     }
 
+    /* --- RENDER DATA LOGIC --- */
     function renderGroupedData() {
         const container = document.getElementById('grouped-data-area');
         container.innerHTML = '';
 
         if (savedEntries.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No scans yet.</p>';
+            container.innerHTML = '<p style="text-align: center; color: #86868b; margin-top: 30px;">No scans recorded yet.</p>';
             return;
         }
-        
-        availableItems.forEach(item => {
-            // Filter entries for this item
+
+        // We loop through available items to maintain order, plus handle any orphans
+        const uniqueItems = [...new Set([...availableItems, ...savedEntries.map(e=>e.item)])];
+
+        uniqueItems.forEach(item => {
             const itemEntries = savedEntries.filter(entry => entry.item === item);
-
+            
             if (itemEntries.length > 0) {
-                const groupDiv = document.createElement('div');
-                groupDiv.className = 'group-container';
-
+                // Header
                 const header = document.createElement('div');
                 header.className = 'group-header';
-                header.innerHTML = `<span>${item}</span> <span style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:10px; font-size:0.8rem;">${itemEntries.length}</span>`;
-                groupDiv.appendChild(header);
+                header.innerHTML = `${item} <span class="badge">${itemEntries.length}</span>`;
+                container.appendChild(header);
 
+                // Table
                 const table = document.createElement('table');
-                // Added col widths to help layout
-                table.innerHTML = `
-                    <thead>
-                        <tr>
-                            <th style="width: 25%">Time</th>
-                            <th style="width: 75%">Data</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${itemEntries.slice().reverse().map(e => `
-                            <tr>
-                                <td>${e.timestamp}</td>
-                                <td>${e.qr}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                `;
-                groupDiv.appendChild(table);
-                container.appendChild(groupDiv);
+                table.className = 'data-table';
+                
+                // Reverse to show newest on top
+                const rows = itemEntries.slice().reverse().map(e => `
+                    <tr>
+                        <td class="timestamp-col">${e.timestamp}</td>
+                        <td>${e.qr}</td>
+                    </tr>
+                `).join('');
+                
+                table.innerHTML = `<tbody>${rows}</tbody>`;
+                container.appendChild(table);
             }
         });
     }
 
+    /* --- EXPORT LOGIC --- */
     function downloadExcel() {
         if (savedEntries.length === 0) {
-            alert("No data.");
+            alert("No data to export.");
             return;
         }
 
-        const sortedEntries = savedEntries.slice().sort((a, b) => {
-            if (a.item < b.item) return -1;
-            if (a.item > b.item) return 1;
-            return 0;
-        });
+        // Sort by Item Name
+        const sorted = savedEntries.slice().sort((a, b) => a.item.localeCompare(b.item));
 
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Item Category,Date Time,QR Data\n";
-
-        sortedEntries.forEach(e => {
-            // Use full timestamp for Excel, short timestamp for display
-            const time = e.fullTimestamp ? e.fullTimestamp : e.timestamp;
-            const safeQr = e.qr.replace(/"/g, '""'); 
+        let csv = "data:text/csv;charset=utf-8,Category,Date Time,QR Content\n";
+        
+        sorted.forEach(e => {
+            const safeQr = e.qr.replace(/"/g, '""');
             const safeItem = e.item.replace(/"/g, '""');
-            csvContent += `"${safeItem}","${time}","${safeQr}"\n`;
+            csv += `"${safeItem}","${e.fullTime}","${safeQr}"\n`;
         });
 
-        const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "inventory_scan.csv");
+        link.href = encodeURI(csv);
+        link.download = "inventory_scan.csv";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     }
 
     function clearAllData() {
-        if (confirm("Delete ALL history and items?")) {
-            savedEntries = [];
-            availableItems = [];
+        if (confirm("Delete ALL history and categories? This cannot be undone.")) {
             localStorage.removeItem(KEY_ENTRIES);
             localStorage.removeItem(KEY_ITEMS);
+            savedEntries = [];
+            availableItems = [];
             updateDropdown();
             renderGroupedData();
         }
