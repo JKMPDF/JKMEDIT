@@ -3,302 +3,479 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro Asset Master</title>
+    <title>Pro Asset Auditor</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
-        :root { --primary: #007aff; --bg: #f4f4f4; --white: #ffffff; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); padding: 15px; margin: 0; }
+        :root { --primary: #007aff; --bg: #f2f2f7; --card: #ffffff; --text: #1c1c1e; --border: #e5e5ea; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); padding: 15px; margin: 0; padding-bottom: 80px; }
         
-        .card { background: var(--white); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        
-        h2 { margin: 0 0 10px 0; font-size: 18px; text-align: center; color: #333; }
-        label { font-size: 12px; font-weight: bold; color: #666; display: block; margin-top: 10px; text-transform: uppercase; }
-        
-        /* Inputs & Selects */
-        input[type="text"], select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        
-        /* Buttons */
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        .btn-blue { background: var(--primary); color: white; }
-        .btn-green { background: #28cd41; color: white; }
-        .btn-red { background: #ff3b30; color: white; margin-top: 5px; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 1.5rem; }
+        .header p { margin: 5px 0 0; color: #8e8e93; font-size: 0.9rem; }
 
-        /* Camera & File Inputs */
-        #qr-reader { width: 100%; border-radius: 10px; overflow: hidden; background: #000; display: none; margin-bottom: 10px; }
+        .card { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
         
-        .photo-upload-container { display: flex; gap: 10px; margin-top: 10px; }
-        .photo-box { flex: 1; text-align: center; }
+        /* Form Elements */
+        .form-group { margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .form-group:last-child { border-bottom: none; }
         
-        /* Hidden file input, styled label acts as button */
-        .custom-file-upload {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 2px dashed #ccc; border-radius: 8px; padding: 10px;
-            background: #fafafa; height: 80px; cursor: pointer;
+        label { font-size: 0.75rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px; }
+        
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #d1d1d6; border-radius: 8px; font-size: 16px; box-sizing: border-box; background: #fafafa; -webkit-appearance: none; }
+        input:focus, select:focus { border-color: var(--primary); outline: none; background: #fff; }
+
+        /* Dynamic List Controls */
+        .input-group { display: flex; gap: 8px; }
+        .btn-add { background: #e5e5ea; color: #000; border: none; width: 45px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        
+        /* Camera & Photos */
+        #qr-reader { border-radius: 10px; overflow: hidden; margin-bottom: 10px; display: none; }
+        
+        .photo-section { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .photo-btn { 
+            border: 2px dashed #007aff; background: #f0f8ff; color: #007aff; 
+            padding: 15px; border-radius: 8px; text-align: center; cursor: pointer; display: block;
         }
-        .custom-file-upload img { max-height: 60px; max-width: 100%; display: none; border-radius: 4px; }
-        .custom-file-upload span { font-size: 12px; color: #007aff; margin-top: 5px; }
+        .photo-btn img { max-width: 100%; max-height: 150px; margin-top: 10px; display: none; border-radius: 6px; }
+        .photo-btn span { font-weight: 600; font-size: 0.9rem; }
 
-        /* Table */
-        .data-list { font-size: 12px; width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .data-list td { padding: 8px; border-bottom: 1px solid #eee; background: white; }
-        .status-msg { text-align: center; color: green; font-weight: bold; height: 20px; }
+        /* Buttons */
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: transform 0.1s; }
+        .btn:active { transform: scale(0.98); }
+        .btn-blue { background: var(--primary); color: white; }
+        .btn-green { background: #34c759; color: white; }
+        .btn-dark { background: #1c1c1e; color: white; }
+        
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        /* Overlay */
+        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; color: white; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>Asset Entry</h2>
-        
-        <div id="qr-reader"></div>
-        <button id="scan-btn" onclick="startScanner()" class="btn btn-blue">Start QR Scan</button>
-        
-        <label>Asset ID (from QR)</label>
-        <input type="text" id="asset-id" placeholder="Scan or type..." readonly style="background:#eef;">
+<div id="loading-overlay">
+    <h3 id="loading-text">Processing...</h3>
+</div>
 
-        <label>Category</label>
-        <div style="display:flex; gap:5px;">
-            <select id="category"><option value="">Select Category...</option></select>
-            <button onclick="addCategory()" style="width:50px; border:1px solid #ddd; border-radius:8px; font-weight:bold;">+</button>
-        </div>
+<div class="header">
+    <h1>Asset Inventory Pro</h1>
+    <p>Professional Auditing Tool</p>
+</div>
 
-        <label>Photos (High Quality)</label>
-        <div class="photo-upload-container">
-            <div class="photo-box">
-                <label for="file-asset" class="custom-file-upload" id="lbl-asset">
-                    <span id="txt-asset">📸 Asset Photo</span>
-                    <img id="prev-asset">
-                </label>
-                <input type="file" id="file-asset" accept="image/*" capture="environment" style="display:none" onchange="previewImage(this, 'prev-asset', 'txt-asset')">
-            </div>
+<div class="card">
+    <div id="qr-reader"></div>
+    <button id="scan-trigger" class="btn btn-blue" onclick="startCamera()">Scan QR Code</button>
+</div>
 
-            <div class="photo-box">
-                <label for="file-qr" class="custom-file-upload" id="lbl-qr">
-                    <span id="txt-qr">📸 Label Photo</span>
-                    <img id="prev-qr">
-                </label>
-                <input type="file" id="file-qr" accept="image/*" capture="environment" style="display:none" onchange="previewImage(this, 'prev-qr', 'txt-qr')">
-            </div>
-        </div>
-
-        <button onclick="saveEntry()" class="btn btn-green">Save Entry</button>
-        <div id="msg" class="status-msg"></div>
+<div class="card">
+    <div class="form-group">
+        <label>1. Asset ID (From QR)</label>
+        <input type="text" id="f_asset_id" readonly placeholder="Scan QR to fill..." style="background-color: #e9e9eb; font-weight: bold;">
     </div>
 
-    <div class="card">
-        <h2>Database (<span id="count">0</span> items)</h2>
-        <button onclick="downloadZip()" class="btn" style="background:#333; color:white;">Download ZIP (Excel + Folders)</button>
-        <button onclick="clearDatabase()" class="btn btn-red" style="font-size:12px; padding:10px;">Reset System</button>
-        <div style="max-height: 200px; overflow-y: auto; margin-top:10px;">
-            <table class="data-list" id="entry-table"></table>
+    <div class="form-group">
+        <label>2. Floor</label>
+        <div class="input-group">
+            <select id="f_floor"><option value="">Select Floor...</option></select>
+            <button class="btn-add" onclick="addItem('f_floor')">+</button>
         </div>
     </div>
+
+    <div class="form-group">
+        <label>3. Sub Location</label>
+        <div class="input-group">
+            <select id="f_sub_loc"><option value="">Select Location...</option></select>
+            <button class="btn-add" onclick="addItem('f_sub_loc')">+</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>4. Asset Category</label>
+        <div class="input-group">
+            <select id="f_category"><option value="">Select Category...</option></select>
+            <button class="btn-add" onclick="addItem('f_category')">+</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>5. Nature of Asset</label>
+        <input type="text" id="f_nature" placeholder="Enter nature...">
+    </div>
+
+    <div class="form-group">
+        <label>6. Asset Description</label>
+        <textarea id="f_desc" rows="3" placeholder="Enter description..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>7. Tagging Status</label>
+        <select id="f_tagging">
+            <option value="YES">YES</option>
+            <option value="NO">NO</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>8. Make</label>
+        <input type="text" id="f_make" placeholder="Brand/Make...">
+    </div>
+
+    <div class="form-group">
+        <label>9. Model</label>
+        <input type="text" id="f_model" placeholder="Model number...">
+    </div>
+
+    <div class="form-group">
+        <label>10. Serial No.</label>
+        <input type="text" id="f_serial" placeholder="Enter serial...">
+    </div>
+
+    <div class="form-group">
+        <label>11. Quantity</label>
+        <input type="number" id="f_qty" value="1" readonly style="background-color: #e9e9eb;">
+    </div>
+
+    <div class="form-group">
+        <label>12. Type of TAG</label>
+        <select id="f_tag_type">
+            <option value="Barcode">Barcode</option>
+            <option value="Metal">Metal</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>13. Tag Location</label>
+        <input type="text" id="f_tag_loc" placeholder="Where is tag placed?">
+    </div>
+
+    <div class="form-group">
+        <label>14. Project Name</label>
+        <input type="text" id="f_project" placeholder="Project name...">
+    </div>
+
+    <div class="form-group">
+        <label>15. Email ID / Person Name</label>
+        <div class="input-group">
+            <select id="f_email"><option value="">Select Person...</option></select>
+            <button class="btn-add" onclick="addItem('f_email')">+</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>16. Department</label>
+        <div class="input-group">
+            <select id="f_dept"><option value="">Select Department...</option></select>
+            <button class="btn-add" onclick="addItem('f_dept')">+</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>17. Responsible Client Personnel</label>
+        <input type="text" id="f_responsible" placeholder="Client personnel name...">
+    </div>
+
+    <div class="form-group">
+        <label>18. Date & Time (Auto)</label>
+        <input type="text" id="f_datetime" readonly placeholder="Will set on save...">
+    </div>
+
+    <div class="form-group">
+        <label>IMAGES (Click to Capture)</label>
+        <div class="photo-section">
+            
+            <label class="photo-btn">
+                <span>19. 📸 Barcode Image</span>
+                <input type="file" id="img_barcode" accept="image/*" capture="environment" hidden onchange="showPreview(this, 'prev_barcode')">
+                <img id="prev_barcode">
+            </label>
+
+            <label class="photo-btn">
+                <span>20. 📸 Serial No. Image</span>
+                <input type="file" id="img_serial" accept="image/*" capture="environment" hidden onchange="showPreview(this, 'prev_serial')">
+                <img id="prev_serial">
+            </label>
+
+            <label class="photo-btn">
+                <span>21. 📸 Asset Image</span>
+                <input type="file" id="img_asset" accept="image/*" capture="environment" hidden onchange="showPreview(this, 'prev_asset')">
+                <img id="prev_asset">
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>22. Geo Code</label>
+        <div class="input-group">
+            <input type="text" id="f_geo" placeholder="Coordinates...">
+            <button class="btn-add" style="width:auto; padding:0 10px;" onclick="getGPS()">📍</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>23. Remarks</label>
+        <input type="text" id="f_remarks" placeholder="Any remarks...">
+    </div>
+
+    <button class="btn btn-green" onclick="saveEntry()">SAVE ENTRY</button>
+</div>
+
+<div class="card">
+    <h3>Database Actions</h3>
+    <p>Entries Saved: <b id="db-count">0</b></p>
+    <button class="btn btn-dark" onclick="exportData()">Download ZIP (Excel + 3 Folders)</button>
+    <button class="btn" style="color:red; background:none; border:1px solid red;" onclick="clearDB()">⚠ Clear All Data</button>
+</div>
 
 <script>
-    // --- CONFIGURATION ---
-    const DB_NAME = "ProAssetDB_v1";
-    const STORE_NAME = "assets";
-    const CAT_STORE = "categories";
-    
+    // --- 1. CONFIGURATION ---
+    const DB_NAME = "AssetAuditorPro";
+    const STORE_DATA = "entries";
     let db;
-    let html5QrCode;
+    let qrScanner = null;
 
-    // --- 1. INITIALIZE DATABASE (IndexedDB) ---
-    // This allows storing 1000+ images without crashing the browser
+    // --- 2. INIT DATABASE ---
     const request = indexedDB.open(DB_NAME, 1);
-    
-    request.onupgradeneeded = (event) => {
-        db = event.target.result;
-        db.createObjectStore(STORE_NAME, { keyPath: "id" });
-        db.createObjectStore(CAT_STORE, { keyPath: "name" });
+    request.onupgradeneeded = e => {
+        db = e.target.result;
+        db.createObjectStore(STORE_DATA, { keyPath: "id", autoIncrement: true });
+    };
+    request.onsuccess = e => {
+        db = e.target.result;
+        updateCount();
+        loadListOptions(); // Load saved dropdown items
     };
 
-    request.onsuccess = (event) => {
-        db = event.target.result;
-        loadCategories();
-        updateTable();
+    // --- 3. DYNAMIC DROPDOWNS LOGIC (LocalStorage) ---
+    // We save the list options in localStorage so they persist
+    const listConfig = {
+        'f_floor': 'Floors',
+        'f_sub_loc': 'SubLocations',
+        'f_category': 'Categories',
+        'f_email': 'EmailList',
+        'f_dept': 'Departments'
     };
 
-    // --- 2. QR CODE LOGIC ---
-    function startScanner() {
-        document.getElementById('qr-reader').style.display = "block";
-        document.getElementById('scan-btn').style.display = "none";
+    function addItem(elementId) {
+        const val = prompt(`Add new item for ${elementId.replace('f_', '')}:`);
+        if(!val) return;
         
-        html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCode.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            onScanSuccess,
-            onScanFailure
-        );
+        const storageKey = listConfig[elementId];
+        let currentList = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        currentList.push(val);
+        localStorage.setItem(storageKey, JSON.stringify(currentList));
+        
+        renderOptions(elementId, currentList);
+        document.getElementById(elementId).value = val; // Select the new item
     }
 
-    function onScanSuccess(decodedText, decodedResult) {
-        // 1. Alert User
-        alert("QR Code Scanned Successfully!\nID: " + decodedText);
-        
-        // 2. Fill Data
-        document.getElementById('asset-id').value = decodedText;
-        
-        // 3. Stop Camera Immediately
-        html5QrCode.stop().then(() => {
-            document.getElementById('qr-reader').style.display = "none";
-            document.getElementById('scan-btn').style.display = "block";
-            document.getElementById('scan-btn').innerText = "Rescan QR";
+    function loadListOptions() {
+        for (const [id, key] of Object.entries(listConfig)) {
+            const list = JSON.parse(localStorage.getItem(key) || "[]");
+            renderOptions(id, list);
+        }
+    }
+
+    function renderOptions(elementId, list) {
+        const select = document.getElementById(elementId);
+        select.innerHTML = '<option value="">Select...</option>';
+        list.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item;
+            opt.innerText = item;
+            select.appendChild(opt);
         });
     }
 
-    function onScanFailure(error) {
-        // no-op to keep console clean
+    // --- 4. QR SCANNER ---
+    function startCamera() {
+        document.getElementById('qr-reader').style.display = 'block';
+        document.getElementById('scan-trigger').style.display = 'none';
+        
+        qrScanner = new Html5Qrcode("qr-reader");
+        qrScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, 
+        (text) => {
+            alert("QR Code Scanned!\nID: " + text);
+            document.getElementById('f_asset_id').value = text;
+            stopCamera();
+        });
     }
 
-    // --- 3. PHOTO HANDLING (Native Camera) ---
-    function previewImage(input, imgId, textId) {
+    function stopCamera() {
+        if(qrScanner) {
+            qrScanner.stop().then(() => {
+                document.getElementById('qr-reader').style.display = 'none';
+                document.getElementById('scan-trigger').style.display = 'block';
+                qrScanner = null;
+            });
+        }
+    }
+
+    // --- 5. GPS ---
+    function getGPS() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                document.getElementById('f_geo').value = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    // --- 6. PHOTO PREVIEW ---
+    function showPreview(input, imgId) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = document.getElementById(imgId);
                 img.src = e.target.result;
                 img.style.display = "block";
-                document.getElementById(textId).style.display = "none";
             }
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    // --- 4. SAVE LOGIC ---
+    // --- 7. SAVE ENTRY ---
     function saveEntry() {
-        const id = document.getElementById('asset-id').value;
-        const cat = document.getElementById('category').value;
-        const fileAsset = document.getElementById('file-asset').files[0];
-        const fileQr = document.getElementById('file-qr').files[0];
+        const assetId = document.getElementById('f_asset_id').value;
+        const barcodeFile = document.getElementById('img_barcode').files[0];
+        const serialFile = document.getElementById('img_serial').files[0];
+        const assetFile = document.getElementById('img_asset').files[0];
 
-        if (!id || !cat) return alert("Please Scan QR and select Category.");
-        if (!fileAsset || !fileQr) return alert("Please take BOTH photos.");
+        // Validation
+        if(!assetId) return alert("Error: Asset ID (QR) is missing.");
+        
+        document.getElementById('loading-overlay').style.display = 'flex';
+        
+        const timestamp = new Date().toLocaleString();
+        const entryId = Date.now(); // Unique ID for file naming
 
-        // Create short filenames
-        const ext = fileAsset.name.split('.').pop() || 'jpg';
-        const assetName = `AST_${id}.${ext}`;
-        const qrName = `LBL_${id}.${ext}`;
+        // Helper to get value safely
+        const v = (id) => document.getElementById(id).value || "";
 
         const entry = {
-            id: id,
-            category: cat,
-            timestamp: new Date().toLocaleString(),
-            assetBlob: fileAsset, // Store the raw file (efficient)
-            qrBlob: fileQr,       // Store the raw file
-            assetFileName: assetName,
-            qrFileName: qrName
+            id: entryId,
+            assetId: assetId,
+            floor: v('f_floor'),
+            subLoc: v('f_sub_loc'),
+            category: v('f_category'),
+            nature: v('f_nature'),
+            desc: v('f_desc'),
+            tagging: v('f_tagging'),
+            make: v('f_make'),
+            model: v('f_model'),
+            serial: v('f_serial'),
+            quantity: "1",
+            tagType: v('f_tag_type'),
+            tagLoc: v('f_tag_loc'),
+            project: v('f_project'),
+            email: v('f_email'),
+            dept: v('f_dept'),
+            responsible: v('f_responsible'),
+            datetime: timestamp,
+            geo: v('f_geo'),
+            remarks: v('f_remarks'),
+            // Files stored as Blobs
+            imgBarcode: barcodeFile || null,
+            imgSerial: serialFile || null,
+            imgAsset: assetFile || null,
+            // Filenames for CSV
+            fNameBarcode: barcodeFile ? `Bar_${assetId}_${entryId}.jpg` : "",
+            fNameSerial: serialFile ? `Ser_${assetId}_${entryId}.jpg` : "",
+            fNameAsset: assetFile ? `Ast_${assetId}_${entryId}.jpg` : ""
         };
 
-        const tx = db.transaction(STORE_NAME, "readwrite");
-        tx.objectStore(STORE_NAME).put(entry);
-        
+        const tx = db.transaction(STORE_DATA, "readwrite");
+        tx.objectStore(STORE_DATA).add(entry);
         tx.oncomplete = () => {
-            document.getElementById('msg').innerText = "Saved: " + id;
-            setTimeout(() => document.getElementById('msg').innerText = "", 2000);
+            document.getElementById('loading-overlay').style.display = 'none';
+            alert("Entry Saved Successfully!");
+            updateCount();
             resetForm();
-            updateTable();
         };
-        
-        tx.onerror = () => alert("Error saving. ID might be duplicate.");
+        tx.onerror = () => {
+            document.getElementById('loading-overlay').style.display = 'none';
+            alert("Error saving data.");
+        };
     }
 
     function resetForm() {
-        document.getElementById('asset-id').value = "";
-        document.getElementById('file-asset').value = "";
-        document.getElementById('file-qr').value = "";
-        document.getElementById('prev-asset').style.display = "none";
-        document.getElementById('prev-qr').style.display = "none";
-        document.getElementById('txt-asset').style.display = "block";
-        document.getElementById('txt-qr').style.display = "block";
-        document.getElementById('scan-btn').innerText = "Start QR Scan";
+        // Clear all inputs except lists logic
+        document.querySelectorAll("input, textarea").forEach(el => el.value = "");
+        document.querySelectorAll("select").forEach(el => el.selectedIndex = 0);
+        document.getElementById('f_qty').value = "1";
+        document.getElementById('f_tagging').value = "YES";
+        document.getElementById('f_tag_type').value = "Barcode";
+        
+        // Hide Images
+        document.getElementById('prev_barcode').style.display = 'none';
+        document.getElementById('prev_serial').style.display = 'none';
+        document.getElementById('prev_asset').style.display = 'none';
     }
 
-    // --- 5. CATEGORIES ---
-    function addCategory() {
-        const name = prompt("Enter new category name:");
-        if (name) {
-            const tx = db.transaction(CAT_STORE, "readwrite");
-            tx.objectStore(CAT_STORE).put({ name: name });
-            tx.oncomplete = loadCategories;
-        }
-    }
-
-    function loadCategories() {
-        const select = document.getElementById('category');
-        select.innerHTML = '<option value="">Select Category...</option>';
-        db.transaction(CAT_STORE).objectStore(CAT_STORE).getAll().onsuccess = (e) => {
-            e.target.result.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c.name;
-                opt.innerText = c.name;
-                select.appendChild(opt);
-            });
+    function updateCount() {
+        db.transaction(STORE_DATA).objectStore(STORE_DATA).count().onsuccess = e => {
+            document.getElementById('db-count').innerText = e.target.result;
         };
     }
 
-    // --- 6. EXPORT / DOWNLOAD ZIP ---
-    async function downloadZip() {
-        const zip = new JSZip();
-        const assetFolder = zip.folder("Asset_Photos");
-        const labelFolder = zip.folder("Label_Photos");
-        
-        let csvContent = "Asset ID,Category,Date,Asset Photo Name,Label Photo Name\n";
-        
-        // Get all data
-        const tx = db.transaction(STORE_NAME, "readonly");
-        const store = tx.objectStore(STORE_NAME);
-        
-        store.getAll().onsuccess = async (event) => {
-            const records = event.target.result;
-            if(records.length === 0) return alert("No data to download.");
+    // --- 8. EXPORT ZIP ---
+    function exportData() {
+        document.getElementById('loading-overlay').style.display = 'flex';
+        document.getElementById('loading-text').innerText = "Generating ZIP...";
 
-            document.getElementById('msg').innerText = "Generating ZIP... Please wait.";
+        const tx = db.transaction(STORE_DATA, "readonly");
+        const store = tx.objectStore(STORE_DATA);
+        
+        store.getAll().onsuccess = async (e) => {
+            const data = e.target.result;
+            if (data.length === 0) {
+                document.getElementById('loading-overlay').style.display = 'none';
+                return alert("No data to export.");
+            }
 
-            records.forEach(rec => {
-                // Add to CSV (Short names only)
-                csvContent += `${rec.id},${rec.category},"${rec.timestamp}",${rec.assetFileName},${rec.qrFileName}\n`;
-                
-                // Add Blobs to Zip Folders
-                assetFolder.file(rec.assetFileName, rec.assetBlob);
-                labelFolder.file(rec.qrFileName, rec.qrBlob);
+            const zip = new JSZip();
+            // Create Folders
+            const f_bar = zip.folder("Barcode_Images");
+            const f_ser = zip.folder("Serial_Images");
+            const f_ast = zip.folder("Assets_Images");
+
+            // CSV Header
+            let csv = "Asset ID,Floor,Sub Location,Category,Nature,Description,Tagging,Make,Model,Serial No,Qty,Tag Type,Tag Location,Project,Person/Email,Department,Responsible,Date Time,Geo Code,Remarks,Barcode Image File,Serial Image File,Asset Image File\n";
+
+            data.forEach(item => {
+                // Add CSV Row
+                const row = [
+                    item.assetId, item.floor, item.subLoc, item.category, item.nature, item.desc, item.tagging,
+                    item.make, item.model, item.serial, item.quantity, item.tagType, item.tagLoc, item.project,
+                    item.email, item.dept, item.responsible, item.datetime, item.geo, item.remarks,
+                    item.fNameBarcode, item.fNameSerial, item.fNameAsset
+                ].map(f => `"${String(f).replace(/"/g, '""')}"`).join(","); // Escape CSV
+                csv += row + "\n";
+
+                // Add Images to Zip Folders
+                if(item.imgBarcode) f_bar.file(item.fNameBarcode, item.imgBarcode);
+                if(item.imgSerial) f_ser.file(item.fNameSerial, item.imgSerial);
+                if(item.imgAsset) f_ast.file(item.fNameAsset, item.imgAsset);
             });
 
-            zip.file("Master_Inventory.csv", csvContent);
-            
+            zip.file("Master_Asset_List.csv", csv);
+
+            // Generate
             const content = await zip.generateAsync({type:"blob"});
             const url = URL.createObjectURL(content);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `Inventory_Backup_${Date.now()}.zip`;
+            a.download = `Asset_Audit_${Date.now()}.zip`;
             a.click();
-            document.getElementById('msg').innerText = "Download Started!";
-        };
-    }
-
-    // --- 7. UI UTILS ---
-    function updateTable() {
-        const tbody = document.getElementById('entry-table');
-        tbody.innerHTML = "";
-        
-        db.transaction(STORE_NAME).objectStore(STORE_NAME).getAll().onsuccess = (e) => {
-            const data = e.target.result;
-            document.getElementById('count').innerText = data.length;
             
-            // Show last 10 entries only for performance
-            data.slice(-10).reverse().forEach(item => {
-                const row = `<tr>
-                    <td><b>${item.id}</b><br><span style="color:#666">${item.category}</span></td>
-                    <td style="text-align:right;">Saved</td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
+            document.getElementById('loading-overlay').style.display = 'none';
         };
     }
 
-    function clearDatabase() {
-        if(confirm("DANGER: This will delete all scanned data permanently. Continue?")) {
+    function clearDB() {
+        if(confirm("DANGER: This will delete ALL entries and photos. Are you sure?")) {
             const req = indexedDB.deleteDatabase(DB_NAME);
             req.onsuccess = () => location.reload();
         }
