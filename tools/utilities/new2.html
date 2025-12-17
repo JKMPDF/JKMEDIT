@@ -3,239 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QR Asset Manager + Photos</title>
+    <title>Pro Asset Manager</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
-        /* ... Keeping your original CSS ... */
         :root {
-            --bg-color: #f2f2f7;
-            --card-bg: #ffffff;
-            --primary-color: #007aff;
-            --danger-color: #ff3b30;
-            --text-color: #1d1d1f;
-            --sub-text: #86868b;
-            --border-radius: 12px;
-            --input-bg: #eef0f2;
+            --bg-color: #f2f2f7; --card-bg: #ffffff; --primary-color: #007aff;
+            --danger-color: #ff3b30; --text-color: #1d1d1f; --border-radius: 12px;
         }
-
-        body { font-family: -apple-system, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px 10px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        h1 { text-align: center; font-size: 1.5rem; }
-        .card { background: var(--card-bg); border-radius: var(--border-radius); padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        label { font-size: 0.85rem; font-weight: 600; color: var(--sub-text); margin-bottom: 6px; display: block; text-transform: uppercase; }
-        input[type="text"], select { width: 100%; padding: 12px; border: none; background: var(--input-bg); border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 15px; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-success { background-color: #34c759; color: white; margin-top: 5px; }
-        .btn-danger { background-color: var(--input-bg); color: var(--danger-color); }
-        .btn-outline { background-color: var(--input-bg); color: var(--primary-color); }
-        .input-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        #reader { width: 100%; border-radius: 10px; overflow: hidden; background: black; margin-bottom: 15px; }
-        
-        /* New Photo Preview Style */
-        .photo-preview { width: 50px; height: 50px; border-radius: 4px; object-fit: cover; background: #eee; }
-        .data-table td { padding: 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
-        
-        /* Modal Styles */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
-        .modal { background: white; padding: 25px; border-radius: 16px; width: 85%; max-width: 320px; text-align: center; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg-color); color: var(--text-color); padding: 15px; margin: 0; }
+        .card { background: var(--card-bg); border-radius: var(--border-radius); padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        h1 { font-size: 1.2rem; text-align: center; }
+        label { font-size: 0.75rem; font-weight: 700; color: #86868b; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; font-size: 16px; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
+        .btn-blue { background: var(--primary-color); color: white; }
+        .btn-green { background: #34c759; color: white; }
+        .btn-photo { background: #5856d6; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        #reader { width: 100%; border-radius: 10px; background: #000; overflow: hidden; margin-bottom: 10px; }
+        .preview-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .preview-box { flex: 1; text-align: center; font-size: 10px; }
+        .preview-box img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; background: #eee; }
+        .data-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; font-size: 12px; }
+        .data-table td { padding: 10px; border-bottom: 1px solid #eee; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 100; }
+        .modal-content { background: white; padding: 20px; border-radius: 15px; width: 80%; max-width: 300px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Inventory + Photo Capture</h1>
+<h1>Asset Inventory Pro</h1>
 
-    <div class="card">
-        <div id="reader"></div>
-        <canvas id="photo-canvas" style="display:none;"></canvas>
-        <button id="start-scan-btn" class="btn btn-primary">Start Camera</button>
+<div class="card">
+    <div id="reader"></div>
+    <button id="cam-toggle" class="btn btn-blue">Start Camera</button>
+</div>
+
+<div class="card">
+    <label>Asset ID (Scanned QR)</label>
+    <input type="text" id="asset-id" placeholder="Scan QR to fill..." readonly>
+
+    <label>Category</label>
+    <div style="display:flex; gap:5px;">
+        <select id="cat-select"><option value="">Select Category</option></select>
+        <button onclick="showModal()" style="width:50px; border-radius:8px; border:1px solid #ddd;">+</button>
     </div>
 
-    <div class="card">
-        <label>Scanned Data</label>
-        <input type="text" id="qr-data" placeholder="Scan a QR code..." readonly>
-
-        <label>Select Item Category</label>
-        <div class="input-row">
-            <select id="item-select">
-                <option value="" disabled selected>Select Category</option>
-            </select>
-            <button onclick="openModal()" class="btn" style="width:50px; background:var(--input-bg); color:var(--primary-color)">+</button>
+    <label>Capture Photos</label>
+    <div class="preview-container">
+        <div class="preview-box">
+            <img id="prev-asset" src="" alt="Pending">
+            <button onclick="takePhoto('asset')" class="btn btn-photo">📸 Asset</button>
         </div>
-
-        <button onclick="saveEntryWithPhoto()" class="btn btn-success">Save Entry & Photo</button>
+        <div class="preview-box">
+            <img id="prev-qr" src="" alt="Pending">
+            <button onclick="takePhoto('qr')" class="btn btn-photo">📸 QR Label</button>
+        </div>
     </div>
 
-    <div id="grouped-data-area"></div>
+    <button onclick="saveToDB()" class="btn btn-green">Save Full Entry</button>
+</div>
 
-    <div class="footer-controls" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-        <button onclick="downloadZip()" class="btn btn-outline">Export All (CSV + Photos)</button>
-        <button onclick="clearAllData()" class="btn btn-danger">Clear All History</button>
+<div id="list-area"></div>
+
+<div style="padding: 10px;">
+    <button onclick="exportZip()" class="btn btn-blue" style="background: #000;">Download ZIP (CSV + Folders)</button>
+    <button onclick="clearSystem()" class="btn" style="color:red; background:none;">Wipe All Data</button>
+</div>
+
+<div id="cat-modal" class="modal">
+    <div class="modal-content">
+        <h3>New Category</h3>
+        <input type="text" id="new-cat-name" placeholder="Name...">
+        <button onclick="addCat()" class="btn btn-blue">Add</button>
+        <button onclick="hideModal()" class="btn" style="background:#eee;">Cancel</button>
     </div>
 </div>
 
-<div id="modal-overlay" class="modal-overlay">
-    <div class="modal">
-        <h3>Add Category</h3>
-        <input type="text" id="new-category-input" placeholder="E.g. Box A...">
-        <div style="display:flex; gap:10px;">
-            <button onclick="closeModal()" class="btn" style="background:#eee;">Cancel</button>
-            <button onclick="addNewItem()" class="btn btn-primary">Add</button>
-        </div>
-    </div>
-</div>
+<canvas id="hidden-canvas" style="display:none;"></canvas>
 
 <script>
-    const KEY_ENTRIES = 'qr_pro_entries_v2';
-    const KEY_ITEMS = 'qr_pro_items_v2';
-    
-    let html5QrcodeScanner = null;
-    let savedEntries = JSON.parse(localStorage.getItem(KEY_ENTRIES)) || [];
-    let availableItems = JSON.parse(localStorage.getItem(KEY_ITEMS)) || [];
+    let db;
+    let scanner = null;
+    let tempAssetPhoto = null;
+    let tempQrPhoto = null;
 
-    window.onload = () => { updateDropdown(); renderGroupedData(); };
+    // --- 1. Database Setup (IndexedDB) ---
+    const request = indexedDB.open("AssetTrackerDB", 1);
+    request.onupgradeneeded = e => {
+        db = e.target.result;
+        db.createObjectStore("entries", { keyPath: "id", autoIncrement: true });
+        db.createObjectStore("categories", { keyPath: "name" });
+    };
+    request.onsuccess = e => {
+        db = e.target.result;
+        loadCategories();
+        renderEntries();
+    };
 
-    /* --- CATEGORY LOGIC --- */
-    function openModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
-    function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
-    
-    function addNewItem() {
-        const val = document.getElementById('new-category-input').value.trim();
-        if(val && !availableItems.includes(val)) {
-            availableItems.push(val);
-            localStorage.setItem(KEY_ITEMS, JSON.stringify(availableItems));
-            updateDropdown();
-            closeModal();
-        }
-    }
-
-    function updateDropdown() {
-        const select = document.getElementById('item-select');
-        select.innerHTML = '<option value="" disabled selected>Select Category</option>';
-        availableItems.forEach(item => {
-            const opt = document.createElement('option');
-            opt.value = opt.textContent = item;
-            select.appendChild(opt);
-        });
-    }
-
-    /* --- CAMERA & SCANNER --- */
-    const startBtn = document.getElementById('start-scan-btn');
-    startBtn.addEventListener('click', () => {
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.stop().then(() => {
-                html5QrcodeScanner = null;
-                startBtn.textContent = "Start Camera";
-                startBtn.classList.replace('btn-danger', 'btn-primary');
-            });
+    // --- 2. Camera & Scanning ---
+    document.getElementById('cam-toggle').addEventListener('click', function() {
+        if(scanner) {
+            scanner.stop().then(() => { scanner = null; this.innerText = "Start Camera"; });
             return;
         }
-        html5QrcodeScanner = new Html5Qrcode("reader");
-        html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, 
-        (text) => { document.getElementById('qr-data').value = text; });
-        startBtn.textContent = "Stop Camera";
-        startBtn.classList.replace('btn-primary', 'btn-danger');
+        scanner = new Html5Qrcode("reader");
+        scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, 
+        (text) => { 
+            document.getElementById('asset-id').value = text;
+            if(navigator.vibrate) navigator.vibrate(50);
+        });
+        this.innerText = "Stop Camera";
     });
 
-    /* --- PHOTO & SAVE LOGIC --- */
-    async function saveEntryWithPhoto() {
-        const qrData = document.getElementById('qr-data').value;
-        const itemType = document.getElementById('item-select').value;
-
-        if (!qrData || !itemType) return alert("Scan QR and Select Category first!");
-        if (!html5QrcodeScanner) return alert("Camera must be ON to take a photo.");
-
-        // Capture photo from video stream
-        const video = document.querySelector('#reader video');
-        const canvas = document.getElementById('photo-canvas');
+    function takePhoto(type) {
+        if(!scanner) return alert("Open camera first!");
+        const video = document.querySelector("#reader video");
+        const canvas = document.getElementById("hidden-canvas");
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0);
+        canvas.getContext("2d").drawImage(video, 0, 0);
+        const data = canvas.toDataURL("image/png");
         
-        const photoBase64 = canvas.toDataURL('image/png');
-        const photoName = `img_${Date.now()}.png`;
-
-        const newEntry = {
-            id: Date.now(),
-            timestamp: new Date().toLocaleTimeString(),
-            fullTime: new Date().toLocaleString(),
-            qr: qrData,
-            item: itemType,
-            photoName: photoName,
-            photoData: photoBase64 // Storing in localStorage (Note: limited to ~5MB total)
-        };
-
-        savedEntries.push(newEntry);
-        localStorage.setItem(KEY_ENTRIES, JSON.stringify(savedEntries));
-        
-        document.getElementById('qr-data').value = '';
-        renderGroupedData();
-        alert("Saved with Photo!");
+        if(type === 'asset') {
+            tempAssetPhoto = data;
+            document.getElementById('prev-asset').src = data;
+        } else {
+            tempQrPhoto = data;
+            document.getElementById('prev-qr').src = data;
+        }
     }
 
-    function renderGroupedData() {
-        const container = document.getElementById('grouped-data-area');
-        container.innerHTML = '';
-        const items = [...new Set(savedEntries.map(e => e.item))];
+    // --- 3. Save Entry ---
+    function saveToDB() {
+        const id = document.getElementById('asset-id').value;
+        const cat = document.getElementById('cat-select').value;
+        
+        if(!id || !cat || !tempAssetPhoto || !tempQrPhoto) {
+            return alert("Missing Data! Scan QR, select Category, and take BOTH photos.");
+        }
 
-        items.forEach(item => {
-            const entries = savedEntries.filter(e => e.item === item);
-            let rows = entries.map(e => `
-                <tr>
-                    <td><img src="${e.photoData}" class="photo-preview"></td>
-                    <td style="font-size:12px;">${e.photoName}</td>
-                    <td>${e.qr}</td>
-                    <td><button onclick="deleteEntry(${e.id})" style="border:none; background:none; color:red;">&times;</button></td>
-                </tr>
-            `).join('');
+        const timestamp = Date.now();
+        const entry = {
+            assetId: id,
+            category: cat,
+            assetPhotoName: `Asset_${id}_${timestamp}.png`,
+            qrPhotoName: `QR_${id}_${timestamp}.png`,
+            assetPhotoData: tempAssetPhoto,
+            qrPhotoData: tempQrPhoto,
+            date: new Date().toLocaleString()
+        };
 
-            container.innerHTML += `
-                <div style="font-weight:bold; margin: 15px 0 5px;">${item} (${entries.length})</div>
-                <table style="width:100%; background:white; border-radius:8px; border-collapse:collapse;">
-                    ${rows}
-                </table>
-            `;
-        });
+        const tx = db.transaction("entries", "readwrite");
+        tx.objectStore("entries").add(entry);
+        tx.oncomplete = () => {
+            alert("Saved Successfully!");
+            resetForm();
+            renderEntries();
+        };
+    }
+
+    function resetForm() {
+        document.getElementById('asset-id').value = "";
+        tempAssetPhoto = null; tempQrPhoto = null;
+        document.getElementById('prev-asset').src = "";
+        document.getElementById('prev-qr').src = "";
+    }
+
+    // --- 4. Categories ---
+    function showModal() { document.getElementById('cat-modal').style.display='flex'; }
+    function hideModal() { document.getElementById('cat-modal').style.display='none'; }
+    
+    function addCat() {
+        const name = document.getElementById('new-cat-name').value.trim();
+        if(!name) return;
+        const tx = db.transaction("categories", "readwrite");
+        tx.objectStore("categories").put({name: name});
+        tx.oncomplete = () => {
+            loadCategories();
+            hideModal();
+            document.getElementById('new-cat-name').value = "";
+        };
+    }
+
+    function loadCategories() {
+        const select = document.getElementById('cat-select');
+        select.innerHTML = '<option value="">Select Category</option>';
+        db.transaction("categories").objectStore("categories").getAll().onsuccess = e => {
+            e.target.result.forEach(c => {
+                select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+            });
+        };
+    }
+
+    // --- 5. Export Logic (ZIP with Folders) ---
+    async function exportZip() {
+        const zip = new JSZip();
+        const assetFolder = zip.folder("assets");
+        const qrFolder = zip.folder("qr_codes");
+        
+        let csv = "Asset ID,Category,Date,Asset Photo File,QR Photo File\n";
+        
+        db.transaction("entries").objectStore("entries").getAll().onsuccess = async e => {
+            const data = e.target.result;
+            if(data.length === 0) return alert("No data to export");
+
+            data.forEach(item => {
+                csv += `"${item.assetId}","${item.category}","${item.date}","${item.assetPhotoName}","${item.qrPhotoName}"\n`;
+                
+                // Add images to respective folders
+                assetFolder.file(item.assetPhotoName, item.assetPhotoData.split(',')[1], {base64: true});
+                qrFolder.file(item.qrPhotoName, item.qrPhotoData.split(',')[1], {base64: true});
+            });
+
+            zip.file("Inventory_Data.csv", csv);
+            const blob = await zip.generateAsync({type:"blob"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Inventory_Export_${Date.now()}.zip`;
+            a.click();
+        };
+    }
+
+    // --- 6. UI Render ---
+    function renderEntries() {
+        const area = document.getElementById('list-area');
+        area.innerHTML = "";
+        db.transaction("entries").objectStore("entries").getAll().onsuccess = e => {
+            const data = e.target.result.reverse();
+            data.forEach(item => {
+                area.innerHTML += `
+                    <div class="card" style="padding:10px;">
+                        <table class="data-table">
+                            <tr>
+                                <td rowspan="2" style="width:60px"><img src="${item.assetPhotoData}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;"></td>
+                                <td><b>ID: ${item.assetId}</b></td>
+                                <td style="text-align:right"><button onclick="deleteEntry(${item.id})" style="color:red;border:none;background:none;">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="color:#666">${item.category} | ${item.date}</td>
+                            </tr>
+                        </table>
+                    </div>
+                `;
+            });
+        };
     }
 
     function deleteEntry(id) {
-        savedEntries = savedEntries.filter(e => e.id !== id);
-        localStorage.setItem(KEY_ENTRIES, JSON.stringify(savedEntries));
-        renderGroupedData();
+        if(confirm("Delete this?")) {
+            db.transaction("entries", "readwrite").objectStore("entries").delete(id).onsuccess = renderEntries;
+        }
     }
 
-    /* --- ZIP EXPORT LOGIC --- */
-    async function downloadZip() {
-        if (savedEntries.length === 0) return alert("No data to export.");
-        
-        const zip = new JSZip();
-        const imgFolder = zip.folder("photos");
-        
-        // 1. Create CSV content
-        let csv = "Category,Date Time,QR Content,Photo Filename\n";
-        savedEntries.forEach(e => {
-            csv += `"${e.item}","${e.fullTime}","${e.qr}","${e.photoName}"\n`;
-            
-            // 2. Add Images to folder
-            const imageData = e.photoData.split(',')[1]; // Remove header
-            imgFolder.file(e.photoName, imageData, {base64: true});
-        });
-
-        zip.file("inventory_data.csv", csv);
-
-        // 3. Generate and Download ZIP
-        const content = await zip.generateAsync({type:"blob"});
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(content);
-        link.download = "inventory_export.zip";
-        link.click();
-    }
-
-    function clearAllData() {
-        if(confirm("Clear everything?")) {
-            localStorage.clear();
+    function clearSystem() {
+        if(confirm("Wipe everything permanently?")) {
+            indexedDB.deleteDatabase("AssetTrackerDB");
             location.reload();
         }
     }
