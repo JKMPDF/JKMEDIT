@@ -244,6 +244,25 @@
             .gallery-item:last-child { margin-right: 0; }
             .footer-links { gap: 1rem; }
         }
+            /* --- FIX FOR MOBILE SIDEBAR ITEMS --- */
+    @media (max-width: 1024px) {
+        /* 1. Remove the height limit on mobile submenus so they expand fully */
+        .sidebar-accordion-submenu {
+            max-height: none !important;
+            overflow-y: visible !important;
+        }
+
+        /* 2. Fix the sidebar height to fit actual mobile screen (prevents cut-off at bottom) */
+        #static-sidebar {
+            height: 100dvh; /* Dynamic Viewport Height */
+        }
+
+        /* 3. Add extra padding at the bottom of the list so the last item isn't hidden behind the footer */
+        .sidebar-nav-container {
+            padding-bottom: 50px;
+        }
+    }
+        
     </style>
 </head>
 <body>
