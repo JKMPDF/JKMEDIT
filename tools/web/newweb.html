@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevMode: Advanced Visual Editor</title>
+    <style>
+        /* --- VS CODE STYLE THEME --- */
+        :root {
+            --bg-dark: #1e1e1e;
+            --bg-panel: #252526;
+            --border: #3e3e42;
+            --accent: #007acc;
+            --text-main: #d4d4d4;
+            --text-muted: #858585;
+            --success: #4ec9b0;
+        }
+
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-dark); color: var(--text-main); overflow: hidden; }
+        
+        /* Layout Grid */
+        .app-container { display: flex; flex-direction: column; height: 100vh; }
+        
+        /* Toolbar */
+        .toolbar {
+            height: 40px; background: #333333; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid var(--border); justify-content: space-between;
+        }
+        .brand { font-weight: bold; color: var(--accent); letter-spacing: 1px; }
+        
+        .btn {
+            background: #3c3c3c; color: white; border: 1px solid transparent; 
+            padding: 5px 12px; font-size: 12px; cursor: pointer; border-radius: 2px; transition: all 0.2s;
+        }
+        .btn:hover { background: #505050; }
+        .btn-primary { background: var(--accent); }
+        .btn-primary:hover { background: #0062a3; }
+
+        /* Main Workspace */
+        .workspace { display: flex; flex: 1; overflow: hidden; }
+        
+        /* Left: Preview */
+        .preview-area { flex: 1; position: relative; background: white; transition: all 0.3s; }
+        iframe { width: 100%; height: 100%; border: none; display: block; }
+        
+        /* Right: Editor Panel */
+        .editor-panel { 
+            width: 40%; background: var(--bg-dark); border-left: 1px solid var(--border); 
+            display: flex; flex-direction: column;
+            transform: translateX(0); transition: transform 0.3s ease;
+        }
+        .editor-panel.hidden { display: none; }
+
+        /* Tabs */
+        .tabs { display: flex; background: var(--bg-panel); }
+        .tab { 
+            padding: 10px 20px; font-size: 13px; cursor: pointer; border-right: 1px solid var(--border); 
+            color: var(--text-muted); background: var(--bg-panel);
+        }
+        .tab.active { background: var(--bg-dark); color: white; border-top: 2px solid var(--accent); }
+        
+        /* Code Areas */
+        .code-container { flex: 1; position: relative; }
+        textarea {
+            width: 100%; height: 100%; background: var(--bg-dark); color: #9cdcfe; 
+            border: none; padding: 15px; font-family: 'Consolas', 'Courier New', monospace; 
+            font-size: 14px; resize: none; outline: none; box-sizing: border-box; line-height: 1.5;
+        }
+        
+        /* Breadcrumbs (Bottom of Editor) */
+        .breadcrumbs { padding: 5px 10px; font-size: 11px; background: var(--accent); color: white; }
+
+        /* Overlay for Upload */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center;
+        }
+        .modal { background: var(--bg-panel); padding: 30px; border-radius: 6px; width: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--border); }
+        .modal textarea { height: 200px; border: 1px solid var(--border); margin: 15px 0; background: #1e1e1e; }
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="uploadModal">
+    <div class="modal">
+        <h3 style="margin-top:0">Import Source Code</h3>
+        <p style="color: #aaa; font-size: 13px;">Paste your full HTML file (including &lt;style&gt; and &lt;script&gt;) to begin.</p>
+        <textarea id="sourceInput" placeholder="<!DOCTYPE html>..."></textarea>
+        <div style="text-align: right;">
+            <button class="btn btn-primary" onclick="loadSource()">Start Editing</button>
+        </div>
+    </div>
+</div>
+
+<div class="app-container">
+    <div class="toolbar">
+        <div class="brand">DEVMODE <span style="font-weight:normal; color:#888;">// VISUAL EDITOR</span></div>
+        <div>
+            <span id="statusMsg" style="font-size: 12px; color: var(--success); margin-right: 15px; opacity: 0; transition: opacity 0.5s;">Changes Applied!</span>
+            <button class="btn" onclick="applyChanges()">⚡ Apply Changes</button>
+            <button class="btn btn-primary" onclick="downloadCode()">↓ Download Code</button>
+        </div>
+    </div>
+
+    <div class="workspace">
+        <div class="preview-area">
+            <iframe id="previewFrame"></iframe>
+        </div>
+
+        <div class="editor-panel" id="editorPanel">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('html')">HTML (Structure)</div>
+                <div class="tab" onclick="switchTab('css')">CSS (Style)</div>
+                <div class="tab" onclick="switchTab('js')">JS (Logic)</div>
+            </div>
+
+            <div class="code-container" id="editorContainer">
+                <textarea id="codeEditor"></textarea>
+            </div>
+            
+            <div class="breadcrumbs" id="breadcrumbs">Select an element to edit...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- GLOBAL STATE ---
+    let FULL_SOURCE = "";
+    let activeElementData = null;
+    let currentTab = 'html'; 
+    
+    // We store the "original snippet" for search-and-replace operations
+    let snippets = {
+        html: { original: "", start: 0, end: 0 },
+        css: { original: "", start: 0, end: 0 },
+        js: { original: "", start: 0, end: 0 }
+    };
+
+    // --- 1. INITIALIZATION ---
+    function loadSource() {
+        const input = document.getElementById('sourceInput').value;
+        if (!input.trim()) return alert("Please paste code first.");
+        
+        FULL_SOURCE = input;
+        document.getElementById('uploadModal').style.display = 'none';
+        renderPreview();
+    }
+
+    // --- 2. RENDERER (With Advanced Inspector) ---
+    function renderPreview() {
+        const frame = document.getElementById('previewFrame');
+        
+        // The Inspector Script: Injected into the user's code
+        // It handles Hover Effects (Blue Border) and Click Capture
+        const inspectorScript = `
+            <script>
+                let hoveredEl = null;
+
+                // 1. Hover Highlighter
+                document.addEventListener('mouseover', (e) => {
+                    e.stopPropagation();
+                    if (hoveredEl) hoveredEl.style.outline = 'none';
+                    
+                    hoveredEl = e.target;
+                    // Visualize the selection
+                    hoveredEl.style.outline = '2px solid #007acc';
+                    hoveredEl.style.cursor = 'crosshair';
+                });
+
+                document.addEventListener('mouseout', (e) => {
+                    e.target.style.outline = 'none';
+                });
+
+                // 2. Click Capture
+                document.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Remove the blue border temporarily so it doesn't get copied in HTML
+                    e.target.style.outline = 'none';
+
+                    // Build the breadcrumb path (e.g., body > div > span)
+                    let path = [];
+                    let el = e.target;
+                    while (el && el.tagName) {
+                        path.unshift(el.tagName.toLowerCase() + (el.id ? '#'+el.id : '') + (el.className ? '.'+el.className.split(' ')[0] : ''));
+                        el = el.parentElement;
+                    }
+
+                    // Send Data to Parent
+                    window.parent.postMessage({
+                        type: 'ELEMENT_SELECTED',
+                        tagName: e.target.tagName.toLowerCase(),
+                        id: e.target.id,
+                        className: e.target.className,
+                        outerHTML: e.target.outerHTML,
+                        path: path.join(' > ')
+                    }, '*');
+                    
+                    // Restore outline
+                    e.target.style.outline = '2px solid #007acc';
+                }, true);
+            <\/script>
+        `;
+        
+        // Inject script before body close
+        const blob = new Blob([FULL_SOURCE + inspectorScript], { type: 'text/html' });
+        frame.src = URL.createObjectURL(blob);
+    }
+
+    // --- 3. EVENT LISTENER ---
+    window.addEventListener('message', (event) => {
+        if (event.data.type === 'ELEMENT_SELECTED') {
+            activeElementData = event.data;
+            updateEditorPanel(event.data);
+        }
+    });
+
+    // --- 4. INTELLIGENT PARSER ---
+    function updateEditorPanel(data) {
+        document.getElementById('breadcrumbs').innerText = data.path;
+        
+        // A. FIND HTML
+        // We look for the exact string of the element in the source
+        // Note: We clean the outline style if it was captured
+        let cleanHTML = data.outerHTML.replace('style="outline: 2px solid rgb(0, 122, 204); cursor: crosshair;"', '').replace('style="outline: none;"', '');
+        
+        // Simple fuzzy locator for prototype
+        snippets.html.original = cleanHTML; // In a real app, we need exact index location
+        
+        // B. FIND CSS
+        // Look for class names in <style> blocks
+        snippets.css.original = "/* No CSS found for this element */";
+        if (data.className) {
+            const firstClass = data.className.split(' ')[0];
+            const cssRegex = new RegExp(`\\.${firstClass}\\s*\\{[\\s\\S]*?\\}`, "g");
+            const match = FULL_SOURCE.match(cssRegex);
+            if (match) {
+                snippets.css.original = match[0];
+            } else {
+                snippets.css.original = `/* Create new style */\n.${firstClass} {\n    background-color: #ffffff;\n    color: #000000;\n}`;
+            }
+        } else if (data.id) {
+             const cssRegex = new RegExp(`#${data.id}\\s*\\{[\\s\\S]*?\\}`, "g");
+             const match = FULL_SOURCE.match(cssRegex);
+             if (match) snippets.css.original = match[0];
+        } else {
+             // Tag selector (e.g., 'body' or 'h1')
+             const cssRegex = new RegExp(`${data.tagName}\\s*\\{[\\s\\S]*?\\}`, "g");
+             const match = FULL_SOURCE.match(cssRegex);
+             if (match) snippets.css.original = match[0];
+        }
+
+        // C. FIND JS (Look for ID refs)
+        snippets.js.original = "// No direct JS references found.";
+        if (data.id) {
+            const jsRegex = new RegExp(`.*getElementById\\('${data.id}'\\).*`, "g");
+            const match = FULL_SOURCE.match(jsRegex);
+            if(match) snippets.js.original = match.join('\n');
+        }
+
+        // Load the active tab
+        renderTabContent();
+    }
+
+    function switchTab(tabName) {
+        // Save current progress before switching? (Optional feature)
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab')[['html','css','js'].indexOf(tabName)].classList.add('active');
+        currentTab = tabName;
+        renderTabContent();
+    }
+
+    function renderTabContent() {
+        const editor = document.getElementById('codeEditor');
+        if (currentTab === 'html') editor.value = snippets.html.original; // In a real app, use the matched source snippet
+        else if (currentTab === 'css') editor.value = snippets.css.original;
+        else if (currentTab === 'js') editor.value = snippets.js.original;
+    }
+
+    // --- 5. APPLY LOGIC ---
+    function applyChanges() {
+        const newCode = document.getElementById('codeEditor').value;
+        const oldCode = snippets[currentTab].original;
+
+        // If CSS, and it's a new style creation, we append to </head>
+        if (currentTab === 'css' && oldCode.includes("/* No CSS found")) {
+            FULL_SOURCE = FULL_SOURCE.replace('</head>', `<style>\n${newCode}\n</style>\n</head>`);
+        } 
+        // Standard Replacement
+        else if (FULL_SOURCE.includes(oldCode)) {
+            FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
+        } else {
+            // Fallback for when "outline" styles mess up the HTML match
+            // In a production app, we would track by character index, not string match
+            alert("Exact match lost. Try reloading or editing a unique text snippet.");
+            return;
+        }
+
+        // Update the 'original' memory to match the new state
+        snippets[currentTab].original = newCode;
+
+        // Visual Feedback
+        const status = document.getElementById('statusMsg');
+        status.style.opacity = '1';
+        setTimeout(() => status.style.opacity = '0', 2000);
+
+        renderPreview();
+    }
+
+    function downloadCode() {
+        const blob = new Blob([FULL_SOURCE], {type: "text/html"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "advanced_edit.html";
+        a.click();
+    }
+</script>
+
+</body>
+</html>
