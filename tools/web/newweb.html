@@ -76,7 +76,6 @@
         }
         .modal { background: var(--bg-panel); padding: 30px; border-radius: 6px; width: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--border); }
         .modal textarea { height: 200px; border: 1px solid var(--border); margin: 15px 0; background: #1e1e1e; }
-
     </style>
 </head>
 <body>
@@ -151,24 +150,37 @@
         const frame = document.getElementById('previewFrame');
         
         // The Inspector Script: Injected into the user's code
-        // It handles Hover Effects (Blue Border) and Click Capture
         const inspectorScript = `
             <script>
                 let hoveredEl = null;
+                let originalOutline = '';
+                let originalCursor = '';
 
                 // 1. Hover Highlighter
                 document.addEventListener('mouseover', (e) => {
                     e.stopPropagation();
-                    if (hoveredEl) hoveredEl.style.outline = 'none';
+                    // Don't highlight the body/html to avoid clutter
+                    if(e.target.tagName === 'BODY' || e.target.tagName === 'HTML') return;
+
+                    if (hoveredEl) {
+                        hoveredEl.style.outline = originalOutline;
+                        hoveredEl.style.cursor = originalCursor;
+                    }
                     
                     hoveredEl = e.target;
-                    // Visualize the selection
+                    originalOutline = hoveredEl.style.outline;
+                    originalCursor = hoveredEl.style.cursor;
+
+                    // Visualize
                     hoveredEl.style.outline = '2px solid #007acc';
                     hoveredEl.style.cursor = 'crosshair';
                 });
 
                 document.addEventListener('mouseout', (e) => {
-                    e.target.style.outline = 'none';
+                   if(hoveredEl) {
+                       hoveredEl.style.outline = originalOutline;
+                       hoveredEl.style.cursor = originalCursor;
+                   }
                 });
 
                 // 2. Click Capture
@@ -176,34 +188,49 @@
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    // Remove the blue border temporarily so it doesn't get copied in HTML
-                    e.target.style.outline = 'none';
+                    const target = e.target;
 
-                    // Build the breadcrumb path (e.g., body > div > span)
+                    // --- CRITICAL FIX: CLEAN BEFORE CAPTURE ---
+                    // 1. Remove the "DevMode" visual styles temporarily
+                    target.style.outline = originalOutline;
+                    target.style.cursor = originalCursor;
+                    
+                    // 2. Remove style attribute entirely if it is now empty 
+                    // (Browsers leave style="" behind, which breaks matching)
+                    const hadStyle = target.getAttribute('style');
+                    if (!hadStyle || hadStyle.trim() === '') {
+                        target.removeAttribute('style');
+                    }
+
+                    // 3. Capture the CLEAN HTML
+                    const cleanHTML = target.outerHTML;
+
+                    // 4. Build Path
                     let path = [];
-                    let el = e.target;
+                    let el = target;
                     while (el && el.tagName) {
                         path.unshift(el.tagName.toLowerCase() + (el.id ? '#'+el.id : '') + (el.className ? '.'+el.className.split(' ')[0] : ''));
                         el = el.parentElement;
                     }
 
-                    // Send Data to Parent
+                    // 5. Send Data
                     window.parent.postMessage({
                         type: 'ELEMENT_SELECTED',
-                        tagName: e.target.tagName.toLowerCase(),
-                        id: e.target.id,
-                        className: e.target.className,
-                        outerHTML: e.target.outerHTML,
+                        tagName: target.tagName.toLowerCase(),
+                        id: target.id,
+                        className: target.className,
+                        outerHTML: cleanHTML, // This is now clean
                         path: path.join(' > ')
                     }, '*');
                     
-                    // Restore outline
-                    e.target.style.outline = '2px solid #007acc';
+                    // 6. Restore Visuals (So user knows what is selected)
+                    target.style.outline = '2px solid #007acc';
+                    target.style.cursor = 'crosshair';
                 }, true);
             <\/script>
         `;
         
-        // Inject script before body close
+        // Inject script
         const blob = new Blob([FULL_SOURCE + inspectorScript], { type: 'text/html' });
         frame.src = URL.createObjectURL(blob);
     }
@@ -221,18 +248,17 @@
         document.getElementById('breadcrumbs').innerText = data.path;
         
         // A. FIND HTML
-        // We look for the exact string of the element in the source
-        // Note: We clean the outline style if it was captured
-        let cleanHTML = data.outerHTML.replace('style="outline: 2px solid rgb(0, 122, 204); cursor: crosshair;"', '').replace('style="outline: none;"', '');
+        let cleanHTML = data.outerHTML;
         
-        // Simple fuzzy locator for prototype
-        snippets.html.original = cleanHTML; // In a real app, we need exact index location
+        // Attempt to find this block in FULL_SOURCE. 
+        // We set this as "original" so we know what to replace later.
+        snippets.html.original = cleanHTML; 
         
         // B. FIND CSS
-        // Look for class names in <style> blocks
         snippets.css.original = "/* No CSS found for this element */";
         if (data.className) {
             const firstClass = data.className.split(' ')[0];
+            // Regex to find .classname { ... }
             const cssRegex = new RegExp(`\\.${firstClass}\\s*\\{[\\s\\S]*?\\}`, "g");
             const match = FULL_SOURCE.match(cssRegex);
             if (match) {
@@ -245,7 +271,6 @@
              const match = FULL_SOURCE.match(cssRegex);
              if (match) snippets.css.original = match[0];
         } else {
-             // Tag selector (e.g., 'body' or 'h1')
              const cssRegex = new RegExp(`${data.tagName}\\s*\\{[\\s\\S]*?\\}`, "g");
              const match = FULL_SOURCE.match(cssRegex);
              if (match) snippets.css.original = match[0];
@@ -254,7 +279,10 @@
         // C. FIND JS (Look for ID refs)
         snippets.js.original = "// No direct JS references found.";
         if (data.id) {
-            const jsRegex = new RegExp(`.*getElementById\\('${data.id}'\\).*`, "g");
+            // Escape the ID for regex safety
+            const safeId = data.id.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            // Look for getElementById('id') OR getElementById("id")
+            const jsRegex = new RegExp(`.*getElementById\\(['"]${safeId}['"]\\).*`, "g");
             const match = FULL_SOURCE.match(jsRegex);
             if(match) snippets.js.original = match.join('\n');
         }
@@ -264,7 +292,6 @@
     }
 
     function switchTab(tabName) {
-        // Save current progress before switching? (Optional feature)
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab')[['html','css','js'].indexOf(tabName)].classList.add('active');
         currentTab = tabName;
@@ -273,7 +300,7 @@
 
     function renderTabContent() {
         const editor = document.getElementById('codeEditor');
-        if (currentTab === 'html') editor.value = snippets.html.original; // In a real app, use the matched source snippet
+        if (currentTab === 'html') editor.value = snippets.html.original;
         else if (currentTab === 'css') editor.value = snippets.css.original;
         else if (currentTab === 'js') editor.value = snippets.js.original;
     }
@@ -281,23 +308,40 @@
     // --- 5. APPLY LOGIC ---
     function applyChanges() {
         const newCode = document.getElementById('codeEditor').value;
-        const oldCode = snippets[currentTab].original;
+        let oldCode = snippets[currentTab].original;
 
-        // If CSS, and it's a new style creation, we append to </head>
+        // If CSS new style creation
         if (currentTab === 'css' && oldCode.includes("/* No CSS found")) {
-            FULL_SOURCE = FULL_SOURCE.replace('</head>', `<style>\n${newCode}\n</style>\n</head>`);
+            if(FULL_SOURCE.includes('</style>')) {
+                FULL_SOURCE = FULL_SOURCE.replace('</style>', `\n${newCode}\n</style>`);
+            } else {
+                FULL_SOURCE = FULL_SOURCE.replace('</head>', `<style>\n${newCode}\n</style>\n</head>`);
+            }
         } 
         // Standard Replacement
-        else if (FULL_SOURCE.includes(oldCode)) {
-            FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
-        } else {
-            // Fallback for when "outline" styles mess up the HTML match
-            // In a production app, we would track by character index, not string match
-            alert("Exact match lost. Try reloading or editing a unique text snippet.");
-            return;
+        else {
+            // 1. Try exact match
+            if (FULL_SOURCE.includes(oldCode)) {
+                FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
+            } 
+            // 2. Fallback: Try matching quote variations (Single vs Double)
+            else {
+                // If the browser normalized <div id='x'> to <div id="x">, we swap quotes to find the match
+                const altOldCode = oldCode.includes('"') 
+                    ? oldCode.replace(/"/g, "'") 
+                    : oldCode.replace(/'/g, '"');
+
+                if (FULL_SOURCE.includes(altOldCode)) {
+                    FULL_SOURCE = FULL_SOURCE.replace(altOldCode, newCode);
+                } else {
+                    console.log("Failed to find:", oldCode);
+                    alert("Exact match lost.\n\nReason: The browser reformatted the HTML (e.g., changed ' to \").\n\nTip: Try editing a smaller portion of text or adding a unique ID to the element.");
+                    return;
+                }
+            }
         }
 
-        // Update the 'original' memory to match the new state
+        // Update the 'original' memory
         snippets[currentTab].original = newCode;
 
         // Visual Feedback
