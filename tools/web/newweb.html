@@ -3,360 +3,428 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevMode: Advanced Visual Editor</title>
+    <title>DevMode Pro: Visual Builder</title>
     <style>
-        /* --- VS CODE STYLE THEME --- */
+        /* --- CORE THEME --- */
         :root {
-            --bg-dark: #1e1e1e;
-            --bg-panel: #252526;
+            --bg-root: #1e1e1e;
+            --bg-sidebar: #252526;
+            --bg-activity: #333333;
             --border: #3e3e42;
             --accent: #007acc;
-            --text-main: #d4d4d4;
-            --text-muted: #858585;
-            --success: #4ec9b0;
+            --accent-hover: #0062a3;
+            --text-main: #cccccc;
+            --text-white: #ffffff;
+            --glass: rgba(30, 30, 30, 0.95);
         }
 
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-dark); color: var(--text-main); overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; background: var(--bg-root); color: var(--text-main); overflow: hidden; }
+
+        /* --- LAYOUT GRID --- */
+        .app-grid { display: grid; grid-template-rows: 40px 1fr; height: 100vh; }
         
-        /* Layout Grid */
-        .app-container { display: flex; flex-direction: column; height: 100vh; }
-        
-        /* Toolbar */
-        .toolbar {
-            height: 40px; background: #333333; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid var(--border); justify-content: space-between;
+        /* 1. TOP BAR */
+        .top-bar {
+            background: var(--bg-activity);
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 15px;
         }
-        .brand { font-weight: bold; color: var(--accent); letter-spacing: 1px; }
+        .logo { font-weight: 700; color: var(--accent); letter-spacing: 1px; font-size: 14px; }
         
-        .btn {
-            background: #3c3c3c; color: white; border: 1px solid transparent; 
-            padding: 5px 12px; font-size: 12px; cursor: pointer; border-radius: 2px; transition: all 0.2s;
+        /* Device Toggles */
+        .device-toggles { display: flex; gap: 5px; background: #252526; padding: 3px; border-radius: 4px; }
+        .device-btn {
+            background: transparent; border: none; color: #858585; padding: 5px 10px; cursor: pointer; border-radius: 3px; transition: 0.2s;
         }
-        .btn:hover { background: #505050; }
+        .device-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+        .device-btn.active { color: white; background: var(--accent); }
+        
+        /* Action Buttons */
+        .actions { display: flex; gap: 10px; }
+        .btn { padding: 5px 15px; font-size: 12px; border-radius: 2px; cursor: pointer; border: 1px solid transparent; color: white; }
         .btn-primary { background: var(--accent); }
-        .btn-primary:hover { background: #0062a3; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-sec { background: #3c3c3c; }
+        .btn-sec:hover { background: #4c4c4c; }
 
-        /* Main Workspace */
-        .workspace { display: flex; flex: 1; overflow: hidden; }
-        
-        /* Left: Preview */
-        .preview-area { flex: 1; position: relative; background: white; transition: all 0.3s; }
-        iframe { width: 100%; height: 100%; border: none; display: block; }
-        
-        /* Right: Editor Panel */
-        .editor-panel { 
-            width: 40%; background: var(--bg-dark); border-left: 1px solid var(--border); 
-            display: flex; flex-direction: column;
-            transform: translateX(0); transition: transform 0.3s ease;
-        }
-        .editor-panel.hidden { display: none; }
+        /* 2. WORKSPACE */
+        .workspace { display: flex; position: relative; height: 100%; overflow: hidden; background: #121212; }
 
-        /* Tabs */
-        .tabs { display: flex; background: var(--bg-panel); }
-        .tab { 
-            padding: 10px 20px; font-size: 13px; cursor: pointer; border-right: 1px solid var(--border); 
-            color: var(--text-muted); background: var(--bg-panel);
+        /* Preview Area (Centered & Resizable) */
+        .preview-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 30px;
+            overflow: auto;
+            background-image: radial-gradient(#333 1px, transparent 1px);
+            background-size: 20px 20px;
         }
-        .tab.active { background: var(--bg-dark); color: white; border-top: 2px solid var(--accent); }
-        
-        /* Code Areas */
-        .code-container { flex: 1; position: relative; }
-        textarea {
-            width: 100%; height: 100%; background: var(--bg-dark); color: #9cdcfe; 
-            border: none; padding: 15px; font-family: 'Consolas', 'Courier New', monospace; 
-            font-size: 14px; resize: none; outline: none; box-sizing: border-box; line-height: 1.5;
+
+        .iframe-wrapper {
+            background: white;
+            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), height 0.4s ease;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
         }
         
-        /* Breadcrumbs (Bottom of Editor) */
-        .breadcrumbs { padding: 5px 10px; font-size: 11px; background: var(--accent); color: white; }
+        /* Dimensions for Devices */
+        .iframe-wrapper.desktop { width: 100%; height: 100%; border-radius: 0; }
+        .iframe-wrapper.tablet { width: 768px; height: 900px; border: 10px solid #333; border-radius: 15px; }
+        .iframe-wrapper.mobile { width: 375px; height: 812px; border: 10px solid #333; border-bottom: 30px solid #333; border-radius: 25px; }
 
-        /* Overlay for Upload */
+        iframe { width: 100%; height: 100%; border: none; background: white; display: block; }
+
+        /* --- 3. POPUP EDITOR (The "Click to Edit" Modal) --- */
+        .popup-editor {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 600px;
+            height: 450px;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--accent);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            border-radius: 6px;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        .popup-editor.visible {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            display: flex;
+        }
+
+        .popup-header {
+            padding: 10px 15px; background: #333; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; cursor: move;
+        }
+        .popup-title { font-size: 13px; font-weight: bold; color: white; }
+        .popup-close { cursor: pointer; color: #aaa; }
+        .popup-close:hover { color: white; }
+
+        .popup-tabs { display: flex; background: #252526; border-bottom: 1px solid var(--border); }
+        .ptab {
+            padding: 8px 15px; font-size: 12px; cursor: pointer; color: #888; border-right: 1px solid var(--border); background: #2d2d2d;
+        }
+        .ptab:hover { color: white; }
+        .ptab.active { background: #1e1e1e; color: var(--accent); border-top: 2px solid var(--accent); }
+
+        .popup-body { flex: 1; position: relative; background: #1e1e1e; }
+        .code-area { 
+            width: 100%; height: 100%; background: #1e1e1e; color: #9cdcfe; border: none; 
+            padding: 15px; font-family: 'Consolas', monospace; font-size: 13px; resize: none; outline: none; 
+        }
+
+        .popup-footer {
+            padding: 10px; border-top: 1px solid var(--border); text-align: right; background: #252526;
+        }
+
+        /* --- 4. STARTUP MODAL --- */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center;
         }
-        .modal { background: var(--bg-panel); padding: 30px; border-radius: 6px; width: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--border); }
-        .modal textarea { height: 200px; border: 1px solid var(--border); margin: 15px 0; background: #1e1e1e; }
+        .start-box { width: 500px; background: #252526; padding: 30px; border: 1px solid var(--border); border-radius: 8px; }
+        .start-box textarea { width: 100%; height: 150px; background: #1e1e1e; border: 1px solid #333; color: white; padding: 10px; margin: 15px 0; }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white;
+            padding: 10px 20px; border-radius: 4px; opacity: 0; transform: translateY(20px); transition: 0.3s;
+        }
     </style>
 </head>
 <body>
 
-<div class="overlay" id="uploadModal">
-    <div class="modal">
-        <h3 style="margin-top:0">Import Source Code</h3>
-        <p style="color: #aaa; font-size: 13px;">Paste your full HTML file (including &lt;style&gt; and &lt;script&gt;) to begin.</p>
-        <textarea id="sourceInput" placeholder="<!DOCTYPE html>..."></textarea>
-        <div style="text-align: right;">
-            <button class="btn btn-primary" onclick="loadSource()">Start Editing</button>
-        </div>
-    </div>
-</div>
-
-<div class="app-container">
-    <div class="toolbar">
-        <div class="brand">DEVMODE <span style="font-weight:normal; color:#888;">// VISUAL EDITOR</span></div>
-        <div>
-            <span id="statusMsg" style="font-size: 12px; color: var(--success); margin-right: 15px; opacity: 0; transition: opacity 0.5s;">Changes Applied!</span>
-            <button class="btn" onclick="applyChanges()">⚡ Apply Changes</button>
-            <button class="btn btn-primary" onclick="downloadCode()">↓ Download Code</button>
+    <div class="overlay" id="uploadModal">
+        <div class="start-box">
+            <h2 style="margin-top:0; color:white;">DevMode Pro</h2>
+            <p style="color:#888; font-size:13px;">Paste your HTML/CSS/JS source code below to enter the visual editor.</p>
+            <textarea id="sourceInput" placeholder="<!DOCTYPE html>..."></textarea>
+            <div style="display:flex; justify-content:flex-end;">
+                <button class="btn btn-primary" onclick="loadSource()">Launch Editor</button>
+            </div>
         </div>
     </div>
 
-    <div class="workspace">
-        <div class="preview-area">
-            <iframe id="previewFrame"></iframe>
-        </div>
-
-        <div class="editor-panel" id="editorPanel">
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab('html')">HTML (Structure)</div>
-                <div class="tab" onclick="switchTab('css')">CSS (Style)</div>
-                <div class="tab" onclick="switchTab('js')">JS (Logic)</div>
-            </div>
-
-            <div class="code-container" id="editorContainer">
-                <textarea id="codeEditor"></textarea>
-            </div>
+    <div class="app-grid">
+        <div class="top-bar">
+            <div class="logo">DEVMODE <span style="color:#666;">PRO</span></div>
             
-            <div class="breadcrumbs" id="breadcrumbs">Select an element to edit...</div>
+            <div class="device-toggles">
+                <button class="device-btn" onclick="setDevice('mobile')">📱 Mobile</button>
+                <button class="device-btn" onclick="setDevice('tablet')">IPad / Tablet</button>
+                <button class="device-btn active" onclick="setDevice('desktop')">💻 Desktop</button>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-sec" onclick="downloadCode()">Download Code</button>
+            </div>
+        </div>
+
+        <div class="workspace">
+            <div class="preview-container">
+                <div class="iframe-wrapper desktop" id="iframeWrapper">
+                    <iframe id="previewFrame"></iframe>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <div class="popup-editor" id="popupEditor">
+        <div class="popup-header">
+            <span class="popup-title" id="targetTag">EDIT: DIV#hero</span>
+            <span class="popup-close" onclick="closePopup()">✖</span>
+        </div>
+        <div class="popup-tabs">
+            <div class="ptab active" onclick="switchTab('html')">HTML Structure</div>
+            <div class="ptab" onclick="switchTab('css')">CSS Styles</div>
+            <div class="ptab" onclick="switchTab('js')">JS Logic</div>
+        </div>
+        <div class="popup-body">
+            <textarea class="code-area" id="popupCode"></textarea>
+        </div>
+        <div class="popup-footer">
+            <button class="btn btn-primary" onclick="applyPopupChanges()">⚡ Apply Changes</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Changes Applied Successfully!</div>
 
 <script>
     // --- GLOBAL STATE ---
     let FULL_SOURCE = "";
-    let activeElementData = null;
-    let currentTab = 'html'; 
-    
-    // We store the "original snippet" for search-and-replace operations
-    let snippets = {
-        html: { original: "", start: 0, end: 0 },
-        css: { original: "", start: 0, end: 0 },
-        js: { original: "", start: 0, end: 0 }
-    };
+    let currentTab = 'html';
+    let activeData = null; // Data of element being edited
+    let snippets = { html: "", css: "", js: "" };
 
     // --- 1. INITIALIZATION ---
     function loadSource() {
         const input = document.getElementById('sourceInput').value;
         if (!input.trim()) return alert("Please paste code first.");
-        
         FULL_SOURCE = input;
         document.getElementById('uploadModal').style.display = 'none';
         renderPreview();
     }
 
-    // --- 2. RENDERER (With Advanced Inspector) ---
+    // --- 2. DEVICE SWITCHER ---
+    function setDevice(mode) {
+        const wrapper = document.getElementById('iframeWrapper');
+        const btns = document.querySelectorAll('.device-btn');
+        
+        // Update Buttons
+        btns.forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Update Wrapper Class
+        wrapper.className = `iframe-wrapper ${mode}`;
+    }
+
+    // --- 3. PREVIEW & INSPECTOR INJECTION ---
     function renderPreview() {
         const frame = document.getElementById('previewFrame');
         
         // The Inspector Script: Injected into the user's code
+        // This adds the hover effects and click-to-edit logic inside the iframe
         const inspectorScript = `
             <script>
                 let hoveredEl = null;
-                let originalOutline = '';
-                let originalCursor = '';
+                let label = null;
 
-                // 1. Hover Highlighter
+                // Create Label
+                function createLabel() {
+                    label = document.createElement('div');
+                    label.style.position = 'fixed';
+                    label.style.background = '#007acc';
+                    label.style.color = 'white';
+                    label.style.padding = '2px 6px';
+                    label.style.fontSize = '10px';
+                    label.style.borderRadius = '3px';
+                    label.style.zIndex = '999999';
+                    label.style.pointerEvents = 'none';
+                    label.style.display = 'none';
+                    label.innerText = 'Element';
+                    document.body.appendChild(label);
+                }
+                createLabel();
+
                 document.addEventListener('mouseover', (e) => {
                     e.stopPropagation();
-                    // Don't highlight the body/html to avoid clutter
                     if(e.target.tagName === 'BODY' || e.target.tagName === 'HTML') return;
 
-                    if (hoveredEl) {
-                        hoveredEl.style.outline = originalOutline;
-                        hoveredEl.style.cursor = originalCursor;
-                    }
+                    if (hoveredEl) hoveredEl.style.outline = '';
                     
                     hoveredEl = e.target;
-                    originalOutline = hoveredEl.style.outline;
-                    originalCursor = hoveredEl.style.cursor;
-
-                    // Visualize
                     hoveredEl.style.outline = '2px solid #007acc';
-                    hoveredEl.style.cursor = 'crosshair';
+                    
+                    // Update Label
+                    const rect = hoveredEl.getBoundingClientRect();
+                    label.style.display = 'block';
+                    label.style.top = (rect.top - 20) + 'px';
+                    label.style.left = rect.left + 'px';
+                    
+                    let idTxt = hoveredEl.id ? '#' + hoveredEl.id : '';
+                    let classTxt = hoveredEl.className ? '.' + hoveredEl.className.split(' ')[0] : '';
+                    label.innerText = hoveredEl.tagName.toLowerCase() + idTxt + classTxt + ' (Click to Edit)';
                 });
 
                 document.addEventListener('mouseout', (e) => {
-                   if(hoveredEl) {
-                       hoveredEl.style.outline = originalOutline;
-                       hoveredEl.style.cursor = originalCursor;
-                   }
+                    if(hoveredEl) hoveredEl.style.outline = '';
+                    label.style.display = 'none';
                 });
 
-                // 2. Click Capture
                 document.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    const target = e.target;
+                    // Clean styles before capturing
+                    e.target.style.outline = '';
+                    const hadStyle = e.target.getAttribute('style');
+                    if (!hadStyle || hadStyle.trim() === '') e.target.removeAttribute('style');
 
-                    // --- CRITICAL FIX: CLEAN BEFORE CAPTURE ---
-                    // 1. Remove the "DevMode" visual styles temporarily
-                    target.style.outline = originalOutline;
-                    target.style.cursor = originalCursor;
+                    const cleanHTML = e.target.outerHTML;
                     
-                    // 2. Remove style attribute entirely if it is now empty 
-                    // (Browsers leave style="" behind, which breaks matching)
-                    const hadStyle = target.getAttribute('style');
-                    if (!hadStyle || hadStyle.trim() === '') {
-                        target.removeAttribute('style');
-                    }
+                    // Restore outline
+                    e.target.style.outline = '2px solid #007acc';
 
-                    // 3. Capture the CLEAN HTML
-                    const cleanHTML = target.outerHTML;
-
-                    // 4. Build Path
-                    let path = [];
-                    let el = target;
-                    while (el && el.tagName) {
-                        path.unshift(el.tagName.toLowerCase() + (el.id ? '#'+el.id : '') + (el.className ? '.'+el.className.split(' ')[0] : ''));
-                        el = el.parentElement;
-                    }
-
-                    // 5. Send Data
+                    // Send data to Parent
                     window.parent.postMessage({
-                        type: 'ELEMENT_SELECTED',
-                        tagName: target.tagName.toLowerCase(),
-                        id: target.id,
-                        className: target.className,
-                        outerHTML: cleanHTML, // This is now clean
-                        path: path.join(' > ')
+                        type: 'OPEN_POPUP',
+                        tagName: e.target.tagName,
+                        id: e.target.id,
+                        className: e.target.className,
+                        outerHTML: cleanHTML
                     }, '*');
-                    
-                    // 6. Restore Visuals (So user knows what is selected)
-                    target.style.outline = '2px solid #007acc';
-                    target.style.cursor = 'crosshair';
-                }, true);
+                });
             <\/script>
         `;
         
-        // Inject script
         const blob = new Blob([FULL_SOURCE + inspectorScript], { type: 'text/html' });
         frame.src = URL.createObjectURL(blob);
     }
 
-    // --- 3. EVENT LISTENER ---
+    // --- 4. POPUP LOGIC ---
     window.addEventListener('message', (event) => {
-        if (event.data.type === 'ELEMENT_SELECTED') {
-            activeElementData = event.data;
-            updateEditorPanel(event.data);
+        if (event.data.type === 'OPEN_POPUP') {
+            openPopup(event.data);
         }
     });
 
-    // --- 4. INTELLIGENT PARSER ---
-    function updateEditorPanel(data) {
-        document.getElementById('breadcrumbs').innerText = data.path;
+    function openPopup(data) {
+        activeData = data;
+        const popup = document.getElementById('popupEditor');
+        const title = document.getElementById('targetTag');
         
-        // A. FIND HTML
-        let cleanHTML = data.outerHTML;
+        // Set Title
+        let name = data.tagName.toLowerCase();
+        if(data.id) name += `#${data.id}`;
+        else if(data.className) name += `.${data.className.split(' ')[0]}`;
+        title.innerText = `EDITING: ${name}`;
+
+        // Parse Code
+        snippets.html = data.outerHTML;
         
-        // Attempt to find this block in FULL_SOURCE. 
-        // We set this as "original" so we know what to replace later.
-        snippets.html.original = cleanHTML; 
-        
-        // B. FIND CSS
-        snippets.css.original = "/* No CSS found for this element */";
+        // CSS Parser (Regex)
+        snippets.css = "/* Add Custom CSS */";
         if (data.className) {
             const firstClass = data.className.split(' ')[0];
-            // Regex to find .classname { ... }
-            const cssRegex = new RegExp(`\\.${firstClass}\\s*\\{[\\s\\S]*?\\}`, "g");
-            const match = FULL_SOURCE.match(cssRegex);
-            if (match) {
-                snippets.css.original = match[0];
-            } else {
-                snippets.css.original = `/* Create new style */\n.${firstClass} {\n    background-color: #ffffff;\n    color: #000000;\n}`;
-            }
+            const regex = new RegExp(`\\.${firstClass}\\s*\\{[\\s\\S]*?\\}`, "g");
+            const match = FULL_SOURCE.match(regex);
+            if(match) snippets.css = match[0];
+            else snippets.css = `.${firstClass} {\n    /* New Rule */\n}`;
         } else if (data.id) {
-             const cssRegex = new RegExp(`#${data.id}\\s*\\{[\\s\\S]*?\\}`, "g");
-             const match = FULL_SOURCE.match(cssRegex);
-             if (match) snippets.css.original = match[0];
-        } else {
-             const cssRegex = new RegExp(`${data.tagName}\\s*\\{[\\s\\S]*?\\}`, "g");
-             const match = FULL_SOURCE.match(cssRegex);
-             if (match) snippets.css.original = match[0];
+            const regex = new RegExp(`#${data.id}\\s*\\{[\\s\\S]*?\\}`, "g");
+            const match = FULL_SOURCE.match(regex);
+            if(match) snippets.css = match[0];
         }
 
-        // C. FIND JS (Look for ID refs)
-        snippets.js.original = "// No direct JS references found.";
-        if (data.id) {
-            // Escape the ID for regex safety
-            const safeId = data.id.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            // Look for getElementById('id') OR getElementById("id")
-            const jsRegex = new RegExp(`.*getElementById\\(['"]${safeId}['"]\\).*`, "g");
-            const match = FULL_SOURCE.match(jsRegex);
-            if(match) snippets.js.original = match.join('\n');
+        // JS Parser
+        snippets.js = "// Global JS only (Edit specific ID logic here)";
+        if(data.id) {
+            const regex = new RegExp(`.*getElementById\\(['"]${data.id}['"]\\).*`, "g");
+            const match = FULL_SOURCE.match(regex);
+            if(match) snippets.js = match.join('\n');
         }
 
-        // Load the active tab
-        renderTabContent();
+        // Show Modal
+        switchTab('html'); // Reset to HTML tab
+        popup.classList.add('visible');
     }
 
-    function switchTab(tabName) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab')[['html','css','js'].indexOf(tabName)].classList.add('active');
-        currentTab = tabName;
-        renderTabContent();
+    function closePopup() {
+        document.getElementById('popupEditor').classList.remove('visible');
     }
 
-    function renderTabContent() {
-        const editor = document.getElementById('codeEditor');
-        if (currentTab === 'html') editor.value = snippets.html.original;
-        else if (currentTab === 'css') editor.value = snippets.css.original;
-        else if (currentTab === 'js') editor.value = snippets.js.original;
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.ptab')[['html','css','js'].indexOf(tab)].classList.add('active');
+        
+        document.getElementById('popupCode').value = snippets[tab];
     }
 
-    // --- 5. APPLY LOGIC ---
-    function applyChanges() {
-        const newCode = document.getElementById('codeEditor').value;
-        let oldCode = snippets[currentTab].original;
+    // --- 5. APPLY & SAVE LOGIC ---
+    function applyPopupChanges() {
+        const newCode = document.getElementById('popupCode').value;
+        const oldCode = snippets[currentTab]; // What it was when we opened the popup
 
-        // If CSS new style creation
-        if (currentTab === 'css' && oldCode.includes("/* No CSS found")) {
-            if(FULL_SOURCE.includes('</style>')) {
-                FULL_SOURCE = FULL_SOURCE.replace('</style>', `\n${newCode}\n</style>`);
-            } else {
-                FULL_SOURCE = FULL_SOURCE.replace('</head>', `<style>\n${newCode}\n</style>\n</head>`);
-            }
-        } 
-        // Standard Replacement
-        else {
-            // 1. Try exact match
-            if (FULL_SOURCE.includes(oldCode)) {
+        // Logic to replace in FULL_SOURCE
+        if(currentTab === 'html') {
+            // Safe Replace
+            if(FULL_SOURCE.includes(oldCode)) {
                 FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
-            } 
-            // 2. Fallback: Try matching quote variations (Single vs Double)
-            else {
-                // If the browser normalized <div id='x'> to <div id="x">, we swap quotes to find the match
-                const altOldCode = oldCode.includes('"') 
-                    ? oldCode.replace(/"/g, "'") 
-                    : oldCode.replace(/'/g, '"');
-
-                if (FULL_SOURCE.includes(altOldCode)) {
-                    FULL_SOURCE = FULL_SOURCE.replace(altOldCode, newCode);
-                } else {
-                    console.log("Failed to find:", oldCode);
-                    alert("Exact match lost.\n\nReason: The browser reformatted the HTML (e.g., changed ' to \").\n\nTip: Try editing a smaller portion of text or adding a unique ID to the element.");
-                    return;
-                }
+            } else {
+                // If browser changed quotes, try loose match
+                const looseOld = oldCode.replace(/"/g, "'");
+                if(FULL_SOURCE.includes(looseOld)) FULL_SOURCE = FULL_SOURCE.replace(looseOld, newCode);
+                else alert("Could not find exact code match. The DOM might have shifted.");
             }
+            snippets.html = newCode;
+        } 
+        else if (currentTab === 'css') {
+            if(oldCode.includes("/* Add Custom CSS */") || !FULL_SOURCE.includes(oldCode)) {
+                // Append new style if not found
+                 FULL_SOURCE = FULL_SOURCE.replace('</style>', `\n${newCode}\n</style>`);
+            } else {
+                FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
+            }
+            snippets.css = newCode;
+        }
+        else if (currentTab === 'js') {
+            if(FULL_SOURCE.includes(oldCode)) FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
+            snippets.js = newCode;
         }
 
-        // Update the 'original' memory
-        snippets[currentTab].original = newCode;
-
-        // Visual Feedback
-        const status = document.getElementById('statusMsg');
-        status.style.opacity = '1';
-        setTimeout(() => status.style.opacity = '0', 2000);
-
+        // Refresh
         renderPreview();
+        showToast();
+        // Keep popup open for rapid editing, or close it:
+        // closePopup(); 
+    }
+
+    function showToast() {
+        const t = document.getElementById('toast');
+        t.style.opacity = '1';
+        t.style.transform = 'translateY(0)';
+        setTimeout(() => {
+            t.style.opacity = '0';
+            t.style.transform = 'translateY(20px)';
+        }, 2000);
     }
 
     function downloadCode() {
         const blob = new Blob([FULL_SOURCE], {type: "text/html"});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = "advanced_edit.html";
+        a.download = "devmode_export.html";
         a.click();
     }
 </script>
