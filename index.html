@@ -1,650 +1,391 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
 <head>
-    <meta charset='UTF-8'/>
-    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>JKM Edit - Free Online PDF, Image, Web & File Tools</title>
-    <meta name="description" content="JKM Edit: Your ultimate free online toolkit. Edit PDFs, convert images, manage files, use accounting and web tools, generate codes, and more. Secure, fast, and no installation needed."/>
-    <meta name="author" content="JKM Edit"/>
-    <meta name="robots" content="index, follow"/>
-    <link rel="canonical" href="https://jkmpdf.github.io/JKMEDIT/"/>
-    <link rel="icon" type="image/png" href="assets/jkm-edit-logo.png">
-
-    <!-- Performance: Preconnect to Font Origins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <script src="https://cmp.gatekeeperconsent.com/min.js" data-cfasync="false"></script>
-<script src="https://the.gatekeeperconsent.com/cmp.min.js" data-cfasync="false"></script>
-
-    <script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
-<script>
-    window.ezstandalone = window.ezstandalone || {};
-    ezstandalone.cmd = ezstandalone.cmd || [];
-</script>
-
-<div id="ezoic-pub-ad-placeholder-102"></div>
-<script>
-    ezstandalone.cmd.push(function() {
-        ezstandalone.showAds(102);
-    });
-</script>
-    
-    <!-- Async Ads -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
-
-    <!-- Pre-load theme script (Blocking but tiny, necessary to prevent flash) -->
-    <script>
-        (function() {
-            try {
-                if (localStorage.getItem('jkm-edit-mode') === 'dark') {
-                    document.documentElement.classList.add('dark-mode');
-                }
-            } catch (e) {}
-        })();
-    </script>
-
-    <!-- Fonts: Display Swap for FCP -->
-    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap' rel='stylesheet'/>
-    
-    <!-- Icons: Load non-blocking -->
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet' media="print" onload="this.media='all'"/>
-    <noscript><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'></noscript>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevMode Pro: Fixed Version</title>
     <style>
+        /* --- CORE THEME --- */
         :root {
-            font-family: 'Poppins', sans-serif;
-            --sidebar-width: 280px;
-            --transition-speed: 0.25s;
-        }
-        html {
-            --primary-color: #0052cc; --bg-color: #f4f5f7; --surface-color: #ffffff;
-            --text-color: #172b4d; --text-secondary-color: #6b778c; --border-color: #dfe1e6;
-            --primary-faded-color: #e6efff; --shadow-color: rgba(0, 0, 0, 0.1);
-            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff);
-            --accent-color: #ccc;
-        }
-        html.dark-mode {
-            --primary-color: #4c9aff; --bg-color: #0d1117; --surface-color: #161b22;
-            --text-color: #c9d1d9; --text-secondary-color: #8b949e; --border-color: #30363d;
-            --primary-faded-color: #1f2d47; --shadow-color: rgba(0, 0, 0, 0.3);
-            --accent-color: #444;
+            --bg-root: #1e1e1e;
+            --bg-sidebar: #252526;
+            --bg-activity: #333333;
+            --border: #3e3e42;
+            --accent: #007acc;
+            --accent-hover: #0062a3;
+            --text-main: #cccccc;
+            --text-white: #ffffff;
         }
 
-        /* Layout */
-        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); }
-        *, *::before, *::after { box-sizing: border-box; }
-        #app-container { display: grid; grid-template-columns: var(--sidebar-width) 1fr; height: 100vh; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; background: var(--bg-root); color: var(--text-main); overflow: hidden; }
 
-        /* Sidebar */
-        #static-sidebar {
-            background-color: var(--surface-color); border-right: 1px solid var(--border-color);
-            z-index: 1000; transition: transform var(--transition-speed) ease-in-out;
-            display: flex; flex-direction: column; height: 100vh;
-        }
-        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
-        .logo-container { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; }
-        .site-logo { height: 2.5rem; width: auto; }
-        .logo-container h1 { font-size: 1.75rem; font-weight: 700; margin: 0; }
-
-        .sidebar-nav-container { flex-grow: 1; overflow-y: auto; padding: 1rem 0; }
-        .sidebar-nav { list-style: none; padding: 0 1rem; margin: 0; }
-        .sidebar-nav-item { position: relative; margin-bottom: 0.25rem; }
-        .sidebar-nav-link {
-            display: flex; align-items: center; justify-content: space-between; gap: 0.85rem; padding: 0.8rem 1rem;
-            border-radius: 8px; font-weight: 500; font-size: 0.95rem; color: var(--text-secondary-color);
-            text-decoration: none; transition: all 0.2s; border-left: 3px solid transparent; cursor: pointer;
-        }
-        .sidebar-nav-link .link-content { display: flex; align-items: center; gap: 0.85rem; }
-        .sidebar-nav-link i { width: 20px; text-align: center; font-size: 1.1em; }
-        .sidebar-nav-link:hover { color: var(--text-color); background-color: var(--primary-faded-color); }
-        .sidebar-nav-link.active {
-            color: var(--primary-color); background-color: var(--primary-faded-color);
-            border-left: 3px solid var(--primary-color); font-weight: 600;
-        }
-
-        /* Sidebar Footer */
-        .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); flex-shrink: 0; }
-        .sidebar-footer-controls { display: flex; justify-content: space-around; align-items: center; }
-        .footer-btn {
-            background: none; border: none; color: var(--text-secondary-color); font-size: 1.25rem; cursor: pointer; padding: 0.5rem;
-            border-radius: 50%; width: 40px; height: 40px; line-height: 1; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
-        }
-        .footer-btn:hover { color: var(--primary-color); background-color: var(--primary-faded-color); }
-        #dark-mode-toggle .fa-sun { display: none; }
-        html.dark-mode #dark-mode-toggle .fa-sun { display: inline-block; }
-        html.dark-mode #dark-mode-toggle .fa-moon { display: none; }
-
-        /* Main Content */
-        #main-content { position: relative; height: 100vh; overflow-y: auto; scroll-behavior: smooth; display: flex; flex-direction: column; }
-        #menu-toggle {
-            display: none; position: fixed; top: 15px; left: 15px; z-index: 1001; background: var(--surface-color); border: 1px solid var(--border-color);
-            border-radius: 8px; width: 40px; height: 40px; font-size: 1.2rem; box-shadow: 0 4px 10px var(--shadow-color);
-        }
-
-        /* Flyout & Submenus */
-        #sidebar-flyout-menu {
-            display: none; position: fixed; background-color: var(--surface-color); box-shadow: 0 10px 30px var(--shadow-color);
-            border-radius: 8px; min-width: 250px; z-index: 2000; padding: 0.5rem; border: 1px solid var(--border-color);
-            max-height: 450px; overflow-y: auto; opacity: 0; transform: scale(0.95); transition: opacity 0.15s ease-out, transform 0.15s ease-out;
-        }
-        #sidebar-flyout-menu.is-visible { display: block; opacity: 1; transform: scale(1); }
-        #sidebar-flyout-menu a {
-            display: block; padding: 0.6rem 1rem; color: var(--text-secondary-color); text-decoration: none; border-radius: 5px; font-size: 0.9rem; transition: all 0.2s;
-        }
-        #sidebar-flyout-menu a:hover { background-color: var(--primary-faded-color); color: var(--primary-color); }
+        /* --- LAYOUT GRID --- */
+        .app-grid { display: grid; grid-template-rows: 40px 1fr; height: 100vh; }
         
-        .sidebar-accordion-submenu { display: none; max-height: 450px; overflow-y: auto; border-left: 1px solid var(--border-color); margin: 0.5rem 0 0.5rem 1.7rem; padding-left: 1rem; }
-        .sidebar-accordion-submenu a { display: block; padding: 0.5rem 0; color: var(--text-secondary-color); text-decoration: none; font-size: 0.9rem; transition: all 0.2s; }
-        .sidebar-accordion-submenu a:hover { color: var(--primary-color); }
-        .sidebar-nav-link .chevron { transition: transform var(--transition-speed); }
-        .sidebar-nav-item.is-open > .sidebar-nav-link .chevron { transform: rotate(90deg); }
-
-        /* Modals (Shared Style) */
-        .modal {
-            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
-            align-items: center; justify-content: center;
+        /* 1. TOP BAR */
+        .top-bar {
+            background: var(--bg-activity);
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 15px;
         }
-        .modal-content {
-            background-color: var(--surface-color); padding: 30px; border-top: 5px solid var(--primary-color);
-            border-radius: 8px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative;
-        }
-        .close-btn {
-            color: #aaa; position: absolute; top: 10px; right: 20px;
-            font-size: 28px; font-weight: bold; cursor: pointer;
-        }
-        .modal-content h2 { margin-top: 0; color: var(--primary-color); }
-        .modal-text-body { font-size: 0.95rem; line-height: 1.6; color: var(--text-color); text-align: left; }
-        .modal-text-body h3 { margin-top: 1.5rem; font-size: 1.1rem; color: var(--text-color); }
-
-        /* Dashboard Styles */
-        .content-wrapper { padding: 2rem 4rem; max-width: 1400px; margin: auto; }
-        .dashboard-header { text-align: center; margin-bottom: 3rem; }
-        .dashboard-header h2 { font-size: 2.5rem; margin-bottom: .5rem; margin-top: 0; }
-        .dashboard-header p { font-size: 1.1rem; color: var(--text-secondary-color); }
+        .logo { font-weight: 700; color: var(--accent); letter-spacing: 1px; font-size: 14px; }
         
-        /* Tools Grid - Explicit 3 columns to match 3 ads row requirement on desktop */
-        .tools-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 2rem; 
+        /* Device Toggles */
+        .device-toggles { display: flex; gap: 5px; background: #252526; padding: 3px; border-radius: 4px; }
+        .device-btn {
+            background: transparent; border: none; color: #858585; padding: 5px 10px; cursor: pointer; border-radius: 3px; transition: 0.2s;
+        }
+        .device-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+        .device-btn.active { color: white; background: var(--accent); }
+        
+        /* Actions */
+        .actions { display: flex; gap: 10px; }
+        .btn { padding: 5px 15px; font-size: 12px; border-radius: 2px; cursor: pointer; border: 1px solid transparent; color: white; }
+        .btn-primary { background: var(--accent); }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-sec { background: #3c3c3c; }
+
+        /* 2. WORKSPACE */
+        .workspace { display: flex; position: relative; height: 100%; overflow: hidden; background: #121212; }
+
+        .preview-container {
+            flex: 1; display: flex; justify-content: center; align-items: flex-start;
+            padding-top: 30px; overflow: auto;
+            background-image: radial-gradient(#333 1px, transparent 1px); background-size: 20px 20px;
+        }
+
+        .iframe-wrapper {
+            background: white; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; position: relative;
         }
         
-        .tool-card {
-            display: flex; flex-direction: column; justify-content: center; background: var(--surface-color);
-            border-radius: 10px; padding: 2rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,.05);
-            border-bottom: 4px solid var(--primary-color); transition: transform .3s, box-shadow .3s;
-            text-decoration: none; color: var(--text-color); min-height: 250px;
-        }
-        .tool-card:hover { transform: translateY(-10px); box-shadow: 0 10px 25px rgba(0,0,0,.1); }
-        .tool-icon { font-size: 3rem; margin-bottom: 1rem; background-image: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-        .tool-card h3 { margin: .5rem 0; font-size: 1.5rem; }
-        .tool-card p { font-size: .9rem; line-height: 1.5; color: var(--text-secondary-color); }
-        
-        .ad-card { border: 2px dashed var(--accent-color); background-color: color-mix(in srgb,var(--surface-color) 95%,var(--accent-color) 5%); align-items: center; }
-        html.dark-mode .ad-card { background-color: color-mix(in srgb,var(--surface-color) 90%,var(--accent-color) 10%); }
-        .ad-placeholder-text { color: var(--text-color); opacity: .6; font-style: italic; }
+        .iframe-wrapper.desktop { width: 100%; height: 100%; border-radius: 0; }
+        .iframe-wrapper.tablet { width: 768px; height: 1024px; border: 10px solid #333; border-radius: 15px; }
+        .iframe-wrapper.mobile { width: 375px; height: 812px; border: 10px solid #333; border-bottom: 30px solid #333; border-radius: 25px; }
 
-        .services-section { padding: 4rem 2rem; background-color: var(--surface-color); margin-top: 4rem; }
-        .services-container { max-width: 1100px; margin: auto; text-align: center; }
-        .services-container h2 { font-size: 2.2rem; margin-bottom: .5rem; color: var(--primary-color); }
-        .services-container > p { font-size: 1.1rem; color: var(--text-secondary-color); margin-bottom: 3rem; }
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; text-align: left; }
-        .service-item { display: flex; align-items: flex-start; gap: 1rem; }
-        .service-item i { font-size: 1.5rem; color: var(--primary-color); margin-top: 5px; min-width: 25px; }
-        .service-item h4 { margin: 0 0 .25rem; font-size: 1.1rem; }
-        .service-item p { margin: 0; font-size: .9rem; color: var(--text-secondary-color); }
+        iframe { width: 100%; height: 100%; border: none; background: white; display: block; }
 
-        .image-gallery-section { padding: 4rem 2rem; background-color: var(--bg-color); text-align: center; }
-        .image-gallery-section h2 { font-size: 2.2rem; margin-bottom: 2rem; color: var(--primary-color); }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
-        .gallery-item { background-color: var(--surface-color); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,.05); }
-        .gallery-item img, .gallery-item video { width: 100%; height: 150px; object-fit: cover; display: block; }
-        .gallery-item h4 { margin: 1rem; font-size: 1.2rem; color: var(--text-color); }
-
-        /* --- DETAILED LIST & FOOTER --- */
-        .all-tools-description { padding: 4rem 2rem; background-color: var(--surface-color); }
-        .all-tools-container { max-width: 1200px; margin: auto; }
-        .tool-category-group { margin-bottom: 4rem; }
-        .tool-category-header { font-size: 2rem; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 2rem; }
-        .tool-list-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-        .tool-description-card { background: var(--bg-color); padding: 1.5rem; border-radius: 8px; transition: 0.3s; border: 1px solid var(--border-color); }
-        .tool-description-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px var(--shadow-color); border-color: var(--primary-color); }
-        .tool-description-card h4 { margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--text-color); }
-        .tool-description-card p { font-size: 0.9rem; color: var(--text-secondary-color); margin: 0; line-height: 1.5; }
-
-        .site-footer { background-color: var(--surface-color); border-top: 1px solid var(--border-color); padding: 3rem 2rem; margin-top: auto; }
-        .footer-content { max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
-        .footer-links { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; }
-        .footer-link { background: none; border: none; color: var(--text-secondary-color); font-size: 1rem; font-weight: 500; font-family: 'Poppins', sans-serif; cursor: pointer; text-decoration: none; transition: color 0.2s; }
-        .footer-link:hover { color: var(--primary-color); }
-        .footer-copy { font-size: 0.9rem; color: var(--text-secondary-color); opacity: 0.8; }
-
-        /* Responsive Grid Adjustments */
-        @media (max-width: 1100px) {
-            .tools-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 1024px) {
-            #app-container { grid-template-columns: 1fr; }
-            #static-sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100%; transform: translateX(-100%); box-shadow: 5px 0 25px var(--shadow-color); }
-            #app-container.sidebar-open #static-sidebar { transform: translateX(0); }
-            #menu-toggle { display: block; }
-            .sidebar-nav-item.is-open > .sidebar-accordion-submenu { display: block; }
-            .content-wrapper { padding: 2rem 1.5rem; }
-        }
-        @media (min-width: 1025px) { .sidebar-nav-link .chevron { display: none; } }
-
-        @media (max-width: 768px) {
-            .tools-grid { grid-template-columns: 1fr; }
-            .gallery-grid { display: flex; overflow-x: auto; grid-template-columns: none; gap: 0; scrollbar-width: none; -ms-overflow-style: none; }
-            .gallery-grid::-webkit-scrollbar { display: none; }
-            .gallery-item { flex: 0 0 80%; margin-right: 1rem; }
-            .gallery-item:last-child { margin-right: 0; }
-            .footer-links { gap: 1rem; }
-        }
-            /* --- FIX FOR MOBILE SIDEBAR ITEMS --- */
-    @media (max-width: 1024px) {
-        /* 1. Remove the height limit on mobile submenus so they expand fully */
-        .sidebar-accordion-submenu {
-            max-height: none !important;
-            overflow-y: visible !important;
+        /* --- 3. POPUP EDITOR --- */
+        .popup-editor {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            width: 600px; height: 450px; background: var(--bg-sidebar); border: 1px solid var(--accent);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7); z-index: 2000;
+            display: none; flex-direction: column; border-radius: 6px; opacity: 0; transition: all 0.2s ease;
         }
 
-        /* 2. Fix the sidebar height to fit actual mobile screen (prevents cut-off at bottom) */
-        #static-sidebar {
-            height: 100dvh; /* Dynamic Viewport Height */
-        }
+        .popup-editor.visible { transform: translate(-50%, -50%) scale(1); opacity: 1; display: flex; }
 
-        /* 3. Add extra padding at the bottom of the list so the last item isn't hidden behind the footer */
-        .sidebar-nav-container {
-            padding-bottom: 50px;
+        .popup-header {
+            padding: 10px 15px; background: #333; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; cursor: grab;
         }
-    }
-        
+        .popup-header:active { cursor: grabbing; }
+
+        .popup-tabs { display: flex; background: #252526; border-bottom: 1px solid var(--border); }
+        .ptab { padding: 8px 15px; font-size: 12px; cursor: pointer; color: #888; border-right: 1px solid var(--border); background: #2d2d2d; }
+        .ptab.active { background: #1e1e1e; color: var(--accent); border-top: 2px solid var(--accent); }
+
+        .popup-body { flex: 1; position: relative; background: #1e1e1e; }
+        .code-area { width: 100%; height: 100%; background: #1e1e1e; color: #9cdcfe; border: none; padding: 15px; font-family: 'Consolas', monospace; font-size: 13px; resize: none; outline: none; box-sizing: border-box; }
+
+        .popup-footer { padding: 10px; border-top: 1px solid var(--border); text-align: right; background: #252526; }
+
+        /* --- 4. STARTUP MODAL --- */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center;
+        }
+        .start-box { width: 600px; background: #252526; padding: 30px; border: 1px solid var(--border); border-radius: 8px; }
+        .start-box h2 { margin-top: 0; color: white; }
+        .start-box textarea { width: 100%; height: 200px; background: #1e1e1e; border: 1px solid #333; color: white; padding: 15px; margin: 15px 0; font-family: monospace; resize: vertical; }
+        .char-count { font-size: 11px; color: #666; text-align: right; margin-bottom: 10px; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white;
+            padding: 10px 20px; border-radius: 4px; opacity: 0; transform: translateY(20px); transition: 0.3s; z-index: 3000;
+        }
     </style>
 </head>
 <body>
 
-<div id="app-container">
-    <!-- Sidebar -->
-    <aside id="static-sidebar">
-        <div class="sidebar-header">
-            <a href="index.html" class='logo-container'>
-                <img src='assets/jkm-edit-logo.png' alt='JKM Edit Logo' class='site-logo' width="150" height="50">
-                <h1>JKM Edit</h1>
-            </a>
-        </div>
-        <div class="sidebar-nav-container">
-            <ul class='sidebar-nav' id="sidebar-nav-list">
-                <!-- Navigation inserted via JS -->
-            </ul>
-        </div>
-        <div class="sidebar-footer">
-            <div class="sidebar-footer-controls">
-                <button id='about-btn' class='footer-btn' aria-label="About"><i class="fa-solid fa-circle-info"></i></button>
-                <button id='contact-btn' class='footer-btn' aria-label="Contact Us"><i class="fa-solid fa-envelope"></i></button>
-                <button id='dark-mode-toggle' class='footer-btn' aria-label="Toggle Dark Mode">
-                    <i class='fa-solid fa-moon'></i><i class='fa-solid fa-sun'></i>
-                </button>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Main content area -->
-    <main id="main-content">
-        <button id="menu-toggle" aria-label="Open Menu"><i class="fa-solid fa-bars"></i></button>
-        
-        <!-- STATIC CONTENT -->
-        <div class='content-wrapper'>
-            <div class='dashboard-header'>
-                <h2>Your All-in-One Online Toolkit</h2>
-                <p>Select a tool category from the sidebar or explore our functions below.</p>
-            </div>
+    <div class="overlay" id="uploadModal">
+        <div class="start-box">
+            <h2>DevMode Pro <span style="font-size:12px; font-weight:normal; color:#888;">v2.1</span></h2>
+            <p style="color:#aaa; font-size:13px;">Paste your full HTML (including style/script) below.</p>
             
-            <!-- ROW 1: 3 TOOLS -->
-            <div class='tools-grid'>
-                <a href='tools/pdf-tools.html' class='tool-card'><i class='fa-solid fa-file-pdf tool-icon'></i><h3>PDF Tools</h3><p>Merge, split, compress, and convert your PDF files with ease.</p></a>
-                <a href='tools/image-tools.html' class='tool-card'><i class='fa-solid fa-image tool-icon'></i><h3>Image Tools</h3><p>Crop, resize, compress, and convert images in various formats.</p></a>
-                <a href='https://jkmpdf.github.io/ACCT/' target='_blank' class='tool-card'><i class='fa-solid fa-file-invoice-dollar tool-icon'></i><h3>Accounting Software</h3><p>Calculate loans, taxes, and investments for financial planning.</p></a>
-                
-                <!-- ROW 2: 3 ADS -->
-                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
-                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
-                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
+            <textarea id="sourceInput" placeholder="<!DOCTYPE html>..." oninput="updateCount()"></textarea>
+            <div class="char-count" id="charCount">0 characters detected</div>
 
-                <!-- ROW 3: 3 TOOLS -->
-                <a href='tools/file-tools.html' class='tool-card'><i class='fa-solid fa-folder-open tool-icon'></i><h3>File Tools</h3><p>Compress, convert, and manage various file types securely.</p></a>
-                <a href='tools/code-generators.html' class='tool-card'><i class='fa-solid fa-qrcode tool-icon'></i><h3>Code Generators</h3><p>Create QR codes, barcodes, passwords, and other data snippets.</p></a>
-                <a href='tools/time-date.html' class='tool-card'><i class='fa-solid fa-clock tool-icon'></i><h3>Time & Date Tools</h3><p>Convert timezones, use timers, and calculate date durations.</p></a>
-                
-                <!-- ROW 4: 3 ADS -->
-                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
-                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
-                <div class='tool-card ad-card'><span class="ad-placeholder-text">Advertisement<br>(300x250)</span></div>
-
-                <!-- ROW 5: 3 TOOLS -->
-                <a href='tools/unit-converters.html' class='tool-card'><i class='fa-solid fa-exchange-alt tool-icon'></i><h3>Unit Convertor</h3><p>Convert units of length, weight, temperature, and more.</p></a>
-                <a href='tools/web-tools.html' class='tool-card'><i class='fa-solid fa-palette tool-icon'></i><h3>Web & UI Tools</h3><p>Tools for developers like minifiers, color pickers, and encoders.</p></a>
-                <a href='tools/utilities.html' class='tool-card'><i class='fa-solid fa-screwdriver-wrench tool-icon'></i><h3>Utilities Tools</h3><p>A collection of helpful utilities for various daily tasks.</p></a>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <button class="btn btn-sec" onclick="loadDemo()">Use Sample Code</button>
+                <button class="btn btn-primary" onclick="loadSource()">Launch Editor</button>
             </div>
-        </div>
-
-        <section class='services-section'>
-            <div class='services-container'>
-                <h2>A Full Suite of Powerful Tools</h2>
-                <p>JKM Edit provides everything you need in one place. Fast, secure, and always free.</p>
-                <div class='services-grid'>
-                    <div class='service-item'><i class='fa-solid fa-shield-halved'></i><div><h4>Secure & Private</h4><p>Your files are processed securely and deleted from our servers automatically.</p></div></div>
-                    <div class='service-item'><i class='fa-solid fa-bolt-lightning'></i><div><h4>Blazing Fast</h4><p>Our tools are optimized for speed, so you can get your work done quickly.</p></div></div>
-                    <div class='service-item'><i class='fa-solid fa-cloud'></i><div><h4>Cloud-Based</h4><p>No installation needed. Access all tools directly from your web browser.</p></div></div>
-                    <div class='service-item'><i class='fa-solid fa-mobile-screen-button'></i><div><h4>Works Everywhere</h4><p>JKM Edit is fully responsive and works on desktop, tablet, and mobile devices.</p></div></div>
-                </div>
-            </div>
-        </section>
-
-        <section class='image-gallery-section'>
-            <h2>Make your Work Superfast</h2>
-            <div class='gallery-grid'>
-                <div class='gallery-item'><img src='assets/Tool1.jpg' loading="lazy" alt='Photo 1'><h4>Make It Easy</h4></div>
-                <div class='gallery-item'>
-                    <video autoplay loop muted playsinline>
-                        <source src="assets/Vid1.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <h4>JKMEDIT.IN</h4>
-                </div>
-                <div class='gallery-item'><img src='assets/Tool2.jpg' loading="lazy" alt='Photo 3'><h4>Using AI</h4></div>
-            </div>
-        </section>
-
-        <!-- NEW DETAILED FUNCTIONS LIST (With Headers in between) -->
-        <section class="all-tools-description">
-            <div class="all-tools-container" id="all-functions-container">
-                <!-- Content injected by JS -->
-            </div>
-        </section>
-
-        <!-- FOOTER -->
-        <footer class="site-footer">
-            <div class="footer-content">
-                <div class="footer-links">
-                    <button id="footer-privacy-btn" class="footer-link">Privacy Policy</button>
-                    <button id="footer-terms-btn" class="footer-link">Terms & Conditions</button>
-                    <button id="footer-about-btn" class="footer-link">About</button>
-                    <button id="footer-contact-btn" class="footer-link">Contact Us</button>
-                </div>
-                <div class="footer-copy">
-                    &copy; <span id="year"></span> JKM Edit. All rights reserved.
-                </div>
-            </div>
-        </footer>
-
-    </main>
-</div>
-
-<!-- Flyout menu -->
-<div id="sidebar-flyout-menu"></div>
-
-<!-- Modals -->
-<div id='about-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>About JKM Edit</h2><p>JKM Edit is your all-in-one solution for online file manipulation, conversion, and utility tools. Our mission is to provide fast, free, and secure tools that are accessible to everyone, everywhere.</p></div></div>
-<div id='contact-modal' class='modal'><div class='modal-content'><span class='close-btn'>&times;</span><h2>Contact Us</h2><p>For any questions or feedback, please email us at:</p><a href='mailto:Mpurohit2414@gmail.com' class='contact-email' style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gradient); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; transition: transform 0.2s;">Mpurohit2414@gmail.com</a></div></div>
-
-<!-- Privacy Policy Modal (AdSense Compliant) -->
-<div id='privacy-modal' class='modal'>
-    <div class='modal-content'>
-        <span class='close-btn'>&times;</span>
-        <h2>Privacy Policy</h2>
-        <div class="modal-text-body">
-            <p>At JKM Edit, accessible from https://jkmedit.in/, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by JKM Edit and how we use it.</p>
-            <h3>Log Files</h3>
-            <p>JKM Edit follows a standard procedure of using log files. These files log visitors when they visit websites. The information collected by log files includes internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, and referring/exit pages.</p>
-            <h3>Cookies and Web Beacons</h3>
-            <p>Like any other website, JKM Edit uses 'cookies'. These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited.</p>
-            <h3>Google DoubleClick DART Cookie</h3>
-            <p>Google is one of a third-party vendor on our site. It also uses cookies, known as DART cookies, to serve ads to our site visitors based upon their visit to www.website.com and other sites on the internet.</p>
-            <h3>Privacy Policies</h3>
-            <p>Third-party ad servers or ad networks uses technologies like cookies, JavaScript, or Web Beacons that are used in their respective advertisements and links that appear on JKM Edit, which are sent directly to users' browser.</p>
         </div>
     </div>
-</div>
 
-<!-- Terms Modal -->
-<div id='terms-modal' class='modal'>
-    <div class='modal-content'>
-        <span class='close-btn'>&times;</span>
-        <h2>Terms & Conditions</h2>
-        <div class="modal-text-body">
-            <h3>Welcome to JKM Edit!</h3>
-            <p>These terms and conditions outline the rules and regulations for the use of JKM Edit's Website.</p>
-            <h3>License</h3>
-            <p>Unless otherwise stated, JKM Edit and/or its licensors own the intellectual property rights for all material on JKM Edit. All intellectual property rights are reserved. You may access this from JKM Edit for your own personal use subjected to restrictions set in these terms and conditions.</p>
-            <h3>Disclaimers</h3>
-            <p>The materials on JKM Edit's website are provided on an 'as is' basis. JKM Edit makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
+    <div class="app-grid">
+        <div class="top-bar">
+            <div class="logo">DEVMODE <span style="color:#666;">PRO</span></div>
+            <div class="device-toggles">
+                <button class="device-btn" onclick="setDevice('mobile')">📱 Mobile</button>
+                <button class="device-btn" onclick="setDevice('tablet')">Tablet</button>
+                <button class="device-btn active" onclick="setDevice('desktop')">💻 Desktop</button>
+            </div>
+            <div class="actions">
+                <button class="btn btn-sec" onclick="downloadCode()">↓ Download</button>
+            </div>
+        </div>
+
+        <div class="workspace">
+            <div class="preview-container">
+                <div class="iframe-wrapper desktop" id="iframeWrapper">
+                    <iframe id="previewFrame"></iframe>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <div class="popup-editor" id="popupEditor">
+        <div class="popup-header" id="dragHeader">
+            <span style="color:white; font-weight:bold; font-size:13px;" id="targetTag">ELEMENT</span>
+            <span style="cursor:pointer; color:#aaa;" onclick="closePopup()">✖</span>
+        </div>
+        <div class="popup-tabs">
+            <div class="ptab active" onclick="switchTab('html')">HTML</div>
+            <div class="ptab" onclick="switchTab('css')">CSS</div>
+            <div class="ptab" onclick="switchTab('js')">JS</div>
+        </div>
+        <div class="popup-body">
+            <textarea class="code-area" id="popupCode"></textarea>
+        </div>
+        <div class="popup-footer">
+            <button class="btn btn-primary" onclick="applyPopupChanges()">⚡ Apply Changes</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Changes Applied!</div>
 
 <script>
-const navData = [
-    { name: "PDF Tools", icon: "fa-file-pdf", link: "tools/pdf-tools.html", sub: [
-        { name: "Merge PDF", link: "tools/pdf-tools/merge-pdf.html" }, { name: "Split PDF", link: "tools/pdf-tools/split-pdf.html" }, { name: "Compress PDF", link: "tools/pdf-tools/compress-pdf.html" },
-        { name: "PDF to WORD", link: "tools/pdf-tools/pdf-to-word.html" }, { name: "Add Watermark", link: "tools/pdf-tools/Watermark.html" }, { name: "View PDF", link: "tools/pdf-tools/View-PDF.html" },
-        { name: "PDF to JPG/PNG", link: "tools/pdf-tools/pdf-to-image.html" }, { name: "JPG/PNG to PDF", link: "tools/pdf-tools/PNG-to-pdf.html" }, { name: "Dark Mode", link: "tools/pdf-tools/Dark-Mode.html" },
-        { name: "PDF Auto Scroll", link: "tools/pdf-tools/PDF-auto.html" }, { name: "PDF Notepad", link: "tools/pdf-tools/PDF-Notepad.html" }, { name: "Sign PDF", link: "tools/pdf-tools/sign-pdf.html" }, { name: "Add page number", link: "tools/pdf-tools/add-page-number.html" },
-        { name: "Rotate PDF", link: "tools/pdf-tools/rotate-pdf.html" }, { name: "Protect PDF", link: "tools/pdf-tools/protect-pdf.html" }
-    ]},
-    { name: "Image Tools", icon: "fa-image", link: "tools/image-tools.html", sub: [
-        { name: "Image Cropper", link: "tools/image-tools/Img-crop.html" }, { name: "Image Resizer", link: "tools/image-tools/image-resizer.html" }, { name: "JPG/PNG Converter", link: "tools/image-tools/Jpg-Png.html" },
-        { name: "Background Remover", link: "tools/image-tools/BG-remove.html" }, { name: "Grayscale Filter", link: "tools/image-tools/grayscale-filter.html" }, { name: "Rotate & Flip", link: "tools/image-tools/rotate-flip.html" },
-        { name: "Color Picker/Inverter", link: "tools/image-tools/Color-Picker.html" }, { name: "Brightness/Contrast Adjuster", link: "tools/image-tools/brightness-contrast.html" },
-        { name: "Add Text Overlay", link: "tools/image-tools/add-text.html" }, { name: "EXIF Data Viewer", link: "tools/image-tools/exif-viewer.html" }
-    ]},
-    { name: "Accounting", icon: "fa-calculator", link: "https://jkmpdf.github.io/ACCT/", target: "_blank", sub: [
-        { name: "Accounting Software", link: "https://jkmpdf.github.io/ACCT/", target: "_blank" }
-    ]},
-    { name: "File Tools", icon: "fa-folder-open", link: "tools/file-tools.html", sub: [
-        { name: "CSV to JSON Converter", link: "tools/file-tools/csv-to-json.html" }, { name: "JSON Formatter/Minifier", link: "tools/file-tools/json-formatter.html" },
-        { name: "Base64 Encoder/Decoder", link: "tools/file-tools/base64-tool.html" }, { name: "Text Case Converter", link: "tools/file-tools/Text-Case-Converter.html" },
-        { name: "Remove Duplicate Lines", link: "tools/file-tools/remove-duplicates.html" }, { name: "Find/Replace in Text", link: "tools/file-tools/find-replace.html" },
-        { name: "Calculate Text Hash (SHA-256)", link: "tools/file-tools/hash-calculator.html" }, { name: "File Reader/Viewer", link: "tools/file-tools/file-viewer.html" },
-        { name: "Line Sorter", link: "tools/file-tools/line-sorter.html" }, { name: "File Splitter (By Size)", link: "tools/file-tools/file-splitter.html" }
-    ]},
-    { name: "Code Generators", icon: "fa-qrcode", link: "tools/code-generators.html", sub: [
-        { name: "QR Code Generator", link: "tools/code-generators/Qr-Code.html" }, { name: "Barcode Generator", link: "tools/code-generators/barcode-generator.html" }, { name: "Password Generator", link: "tools/code-generators/password-generator.html" },
-        { name: "UUID/GUID Generator", link: "tools/code-generators/uuid-generator.html" }, { name: "Color Palette Generator", link: "tools/code-generators/color-palette.html" }, { name: "Lorem Ipsum Generator", link: "tools/code-generators/lorem-ipsum.html" },
-        { name: "Favicon Preview/Generator", link: "tools/code-generators/favicon-generator.html" }, { name: "CSS Box Shadow Generator", link: "tools/code-generators/box-shadow.html" },
-        { name: "CSS Linear Gradient Generator", link: "tools/code-generators/gradient-generator.html" }, { name: "HTML Entities Converter", link: "tools/code-generators/html-entities.html" }, { name: "QR Scan to Excel", link: "tools/code-generators/qr-excel.html" }
-    ]},
-    { name: "Time & Date", icon: "fa-clock", link: "tools/time-date.html", sub: [
-        { name: "Timestamp Converter", link: "tools/time-date/timestamp-converter.html" }, { name: "Date Difference Calculator", link: "tools/time-date/date-difference.html" }, { name: "Countdown Timer", link: "tools/time-date/countdown.html" },
-        { name: "Stopwatch", link: "tools/time-date/Stopwatch.html" }, { name: "Time Zone Converter", link: "tools/time-date/timezone.html" }, { name: "Leap Year Checker", link: "tools/time-date/leap-year.html" },
-        { name: "Day of the Week Calculator", link: "tools/time-date/day-of-week.html" }, { name: "Age Calculator", link: "tools/time-date/age-calculator.html" },
-        { name: "Time Adder/Subtracter", link: "tools/time-date/time-adder.html" }, { name: "Calendar Generator", link: "tools/time-date/calendar.html" }
-    ]},
-    { name: "Unit Converters", icon: "fa-ruler-combined", link: "tools/unit-converters.html", sub: [
-        { name: "Length Converter", link: "tools/unit-convertors/length-converter.html" }, { name: "Mass/Weight Converter", link: "tools/unit-convertors/weight-converter.html" }, { name: "Temperature Converter", link: "tools/unit-convertors/temp-converter.html" },
-        { name: "Area Converter", link: "tools/unit-convertors/area-converter.html" }, { name: "Volume Converter", link: "tools/unit-convertors/volume-converter.html" }, { name: "Speed Converter", link: "tools/unit-convertors/speed-converter.html" },
-        { name: "Base Converter", link: "tools/unit-convertors/base-converter.html" }, { name: "Hex-RGB-HSL Converter", link: "tools/unit-convertors/color-code-converter.html" },
-        { name: "Scientific Calculator", link: "tools/unit-convertors/sci-calculator.html" }, { name: "Simple Interest Calculator", link: "tools/unit-convertors/interest-calculator.html" }
-    ]},
-    { name: "Web & UI Tools", icon: "fa-palette", link: "pages/web-tools.html", sub: [
-        { name: "web code preview", link: "tools/web/web-preview.html" }, { name: "Function 2", link: "pages/web-tool-2.html" }, { name: "Function 3", link: "pages/web-tool-3.html" },
-        { name: "Function 4", link: "pages/web-tool-4.html" }, { name: "Function 5", link: "pages/web-tool-5.html" }, { name: "Function 6", link: "pages/web-tool-6.html" },
-        { name: "Function 7", link: "pages/web-tool-7.html" }, { name: "Function 8", link: "pages/web-tool-8.html" }, { name: "Function 9", link: "pages/web-tool-9.html" }
-    ]},
-    { name: "Utilities", icon: "fa-screwdriver-wrench", link: "tools/utilities.html", sub: [
-        { name: "Screen Recorder", link: "tools/utilities/screen-recorder.html" }, { name: "EMI Calculator", link: "tools/utilities/EMI-Calculator.html" }, { name: "Chat", link: "tools/utilities/Chat.html" },
-        { name: "Youtube to MP3", link: "tools/utilities/Yt-mp3.html" }, { name: "Whatsapp Chat Backup", link: "tools/utilities/Whatsapp-chat.html" }, { name: "Build CV", link: "tools/utilities/build-cv.html" },
-        { name: "Bank Analysis", link: "tools/utilities/bank-reco.html" }, { name: "Live Music", link: "tools/utilities/music.html" }, { name: "New", link: "tools/utilities/new.html" }
-    ]}
-];
+    // --- GLOBAL STATE ---
+    let FULL_SOURCE = "";
+    let currentTab = 'html';
+    let snippets = { html: "", css: "", js: "" };
 
-document.addEventListener('DOMContentLoaded', () => {
-    const appContainer = document.getElementById('app-container');
-    const menuToggle = document.getElementById('menu-toggle');
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const htmlElement = document.documentElement;
-    const navList = document.getElementById('sidebar-nav-list');
-    const flyoutMenu = document.getElementById('sidebar-flyout-menu');
+    // --- 1. ROBUST LOAD FUNCTIONS ---
+    function updateCount() {
+        const val = document.getElementById('sourceInput').value;
+        document.getElementById('charCount').innerText = val.length + " characters detected";
+    }
 
-    // Build Sidebar
-    navData.forEach((item, index) => {
-        const listItem = document.createElement('li');
-        listItem.className = 'sidebar-nav-item';
-        listItem.dataset.index = index;
-        const hasSub = item.sub && item.sub.length > 0;
-        const target = item.target || '_self';
+    function loadSource() {
+        const input = document.getElementById('sourceInput');
+        const val = input.value;
+        
+        // Debugging Log
+        console.log("Loading source, length:", val.length);
 
-        listItem.innerHTML = `
-            <a href="${item.link}" target="${target}" class="sidebar-nav-link">
-                <div class="link-content"><i class="fa-solid ${item.icon}"></i> ${item.name}</div>
-                ${hasSub ? '<i class="fa-solid fa-chevron-right chevron"></i>' : ''}
-            </a>
-            ${hasSub ? `<div class="sidebar-accordion-submenu">${item.sub.map(s => {
-                const subTarget = s.target || '_self';
-                return `<a href="${s.link}" target="${subTarget}">${s.name}</a>`;
-            }).join('')}</div>` : ''}
+        if (val.length < 5) {
+            // Fallback for user error
+            if(confirm("The code seems too short or empty. Load demo code instead?")) {
+                loadDemo();
+            }
+            return;
+        }
+
+        FULL_SOURCE = val;
+        startEditor();
+    }
+
+    function loadDemo() {
+        // A built-in demo to test the editor
+        FULL_SOURCE = `
+<!DOCTYPE html>
+<html>
+<style>
+  body { font-family: sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+  .card { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 300px; }
+  h1 { color: #333; margin-top: 0; }
+  p { color: #666; line-height: 1.6; }
+  button { background: #007acc; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 20px; transition: 0.3s; }
+  button:hover { background: #005f9e; transform: scale(1.05); }
+</style>
+<body>
+  <div class="card" id="mainCard">
+    <h1 id="title">Hello World</h1>
+    <p>This is a demo card. Hover over elements and click them to edit text, styles, or structure!</p>
+    <button id="btn" onclick="alert('Clicked!')">Click Me</button>
+  </div>
+</body>
+</html>`;
+        startEditor();
+    }
+
+    function startEditor() {
+        document.getElementById('uploadModal').style.display = 'none';
+        renderPreview();
+    }
+
+    // --- 2. DEVICE SWITCHER ---
+    function setDevice(mode) {
+        const wrapper = document.getElementById('iframeWrapper');
+        document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        wrapper.className = `iframe-wrapper ${mode}`;
+    }
+
+    // --- 3. PREVIEW & INSPECTOR ---
+    function renderPreview() {
+        const frame = document.getElementById('previewFrame');
+        
+        // Inject Inspector Script
+        const inspectorScript = `
+            <script>
+                let hoveredEl = null;
+                // Add label to DOM
+                const label = document.createElement('div');
+                label.style.cssText = 'position:fixed; background:#007acc; color:white; padding:2px 6px; font-size:10px; border-radius:3px; z-index:999999; pointer-events:none; display:none;';
+                label.innerText = 'Element';
+                document.body.appendChild(label);
+
+                document.addEventListener('mouseover', (e) => {
+                    e.stopPropagation();
+                    if(e.target === document.body || e.target === document.documentElement || e.target === label) return;
+
+                    if (hoveredEl) hoveredEl.style.outline = '';
+                    hoveredEl = e.target;
+                    hoveredEl.style.outline = '2px solid #007acc';
+                    
+                    const rect = hoveredEl.getBoundingClientRect();
+                    label.style.display = 'block';
+                    label.style.top = (rect.top > 20 ? rect.top - 25 : rect.bottom + 5) + 'px';
+                    label.style.left = rect.left + 'px';
+                    label.innerText = '<' + hoveredEl.tagName.toLowerCase() + '>';
+                });
+
+                document.addEventListener('mouseout', (e) => {
+                    if(hoveredEl) hoveredEl.style.outline = '';
+                    label.style.display = 'none';
+                });
+
+                document.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if(!hoveredEl) return;
+
+                    // Clean style for export
+                    hoveredEl.style.outline = '';
+                    const cleanHTML = hoveredEl.outerHTML;
+                    hoveredEl.style.outline = '2px solid #007acc'; // restore visual
+
+                    window.parent.postMessage({
+                        type: 'OPEN_POPUP',
+                        tagName: hoveredEl.tagName,
+                        id: hoveredEl.id,
+                        className: hoveredEl.className,
+                        outerHTML: cleanHTML
+                    }, '*');
+                });
+            <\/script>
         `;
-        navList.appendChild(listItem);
+        
+        const blob = new Blob([FULL_SOURCE + inspectorScript], { type: 'text/html' });
+        frame.src = URL.createObjectURL(blob);
+    }
+
+    // --- 4. POPUP LOGIC ---
+    window.addEventListener('message', (event) => {
+        if (event.data.type === 'OPEN_POPUP') openPopup(event.data);
     });
 
-    // Hover Flyout Logic
-    let flyoutTimeout;
-    navList.addEventListener('mouseover', (e) => {
-        if (window.innerWidth <= 1024) return;
-        const navItem = e.target.closest('.sidebar-nav-item');
-        if (navItem) {
-            clearTimeout(flyoutTimeout);
-            const itemIndex = parseInt(navItem.dataset.index, 10);
-            const data = navData[itemIndex];
-            if (data && data.sub) {
-                flyoutMenu.innerHTML = data.sub.map(s => {
-                     const subTarget = s.target || '_self';
-                     return `<a href="${s.link}" target="${subTarget}">${s.name}</a>`
-                }).join('');
-                const rect = navItem.getBoundingClientRect();
-                flyoutMenu.classList.add('is-visible');
-                const menuHeight = flyoutMenu.offsetHeight;
-                const viewportHeight = window.innerHeight;
-                flyoutMenu.style.bottom = 'auto';
-                if ((rect.top + menuHeight) > viewportHeight - 10) {
-                    flyoutMenu.style.top = 'auto';
-                    flyoutMenu.style.bottom = '10px';
-                } else {
-                    flyoutMenu.style.top = `${rect.top}px`;
-                }
-                flyoutMenu.style.left = `${rect.right}px`;
+    function openPopup(data) {
+        const popup = document.getElementById('popupEditor');
+        document.getElementById('targetTag').innerText = `EDIT: <${data.tagName.toLowerCase()}>`;
+        
+        // 1. HTML
+        snippets.html = data.outerHTML;
+
+        // 2. CSS (Heuristic)
+        snippets.css = "/* CSS not found or global */";
+        if(data.className) {
+            const cls = data.className.split(' ')[0];
+            const regex = new RegExp(`\\.${cls}\\s*\\{[\\s\\S]*?\\}`, "g");
+            const match = FULL_SOURCE.match(regex);
+            if(match) snippets.css = match[0];
+            else snippets.css = `.${cls} {\n  /* New Style */\n}`;
+        } else if (data.id) {
+            const regex = new RegExp(`#${data.id}\\s*\\{[\\s\\S]*?\\}`, "g");
+            const match = FULL_SOURCE.match(regex);
+            if(match) snippets.css = match[0];
+            else snippets.css = `#${data.id} {\n  /* New ID Style */\n}`;
+        }
+
+        // 3. JS
+        snippets.js = "// JS Logic specific to this element not auto-detected.";
+        if(data.id) {
+            // Simple check for ID refs
+            if(FULL_SOURCE.includes(`getElementById('${data.id}')`) || FULL_SOURCE.includes(`getElementById("${data.id}")`)) {
+                 snippets.js = "// Found reference in code, but edit globally or paste snippet here.";
             }
         }
-    });
 
-    const hideFlyout = () => {
-         if (window.innerWidth <= 1024) return;
-         flyoutTimeout = setTimeout(() => flyoutMenu.classList.remove('is-visible'), 150);
-    };
+        switchTab('html');
+        popup.classList.add('visible');
+    }
 
-    navList.addEventListener('mouseout', hideFlyout);
-    flyoutMenu.addEventListener('mouseover', () => clearTimeout(flyoutTimeout));
-    flyoutMenu.addEventListener('mouseout', hideFlyout);
+    function closePopup() {
+        document.getElementById('popupEditor').classList.remove('visible');
+    }
 
-    document.body.addEventListener('click', (e) => {
-        const clickedLink = e.target.closest('a');
-        if (!clickedLink) return;
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.ptab')[['html','css','js'].indexOf(tab)].classList.add('active');
+        document.getElementById('popupCode').value = snippets[tab];
+    }
 
-        const isSidebarLink = clickedLink.closest('#static-sidebar, #sidebar-flyout-menu');
-        if (isSidebarLink) {
-            const parentItem = clickedLink.closest('.sidebar-nav-item');
-            if (window.innerWidth <= 1024 && clickedLink.classList.contains('sidebar-nav-link') && parentItem && parentItem.querySelector('.sidebar-accordion-submenu')) {
-                e.preventDefault();
-                parentItem.classList.toggle('is-open');
+    function applyPopupChanges() {
+        const newCode = document.getElementById('popupCode').value;
+        const oldCode = snippets[currentTab];
+
+        if(currentTab === 'html') {
+            if(FULL_SOURCE.includes(oldCode)) {
+                FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
+            } else {
+                // If direct match failed (due to formatting), try a looser replace or alert
+                // For this version, we will try to replace the whole body if it's a massive change,
+                // but usually, this simple replace works if text hasn't changed.
+                // Fallback: simple alert for now
+                alert("Exact HTML match lost (browser reformatted it). Try editing a smaller chunk.");
                 return;
             }
-            if (window.innerWidth <= 1024) appContainer.classList.remove('sidebar-open');
-            flyoutMenu.classList.remove('is-visible');
+            snippets.html = newCode;
+        } 
+        else if (currentTab === 'css') {
+            if(oldCode.includes("/* New")) {
+                // Append new style
+                 FULL_SOURCE = FULL_SOURCE.replace('</style>', `\n${newCode}\n</style>`);
+            } else if (FULL_SOURCE.includes(oldCode)) {
+                FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
+            }
+            snippets.css = newCode;
         }
-    });
 
-    menuToggle.addEventListener('click', () => appContainer.classList.toggle('sidebar-open'));
-
-    // Dark Mode
-    const setDarkMode = (isDark) => {
-        htmlElement.classList.toggle('dark-mode', isDark);
-        localStorage.setItem('jkm-edit-mode', isDark ? 'dark' : 'light');
-    };
-    darkModeToggle.addEventListener('click', () => setDarkMode(!htmlElement.classList.contains('dark-mode')));
-
-    // Modals
-    const aboutModal = document.getElementById('about-modal');
-    const contactModal = document.getElementById('contact-modal');
-    const privacyModal = document.getElementById('privacy-modal');
-    const termsModal = document.getElementById('terms-modal');
-
-    const openModal = (modal) => modal.style.display = 'flex';
-    const closeModal = (modal) => modal.style.display = 'none';
-    
-    // Sidebar Buttons
-    document.getElementById('about-btn').addEventListener('click', () => openModal(aboutModal));
-    document.getElementById('contact-btn').addEventListener('click', () => openModal(contactModal));
-    
-    // Footer Buttons
-    document.getElementById('footer-about-btn').addEventListener('click', () => openModal(aboutModal));
-    document.getElementById('footer-contact-btn').addEventListener('click', () => openModal(contactModal));
-    document.getElementById('footer-privacy-btn').addEventListener('click', () => openModal(privacyModal));
-    document.getElementById('footer-terms-btn').addEventListener('click', () => openModal(termsModal));
-
-    document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal'))));
-    window.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) closeModal(e.target); });
-
-    // Set Year
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    // ------------------------------------------------------------
-    // Dynamic Description Generator for Bottom Section
-    // ------------------------------------------------------------
-    const allFunctionsContainer = document.getElementById('all-functions-container');
-    
-    navData.forEach(category => {
-        // Create Category Wrapper
-        const groupDiv = document.createElement('div');
-        groupDiv.className = 'tool-category-group';
+        renderPreview();
         
-        // Create Header (Description Head in between)
-        const header = document.createElement('h3');
-        header.className = 'tool-category-header';
-        header.innerHTML = `<i class="fa-solid ${category.icon}" style="margin-right: 10px;"></i> ${category.name}`;
-        groupDiv.appendChild(header);
+        // Toast
+        const t = document.getElementById('toast');
+        t.style.opacity = '1'; t.style.transform = 'translateY(0)';
+        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(20px)'; }, 2000);
+    }
 
-        // Create Grid
-        const listGrid = document.createElement('div');
-        listGrid.className = 'tool-list-grid';
-
-        if(category.sub && category.sub.length > 0) {
-            category.sub.forEach(tool => {
-                const card = document.createElement('a');
-                card.href = tool.link;
-                if(tool.target) card.target = tool.target;
-                card.className = 'tool-description-card';
-                card.style.textDecoration = 'none';
-                
-                let descText = `Use our free online ${tool.name} tool. Fast, secure, and easy to use without installation.`;
-                if(tool.name.toLowerCase().includes('pdf')) descText = `Easily process your documents with this ${tool.name} utility. Completely free and runs in your browser.`;
-                if(tool.name.toLowerCase().includes('converter')) descText = `Convert files instantly with the ${tool.name}. Supports high-quality conversion for free.`;
-                if(tool.name.toLowerCase().includes('generator')) descText = `Generate custom data instantly using the ${tool.name}. Copy and use the results immediately.`;
-
-                card.innerHTML = `
-                    <h4>${tool.name}</h4>
-                    <p>${descText}</p>
-                `;
-                listGrid.appendChild(card);
-            });
-        }
-
-        groupDiv.appendChild(listGrid);
-        allFunctionsContainer.appendChild(groupDiv);
-    });
-});
+    function downloadCode() {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([FULL_SOURCE], {type: "text/html"}));
+        a.download = "devmode_pro_v2.html";
+        a.click();
+    }
 </script>
+
 </body>
 </html>
