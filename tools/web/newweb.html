@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevMode Pro: Smart Fix</title>
+    <title>DevMode Pro: Fingerprint Engine</title>
     <style>
-        /* --- 1. PROFESSIONAL THEME --- */
+        /* --- PROFESSIONAL THEME (UNCHANGED) --- */
         :root {
             --bg-dark: #1e1e1e;
             --bg-panel: #252526;
@@ -21,7 +21,6 @@
 
         .app-container { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
 
-        /* --- 2. TOOLBAR --- */
         .toolbar {
             height: 45px; background: var(--bg-header); border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
@@ -41,7 +40,6 @@
         .btn-primary { background: var(--accent); }
         .btn-sec { background: #3c3c3c; border: 1px solid var(--border); }
 
-        /* --- 3. WORKSPACE --- */
         .workspace { flex: 1; display: flex; overflow: hidden; background: #121212; position: relative; }
 
         .preview-canvas {
@@ -60,7 +58,6 @@
 
         iframe { width: 100%; height: 100%; border: none; background: white; display: block; }
 
-        /* --- 4. POPUP EDITOR --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 2000;
@@ -90,7 +87,6 @@
 
         .popup-footer { padding: 10px 15px; background: #252526; border-top: 1px solid var(--border); text-align: right; }
 
-        /* --- 5. STARTUP OVERLAY --- */
         .startup-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #1e1e1e; z-index: 9999; display: flex; align-items: center; justify-content: center;
@@ -98,7 +94,6 @@
         .startup-box { width: 500px; background: #252526; padding: 30px; border-radius: 8px; border: 1px solid var(--border); }
         .startup-box textarea { width: 100%; height: 150px; background: #1e1e1e; border: 1px solid var(--border); color: white; margin: 15px 0; padding: 10px; font-family: monospace; }
         
-        /* Toast */
         .toast {
             position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white;
             padding: 10px 20px; border-radius: 4px; font-size: 13px; opacity: 0; transition: 0.3s; z-index: 3000; pointer-events: none;
@@ -109,8 +104,8 @@
 
     <div class="startup-overlay" id="startupModal">
         <div class="startup-box">
-            <h2 style="margin:0 0 10px 0; color:white;">DevMode Pro v3.0</h2>
-            <p style="color:#888; font-size:13px;">Paste your code. The smart engine will now fix "DOM Mismatch" errors.</p>
+            <h2 style="margin:0 0 10px 0; color:white;">DevMode Pro</h2>
+            <p style="color:#888; font-size:13px;">Paste your code. Fingerprint Engine Active.</p>
             <textarea id="sourceInput" placeholder="Paste HTML..."></textarea>
             <div style="display:flex; justify-content:flex-end; gap:10px;">
                 <button class="btn btn-sec" onclick="loadDemo()">Load Demo</button>
@@ -128,7 +123,7 @@
                 <button class="device-btn active" onclick="setDevice('desktop')"><span>💻</span> Desktop</button>
             </div>
             <div class="actions">
-                <button class="btn btn-sec" onclick="downloadCode()">Download Code</button>
+                <button class="btn btn-sec" onclick="downloadCode()">Download Clean Code</button>
             </div>
         </div>
 
@@ -164,49 +159,67 @@
     <div class="toast" id="toast">Changes Applied!</div>
 
 <script>
-    // --- ADVANCED STATE MANAGEMENT ---
-    let FULL_SOURCE = "";
+    // --- GLOBAL STATE ---
+    // TAGGED_SOURCE holds the code with invisible data-dev-id attributes
+    let TAGGED_SOURCE = ""; 
     let currentTab = 'html';
-    // We store the *exact string* found in the source, not the browser DOM
-    let matchedSourceCode = ""; 
-    let currentData = null;
+    let currentEditId = null; // The fingerprint of the element currently being edited
     let snippets = { html: "", css: "", js: "" };
 
-    // --- 1. STARTUP ---
+    // --- 1. STARTUP & FINGERPRINTING ---
     function loadSource() {
         const input = document.getElementById('sourceInput').value;
         if (!input.trim()) return alert("Please paste some code.");
-        FULL_SOURCE = input;
+        
+        // FINGERPRINTING: Inject unique IDs into the source code
+        TAGGED_SOURCE = injectFingerprints(input);
+        
         document.getElementById('startupModal').style.display = 'none';
         renderPreview();
+    }
+
+    // Adds data-dev-id="uid" to HTML tags in source string
+    function injectFingerprints(sourceCode) {
+        // Regex finds <tagname ... >
+        return sourceCode.replace(/<([a-zA-Z0-9]+)([^>]*?)>/g, (match, tag, attrs) => {
+            // Don't tag closing tags or special tags if not needed (browsers handle script/style quirks)
+            // We skip if it already has a dev-id (re-injection safety)
+            if(attrs.includes('data-dev-id')) return match;
+            
+            // Create Short UUID
+            const uid = Math.random().toString(36).substr(2, 9);
+            return `<${tag}${attrs} data-dev-id="${uid}">`;
+        });
     }
 
     function loadDemo() {
-        FULL_SOURCE = `<!DOCTYPE html>
+        const demo = `<!DOCTYPE html>
 <html>
 <style>
-    body { font-family: sans-serif; background: #eee; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-    .box { background: white; padding: 40px; border-radius: 8px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    h1 { color: #333; }
-    button { background: #007acc; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+    body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 320px; text-align: center; }
+    h1 { color: #1a1a1a; margin-top: 0; }
+    p { color: #666; line-height: 1.5; }
+    button { background: #007acc; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 15px; transition: 0.2s; }
+    button:hover { background: #005f9e; }
 </style>
 <body>
-    <div class="box" id="mainBox">
-        <h1>Hello World</h1>
-        <p>Click me to test the new Smart Engine!</p>
-        <button id="btn" onclick="alert('Works!')">Click Me</button>
+    <div class="card" id="mainCard">
+        <h1>Fingerprint Engine</h1>
+        <p>This version uses unique invisible IDs to track elements. You can change text, classes, or nested items without breaking the sync.</p>
+        <button onclick="alert('Synced!')">Test Button</button>
     </div>
 </body>
 </html>`;
-        document.getElementById('startupModal').style.display = 'none';
-        renderPreview();
+        document.getElementById('sourceInput').value = demo;
+        loadSource();
     }
 
-    // --- 2. RENDERER & INSPECTOR ---
+    // --- 2. RENDERER ---
     function renderPreview() {
         const frame = document.getElementById('previewFrame');
         
-        // This script runs inside the iframe to detect clicks
+        // We inject the inspector logic which reads the fingerprints
         const inspectorScript = `
             <script>
                 let hovered = null;
@@ -217,6 +230,7 @@
                 document.addEventListener('mouseover', (e) => {
                     e.stopPropagation();
                     if(e.target.tagName === 'BODY' || e.target.tagName === 'HTML') return;
+                    
                     if(hovered) hovered.style.outline = '';
                     hovered = e.target;
                     hovered.style.outline = '2px solid #007acc';
@@ -237,134 +251,164 @@
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    window.parent.postMessage({
-                        type: 'OPEN_EDITOR',
-                        tag: e.target.tagName,
-                        id: e.target.id,
-                        class: e.target.className,
-                        // We send outerHTML just as a fallback/reference
-                        browserHTML: e.target.outerHTML
-                    }, '*');
+                    // GET THE FINGERPRINT
+                    const uid = e.target.getAttribute('data-dev-id');
+                    
+                    if(uid) {
+                        window.parent.postMessage({
+                            type: 'OPEN_EDITOR',
+                            tag: e.target.tagName,
+                            uid: uid,
+                            className: e.target.className,
+                            id: e.target.id
+                        }, '*');
+                    } else {
+                        console.warn("Element has no fingerprint (might be dynamically created JS).");
+                    }
                 });
             <\/script>
         `;
-
-        const blob = new Blob([FULL_SOURCE + inspectorScript], { type: 'text/html' });
+        
+        const blob = new Blob([TAGGED_SOURCE + inspectorScript], { type: 'text/html' });
         frame.src = URL.createObjectURL(blob);
     }
 
-    // --- 3. SMART SEARCH ENGINE (The Fix) ---
+    // --- 3. EDITOR & SAVING LOGIC ---
     window.addEventListener('message', (event) => {
         if(event.data.type === 'OPEN_EDITOR') openPopup(event.data);
     });
 
-    function findInSource(tag, id, cls, browserHTML) {
-        // STRATEGY 1: ID Search (Most Accurate)
-        if (id) {
-            // Regex: <tagName ... id="theID" ... >
-            const idRegex = new RegExp(`<${tag}[^>]*id=["']${id}["'][^>]*>`, 'i');
-            const match = FULL_SOURCE.match(idRegex);
-            if (match) {
-                return locateFullBlock(match.index, tag);
-            }
-        }
-
-        // STRATEGY 2: Class Search
-        if (cls) {
-            const firstClass = cls.split(' ')[0];
-            const classRegex = new RegExp(`<${tag}[^>]*class=["'][^"']*${firstClass}[^"']*["'][^>]*>`, 'i');
-            const match = FULL_SOURCE.match(classRegex);
-            if (match) {
-                return locateFullBlock(match.index, tag);
-            }
-        }
-
-        // STRATEGY 3: Exact String fallback (if user formatted code nicely)
-        if (FULL_SOURCE.includes(browserHTML)) {
-            return browserHTML;
-        }
-
-        // If all fails, return Browser HTML (User might get an error if they save, but better than nothing)
-        return browserHTML;
-    }
-
-    // Helper to find where the tag closes starting from an index
-    function locateFullBlock(startIndex, tagName) {
-        // This is a simplified parser. It finds the opening tag, then searches for the next </tag>
-        // Note: Nested tags of same type might confuse this simple logic, but ID search is robust.
-        const endTag = `</${tagName.toLowerCase()}>`;
-        const restOfCode = FULL_SOURCE.substring(startIndex);
-        const endIndex = restOfCode.toLowerCase().indexOf(endTag);
+    // Helper: Find exact block in TAGGED_SOURCE using the Unique ID
+    function locateBlockByFingerprint(uid, tagName) {
+        const regex = new RegExp(`<${tagName}[^>]*data-dev-id="${uid}"[^>]*>`, 'i');
+        const match = TAGGED_SOURCE.match(regex);
         
-        if (endIndex !== -1) {
-            return restOfCode.substring(0, endIndex + endTag.length);
+        if (!match) return null;
+        
+        const startIndex = match.index;
+        
+        // Smart Tag Counting to find end
+        const lowerSource = TAGGED_SOURCE.toLowerCase();
+        const startTag = `<${tagName.toLowerCase()}`;
+        const endTag = `</${tagName.toLowerCase()}>`;
+        
+        let depth = 0;
+        let cursor = startIndex;
+        
+        while(cursor < lowerSource.length) {
+            const nextOpen = lowerSource.indexOf(startTag, cursor);
+            const nextClose = lowerSource.indexOf(endTag, cursor);
+            
+            if (nextClose === -1) return null; // Error in HTML structure
+            
+            if (nextOpen !== -1 && nextOpen < nextClose) {
+                if(nextOpen === startIndex) {
+                    // This is our starting tag, move past it
+                    cursor = nextOpen + 1;
+                } else {
+                    depth++;
+                    cursor = nextOpen + 1;
+                }
+            } else {
+                if (depth === 0) {
+                    return {
+                        fullBlock: TAGGED_SOURCE.substring(startIndex, nextClose + endTag.length),
+                        startIndex: startIndex,
+                        endIndex: nextClose + endTag.length
+                    };
+                }
+                depth--;
+                cursor = nextClose + 1;
+            }
         }
-        return null; 
+        return null;
     }
 
     function openPopup(data) {
-        currentData = data;
-        const name = data.tag.toLowerCase() + (data.id ? '#'+data.id : '');
-        document.getElementById('popupTitle').innerText = `EDITING: ${name}`;
+        currentEditId = data.uid;
+        document.getElementById('popupTitle').innerText = `EDITING: ${data.tag}`;
 
-        // CRITICAL STEP: Find the *Real* source code
-        const realSource = findInSource(data.tag, data.id, data.class, data.browserHTML);
+        const location = locateBlockByFingerprint(data.uid, data.tag);
         
-        if (realSource) {
-            matchedSourceCode = realSource; // Save this specifically for replacement later
-            snippets.html = realSource;
+        if(location) {
+            // We strip the fingerprints for the editor view so it looks clean to the user
+            const cleanView = location.fullBlock.replace(/\s+data-dev-id="[^"]*"/g, '');
+            snippets.html = cleanView;
         } else {
-            alert("Warning: Could not locate this exact element in source (DOM Mismatch). You can edit, but saving might fail if not unique.");
-            matchedSourceCode = data.browserHTML;
-            snippets.html = data.browserHTML;
+            alert("Could not locate element in source.");
+            return;
         }
 
-        // CSS & JS Finders
-        snippets.css = "/* CSS not detected for this element */";
-        if(data.class) {
-            const c = data.class.split(' ')[0];
-            const m = FULL_SOURCE.match(new RegExp(`\\.${c}\\s*\\{[\\s\\S]*?\\}`, 'g'));
+        // CSS
+        snippets.css = "/* CSS */";
+        if(data.className) {
+            const c = data.className.split(' ')[0];
+            const m = TAGGED_SOURCE.match(new RegExp(`\\.${c}\\s*\\{[\\s\\S]*?\\}`, 'g'));
             if(m) snippets.css = m[0];
             else snippets.css = `.${c} {\n  /* New Style */\n}`;
         }
-
-        snippets.js = "// JS specific to this ID not found";
         
+        snippets.js = "// JS";
+
         switchTab('html');
         document.getElementById('editorModal').classList.add('active');
     }
 
     function applyChanges() {
-        const newCode = document.getElementById('editorArea').value;
-        const oldCode = matchedSourceCode; // Use the one we found in Source, not Browser
+        const userCode = document.getElementById('editorArea').value;
+        const uid = currentEditId;
 
         if(currentTab === 'html') {
-            if(FULL_SOURCE.includes(oldCode)) {
-                FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
-                matchedSourceCode = newCode; // Update memory
-                showToast("Changes Applied!");
-            } else {
-                // If ID-based search found it, but exact string replace fails (rare), try loose ID replace
-                if(currentData.id) {
-                     alert("Exact string match lost. Trying force update via ID...");
-                     // Logic to regex replace whole block by ID could go here, but usually above works.
-                } else {
-                    alert("Error: The source code has changed since you opened this popup. Please close and click again.");
+            // 1. We need to find the OLD block again to replace it
+            // We know the tag name is likely the same, but let's re-verify or assume wrapper
+            // Note: Since we only have the UID, we scan for it.
+            // Simplified: We search regex for the ID again.
+            
+            const regex = new RegExp(`<([a-zA-Z0-9]+)[^>]*data-dev-id="${uid}"[^>]*>`, 'i');
+            const match = TAGGED_SOURCE.match(regex);
+            
+            if(match) {
+                const tagName = match[1];
+                const location = locateBlockByFingerprint(uid, tagName);
+                
+                if(location) {
+                    // 2. Before swapping, we must inject NEW fingerprints into the user's new code
+                    // otherwise subsequent edits to this block will fail
+                    const retaggedUserCode = injectFingerprints(userCode);
+                    
+                    // 3. Perform Swap
+                    TAGGED_SOURCE = TAGGED_SOURCE.substring(0, location.startIndex) + 
+                                    retaggedUserCode + 
+                                    TAGGED_SOURCE.substring(location.endIndex);
+                                    
+                    showToast("Update Successful!");
                 }
-            }
-            snippets.html = newCode;
-        } 
-        else if(currentTab === 'css') {
-            if(FULL_SOURCE.includes(oldCode)) {
-                FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
             } else {
-                FULL_SOURCE = FULL_SOURCE.replace('</style>', `\n${newCode}\n</style>`);
+                alert("Error: Element ID lost.");
             }
-            snippets.css = newCode;
-            showToast("Styles Updated!");
+            snippets.html = userCode;
+        } 
+        else if (currentTab === 'css') {
+            const oldCss = snippets.css;
+            if(TAGGED_SOURCE.includes(oldCss)) TAGGED_SOURCE = TAGGED_SOURCE.replace(oldCss, userCode);
+            else TAGGED_SOURCE = TAGGED_SOURCE.replace('</style>', `\n${userCode}\n</style>`);
+            snippets.css = userCode;
+            showToast("CSS Updated");
         }
 
         renderPreview();
+    }
+
+    // --- 4. CLEAN & DOWNLOAD ---
+    function downloadCode() {
+        // Strip all data-dev-id attributes for the final file
+        const cleanSource = TAGGED_SOURCE.replace(/\s+data-dev-id="[^"]*"/g, '');
+        
+        const blob = new Blob([cleanSource], {type: "text/html"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "clean_project.html";
+        a.click();
     }
 
     // --- UI HELPERS ---
@@ -380,8 +424,7 @@
     function setDevice(mode) {
         document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
         event.currentTarget.classList.add('active');
-        const f = document.getElementById('deviceFrame');
-        f.className = 'device-frame ' + mode;
+        document.getElementById('deviceFrame').className = 'device-frame ' + mode;
     }
 
     function showToast(msg) {
@@ -389,13 +432,6 @@
         t.innerText = msg;
         t.style.opacity = '1'; t.style.transform = 'translateY(-10px)';
         setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(0)'; }, 2000);
-    }
-
-    function downloadCode() {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob([FULL_SOURCE], {type:'text/html'}));
-        a.download = 'devmode_fixed.html';
-        a.click();
     }
 </script>
 
