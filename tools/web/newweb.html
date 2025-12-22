@@ -3,281 +3,424 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevMode Pro: Visual Builder</title>
+    <title>DevMode Pro: Visual IDE</title>
     <style>
-        /* --- CORE THEME --- */
+        /* --- 1. PROFESSIONAL THEME VARIABLES --- */
         :root {
-            --bg-root: #1e1e1e;
-            --bg-sidebar: #252526;
-            --bg-activity: #333333;
-            --border: #3e3e42;
-            --accent: #007acc;
+            --bg-dark: #1e1e1e;       /* Main Editor Background */
+            --bg-panel: #252526;      /* Sidebars/Panels */
+            --bg-header: #333333;     /* Top Toolbar */
+            --border: #3e3e42;        /* Subtle Borders */
+            --accent: #007acc;        /* VS Code Blue */
             --accent-hover: #0062a3;
             --text-main: #cccccc;
             --text-white: #ffffff;
-            --glass: rgba(30, 30, 30, 0.95);
+            --shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
 
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; background: var(--bg-root); color: var(--text-main); overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg-dark); color: var(--text-main); overflow: hidden; }
 
-        /* --- LAYOUT GRID --- */
-        .app-grid { display: grid; grid-template-rows: 40px 1fr; height: 100vh; }
-        
-        /* 1. TOP BAR */
-        .top-bar {
-            background: var(--bg-activity);
+        /* --- 2. MAIN LAYOUT STRUCTURE (Vertical Flex) --- */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* --- 3. TOP TOOLBAR --- */
+        .toolbar {
+            height: 45px;
+            min-height: 45px;
+            background: var(--bg-header);
             border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center; padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            user-select: none;
         }
-        .logo { font-weight: 700; color: var(--accent); letter-spacing: 1px; font-size: 14px; }
-        
-        /* Device Toggles */
-        .device-toggles { display: flex; gap: 5px; background: #252526; padding: 3px; border-radius: 4px; }
+
+        .brand { 
+            font-weight: 600; 
+            color: var(--text-white); 
+            font-size: 14px; 
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand span { color: var(--accent); }
+
+        /* Device Switcher (Center Group) */
+        .device-group {
+            display: flex;
+            background: #252526;
+            padding: 3px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
         .device-btn {
-            background: transparent; border: none; color: #858585; padding: 5px 10px; cursor: pointer; border-radius: 3px; transition: 0.2s;
+            background: transparent;
+            border: none;
+            color: #858585;
+            padding: 6px 15px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .device-btn:hover { color: white; background: rgba(255,255,255,0.1); }
-        .device-btn.active { color: white; background: var(--accent); }
-        
-        /* Action Buttons */
+        .device-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+        .device-btn.active { background: var(--bg-header); color: var(--text-white); box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+
+        /* Action Buttons (Right) */
         .actions { display: flex; gap: 10px; }
-        .btn { padding: 5px 15px; font-size: 12px; border-radius: 2px; cursor: pointer; border: 1px solid transparent; color: white; }
+        .btn {
+            padding: 6px 16px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            color: white;
+            font-weight: 500;
+        }
         .btn-primary { background: var(--accent); }
         .btn-primary:hover { background: var(--accent-hover); }
-        .btn-sec { background: #3c3c3c; }
+        .btn-sec { background: #3c3c3c; border: 1px solid var(--border); }
         .btn-sec:hover { background: #4c4c4c; }
 
-        /* 2. WORKSPACE */
-        .workspace { display: flex; position: relative; height: 100%; overflow: hidden; background: #121212; }
+        /* --- 4. WORKSPACE AREA --- */
+        .workspace {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            background: #121212; /* Darker background for contrast */
+            position: relative;
+        }
 
-        /* Preview Area (Centered & Resizable) */
-        .preview-container {
+        /* Preview Canvas */
+        .preview-canvas {
             flex: 1;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            padding-top: 30px;
-            overflow: auto;
+            align-items: flex-start; /* Aligns to top, allows scrolling */
+            padding: 40px;
+            overflow-y: auto;
             background-image: radial-gradient(#333 1px, transparent 1px);
             background-size: 20px 20px;
         }
 
-        .iframe-wrapper {
+        /* The Device Frame */
+        .device-frame {
             background: white;
-            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), height 0.4s ease;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border-radius: 4px;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
             overflow: hidden;
             position: relative;
         }
+
+        /* Responsive Modes */
+        .device-frame.desktop { 
+            width: 100%; 
+            height: 100%; 
+            border-radius: 4px; 
+            border: 1px solid #444; 
+        }
         
-        /* Dimensions for Devices */
-        .iframe-wrapper.desktop { width: 100%; height: 100%; border-radius: 0; }
-        .iframe-wrapper.tablet { width: 768px; height: 900px; border: 10px solid #333; border-radius: 15px; }
-        .iframe-wrapper.mobile { width: 375px; height: 812px; border: 10px solid #333; border-bottom: 30px solid #333; border-radius: 25px; }
+        .device-frame.tablet { 
+            width: 768px; 
+            height: 1024px; 
+            border-radius: 12px;
+            border: 12px solid #252526;
+            flex-shrink: 0; /* Prevent squishing */
+        }
+        
+        .device-frame.mobile { 
+            width: 375px; 
+            height: 812px; 
+            border-radius: 24px;
+            border: 12px solid #252526;
+            border-bottom-width: 30px; /* Chin */
+            flex-shrink: 0;
+        }
 
         iframe { width: 100%; height: 100%; border: none; background: white; display: block; }
 
-        /* --- 3. POPUP EDITOR (The "Click to Edit" Modal) --- */
-        .popup-editor {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            width: 600px;
-            height: 450px;
-            background: var(--bg-sidebar);
-            border: 1px solid var(--accent);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
-            z-index: 1000;
+        /* --- 5. FLOATING POPUP EDITOR --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(2px);
+            z-index: 2000;
             display: none;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .editor-popup {
+            width: 700px;
+            height: 500px;
+            background: var(--bg-dark);
+            border: 1px solid var(--accent);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
             border-radius: 6px;
-            opacity: 0;
-            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popIn 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
         }
 
-        .popup-editor.visible {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-            display: flex;
+        @keyframes popIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .popup-header {
-            padding: 10px 15px; background: #333; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center; cursor: move;
+            height: 35px;
+            background: #252526;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
         }
-        .popup-title { font-size: 13px; font-weight: bold; color: white; }
-        .popup-close { cursor: pointer; color: #aaa; }
-        .popup-close:hover { color: white; }
+        .popup-title { font-size: 12px; font-weight: bold; color: white; text-transform: uppercase; }
+        .close-icon { cursor: pointer; color: #888; font-size: 16px; }
+        .close-icon:hover { color: white; }
 
-        .popup-tabs { display: flex; background: #252526; border-bottom: 1px solid var(--border); }
-        .ptab {
-            padding: 8px 15px; font-size: 12px; cursor: pointer; color: #888; border-right: 1px solid var(--border); background: #2d2d2d;
+        .popup-tabs {
+            display: flex;
+            background: #1e1e1e;
+            border-bottom: 1px solid var(--border);
         }
-        .ptab:hover { color: white; }
-        .ptab.active { background: #1e1e1e; color: var(--accent); border-top: 2px solid var(--accent); }
+        .tab {
+            padding: 8px 20px;
+            font-size: 12px;
+            color: #888;
+            cursor: pointer;
+            border-right: 1px solid var(--border);
+            background: #252526;
+        }
+        .tab.active {
+            color: var(--accent);
+            background: #1e1e1e;
+            border-top: 2px solid var(--accent);
+        }
 
-        .popup-body { flex: 1; position: relative; background: #1e1e1e; }
-        .code-area { 
-            width: 100%; height: 100%; background: #1e1e1e; color: #9cdcfe; border: none; 
-            padding: 15px; font-family: 'Consolas', monospace; font-size: 13px; resize: none; outline: none; 
+        .popup-content {
+            flex: 1;
+            position: relative;
+        }
+        textarea.code-editor {
+            width: 100%;
+            height: 100%;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border: none;
+            padding: 15px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            resize: none;
+            outline: none;
+            box-sizing: border-box;
+            line-height: 1.5;
         }
 
         .popup-footer {
-            padding: 10px; border-top: 1px solid var(--border); text-align: right; background: #252526;
+            padding: 10px 15px;
+            background: #252526;
+            border-top: 1px solid var(--border);
+            text-align: right;
         }
 
-        /* --- 4. STARTUP MODAL --- */
-        .overlay {
+        /* --- 6. STARTUP OVERLAY --- */
+        .startup-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center;
+            background: #1e1e1e; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
         }
-        .start-box { width: 500px; background: #252526; padding: 30px; border: 1px solid var(--border); border-radius: 8px; }
-        .start-box textarea { width: 100%; height: 150px; background: #1e1e1e; border: 1px solid #333; color: white; padding: 10px; margin: 15px 0; }
+        .startup-box {
+            width: 500px;
+            background: #252526;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .startup-box textarea {
+            width: 100%;
+            height: 150px;
+            background: #1e1e1e;
+            border: 1px solid var(--border);
+            color: white;
+            margin: 15px 0;
+            padding: 10px;
+            font-family: monospace;
+            box-sizing: border-box;
+        }
 
-        /* Notification Toast */
+        /* Notifications */
         .toast {
-            position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white;
-            padding: 10px 20px; border-radius: 4px; opacity: 0; transform: translateY(20px); transition: 0.3s;
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--accent); color: white;
+            padding: 10px 20px; border-radius: 4px; font-size: 13px;
+            opacity: 0; transform: translateY(10px); transition: 0.3s;
+            z-index: 3000;
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="uploadModal">
-        <div class="start-box">
-            <h2 style="margin-top:0; color:white;">DevMode Pro</h2>
-            <p style="color:#888; font-size:13px;">Paste your HTML/CSS/JS source code below to enter the visual editor.</p>
-            <textarea id="sourceInput" placeholder="<!DOCTYPE html>..."></textarea>
-            <div style="display:flex; justify-content:flex-end;">
-                <button class="btn btn-primary" onclick="loadSource()">Launch Editor</button>
+    <div class="startup-overlay" id="startupModal">
+        <div class="startup-box">
+            <h2 style="margin: 0 0 10px 0; color: white; font-size: 18px;">Welcome to DevMode</h2>
+            <p style="color: #888; font-size: 13px; margin: 0;">Paste your HTML source code below to begin editing.</p>
+            <textarea id="sourceInput" placeholder="Paste <!DOCTYPE html> here..."></textarea>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn btn-sec" onclick="loadDemo()">Load Demo</button>
+                <button class="btn btn-primary" onclick="loadSource()">Start Editor</button>
             </div>
         </div>
     </div>
 
-    <div class="app-grid">
-        <div class="top-bar">
-            <div class="logo">DEVMODE <span style="color:#666;">PRO</span></div>
-            
-            <div class="device-toggles">
-                <button class="device-btn" onclick="setDevice('mobile')">📱 Mobile</button>
-                <button class="device-btn" onclick="setDevice('tablet')">IPad / Tablet</button>
-                <button class="device-btn active" onclick="setDevice('desktop')">💻 Desktop</button>
+    <div class="app-container">
+        
+        <div class="toolbar">
+            <div class="brand">
+                <span>⚡</span> DEVMODE PRO
+            </div>
+
+            <div class="device-group">
+                <button class="device-btn" onclick="setDevice('mobile')">
+                    <span>📱</span> Mobile
+                </button>
+                <button class="device-btn" onclick="setDevice('tablet')">
+                    <span>💊</span> Tablet
+                </button>
+                <button class="device-btn active" onclick="setDevice('desktop')">
+                    <span>💻</span> Desktop
+                </button>
             </div>
 
             <div class="actions">
-                <button class="btn btn-sec" onclick="downloadCode()">Download Code</button>
+                <button class="btn btn-sec" onclick="downloadCode()">Download HTML</button>
             </div>
         </div>
 
         <div class="workspace">
-            <div class="preview-container">
-                <div class="iframe-wrapper desktop" id="iframeWrapper">
+            <div class="preview-canvas">
+                <div class="device-frame desktop" id="deviceFrame">
                     <iframe id="previewFrame"></iframe>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="popup-editor" id="popupEditor">
-        <div class="popup-header">
-            <span class="popup-title" id="targetTag">EDIT: DIV#hero</span>
-            <span class="popup-close" onclick="closePopup()">✖</span>
-        </div>
-        <div class="popup-tabs">
-            <div class="ptab active" onclick="switchTab('html')">HTML Structure</div>
-            <div class="ptab" onclick="switchTab('css')">CSS Styles</div>
-            <div class="ptab" onclick="switchTab('js')">JS Logic</div>
-        </div>
-        <div class="popup-body">
-            <textarea class="code-area" id="popupCode"></textarea>
-        </div>
-        <div class="popup-footer">
-            <button class="btn btn-primary" onclick="applyPopupChanges()">⚡ Apply Changes</button>
+    <div class="modal-overlay" id="editorModal">
+        <div class="editor-popup">
+            <div class="popup-header">
+                <div class="popup-title" id="popupTitle">EDITING: DIV#MAIN</div>
+                <div class="close-icon" onclick="closePopup()">✕</div>
+            </div>
+            
+            <div class="popup-tabs">
+                <div class="tab active" onclick="switchTab('html')">HTML Structure</div>
+                <div class="tab" onclick="switchTab('css')">CSS Styles</div>
+                <div class="tab" onclick="switchTab('js')">JS Logic</div>
+            </div>
+
+            <div class="popup-content">
+                <textarea class="code-editor" id="editorArea"></textarea>
+            </div>
+
+            <div class="popup-footer">
+                <button class="btn btn-primary" onclick="applyChanges()">Apply Changes</button>
+            </div>
         </div>
     </div>
 
     <div class="toast" id="toast">Changes Applied Successfully!</div>
 
 <script>
-    // --- GLOBAL STATE ---
+    // --- STATE MANAGEMENT ---
     let FULL_SOURCE = "";
     let currentTab = 'html';
-    let activeData = null; // Data of element being edited
     let snippets = { html: "", css: "", js: "" };
 
-    // --- 1. INITIALIZATION ---
+    // --- 1. STARTUP LOGIC ---
     function loadSource() {
         const input = document.getElementById('sourceInput').value;
-        if (!input.trim()) return alert("Please paste code first.");
+        if (!input.trim()) return alert("Please paste some code first.");
         FULL_SOURCE = input;
-        document.getElementById('uploadModal').style.display = 'none';
+        document.getElementById('startupModal').style.display = 'none';
         renderPreview();
     }
 
-    // --- 2. DEVICE SWITCHER ---
-    function setDevice(mode) {
-        const wrapper = document.getElementById('iframeWrapper');
-        const btns = document.querySelectorAll('.device-btn');
-        
-        // Update Buttons
-        btns.forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-
-        // Update Wrapper Class
-        wrapper.className = `iframe-wrapper ${mode}`;
+    function loadDemo() {
+        // Simple demo for testing
+        FULL_SOURCE = `
+<!DOCTYPE html>
+<html>
+<style>
+    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f4f4f4; margin: 0; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; max-width: 300px; }
+    h1 { color: #333; margin-bottom: 10px; }
+    p { color: #666; line-height: 1.5; }
+    button { background: #007acc; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 15px; }
+    button:hover { background: #005f9e; }
+</style>
+<body>
+    <div class="card" id="main-card">
+        <h1>Hello World</h1>
+        <p>This is a responsive card. Click me to edit text, or use the toolbar to test mobile view.</p>
+        <button id="cta-btn" onclick="alert('Button Clicked!')">Click Me</button>
+    </div>
+</body>
+</html>`;
+        document.getElementById('startupModal').style.display = 'none';
+        renderPreview();
     }
 
-    // --- 3. PREVIEW & INSPECTOR INJECTION ---
+    // --- 2. PREVIEW RENDERER ---
     function renderPreview() {
         const frame = document.getElementById('previewFrame');
         
-        // The Inspector Script: Injected into the user's code
-        // This adds the hover effects and click-to-edit logic inside the iframe
+        // Inject Inspector script (Hidden logic inside user code)
         const inspectorScript = `
             <script>
-                let hoveredEl = null;
-                let label = null;
-
-                // Create Label
-                function createLabel() {
-                    label = document.createElement('div');
-                    label.style.position = 'fixed';
-                    label.style.background = '#007acc';
-                    label.style.color = 'white';
-                    label.style.padding = '2px 6px';
-                    label.style.fontSize = '10px';
-                    label.style.borderRadius = '3px';
-                    label.style.zIndex = '999999';
-                    label.style.pointerEvents = 'none';
-                    label.style.display = 'none';
-                    label.innerText = 'Element';
-                    document.body.appendChild(label);
-                }
-                createLabel();
+                // Visual Inspector Logic
+                let hovered = null;
+                
+                // Helper: Create floating label
+                const label = document.createElement('div');
+                label.style.cssText = "position: fixed; background: #007acc; color: white; padding: 3px 6px; font-size: 11px; border-radius: 3px; pointer-events: none; z-index: 9999; display: none; font-family: sans-serif;";
+                document.body.appendChild(label);
 
                 document.addEventListener('mouseover', (e) => {
                     e.stopPropagation();
-                    if(e.target.tagName === 'BODY' || e.target.tagName === 'HTML') return;
+                    if(e.target === document.body || e.target === document.documentElement) return;
+                    
+                    if(hovered) hovered.style.outline = '';
+                    hovered = e.target;
+                    hovered.style.outline = '2px solid #007acc';
+                    hovered.style.cursor = 'pointer';
 
-                    if (hoveredEl) hoveredEl.style.outline = '';
-                    
-                    hoveredEl = e.target;
-                    hoveredEl.style.outline = '2px solid #007acc';
-                    
-                    // Update Label
-                    const rect = hoveredEl.getBoundingClientRect();
+                    // Update label
+                    const rect = hovered.getBoundingClientRect();
+                    label.innerText = '<' + hovered.tagName.toLowerCase() + '>';
                     label.style.display = 'block';
-                    label.style.top = (rect.top - 20) + 'px';
+                    label.style.top = (rect.top - 25) + 'px';
                     label.style.left = rect.left + 'px';
-                    
-                    let idTxt = hoveredEl.id ? '#' + hoveredEl.id : '';
-                    let classTxt = hoveredEl.className ? '.' + hoveredEl.className.split(' ')[0] : '';
-                    label.innerText = hoveredEl.tagName.toLowerCase() + idTxt + classTxt + ' (Click to Edit)';
                 });
 
                 document.addEventListener('mouseout', (e) => {
-                    if(hoveredEl) hoveredEl.style.outline = '';
+                    if(hovered) hovered.style.outline = '';
                     label.style.display = 'none';
                 });
 
@@ -285,146 +428,123 @@
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    // Clean styles before capturing
-                    e.target.style.outline = '';
-                    const hadStyle = e.target.getAttribute('style');
-                    if (!hadStyle || hadStyle.trim() === '') e.target.removeAttribute('style');
-
+                    // Clean outline before capturing HTML
+                    if(hovered) hovered.style.outline = '';
                     const cleanHTML = e.target.outerHTML;
-                    
-                    // Restore outline
-                    e.target.style.outline = '2px solid #007acc';
+                    if(hovered) hovered.style.outline = '2px solid #007acc';
 
-                    // Send data to Parent
+                    // Send data to parent editor
                     window.parent.postMessage({
-                        type: 'OPEN_POPUP',
-                        tagName: e.target.tagName,
+                        type: 'OPEN_EDITOR',
+                        tag: e.target.tagName,
                         id: e.target.id,
-                        className: e.target.className,
-                        outerHTML: cleanHTML
+                        class: e.target.className,
+                        html: cleanHTML
                     }, '*');
                 });
             <\/script>
         `;
-        
+
         const blob = new Blob([FULL_SOURCE + inspectorScript], { type: 'text/html' });
         frame.src = URL.createObjectURL(blob);
     }
 
-    // --- 4. POPUP LOGIC ---
+    // --- 3. EDITOR LOGIC ---
     window.addEventListener('message', (event) => {
-        if (event.data.type === 'OPEN_POPUP') {
+        if(event.data.type === 'OPEN_EDITOR') {
             openPopup(event.data);
         }
     });
 
     function openPopup(data) {
-        activeData = data;
-        const popup = document.getElementById('popupEditor');
-        const title = document.getElementById('targetTag');
-        
         // Set Title
-        let name = data.tagName.toLowerCase();
-        if(data.id) name += `#${data.id}`;
-        else if(data.className) name += `.${data.className.split(' ')[0]}`;
-        title.innerText = `EDITING: ${name}`;
+        const name = data.tag.toLowerCase() + (data.id ? '#'+data.id : '');
+        document.getElementById('popupTitle').innerText = `EDITING: ${name}`;
 
-        // Parse Code
-        snippets.html = data.outerHTML;
+        // Prepare Code Snippets
+        snippets.html = data.html;
         
-        // CSS Parser (Regex)
-        snippets.css = "/* Add Custom CSS */";
-        if (data.className) {
-            const firstClass = data.className.split(' ')[0];
-            const regex = new RegExp(`\\.${firstClass}\\s*\\{[\\s\\S]*?\\}`, "g");
-            const match = FULL_SOURCE.match(regex);
+        // Simple CSS Finder (Regex)
+        snippets.css = "/* Global CSS or Inline Styles not detected */";
+        if(data.class) {
+            const cls = data.class.split(' ')[0];
+            const match = FULL_SOURCE.match(new RegExp(`\\.${cls}\\s*\\{[\\s\\S]*?\\}`, 'g'));
             if(match) snippets.css = match[0];
-            else snippets.css = `.${firstClass} {\n    /* New Rule */\n}`;
-        } else if (data.id) {
-            const regex = new RegExp(`#${data.id}\\s*\\{[\\s\\S]*?\\}`, "g");
-            const match = FULL_SOURCE.match(regex);
-            if(match) snippets.css = match[0];
+            else snippets.css = `.${cls} {\n    /* Add styles here */\n}`;
         }
 
-        // JS Parser
-        snippets.js = "// Global JS only (Edit specific ID logic here)";
-        if(data.id) {
-            const regex = new RegExp(`.*getElementById\\(['"]${data.id}['"]\\).*`, "g");
-            const match = FULL_SOURCE.match(regex);
-            if(match) snippets.js = match.join('\n');
-        }
-
-        // Show Modal
-        switchTab('html'); // Reset to HTML tab
-        popup.classList.add('visible');
+        // Simple JS Finder
+        snippets.js = "// JS specific to this element not found";
+        
+        // Reset to HTML tab and show
+        switchTab('html');
+        document.getElementById('editorModal').classList.add('active');
     }
 
     function closePopup() {
-        document.getElementById('popupEditor').classList.remove('visible');
+        document.getElementById('editorModal').classList.remove('active');
     }
 
     function switchTab(tab) {
         currentTab = tab;
-        document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.ptab')[['html','css','js'].indexOf(tab)].classList.add('active');
-        
-        document.getElementById('popupCode').value = snippets[tab];
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab')[['html','css','js'].indexOf(tab)].classList.add('active');
+        document.getElementById('editorArea').value = snippets[tab];
     }
 
-    // --- 5. APPLY & SAVE LOGIC ---
-    function applyPopupChanges() {
-        const newCode = document.getElementById('popupCode').value;
-        const oldCode = snippets[currentTab]; // What it was when we opened the popup
+    function applyChanges() {
+        const newCode = document.getElementById('editorArea').value;
+        const oldCode = snippets[currentTab];
 
-        // Logic to replace in FULL_SOURCE
         if(currentTab === 'html') {
-            // Safe Replace
             if(FULL_SOURCE.includes(oldCode)) {
                 FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
             } else {
-                // If browser changed quotes, try loose match
+                // Loose match fallback
                 const looseOld = oldCode.replace(/"/g, "'");
                 if(FULL_SOURCE.includes(looseOld)) FULL_SOURCE = FULL_SOURCE.replace(looseOld, newCode);
-                else alert("Could not find exact code match. The DOM might have shifted.");
+                else alert("Could not match HTML exactly. DOM might have changed.");
             }
             snippets.html = newCode;
         } 
-        else if (currentTab === 'css') {
-            if(oldCode.includes("/* Add Custom CSS */") || !FULL_SOURCE.includes(oldCode)) {
-                // Append new style if not found
-                 FULL_SOURCE = FULL_SOURCE.replace('</style>', `\n${newCode}\n</style>`);
-            } else {
+        else if(currentTab === 'css') {
+            if(FULL_SOURCE.includes(oldCode)) {
                 FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
+            } else {
+                // If it was a new style
+                FULL_SOURCE = FULL_SOURCE.replace('</style>', `\n${newCode}\n</style>`);
             }
             snippets.css = newCode;
         }
-        else if (currentTab === 'js') {
-            if(FULL_SOURCE.includes(oldCode)) FULL_SOURCE = FULL_SOURCE.replace(oldCode, newCode);
-            snippets.js = newCode;
-        }
 
-        // Refresh
         renderPreview();
         showToast();
-        // Keep popup open for rapid editing, or close it:
-        // closePopup(); 
+    }
+
+    // --- 4. TOOLBAR ACTIONS ---
+    function setDevice(mode) {
+        const frame = document.getElementById('deviceFrame');
+        document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+        
+        // Add active class to clicked button
+        event.currentTarget.classList.add('active');
+
+        // Reset classes
+        frame.className = 'device-frame';
+        frame.classList.add(mode);
     }
 
     function showToast() {
         const t = document.getElementById('toast');
-        t.style.opacity = '1';
-        t.style.transform = 'translateY(0)';
-        setTimeout(() => {
-            t.style.opacity = '0';
-            t.style.transform = 'translateY(20px)';
-        }, 2000);
+        t.style.opacity = '1'; t.style.transform = 'translateY(0)';
+        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(10px)'; }, 2000);
     }
 
     function downloadCode() {
-        const blob = new Blob([FULL_SOURCE], {type: "text/html"});
+        const blob = new Blob([FULL_SOURCE], { type: 'text/html' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = "devmode_export.html";
+        a.download = 'devmode_project.html';
         a.click();
     }
 </script>
