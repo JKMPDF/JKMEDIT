@@ -2,7 +2,7 @@ name: Auto Update Library
 on:
   push:
     paths:
-      - 'tools/Ebook/**' # This tells it to watch your Ebook folder
+      - 'tools/Ebook/**' # Trigger when you add folders here
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,5 +17,5 @@ jobs:
           git config --global user.name 'Library-Bot'
           git config --global user.email 'bot@github.com'
           git add tools/Ebook/library.json
-          git commit -m "Generated library.json" || exit 0
+          git commit -m "Auto-update library" || exit 0
           git push
