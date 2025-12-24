@@ -3,7 +3,7 @@
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>E-Book Library | JKM Edit</title>
+    <title>M&M❣️ Library | JKM Edit</title>
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
@@ -15,33 +15,38 @@
             --bg-color: #1a1a1a; --surface-color: #2d2d2d; --text-color: #f4f5f7;
         }
         
-        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Poppins', sans-serif; transition: 0.3s; }
+        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Poppins', sans-serif; transition: 0.3s; min-height: 100vh; display: flex; flex-direction: column; }
         
         .branding-bar { 
             display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;
-            background: var(--surface-color); border-bottom: 3px solid var(--primary-color);
+            background: var(--surface-color); border-bottom: 3px solid var(--primary-color); position: sticky; top: 0; z-index: 100;
         }
 
-        .controls-top { display: flex; gap: 15px; align-items: center; }
-        .toggle-btn { cursor: pointer; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--primary-color); background: none; color: var(--text-color); font-weight: 600; }
+        .controls-top { display: flex; gap: 10px; align-items: center; }
+        .toggle-btn { cursor: pointer; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--primary-color); background: none; color: var(--text-color); font-weight: 600; font-size: 0.8rem; }
         .toggle-btn.active { background: var(--primary-color); color: white; }
 
-        .library-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .book-card { background: var(--surface-color); border-radius: 12px; overflow: hidden; text-align: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .book-card img { width: 100%; height: 220px; object-fit: cover; }
+        .library-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .book-card { background: var(--surface-color); border-radius: 12px; overflow: hidden; text-align: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s; border: 1px solid rgba(0,0,0,0.05); }
+        .book-card:hover { transform: translateY(-5px); }
+        .book-card img { width: 100%; height: 220px; object-fit: cover; background: #eee; }
         
-        .reader-panel { max-width: 800px; margin: 20px auto; padding: 30px; background: var(--surface-color); border-radius: 12px; line-height: 1.8; white-space: pre-wrap; }
+        .reader-panel { max-width: 800px; margin: 20px auto; padding: 30px; background: var(--surface-color); border-radius: 12px; line-height: 1.8; white-space: pre-wrap; font-size: 1.1rem; flex: 1; width: 90%; }
         
-        @media (max-width: 600px) { .library-grid { grid-template-columns: repeat(2, 1fr); } .branding-bar { padding: 1rem; flex-direction: column; gap: 10px; } }
+        @media (max-width: 600px) { 
+            .library-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; } 
+            .branding-bar { padding: 0.8rem 1rem; }
+            .branding-bar h1 { font-size: 1.1rem; }
+        }
     </style>
 </head>
-<body data-theme="light">
+<body>
 
     <header class="branding-bar">
-        <div class="logo"><h1>JKM Edit</h1></div>
+        <div onclick="location.reload()" style="cursor:pointer"><h1>JKM Edit</h1></div>
         <div class="controls-top">
-            <button onclick="toggleDarkMode()" class="toggle-btn"><i class="fa-solid fa-moon"></i></button>
-            <div style="display:flex; background:#eee; border-radius:20px; padding:2px;">
+            <button onclick="toggleDarkMode()" class="toggle-btn"><i class="fa-solid fa-circle-half-stroke"></i></button>
+            <div style="display:flex; background: rgba(0,0,0,0.1); border-radius:20px; padding:2px;">
                 <button id="btn-eng" onclick="setLanguage('en')" class="toggle-btn active">EN</button>
                 <button id="btn-hin" onclick="setLanguage('hi')" class="toggle-btn">HI</button>
             </div>
@@ -52,64 +57,70 @@
         <div id="library-display" class="library-grid"></div>
     </main>
 
-    <div style="text-align:center; padding: 20px;">
-        <button onclick="goBack()" class="toggle-btn">Go Back</button>
-    </div>
+    <footer style="text-align:center; padding: 20px; position: sticky; bottom: 0; background: var(--bg-color);">
+        <button onclick="goBack()" class="btn-nav" style="padding: 10px 30px; border-radius: 25px; border: none; background: var(--primary-color); color: white; font-weight: 600; cursor: pointer;">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </button>
+    </footer>
 
     <script>
         let fullData = [];
         let navigationStack = [];
         let currentLang = 'en';
+        let currentActiveBook = null;
 
         async function init() {
-            const res = await fetch('./library.json');
-            fullData = await res.json();
-            render(fullData);
+            try {
+                const res = await fetch('./library.json');
+                fullData = await res.json();
+                render(fullData);
+            } catch (e) {
+                document.getElementById('library-display').innerHTML = "<h2>Loading Library...</h2>";
+            }
         }
 
         function setLanguage(lang) {
             currentLang = lang;
             document.getElementById('btn-eng').classList.toggle('active', lang === 'en');
             document.getElementById('btn-hin').classList.toggle('active', lang === 'hi');
-            // Refresh current view to update language
-            const currentView = navigationStack.length ? navigationStack[navigationStack.length-1].children : fullData;
-            render(currentView);
+            
+            // If user is inside a book, update text immediately
+            if (currentActiveBook) {
+                openReader(currentActiveBook.name, currentActiveBook.files);
+            } else {
+                const currentItems = navigationStack.length ? navigationStack[navigationStack.length - 1].children : fullData;
+                render(currentItems);
+            }
         }
 
         function toggleDarkMode() {
             const body = document.body;
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
         }
 
         function render(items) {
-            const display = document.getElementById('library-display');
-            display.innerHTML = items.map((item, index) => {
-                // If it's a book folder (has children that are files), check if it should show as a book or folder
-                const isBookFolder = item.type === 'folder' && item.children.some(c => c.type === 'file');
-                
-                return `
-                    <div class="book-card" onclick="handleClick(${index})">
-                        <img src="${item.image}" onerror="this.src='https://via.placeholder.com/150x220?text=${item.name}'">
-                        <div style="padding:10px;"><h3>${item.name}</h3></div>
-                    </div>
-                `;
-            }).join('');
+            currentActiveBook = null;
+            const display = document.getElementById('main-content');
+            display.innerHTML = `<div id="library-display" class="library-grid"></div>`;
+            const grid = document.getElementById('library-display');
+
+            grid.innerHTML = items.map((item, index) => `
+                <div class="book-card" onclick="handleClick(${index})">
+                    <img src="${item.image}" onerror="this.src='https://via.placeholder.com/150x220?text=${item.name}'">
+                    <div style="padding:10px;"><h3>${item.name}</h3></div>
+                </div>
+            `).join('');
         }
 
         function handleClick(index) {
-            const parent = navigationStack.length ? navigationStack[navigationStack.length-1].children : fullData;
-            const selected = parent[index];
+            const currentItems = navigationStack.length ? navigationStack[navigationStack.length - 1].children : fullData;
+            const selected = currentItems[index];
 
             if (selected.type === 'folder') {
-                // Check if this folder contains .txt files (making it a "Book")
                 const txtFiles = selected.children.filter(c => c.type === 'file');
-                
                 if (txtFiles.length > 0) {
-                    // Direct Read Mode
                     openReader(selected.name, txtFiles);
                 } else {
-                    // Normal Folder Drill-down
                     navigationStack.push(selected);
                     render(selected.children);
                 }
@@ -117,23 +128,35 @@
         }
 
         function openReader(title, files) {
+            currentActiveBook = { name: title, files: files };
             const display = document.getElementById('main-content');
-            // Find Hindi file if requested, otherwise pick the first available file
+            
             const hindiFile = files.find(f => f.name.toLowerCase().includes('hindi'));
-            const defaultFile = files[0];
+            const defaultFile = files.find(f => !f.name.toLowerCase().includes('hindi')) || files[0];
             const content = (currentLang === 'hi' && hindiFile) ? hindiFile.content : defaultFile.content;
 
             display.innerHTML = `
                 <div class="reader-panel">
-                    <h2>${title}</h2>
-                    <hr>
-                    <div id="book-text">${content}</div>
+                    <h2 style="color:var(--primary-color)">${title}</h2>
+                    <hr style="opacity:0.2">
+                    <div>${content}</div>
                 </div>
             `;
+            window.scrollTo(0,0);
         }
 
         function goBack() {
-            location.reload(); // Simplest way to reset to main view
+            if (currentActiveBook) {
+                currentActiveBook = null;
+                const currentItems = navigationStack.length ? navigationStack[navigationStack.length - 1].children : fullData;
+                render(currentItems);
+            } else if (navigationStack.length > 0) {
+                navigationStack.pop();
+                const prevItems = navigationStack.length ? navigationStack[navigationStack.length - 1].children : fullData;
+                render(prevItems);
+            } else {
+                window.history.back();
+            }
         }
 
         init();
