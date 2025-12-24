@@ -2,11 +2,10 @@ import os, json
 
 def scan(path):
     items = []
-    # Check if path exists to avoid errors
     if not os.path.exists(path): return items
     
     for entry in os.scandir(path):
-        # Skip hidden files and the script/json itself
+        # Skip system files and the code files themselves
         if entry.name.startswith('.') or entry.name in ['script.py', 'library.json', 'index.html']:
             continue
             
@@ -14,11 +13,12 @@ def scan(path):
             items.append({
                 "name": entry.name,
                 "type": "folder",
-                "image": f"{entry.name}/cover.jpg", # Path relative to the folder
+                # This ensures the website looks for the image inside the folder
+                "image": f"{entry.name}/cover.jpg", 
                 "children": scan(entry.path)
             })
         elif entry.name.endswith(".txt"):
-            with open(entry.path, 'r', encoding='utf-8') as f:
+            with open(entry.path, 'r', encoding='utf-8', errors='ignore') as f:
                 items.append({
                     "name": entry.name.replace(".txt", ""),
                     "type": "file",
@@ -26,7 +26,7 @@ def scan(path):
                 })
     return items
 
-# '.' tells Python to scan the folder where this script is located
+# '.' means "Scan the folder I am currently in"
 data = scan(".") 
 with open("library.json", "w", encoding="utf-8") as f:
     json.dump(data, f, indent=2)
