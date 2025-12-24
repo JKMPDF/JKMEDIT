@@ -1,0 +1,19 @@
+name: Auto Update Library
+on:
+  push:
+    paths:
+      - 'Ebook/**' # Trigger when you add folders to Ebook
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Script
+        run: python script.py
+      - name: Save Changes
+        run: |
+          git config --global user.name 'Library-Bot'
+          git config --global user.email 'bot@github.com'
+          git add library.json
+          git commit -m "Updated library with new folders" || exit 0
+          git push
