@@ -1,33 +1,202 @@
-<div id="display" class="grid"></div>
-
-<script>
-    let library = [];
-
-    async function start() {
-        const res = await fetch('./library.json');
-        library = await res.json();
-        show(library);
-    }
-
-    function show(items) {
-        const div = document.getElementById('display');
-        div.innerHTML = items.map((item, i) => `
-            <div class="box" onclick="openItem(${i}, '${item.type}')">
-                ${item.type === 'folder' ? `<img src="${item.image}">` : ''}
-                <h3>${item.name}</h3>
-            </div>
-        `).join('');
-    }
-
-    function openItem(i, type) {
-        const selected = library[i];
-        if (type === 'folder') {
-            library = selected.children; // Move inside folder A
-            show(library);
-        } else {
-            // It's a book! Show text
-            document.body.innerHTML = `<button onclick="location.reload()">Back</button><div>${selected.content}</div>`;
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>E-Book Library | JKM Edit</title>
+    
+    <link rel="icon" type="image/png" href="../../assets/jkm-edit-logo.png">
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <style>
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
         }
-    }
-    start();
-</script>
+        
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* HEADER */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 40px; width: auto; object-fit: contain; }
+        .branding-bar h1 { font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* LAYOUT */
+        .tool-container { padding: 1.5rem 1rem; max-width: 1200px; margin: 0 auto; width: 100%; flex: 1; }
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h2 { font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+
+        /* GRID SYSTEM (Mobile First) */
+        .library-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px; 
+            justify-content: center; 
+        }
+
+        /* CARD STYLE */
+        .book-card {
+            background: var(--surface-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #eef0f2;
+        }
+        .book-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        
+        .card-image-wrapper { position: relative; width: 100%; padding-top: 140%; /* 3:4 Aspect Ratio */ overflow: hidden; background: #eee; }
+        .card-image-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        
+        .card-info { padding: 12px; text-align: center; flex-grow: 1; display: flex; align-items: center; justify-content: center; }
+        .card-info h3 { font-size: 0.95rem; margin: 0; color: var(--text-color); font-weight: 600; }
+
+        /* READER VIEW */
+        .reader-panel { 
+            background: var(--surface-color); 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            white-space: pre-wrap; /* Preserves poem/text formatting */
+        }
+
+        /* BUTTONS */
+        .nav-btns { margin-top: 2rem; display: flex; justify-content: center; gap: 1rem; padding-bottom: 2rem; }
+        .btn-nav { 
+            padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 600; 
+            background: #e9ecef; color: #333; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-dash { background: var(--primary-color); color: white; }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            .library-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .branding-bar { padding: 1rem; }
+            .branding-bar h1 { font-size: 1.2rem; }
+            .tool-header h2 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="branding-bar">
+        <a href="index.html" class="logo-container">
+            <img src="../../assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h1>JKM Edit Library</h1>
+        </a>
+    </header>
+
+    <main class="tool-container">
+        <div id="header-area" class="tool-header">
+            <h2 id="current-title">Spiritual Library</h2>
+            <p id="current-subtitle">Select a category to explore the collection.</p>
+        </div>
+
+        <div id="content-area">
+            <div id="library-display" class="library-grid">
+                </div>
+        </div>
+
+        <div class="nav-btns">
+            <button onclick="goBack()" class="btn-nav"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            <a href="../../index.html" class="btn-nav btn-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+    </main>
+
+    <script>
+        let fullData = [];
+        let navigationHistory = [];
+
+        async function init() {
+            try {
+                const res = await fetch('./library.json');
+                fullData = await res.json();
+                renderItems(fullData);
+            } catch (err) {
+                document.getElementById('library-display').innerHTML = "<p>Updating library... please refresh in a moment.</p>";
+            }
+        }
+
+        function renderItems(items, title = "Library", subtitle = "Select a category to begin") {
+            const display = document.getElementById('library-display');
+            const titleEl = document.getElementById('current-title');
+            const subtitleEl = document.getElementById('current-subtitle');
+            
+            titleEl.innerText = title;
+            subtitleEl.innerText = subtitle;
+            display.className = "library-grid"; // Ensure grid is active
+            
+            display.innerHTML = items.map((item, index) => `
+                <div class="book-card" onclick="handleClick(${index})">
+                    <div class="card-image-wrapper">
+                        <img src="${item.type === 'folder' ? item.image : 'https://via.placeholder.com/300x400?text=' + item.name}" onerror="this.src='https://via.placeholder.com/300x400?text=Cover'">
+                    </div>
+                    <div class="card-info">
+                        <h3>${item.name}</h3>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleClick(index) {
+            const selected = (navigationHistory.length === 0) ? fullData[index] : navigationHistory[navigationHistory.length - 1].children[index];
+            
+            if (selected.type === 'folder') {
+                navigationHistory.push(selected);
+                renderItems(selected.children, selected.name, "Explore sub-categories or books");
+            } else {
+                openReader(selected);
+            }
+        }
+
+        function openReader(book) {
+            const display = document.getElementById('library-display');
+            document.getElementById('current-title').innerText = book.name;
+            document.getElementById('current-subtitle').innerText = "Reading Mode";
+            
+            display.className = ""; // Remove grid for reader
+            display.innerHTML = `
+                <div class="reader-panel">
+                    ${book.content}
+                </div>
+            `;
+            window.scrollTo(0,0);
+        }
+
+        function goBack() {
+            if (navigationHistory.length > 0) {
+                navigationHistory.pop();
+                if (navigationHistory.length === 0) {
+                    renderItems(fullData);
+                } else {
+                    const prev = navigationHistory[navigationHistory.length - 1];
+                    renderItems(prev.children, prev.name);
+                }
+            } else {
+                window.history.back();
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
