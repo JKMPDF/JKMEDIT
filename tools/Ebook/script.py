@@ -1,15 +1,21 @@
 import os, json
 
 def scan(path):
-    # This function looks at every folder and file
     items = []
+    # Check if path exists to avoid errors
+    if not os.path.exists(path): return items
+    
     for entry in os.scandir(path):
+        # Skip hidden files and the script/json itself
+        if entry.name.startswith('.') or entry.name in ['script.py', 'library.json', 'index.html']:
+            continue
+            
         if entry.is_dir():
             items.append({
                 "name": entry.name,
                 "type": "folder",
-                "image": f"{path}/{entry.name}/cover.jpg", # Path to your cover
-                "children": scan(entry.path) # Scan inside this folder too
+                "image": f"{entry.name}/cover.jpg", # Path relative to the folder
+                "children": scan(entry.path)
             })
         elif entry.name.endswith(".txt"):
             with open(entry.path, 'r', encoding='utf-8') as f:
@@ -20,7 +26,7 @@ def scan(path):
                 })
     return items
 
-# Start the scan and save to library.json
-data = scan("Ebook")
+# '.' tells Python to scan the folder where this script is located
+data = scan(".") 
 with open("library.json", "w", encoding="utf-8") as f:
     json.dump(data, f, indent=2)
