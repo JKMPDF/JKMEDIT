@@ -1,0 +1,33 @@
+<div id="display" class="grid"></div>
+
+<script>
+    let library = [];
+
+    async function start() {
+        const res = await fetch('library.json');
+        library = await res.json();
+        show(library);
+    }
+
+    function show(items) {
+        const div = document.getElementById('display');
+        div.innerHTML = items.map((item, i) => `
+            <div class="box" onclick="openItem(${i}, '${item.type}')">
+                ${item.type === 'folder' ? `<img src="${item.image}">` : ''}
+                <h3>${item.name}</h3>
+            </div>
+        `).join('');
+    }
+
+    function openItem(i, type) {
+        const selected = library[i];
+        if (type === 'folder') {
+            library = selected.children; // Move inside folder A
+            show(library);
+        } else {
+            // It's a book! Show text
+            document.body.innerHTML = `<button onclick="location.reload()">Back</button><div>${selected.content}</div>`;
+        }
+    }
+    start();
+</script>
