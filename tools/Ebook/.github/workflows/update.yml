@@ -1,8 +1,8 @@
-name: Auto Update Ebook
+name: Auto Update Library
 on:
   push:
     paths:
-      - 'tools/Ebook/**' # Only triggers when you change things in this specific folder
+      - 'tools/Ebook/**' # Trigger only when this folder changes
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,5 +17,5 @@ jobs:
           git config --global user.name 'Library-Bot'
           git config --global user.email 'bot@github.com'
           git add tools/Ebook/library.json
-          git commit -m "Updated Ebook library" || exit 0
+          git commit -m "Updated library.json in tools/Ebook" || exit 0
           git push
