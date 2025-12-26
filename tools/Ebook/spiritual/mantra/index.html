@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="title" content="JKM EDIT | Official Digital Library">
+<meta name="description" content="Explore a curated collection of Spiritual, Motivation, and Poetry eBooks at JKM EDIT, providing a modern reading experience.">
+<meta name="keywords" content="JKM EDIT, Aarti, all god aarti, Ganesh ji ki aarti, Hanuman ji ki aarti, Mata ji ki aarti,God aarti, sab bhagawan ki aarti, bhagawan, Digital Library, Ebooks">
+<meta name="author" content="JKM EDIT">
+<meta name="robots" content="index, follow">
+
+    <title>JKM EDIT | E-Book</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --corp-blue: #0071e3; 
+            --bg: #f5f5f7; 
+            --text: #1d1d1f; 
+            --secondary-text: #86868b;
+            --max-w: 850px; 
+        }
+        
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            background: var(--bg); margin: 0; color: var(--text); 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header { 
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+            padding: 12px 5%; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #d2d2d7; position: sticky; top: 0; z-index: 100;
+        }
+        .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #003366; font-weight: 600; }
+        .logo img { width: 32px; height: 32px; border-radius: 6px; }
+
+        .search-container { position: relative; }
+        #searchInput { 
+            padding: 8px 15px 8px 35px; border-radius: 20px; border: 1px solid #d2d2d7;
+            font-size: 0.9rem; outline: none; transition: 0.3s; width: 150px;
+        }
+        #searchInput:focus { border-color: var(--corp-blue); width: 200px; }
+        .search-icon { position: absolute; left: 12px; top: 10px; color: var(--secondary-text); }
+
+        .main-wrapper { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; }
+
+        .grid-container { 
+            display: grid; padding: 40px 0;
+            grid-template-columns: repeat(auto-fill, 150px); 
+            justify-content: space-between; gap: 20px; 
+        }
+        
+        .book-card { width: 150px; text-decoration: none; color: inherit; transition: 0.3s; }
+        .book-card:hover { transform: translateY(-5px); }
+        .photo-box { 
+            width: 150px; height: 220px; background: #fff; border-radius: 12px; 
+            overflow: hidden; border: 1px solid #d2d2d7; box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+        }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .book-card h3 { padding: 10px 0; margin: 0; font-size: 0.85rem; text-align: center; font-weight: 500; }
+
+        .about-section { 
+            margin: 20px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid #d2d2d7; box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--corp-blue); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        footer { padding: 40px 5%; text-align: center; border-top: 1px solid #d2d2d7; }
+        .footer-links a { color: var(--corp-blue); text-decoration: none; margin: 0 15px; font-size: 0.85rem; cursor: pointer; font-weight: 500; }
+
+        /* Professional Modal Styling - Scrollable & Fixed Size */
+        .modal { 
+            display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+            background:rgba(0,0,0,0.5); z-index:1000; backdrop-filter: blur(8px); 
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-content { 
+            background: white; 
+            width: 90%; 
+            max-width: 500px; 
+            max-height: 80vh; /* Limits height to 80% of screen */
+            margin: 10vh auto; 
+            border-radius: 24px; 
+            padding: 30px; 
+            position: relative; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #modalTitle { 
+            margin-top: 0; 
+            font-size: 1.4rem; 
+            color: var(--text); 
+            font-weight: 600; 
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f2f2f7;
+            flex-shrink: 0;
+        }
+
+        #modalBody { 
+            line-height: 1.7; 
+            color: #424245; 
+            font-size: 0.95rem; 
+            margin-top: 15px;
+            overflow-y: auto; /* Makes content scrollable */
+            padding-right: 10px;
+        }
+
+        /* Custom scrollbar for professional look */
+        #modalBody::-webkit-scrollbar { width: 5px; }
+        #modalBody::-webkit-scrollbar-track { background: #f1f1f1; }
+        #modalBody::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 10px; }
+        
+        .close-btn { 
+            display: block; width: 100%; margin-top: 20px; padding: 14px; 
+            background: var(--corp-blue); color: white; border: none; 
+            border-radius: 14px; font-weight: 600; cursor: pointer; transition: 0.2s;
+            flex-shrink: 0;
+        }
+        .close-btn:hover { opacity: 0.9; transform: scale(0.99); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        @media (max-width: 600px) { 
+            .grid-container { grid-template-columns: repeat(2, 1fr); gap: 15px; justify-content: center; } 
+            .book-card { width: 100%; } 
+            .photo-box { width: 100%; height: 210px; }
+            .about-section { padding: 20px; }
+            #searchInput { width: 100px; }
+            #searchInput:focus { width: 120px; }
+            .modal-content { padding: 25px; margin: 8vh auto; max-height: 85vh; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="https://jkmedit.in/" class="logo">
+        <img src="../../assets/jkm-edit-logo.png" alt="JKM" onerror="this.src='https://via.placeholder.com/32/0071e3/ffffff?text=J'">
+        <span>JKM EDIT</span>
+    </a>
+    <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search books..." onkeyup="searchBooks()">
+    </div>
+</header>
+
+<div class="main-wrapper">
+    <div class="grid-container" id="bookGrid">
+        <a href="a/index.html" class="book-card"><div class="photo-box"><img src="bhagawatgeeta/cover.jpg"></div><h3>Srimad Bhagawat Geeta</h3></a>
+        <a href="b/index.html" class="book-card"><div class="photo-box"><img src="aarti/cover.jpg"></div><h3>Aarti</h3></a>
+        <a href="c/index.html" class="book-card"><div class="photo-box"><img src="mantra/cover.jpg"></div><h3> Mantra </h3></a>
+        <a href="d/index.html" class="book-card"><div class="photo-box"><img src="vedas/cover.jpg"></div><h3> Vedas </h3></a>
+    
+
+    </div>
+
+    <div class="about-section">
+        <h2>About the JKM EDIT Library</h2>
+        <p>Spiritual literature has long been a source of guidance, offering clarity, purpose, and inner strength to those who seek meaning beyond material life. At JKM EDIT, spiritual books are curated to help readers explore self-awareness, faith, and mindfulness through timeless wisdom and thoughtful reflection. These writings encourage individuals to pause, observe their inner world, and develop a deeper understanding of life, values, and consciousness.</p>
+
+        <p>Our spiritual collection draws inspiration from ancient scriptures, devotional texts, philosophical teachings, and sacred traditions that have shaped human thought for centuries. Aarti, prayers, and devotional writings hold a special place in this collection, preserving rituals and expressions of gratitude that strengthen faith and nurture emotional balance. Such works provide comfort during uncertainty and inspire hope, devotion, and resilience in everyday life.</p>
+
+        <p>Beyond ritual and tradition, spiritual books also address modern challenges by guiding readers toward inner peace, discipline, and ethical living. They offer practical insights on meditation, self-control, compassion, and mindful living, helping individuals manage stress, cultivate positivity, and maintain harmony between mind, body, and soul. Through these teachings, spirituality becomes a lived experience rather than a distant concept.</p>
+
+        <p>At JKM EDIT, we believe spiritual reading is a personal journey rather than a fixed path. Each reader may interpret wisdom differently, finding their own meaning and direction through reflection and experience. Our aim is to provide authentic spiritual content that respects diverse beliefs while encouraging inner growth, self-realization, and a lasting sense of peace that extends beyond the pages of a book.</p>
+
+        <H2>Thank you </H2>
+
+
+    </div>
+</div>
+
+<footer>
+    <div class="footer-links">
+        <a onclick="showModal('Privacy Policy', `At JKM EDIT, your privacy is our priority.<br><br>We collect only the minimum information required to provide access to our eBooks and services.<br><br>Your personal data is kept strictly confidential and is never sold, shared, or misused.<br><br>All information is used solely to improve user experience and service quality.<br><br>We apply appropriate security measures to protect your data from unauthorized access.<br><br>Cookies may be used to enhance website functionality and browsing experience.<br><br>By using this website, you agree to our privacy practices and policies.<br><br>JKM EDIT reserves the right to update this privacy policy when necessary.`)">Privacy</a>
+
+        <a onclick="showModal('Copyright', `© All content published on JKM EDIT is protected by copyright laws.<br><br>All eBooks, text, designs, and digital materials are the exclusive property of JKM EDIT.<br><br>Unauthorized copying, reproduction, distribution, or resale of any content is strictly prohibited.<br><br>No part of this website or its content may be reproduced in any form without prior written permission.<br><br>Any misuse or violation of copyright may result in legal action under applicable laws.<br><br>By accessing this website, you agree to respect and comply with our copyright policy.`)">Copyright</a>
+
+        <a onclick="showModal('Contact Us', `<b>Email:</b> Mpurohit2414@gmail.com<br><br>If you have any questions, feedback, or support requests, feel free to reach out to us.<br><br>We are happy to assist you with eBook access, downloads, or general inquiries.<br><br>We aim to respond to all queries as quickly as possible.<br><br>Thank you for connecting with JKM EDIT.`)">Contact us</a>
+    </div>
+    <p style="color:var(--secondary-text); font-size:0.75rem; margin-top:15px;">&copy; 2025 JKM EDIT</p>
+</footer>
+
+<div id="infoModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle"></h2>
+        <div id="modalBody"></div>
+        <button class="close-btn" onclick="closeModal()">Got it</button>
+    </div>
+</div>
+
+<script>
+    // Search Function
+    function searchBooks() {
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let cards = document.getElementsByClassName('book-card');
+        for (let i = 0; i < cards.length; i++) {
+            let title = cards[i].getElementsByTagName('h3')[0].innerText.toLowerCase();
+            cards[i].style.display = title.includes(input) ? "" : "none";
+        }
+    }
+
+    // Modal Function
+    function showModal(title, text) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalBody').innerHTML = text;
+        document.getElementById('infoModal').style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Locks background scroll
+    }
+
+    function closeModal() {
+        document.getElementById('infoModal').style.display = 'none';
+        document.body.style.overflow = 'auto'; // Enables background scroll
+    }
+
+    // Close modal when clicking on the dark background
+    window.onclick = function(event) {
+        let modal = document.getElementById('infoModal');
+        if (event.target == modal) closeModal();
+    }
+</script>
+
+</body>
+</html>
