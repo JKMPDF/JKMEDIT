@@ -1,165 +1,178 @@
 <!DOCTYPE html>
-<html lang='en' data-theme='light'>
+<html lang="en">
 <head>
-    <meta charset='UTF-8'/>
-    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>M&M❣️ Library | JKM Edit</title>
-    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JKM EDIT | Official Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { 
-            --primary-color: #0052cc; --bg-color: #f4f5f7; --surface-color: #ffffff; --text-color: #172b4d; 
-        }
-        [data-theme='dark'] {
-            --bg-color: #1a1a1a; --surface-color: #2d2d2d; --text-color: #f4f5f7;
+            --corp-blue: #0071e3; 
+            --bg: #f5f5f7; 
+            --text: #1d1d1f; 
+            --secondary-text: #86868b;
+            --max-w: 850px; /* Aligns 5 books perfectly on desktop */
         }
         
-        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Poppins', sans-serif; transition: 0.3s; min-height: 100vh; display: flex; flex-direction: column; }
-        
-        .branding-bar { 
-            display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;
-            background: var(--surface-color); border-bottom: 3px solid var(--primary-color); position: sticky; top: 0; z-index: 100;
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            background: var(--bg); margin: 0; color: var(--text); 
         }
 
-        .controls-top { display: flex; gap: 10px; align-items: center; }
-        .toggle-btn { cursor: pointer; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--primary-color); background: none; color: var(--text-color); font-weight: 600; font-size: 0.8rem; }
-        .toggle-btn.active { background: var(--primary-color); color: white; }
+        header { 
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+            padding: 12px 5%; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #d2d2d7; position: sticky; top: 0; z-index: 100;
+        }
+        .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #003366; font-weight: 600; }
+        .logo img { width: 32px; height: 32px; border-radius: 6px; }
 
-        .library-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
-        .book-card { background: var(--surface-color); border-radius: 12px; overflow: hidden; text-align: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s; border: 1px solid rgba(0,0,0,0.05); }
-        .book-card:hover { transform: translateY(-5px); }
-        .book-card img { width: 100%; height: 220px; object-fit: cover; background: #eee; }
+        /* Search Bar Styling */
+        .search-container { position: relative; }
+        #searchInput { 
+            padding: 8px 15px 8px 35px; border-radius: 20px; border: 1px solid #d2d2d7;
+            font-size: 0.9rem; outline: none; transition: 0.3s; width: 150px;
+        }
+        #searchInput:focus { border-color: var(--corp-blue); width: 200px; }
+        .search-icon { position: absolute; left: 12px; top: 10px; color: var(--secondary-text); }
+
+        .main-wrapper { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; }
+
+        /* Grid - Aligned perfectly with paragraph below */
+        .grid-container { 
+            display: grid; padding: 40px 0;
+            grid-template-columns: repeat(auto-fill, 150px); 
+            justify-content: space-between; gap: 20px; 
+        }
         
-        .reader-panel { max-width: 800px; margin: 20px auto; padding: 30px; background: var(--surface-color); border-radius: 12px; line-height: 1.8; white-space: pre-wrap; font-size: 1.1rem; flex: 1; width: 90%; }
-        
+        .book-card { width: 150px; text-decoration: none; color: inherit; transition: 0.3s; }
+        .photo-box { 
+            width: 150px; height: 220px; background: #fff; border-radius: 12px; 
+            overflow: hidden; border: 1px solid #d2d2d7; box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+        }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .book-card h3 { padding: 10px 0; margin: 0; font-size: 0.85rem; text-align: center; font-weight: 500; }
+
+        /* Paragraph Box - Matches Grid Width */
+        .about-section { 
+            margin: 20px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid #d2d2d7; box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--corp-blue); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        footer { padding: 40px 5%; text-align: center; border-top: 1px solid #d2d2d7; }
+        .footer-links a { color: var(--corp-blue); text-decoration: none; margin: 0 15px; font-size: 0.85rem; cursor: pointer; }
+
+        /* Modal Popup */
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; backdrop-filter: blur(5px); }
+        .modal-content { background:white; width:85%; max-width:500px; margin:15vh auto; border-radius:20px; padding:30px; position:relative; }
+        .close { position:absolute; right:20px; top:15px; font-size:24px; cursor:pointer; }
+
         @media (max-width: 600px) { 
-            .library-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; } 
-            .branding-bar { padding: 0.8rem 1rem; }
-            .branding-bar h1 { font-size: 1.1rem; }
+            .grid-container { grid-template-columns: repeat(2, 1fr); gap: 15px; justify-content: center; } 
+            .book-card { width: 100%; } 
+            .photo-box { width: 100%; height: 210px; }
+            .about-section { padding: 20px; }
+            #searchInput { width: 100px; }
+            #searchInput:focus { width: 120px; }
         }
     </style>
 </head>
 <body>
 
-    <header class="branding-bar">
-        <div onclick="location.reload()" style="cursor:pointer"><h1>JKM Edit</h1></div>
-        <div class="controls-top">
-            <button onclick="toggleDarkMode()" class="toggle-btn"><i class="fa-solid fa-circle-half-stroke"></i></button>
-            <div style="display:flex; background: rgba(0,0,0,0.1); border-radius:20px; padding:2px;">
-                <button id="btn-eng" onclick="setLanguage('en')" class="toggle-btn active">EN</button>
-                <button id="btn-hin" onclick="setLanguage('hi')" class="toggle-btn">HI</button>
-            </div>
-        </div>
-    </header>
+<header>
+    <a href="https://jkmedit.in/" class="logo">
+        <img src="assets/logo.png" alt="JKM" onerror="this.src='https://via.placeholder.com/32/0071e3/ffffff?text=J'">
+        <span>JKM EDIT</span>
+    </a>
+    <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search books..." onkeyup="searchBooks()">
+    </div>
+</header>
 
-    <main id="main-content">
-        <div id="library-display" class="library-grid"></div>
-    </main>
+<div class="main-wrapper">
+    <div class="grid-container" id="bookGrid">
+        <a href="tools/Ebook/spiritual/index.html/" class="book-card"><div class="photo-box"><img src="tools/Ebook/spiritual/cover.jpg"></div><h3>Spiritual</h3></a>
+        <a href="tools/Ebook/motivation/index.html" class="book-card"><div class="photo-box"><img src="tools/Ebook/motivation/cover.jpg"></div><h3>Motivation And Self Growth</h3></a>
+        <a href="tools/Ebook/love/index.html" class="book-card"><div class="photo-box"><img src="tools/Ebook/love/cover.jpg"></div><h3> Love & Poetry </h3></a>
+        <a href="tools/Ebook/fiction/index.html" class="book-card"><div class="photo-box"><img src="tools/Ebook/fiction/cover.jpg"></div><h3> Fiction </h3></a>
+        <a href="tools/Ebook/nonfiction/index.html" class="book-card"><div class="photo-box"><img src="tools/Ebook/nonfiction/cover.jpg"></div><h3> Non Fiction </h3></a>
+        <a href="tools/Ebook/poetry/index.html" class="book-card"><div class="photo-box"><img src="tools/Ebook/poetry/cover.jpg"></div><h3> Poetry </h3></a>
+    </div>
 
-    <footer style="text-align:center; padding: 20px; position: sticky; bottom: 0; background: var(--bg-color);">
-        <button onclick="goBack()" class="btn-nav" style="padding: 10px 30px; border-radius: 25px; border: none; background: var(--primary-color); color: white; font-weight: 600; cursor: pointer;">
-            <i class="fa-solid fa-arrow-left"></i> Back
-        </button>
-    </footer>
+    <div class="about-section">
+        <h2>About the JKM EDIT Library</h2>
+        <p>This library is dedicated to M&M❣️. We offer a curated collection of spiritual texts and guides, designed for a modern reading experience.</p>
+        <p>Your 1000 words can go here. The border of this box is now perfectly aligned with the edges of the book cards above on desktop, tablet, and mobile views.</p>
+    </div>
+</div>
 
-    <script>
-        let fullData = [];
-        let navigationStack = [];
-        let currentLang = 'en';
-        let currentActiveBook = null;
+<footer>
+    <div class="footer-links">
+        <a onclick="showModal('Privacy Policy', 'At JKM EDIT, your privacy is our priority.<br>
+We collect only the minimum information required to provide access to our eBooks and services.<br>
+Your personal data is kept strictly confidential and is never sold, shared, or misused.<br>
+All information is used solely to improve user experience and service quality.<br>
+We apply appropriate security measures to protect your data from unauthorized access.<br>
+Cookies may be used to enhance website functionality and browsing experience.<br>
+By using this website, you agree to our privacy practices and policies.<br>
+JKM EDIT reserves the right to update this privacy policy when necessary.<br>
+')">Privacy</a>
 
-        async function init() {
-            try {
-                const res = await fetch('./library.json');
-                fullData = await res.json();
-                render(fullData);
-            } catch (e) {
-                document.getElementById('library-display').innerHTML = "<h2>Loading Library...</h2>";
-            }
+        <a onclick="showModal('Copyright', '© All content published on JKM EDIT is protected by copyright laws.<br>
+All eBooks, text, designs, and digital materials are the exclusive property of JKM EDIT.<br>
+Unauthorized copying, reproduction, distribution, or resale of any content is strictly prohibited.<br>
+No part of this website or its content may be reproduced in any form without prior written permission.<br>
+Any misuse or violation of copyright may result in legal action under applicable laws.<br>
+By accessing this website, you agree to respect and comply with our copyright policy.<br>
+')">Copyright</a>
+
+        <a onclick="showModal('Contact ', 'Contact Us<br>
+If you have any questions, feedback, or support requests, feel free to reach out to us.<br>
+We are happy to assist you with eBook access, downloads, or general inquiries.<br>
+Email: Mpurohit2414@gmail.com<br>
+We aim to respond to all queries as quickly as possible.<br>
+Thank you for connecting with JKM EDIT.<br>
+')">Contact us</a>
+    </div>
+    <p style="color:var(--secondary-text); font-size:0.75rem; margin-top:15px;">&copy; 2025 JKM EDIT</p>
+</footer>
+
+<div id="infoModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="document.getElementById('infoModal').style.display='none'">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalBody"></p>
+    </div>
+</div>
+
+<script>
+    // Search Function
+    function searchBooks() {
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let cards = document.getElementsByClassName('book-card');
+        for (let i = 0; i < cards.length; i++) {
+            let title = cards[i].getElementsByTagName('h3')[0].innerText.toLowerCase();
+            cards[i].style.display = title.includes(input) ? "" : "none";
         }
+    }
 
-        function setLanguage(lang) {
-            currentLang = lang;
-            document.getElementById('btn-eng').classList.toggle('active', lang === 'en');
-            document.getElementById('btn-hin').classList.toggle('active', lang === 'hi');
-            
-            // If user is inside a book, update text immediately
-            if (currentActiveBook) {
-                openReader(currentActiveBook.name, currentActiveBook.files);
-            } else {
-                const currentItems = navigationStack.length ? navigationStack[navigationStack.length - 1].children : fullData;
-                render(currentItems);
-            }
-        }
+    // Modal Function
+    function showModal(title, text) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalBody').innerText = text;
+        document.getElementById('infoModal').style.display = 'block';
+    }
 
-        function toggleDarkMode() {
-            const body = document.body;
-            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-        }
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        let modal = document.getElementById('infoModal');
+        if (event.target == modal) modal.style.display = "none";
+    }
+</script>
 
-        function render(items) {
-            currentActiveBook = null;
-            const display = document.getElementById('main-content');
-            display.innerHTML = `<div id="library-display" class="library-grid"></div>`;
-            const grid = document.getElementById('library-display');
-
-            grid.innerHTML = items.map((item, index) => `
-                <div class="book-card" onclick="handleClick(${index})">
-                    <img src="${item.image}" onerror="this.src='https://via.placeholder.com/150x220?text=${item.name}'">
-                    <div style="padding:10px;"><h3>${item.name}</h3></div>
-                </div>
-            `).join('');
-        }
-
-        function handleClick(index) {
-            const currentItems = navigationStack.length ? navigationStack[navigationStack.length - 1].children : fullData;
-            const selected = currentItems[index];
-
-            if (selected.type === 'folder') {
-                const txtFiles = selected.children.filter(c => c.type === 'file');
-                if (txtFiles.length > 0) {
-                    openReader(selected.name, txtFiles);
-                } else {
-                    navigationStack.push(selected);
-                    render(selected.children);
-                }
-            }
-        }
-
-        function openReader(title, files) {
-            currentActiveBook = { name: title, files: files };
-            const display = document.getElementById('main-content');
-            
-            const hindiFile = files.find(f => f.name.toLowerCase().includes('hindi'));
-            const defaultFile = files.find(f => !f.name.toLowerCase().includes('hindi')) || files[0];
-            const content = (currentLang === 'hi' && hindiFile) ? hindiFile.content : defaultFile.content;
-
-            display.innerHTML = `
-                <div class="reader-panel">
-                    <h2 style="color:var(--primary-color)">${title}</h2>
-                    <hr style="opacity:0.2">
-                    <div>${content}</div>
-                </div>
-            `;
-            window.scrollTo(0,0);
-        }
-
-        function goBack() {
-            if (currentActiveBook) {
-                currentActiveBook = null;
-                const currentItems = navigationStack.length ? navigationStack[navigationStack.length - 1].children : fullData;
-                render(currentItems);
-            } else if (navigationStack.length > 0) {
-                navigationStack.pop();
-                const prevItems = navigationStack.length ? navigationStack[navigationStack.length - 1].children : fullData;
-                render(prevItems);
-            } else {
-                window.history.back();
-            }
-        }
-
-        init();
-    </script>
 </body>
 </html>
