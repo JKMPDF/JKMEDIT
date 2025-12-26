@@ -17,6 +17,7 @@
         body { 
             font-family: -apple-system, system-ui, sans-serif; 
             background: var(--bg); margin: 0; color: var(--text); 
+            -webkit-font-smoothing: antialiased;
         }
 
         header { 
@@ -63,30 +64,61 @@
         footer { padding: 40px 5%; text-align: center; border-top: 1px solid #d2d2d7; }
         .footer-links a { color: var(--corp-blue); text-decoration: none; margin: 0 15px; font-size: 0.85rem; cursor: pointer; font-weight: 500; }
 
-        /* Professional Modal Styling */
+        /* Professional Modal Styling - Scrollable & Fixed Size */
         .modal { 
             display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
-            background:rgba(0,0,0,0.4); z-index:1000; backdrop-filter: blur(8px); 
+            background:rgba(0,0,0,0.5); z-index:1000; backdrop-filter: blur(8px); 
             animation: fadeIn 0.3s ease;
         }
         .modal-content { 
-            background:white; width:90%; max-width:500px; margin:12vh auto; 
-            border-radius: 24px; padding: 40px; position: relative; 
+            background: white; 
+            width: 90%; 
+            max-width: 500px; 
+            max-height: 80vh; /* Limits height to 80% of screen */
+            margin: 10vh auto; 
+            border-radius: 24px; 
+            padding: 30px; 
+            position: relative; 
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            flex-direction: column;
         }
-        #modalTitle { margin-top: 0; font-size: 1.5rem; color: var(--text); font-weight: 600; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        #modalBody { line-height: 1.7; color: #424245; font-size: 0.95rem; margin-top: 20px; }
+
+        #modalTitle { 
+            margin-top: 0; 
+            font-size: 1.4rem; 
+            color: var(--text); 
+            font-weight: 600; 
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f2f2f7;
+            flex-shrink: 0;
+        }
+
+        #modalBody { 
+            line-height: 1.7; 
+            color: #424245; 
+            font-size: 0.95rem; 
+            margin-top: 15px;
+            overflow-y: auto; /* Makes content scrollable */
+            padding-right: 10px;
+        }
+
+        /* Custom scrollbar for professional look */
+        #modalBody::-webkit-scrollbar { width: 5px; }
+        #modalBody::-webkit-scrollbar-track { background: #f1f1f1; }
+        #modalBody::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 10px; }
         
         .close-btn { 
-            display: block; width: 100%; margin-top: 30px; padding: 12px; 
+            display: block; width: 100%; margin-top: 20px; padding: 14px; 
             background: var(--corp-blue); color: white; border: none; 
-            border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;
+            border-radius: 14px; font-weight: 600; cursor: pointer; transition: 0.2s;
+            flex-shrink: 0;
         }
-        .close-btn:hover { opacity: 0.9; }
+        .close-btn:hover { opacity: 0.9; transform: scale(0.99); }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         @media (max-width: 600px) { 
             .grid-container { grid-template-columns: repeat(2, 1fr); gap: 15px; justify-content: center; } 
@@ -95,7 +127,7 @@
             .about-section { padding: 20px; }
             #searchInput { width: 100px; }
             #searchInput:focus { width: 120px; }
-            .modal-content { padding: 25px; margin: 10vh auto; }
+            .modal-content { padding: 25px; margin: 8vh auto; max-height: 85vh; }
         }
     </style>
 </head>
@@ -114,18 +146,28 @@
 
 <div class="main-wrapper">
     <div class="grid-container" id="bookGrid">
-        <a href="/spiritual/index.html/" class="book-card"><div class="photo-box"><img src="/spiritual/cover.jpg"></div><h3>Spiritual</h3></a>
-        <a href="/motivation/index.html" class="book-card"><div class="photo-box"><img src="/motivation/cover.jpg"></div><h3>Motivation And Self Growth</h3></a>
-        <a href="/love/index.html" class="book-card"><div class="photo-box"><img src="/love/cover.jpg"></div><h3> Love & Poetry </h3></a>
-        <a href="/fiction/index.html" class="book-card"><div class="photo-box"><img src="/fiction/cover.jpg"></div><h3> Fiction </h3></a>
-        <a href="/nonfiction/index.html" class="book-card"><div class="photo-box"><img src="/nonfiction/cover.jpg"></div><h3> Non Fiction </h3></a>
-        <a href="/poetry/index.html" class="book-card"><div class="photo-box"><img src="/poetry/cover.jpg"></div><h3> Poetry </h3></a>
+        <a href="tools/Ebook/spiritual/index.html/" class="book-card"><div class="photo-box"><img src="tools/Ebook/spiritual/cover.jpg"></div><h3>Spiritual</h3></a>
+        <a href="tools/Ebook/motivation/index.html" class="book-card"><div class="photo-box"><img src="tools/Ebook/motivation/cover.jpg"></div><h3>Motivation And Self Growth</h3></a>
+        <a href="tools/Ebook/love/index.html" class="book-card"><div class="photo-box"><img src="tools/Ebook/love/cover.jpg"></div><h3> Love & Poetry </h3></a>
+        <a href="tools/Ebook/fiction/index.html" class="book-card"><div class="photo-box"><img src="tools/Ebook/fiction/cover.jpg"></div><h3> Fiction </h3></a>
+        <a href="tools/Ebook/nonfiction/index.html" class="book-card"><div class="photo-box"><img src="tools/Ebook/nonfiction/cover.jpg"></div><h3> Non Fiction </h3></a>
+        <a href="tools/Ebook/poetry/index.html" class="book-card"><div class="photo-box"><img src="tools/Ebook/poetry/cover.jpg"></div><h3> Poetry </h3></a>
     </div>
 
     <div class="about-section">
         <h2>About the JKM EDIT Library</h2>
-        <p>This library is dedicated to M&M❣️. We offer a curated collection of spiritual texts and guides, designed for a modern reading experience.</p>
-        <p>Your 1000 words can go here. The border of this box is now perfectly aligned with the edges of the book cards above on desktop, tablet, and mobile views.</p>
+        <p>Books have always been more than mere collections of pages; they are carriers of ideas, emotions, wisdom, and lived experiences that connect generations across time. At JKM EDIT, we believe reading is a deeply personal journey that allows individuals to pause, reflect, and grow through the power of words. Our platform is dedicated to creating a thoughtful digital space where readers can explore literature that nourishes the mind, touches the heart, and uplifts the soul. Each book offered here is chosen with care, ensuring that readers find depth, authenticity, and meaning rather than fleeting entertainment.</p>
+
+        <p>A significant part of our collection is devoted to spiritual literature and devotional works, including aarti and sacred writings that guide readers toward inner peace, mindfulness, and self-awareness. These books reflect timeless wisdom drawn from tradition, philosophy, and spiritual practice, offering comfort and clarity in an increasingly fast-paced world. Whether read during moments of worship or quiet reflection, our spiritual content aims to reconnect readers with faith, gratitude, and a deeper understanding of life beyond material pursuits.</p>
+
+        <p>Love and poetry form the emotional heart of JKM EDIT’s library, capturing the beauty and complexity of human relationships and inner feelings. Our love stories explore connection, longing, joy, sacrifice, and emotional growth, presenting narratives that resonate with real experiences and unspoken emotions. Poetry, in its many forms, offers a space where language becomes rhythm and feeling, expressing thoughts that are often difficult to articulate, from tender moments of affection to profound reflections on life, society, and the self.</p>
+        <p>Fiction on our platform invites readers into imagined worlds filled with compelling characters and meaningful storytelling. These narratives entertain while also encouraging reflection on human nature, social realities, and personal transformation. Through fiction, readers can escape routine, explore different perspectives, and experience stories that blend creativity with truth, making literature both enjoyable and thought-provoking.  </p>
+
+        <p>Complementing our fictional works, the non-fiction section at JKM EDIT provides knowledge, insight, and real-world understanding. These books focus on personal growth, philosophy, motivation, history, and lived experiences that inform and inspire readers. Non-fiction here is designed not only to educate but also to empower, helping individuals gain clarity, confidence, and a broader perspective on life and society.</p>
+<p>At JKM EDIT, we view books as lifelong companions rather than temporary distractions. Our mission is to preserve meaningful literature, celebrate diverse voices, and make quality reading accessible in a digital format that respects both tradition and modern convenience. Whether a reader seeks spiritual calm, emotional connection, creative expression, imaginative escape, or practical wisdom, our platform strives to offer a rich and balanced collection that reflects the depth and beauty of human thought and experience.</p>
+<H2>Thank you </H2>
+
+
     </div>
 </div>
 
@@ -164,15 +206,15 @@
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('modalBody').innerHTML = text;
         document.getElementById('infoModal').style.display = 'block';
-        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        document.body.style.overflow = 'hidden'; // Locks background scroll
     }
 
     function closeModal() {
         document.getElementById('infoModal').style.display = 'none';
-        document.body.style.overflow = 'auto'; // Restore scrolling
+        document.body.style.overflow = 'auto'; // Enables background scroll
     }
 
-    // Close modal when clicking outside
+    // Close modal when clicking on the dark background
     window.onclick = function(event) {
         let modal = document.getElementById('infoModal');
         if (event.target == modal) closeModal();
