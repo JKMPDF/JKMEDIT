@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>Enterprise Invoice System | Pro</title>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    <style>
+        :root { --primary: #0052cc; --dark: #172b4d; --border: #c1c7d0; --light-bg: #f4f5f7; }
+        body { font-family: 'Inter', sans-serif; background: var(--light-bg); margin: 0; color: var(--dark); }
+        
+        /* Toolbar */
+        .no-print { 
+            background: #fff; padding: 12px 20px; border-bottom: 2px solid var(--primary); 
+            display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000;
+        }
+
+        /* Invoice Canvas */
+        .invoice-canvas {
+            background: #fff; width: 210mm; min-height: 297mm; margin: 20px auto;
+            padding: 40px; box-shadow: 0 0 15px rgba(0,0,0,0.1); position: relative; box-sizing: border-box;
+        }
+
+        .header-section { display: flex; justify-content: space-between; border-bottom: 2px solid var(--dark); padding-bottom: 15px; margin-bottom: 20px; }
+        .logo-area img { max-height: 70px; max-width: 200px; display: block; margin-bottom: 5px; }
+        
+        .title-area { text-align: right; }
+        .title-area h1 { margin: 0; font-size: 22pt; text-transform: uppercase; color: #000; }
+        .export-subtitle { font-size: 8pt; font-weight: 700; color: #d32f2f; margin-top: 2px; display: none; }
+
+        .info-strip { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid #000; margin-bottom: 20px; }
+        .info-item { border-right: 1px solid #000; padding: 8px; }
+        .info-item:last-child { border-right: none; }
+        .info-item label { display: block; font-size: 7pt; font-weight: 700; text-transform: uppercase; }
+        .info-item input { border: none; font-size: 9pt; width: 100%; font-weight: 600; outline: none; }
+
+        .client-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #000; margin-bottom: 20px; }
+        .client-col { padding: 12px; border-right: 1px solid #000; }
+        .client-col:last-child { border-right: none; }
+        .client-col h3 { font-size: 9pt; margin: 0 0 8px 0; background: #eee; padding: 4px; border-bottom: 1px solid #000; display: flex; justify-content: space-between; }
+        .client-col input, .client-col textarea { width: 100%; border: none; font-size: 9pt; font-family: inherit; resize: none; outline: none; }
+
+        /* Table */
+        .item-table { width: 100%; border-collapse: collapse; border: 1px solid #000; }
+        .item-table th { background: #eee; border: 1px solid #000; font-size: 8pt; padding: 8px; }
+        .item-table td { border: 1px solid #000; padding: 5px; vertical-align: top; }
+        .item-table input { width: 100%; border: none; outline: none; font-size: 9pt; }
+
+        .bottom-section { display: grid; grid-template-columns: 1.3fr 1fr; border: 1px solid #000; border-top: none; }
+        .bottom-left { padding: 10px; border-right: 1px solid #000; }
+        .bottom-right { padding: 0; }
+
+        .totals-table { width: 100%; border-collapse: collapse; }
+        .totals-table td { padding: 6px 10px; border-bottom: 1px solid #eee; font-size: 9pt; text-align: right; }
+        .grand-total { background: #eee; font-weight: 700; font-size: 11pt !important; }
+
+        .seal-area { text-align: center; padding: 20px 10px 10px 10px; }
+        #display-seal { max-height: 80px; margin-bottom: 5px; }
+
+        /* Modals */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); overflow-y: auto; }
+        .modal-content { background: #fff; margin: 2% auto; padding: 20px; width: 90%; max-width: 500px; border-radius: 4px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 8pt; font-weight: 600; margin-bottom: 4px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--border); box-sizing: border-box; }
+
+        .btn { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-sec { background: #dfe1e6; color: #172b4d; }
+
+        @media print {
+            .no-print, .btn-add, .client-select-btn { display: none !important; }
+            body { background: #fff; }
+            .invoice-canvas { margin: 0; box-shadow: none; width: 100%; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="no-print">
+        <div style="font-weight: 700;">Enterprise Billing v3.5</div>
+        <div style="display: flex; gap: 8px;">
+            <select id="invoiceType" onchange="syncUI()">
+                <option value="regular">Regular GST Invoice</option>
+                <option value="export_lut">Export Under LUT</option>
+                <option value="export_tax">Export With Tax</option>
+            </select>
+            <select id="supplyLocation" onchange="calculateAll()">
+                <option value="intra">Intra-State (CGST+SGST)</option>
+                <option value="inter">Inter-State (IGST)</option>
+            </select>
+            <button class="btn btn-sec" onclick="openM('settingsModal')"><i class="fa fa-cog"></i> Settings</button>
+            <button class="btn btn-sec" onclick="openM('clientListModal')"><i class="fa fa-users"></i> Clients</button>
+            <button class="btn btn-primary" onclick="window.print()"><i class="fa fa-print"></i> Print</button>
+        </div>
+    </div>
+
+    <div class="invoice-canvas">
+        <div class="header-section">
+            <div class="logo-area">
+                <img id="view-logo" src="" alt="" onerror="this.style.display='none'">
+                <div id="view-company-info" style="font-size: 9pt; line-height: 1.3;">
+                    <b style="font-size: 11pt;">YOUR COMPANY NAME</b><br>
+                    Add Business Address in Settings<br>
+                    GSTIN: 00XXXXX0000X0Z0
+                </div>
+            </div>
+            <div class="title-area">
+                <h1 id="view-title">Tax Invoice</h1>
+                <div id="view-lut-label" class="export-subtitle"></div>
+            </div>
+        </div>
+
+        <div class="info-strip">
+            <div class="info-item"><label>Invoice No.</label><input type="text" value="INV/25/001"></div>
+            <div class="info-item"><label>Date</label><input type="date" id="invDate"></div>
+            <div class="info-item"><label>Place of Supply</label><input type="text" placeholder="State Name"></div>
+            <div class="info-item"><label>Vehicle/Doc No.</label><input type="text" placeholder="NA"></div>
+        </div>
+
+        <div class="client-grid">
+            <div class="client-col">
+                <h3>Bill To <span class="no-print" style="cursor:pointer; color:blue;" onclick="openM('clientListModal')">Select</span></h3>
+                <input type="text" id="bill-name" placeholder="Customer Name" style="font-weight:700;">
+                <textarea id="bill-address" placeholder="Address" rows="3"></textarea>
+                <input type="text" id="bill-gst" placeholder="GSTIN">
+            </div>
+            <div class="client-col">
+                <h3>Ship To</h3>
+                <input type="text" placeholder="Consignee Name">
+                <textarea placeholder="Delivery Address" rows="3"></textarea>
+                <input type="text" placeholder="State Code">
+            </div>
+        </div>
+
+        <table class="item-table">
+            <thead>
+                <tr>
+                    <th width="5%">#</th>
+                    <th width="45%">Description of Goods/Services</th>
+                    <th width="10%">HSN</th>
+                    <th width="8%">Qty</th>
+                    <th width="10%">Rate</th>
+                    <th width="10%">GST</th>
+                    <th width="12%">Amount</th>
+                </tr>
+            </thead>
+            <tbody id="itemsBody">
+                <tr class="item-row">
+                    <td style="text-align:center;">1</td>
+                    <td><input type="text" placeholder="Product Name"></td>
+                    <td><input type="text" placeholder="HSN"></td>
+                    <td><input type="number" class="qty" value="1" oninput="calculateAll()"></td>
+                    <td><input type="number" class="rate" value="0" oninput="calculateAll()"></td>
+                    <td>
+                        <select class="tax-rate" onchange="calculateAll()" style="width:100%; border:none;">
+                            <option value="0">0%</option><option value="5">5%</option>
+                            <option value="12">12%</option><option value="18" selected>18%</option>
+                            <option value="28">28%</option>
+                        </select>
+                    </td>
+                    <td class="row-total" style="text-align:right; font-weight:600;">0.00</td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn btn-sec btn-add no-print" style="margin-top: 10px;" onclick="addRow()">+ Add Line</button>
+
+        <div class="bottom-section">
+            <div class="bottom-left">
+                <div style="font-size: 8pt;"><b>Amount in Words:</b><br><span id="view-words">Zero Rupees Only</span></div>
+                <div style="display: flex; align-items: center; margin-top: 15px; border: 1px solid #eee; padding: 5px; width: fit-content;">
+                    <img id="view-qr" src="" style="width: 60px; height: 60px; margin-right: 10px;">
+                    <div style="font-size: 7pt;">Scan to Pay via UPI<br><b id="view-upi-text"></b></div>
+                </div>
+                <div style="font-size: 7pt; margin-top: 15px; color: #555;">
+                    <b>Terms & Conditions:</b><br>
+                    <span id="view-terms">1. Goods once sold not returned. 2. Interest @18% for delay.</span>
+                </div>
+            </div>
+            <div class="bottom-right">
+                <table class="totals-table">
+                    <tr><td>Taxable Sub-Total</td><td id="res-sub">0.00</td></tr>
+                    <tr id="row-cgst"><td>CGST</td><td id="res-cgst">0.00</td></tr>
+                    <tr id="row-sgst"><td>SGST</td><td id="res-sgst">0.00</td></tr>
+                    <tr id="row-igst" style="display:none;"><td>IGST</td><td id="res-igst">0.00</td></tr>
+                    <tr class="grand-total"><td>Total Amount</td><td id="res-total">0.00</td></tr>
+                </table>
+                <div class="seal-area">
+                    <div style="font-size: 8pt; margin-bottom: 40px;">For <b id="view-sig-name">YOUR COMPANY</b></div>
+                    <img id="view-seal" src="" alt="" onerror="this.style.display='none'">
+                    <div style="font-size: 8pt; border-top: 1px solid #000; padding-top: 5px; width: 150px; margin: 0 auto;">Authorised Signatory</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <h3>Business Profile</h3>
+            <div class="form-group"><label>Company Name</label><input type="text" id="set-name"></div>
+            <div class="form-group"><label>Address</label><textarea id="set-addr"></textarea></div>
+            <div class="form-group"><label>GSTIN</label><input type="text" id="set-gst"></div>
+            <div class="form-group"><label>UPI ID</label><input type="text" id="set-upi"></div>
+            <div class="form-group"><label>Logo (Local File)</label><input type="file" id="file-logo" accept="image/*" onchange="handleImg(this, 'logo')"></div>
+            <div class="form-group"><label>Or Logo URL</label><input type="text" id="set-logo-url"></div>
+            <div class="form-group"><label>Seal/Sign (Local File)</label><input type="file" id="file-seal" accept="image/*" onchange="handleImg(this, 'seal')"></div>
+            <div class="form-group"><label>Terms</label><textarea id="set-terms-text"></textarea></div>
+            <button class="btn btn-primary" onclick="saveSet()">Save Settings</button>
+            <button class="btn btn-sec" onclick="closeM('settingsModal')">Close</button>
+        </div>
+    </div>
+
+    <div id="clientListModal" class="modal">
+        <div class="modal-content">
+            <h3>Client Directory</h3>
+            <div id="dir-list" style="border: 1px solid #eee; margin-bottom: 10px; max-height: 200px; overflow-y:auto;"></div>
+            <hr>
+            <h4>Add New Client</h4>
+            <div class="form-group"><input type="text" id="new-c-name" placeholder="Name"></div>
+            <div class="form-group"><textarea id="new-c-addr" placeholder="Address"></textarea></div>
+            <div class="form-group"><input type="text" id="new-c-gst" placeholder="GSTIN"></div>
+            <button class="btn btn-primary" onclick="addCli()">Save Client</button>
+            <button class="btn btn-sec" onclick="closeM('clientListModal')">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let config = JSON.parse(localStorage.getItem('jkm_v3_config')) || { logo: '', seal: '', name: '', addr: '', gst: '', upi: '', terms: '' };
+        let clients = JSON.parse(localStorage.getItem('jkm_v3_clients')) || [];
+
+        document.getElementById('invDate').valueAsDate = new Date();
+
+        function openM(id) { document.getElementById(id).style.display = 'block'; if(id==='settingsModal') fillSet(); if(id==='clientListModal') renderCli(); }
+        function closeM(id) { document.getElementById(id).style.display = 'none'; }
+
+        function handleImg(input, type) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => { config[type] = reader.result; };
+            if (file) reader.readAsDataURL(file);
+        }
+
+        function saveSet() {
+            config.name = document.getElementById('set-name').value;
+            config.addr = document.getElementById('set-addr').value;
+            config.gst = document.getElementById('set-gst').value;
+            config.upi = document.getElementById('set-upi').value;
+            config.terms = document.getElementById('set-terms-text').value;
+            if(document.getElementById('set-logo-url').value) config.logo = document.getElementById('set-logo-url').value;
+            localStorage.setItem('jkm_v3_config', JSON.stringify(config));
+            applySet();
+            closeM('settingsModal');
+        }
+
+        function fillSet() {
+            document.getElementById('set-name').value = config.name;
+            document.getElementById('set-addr').value = config.addr;
+            document.getElementById('set-gst').value = config.gst;
+            document.getElementById('set-upi').value = config.upi;
+            document.getElementById('set-terms-text').value = config.terms;
+        }
+
+        function applySet() {
+            document.getElementById('view-logo').src = config.logo;
+            document.getElementById('view-logo').style.display = config.logo ? 'block' : 'none';
+            document.getElementById('view-company-info').innerHTML = `<b>${config.name}</b><br>${config.addr.replace(/\n/g,'<br>')}<br>GSTIN: ${config.gst}`;
+            document.getElementById('view-sig-name').innerText = config.name;
+            document.getElementById('view-upi-text').innerText = config.upi;
+            document.getElementById('view-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=upi://pay?pa=${config.upi}&pn=${config.name}`;
+            document.getElementById('view-seal').src = config.seal;
+            document.getElementById('view-seal').style.display = config.seal ? 'block' : 'none';
+            document.getElementById('view-terms').innerText = config.terms;
+        }
+
+        function addCli() {
+            clients.push({ name: document.getElementById('new-c-name').value, addr: document.getElementById('new-c-addr').value, gst: document.getElementById('new-c-gst').value });
+            localStorage.setItem('jkm_v3_clients', JSON.stringify(clients));
+            renderCli();
+        }
+
+        function renderCli() {
+            document.getElementById('dir-list').innerHTML = clients.map((c, i) => `<div style="padding:5px; border-bottom:1px solid #eee;">${c.name} <button onclick="pickCli(${i})">Pick</button></div>`).join('');
+        }
+
+        function pickCli(i) {
+            document.getElementById('bill-name').value = clients[i].name;
+            document.getElementById('bill-address').value = clients[i].addr;
+            document.getElementById('bill-gst').value = clients[i].gst;
+            closeM('clientListModal');
+        }
+
+        function syncUI() {
+            const type = document.getElementById('invoiceType').value;
+            const supply = document.getElementById('supplyLocation');
+            const lutLabel = document.getElementById('view-lut-label');
+            const title = document.getElementById('view-title');
+
+            if(type.includes('export')) {
+                supply.innerHTML = `<option value="inter">Export Supply</option>`;
+                title.innerText = "Export Invoice";
+                lutLabel.style.display = "block";
+                lutLabel.innerText = type === 'export_lut' ? "SUPPLY MEANT FOR EXPORT UNDER LUT WITHOUT PAYMENT OF INTEGRATED TAX" : "SUPPLY MEANT FOR EXPORT ON PAYMENT OF INTEGRATED TAX";
+            } else {
+                supply.innerHTML = `<option value="intra">Intra-State (CGST+SGST)</option><option value="inter">Inter-State (IGST)</option>`;
+                title.innerText = "Tax Invoice";
+                lutLabel.style.display = "none";
+            }
+            calculateAll();
+        }
+
+        function addRow() {
+            const tr = document.querySelector('.item-row').cloneNode(true);
+            tr.querySelectorAll('input').forEach(i => i.value = i.className === 'qty' ? 1 : (i.className === 'rate' ? 0 : ''));
+            tr.querySelector('.row-total').innerText = "0.00";
+            document.getElementById('itemsBody').appendChild(tr);
+        }
+
+        function calculateAll() {
+            const type = document.getElementById('invoiceType').value;
+            const location = document.getElementById('supplyLocation').value;
+            let sub = 0, tax = 0;
+
+            document.querySelectorAll('.item-row').forEach(row => {
+                const q = parseFloat(row.querySelector('.qty').value) || 0;
+                const r = parseFloat(row.querySelector('.rate').value) || 0;
+                const lineSub = q * r;
+                let lineTaxP = parseFloat(row.querySelector('.tax-rate').value) || 0;
+                if(type === 'export_lut') lineTaxP = 0;
+                
+                const lineTax = (lineSub * lineTaxP) / 100;
+                row.querySelector('.row-total').innerText = (lineSub + lineTax).toFixed(2);
+                sub += lineSub; tax += lineTax;
+            });
+
+            document.getElementById('res-sub').innerText = sub.toFixed(2);
+            document.getElementById('res-total').innerText = (sub + tax).toFixed(2);
+            document.getElementById('view-words').innerText = numberToWords(Math.round(sub + tax)) + " Rupees Only";
+
+            const cg = document.getElementById('row-cgst'), sg = document.getElementById('row-sgst'), ig = document.getElementById('row-igst');
+            if(location === 'inter' || type === 'export_tax') {
+                cg.style.display = sg.style.display = 'none'; ig.style.display = 'table-row';
+                document.getElementById('res-igst').innerText = tax.toFixed(2);
+            } else {
+                cg.style.display = sg.style.display = 'table-row'; ig.style.display = 'none';
+                document.getElementById('res-cgst').innerText = (tax/2).toFixed(2);
+                document.getElementById('res-sgst').innerText = (tax/2).toFixed(2);
+            }
+        }
+
+        function numberToWords(n) {
+            const a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
+            const b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
+            let str = '';
+            let num = ('000000000' + n).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+            if (!num) return '';
+            str += (num[1] != 0) ? (a[Number(num[1])] || b[num[1][0]] + ' ' + a[num[1][1]]) + 'Crore ' : '';
+            str += (num[2] != 0) ? (a[Number(num[2])] || b[num[2][0]] + ' ' + a[num[2][1]]) + 'Lakh ' : '';
+            str += (num[3] != 0) ? (a[Number(num[3])] || b[num[3][0]] + ' ' + a[num[3][1]]) + 'Thousand ' : '';
+            str += (num[4] != 0) ? (a[Number(num[4])] || b[num[4][0]] + ' ' + a[num[4][1]]) + 'Hundred ' : '';
+            str += (num[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(num[5])] || b[num[5][0]] + ' ' + a[num[5][1]]) : '';
+            return str;
+        }
+
+        applySet();
+    </script>
+</body>
+</html>
