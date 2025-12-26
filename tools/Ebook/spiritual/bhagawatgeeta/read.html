@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reading | JKM EDIT</title>
+    <title>Reader | JKM EDIT</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { 
@@ -26,117 +26,155 @@
             border-bottom: 1px solid #d2d2d7; position: sticky; top: 0; z-index: 100;
         }
 
-        .nav-left { display: flex; gap: 10px; align-items: center; }
+        .nav-left { display: flex; gap: 10px; }
         .nav-btn {
-            text-decoration: none; color: var(--corp-blue); font-size: 0.9rem;
-            font-weight: 500; padding: 8px 12px; border-radius: 8px; transition: 0.2s;
-            background: transparent; border: none; cursor: pointer;
+            text-decoration: none; color: var(--corp-blue); font-size: 1.1rem;
+            padding: 8px; cursor: pointer; background: transparent; border: none;
         }
-        .nav-btn:hover { background: rgba(0, 113, 227, 0.1); }
+
+        #chapterIndicator { font-weight: 600; font-size: 1.1rem; color: var(--text); }
 
         .lang-switcher { display: flex; background: #e8e8ed; border-radius: 10px; padding: 2px; }
         .lang-btn {
-            padding: 6px 15px; border: none; border-radius: 8px; cursor: pointer;
-            font-size: 0.8rem; font-weight: 600; transition: 0.3s; color: var(--secondary-text);
+            padding: 6px 12px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 0.75rem; font-weight: 700; color: var(--secondary-text);
         }
         .lang-btn.active { background: white; color: var(--corp-blue); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        .main-wrapper { max-width: var(--max-w); margin: 30px auto; padding: 0 20px; min-height: 60vh; }
+        .main-wrapper { max-width: var(--max-w); margin: 30px auto; padding: 0 20px; }
         
         .content-box {
             background: white; padding: 40px; border-radius: 18px; border: 1px solid #d2d2d7;
-            line-height: 1.8; font-size: 1.15rem; white-space: pre-wrap;
+            line-height: 1.8; font-size: 1.15rem; white-space: pre-wrap; min-height: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         }
 
-        /* Footer styling to match your exact theme */
+        /* Navigation Arrows */
+        .arrow-nav { display: flex; justify-content: space-between; margin-top: 25px; gap: 20px; }
+        .arrow-btn {
+            flex: 1; background: white; border: 1px solid #d2d2d7; padding: 15px;
+            border-radius: 14px; cursor: pointer; color: var(--corp-blue);
+            font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.2s;
+        }
+        .arrow-btn:hover:not(:disabled) { background: #f9f9fb; border-color: var(--corp-blue); }
+        .arrow-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
         footer { padding: 40px 5%; text-align: center; border-top: 1px solid #d2d2d7; }
         .footer-links a { color: var(--corp-blue); text-decoration: none; margin: 0 15px; font-size: 0.85rem; cursor: pointer; font-weight: 500; }
         
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; backdrop-filter: blur(8px); }
-        .modal-content { background: white; width: 90%; max-width: 500px; max-height: 80vh; margin: 10vh auto; border-radius: 24px; padding: 30px; position: relative; display: flex; flex-direction: column; }
-        #modalBody { overflow-y: auto; line-height: 1.7; color: #424245; margin-top: 15px; }
+        .modal-content { background: white; width: 90%; max-width: 500px; max-height: 80vh; margin: 10vh auto; border-radius: 24px; padding: 30px; position: relative; overflow-y: auto; }
         .close-btn { display: block; width: 100%; margin-top: 20px; padding: 14px; background: var(--corp-blue); color: white; border: none; border-radius: 14px; font-weight: 600; cursor: pointer; }
 
-        @media (max-width: 600px) { .content-box { padding: 20px; font-size: 1.05rem; } .nav-btn span { display: none; } }
+        @media (max-width: 600px) { 
+            .content-box { padding: 25px; font-size: 1.1rem; }
+            .arrow-btn span { display: none; } /* Hide text on small screens */
+        }
     </style>
 </head>
 <body>
 
 <header>
     <div class="nav-left">
-        <a href="../index.html" class="nav-btn"><i class="fa-solid fa-house"></i> <span>Home</span></a>
-        <button onclick="history.back()" class="nav-btn"><i class="fa-solid fa-chevron-left"></i> <span>Back</span></button>
+        <a href="../index.html" class="nav-btn"><i class="fa-solid fa-house"></i></a>
+        <button onclick="history.back()" class="nav-btn"><i class="fa-solid fa-chevron-left"></i></button>
     </div>
+    
+    <div id="chapterIndicator">Chapter 1</div>
 
     <div class="lang-switcher">
-        <button id="btn-en" class="lang-btn active" onclick="loadContent('english.txt', 'en')">English</button>
-        <button id="btn-hi" class="lang-btn" onclick="loadContent('hindi.txt', 'hi')">हिंदी</button>
+        <button id="btn-en" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+        <button id="btn-hi" class="lang-btn" onclick="setLanguage('hi')">HI</button>
     </div>
 </header>
 
 <div class="main-wrapper">
     <div id="bookContent" class="content-box">Loading...</div>
+
+    <div class="arrow-nav">
+        <button id="prevBtn" class="arrow-btn" onclick="changeChapter(-1)">
+            <i class="fa-solid fa-arrow-left"></i> <span>Previous</span>
+        </button>
+        <button id="nextBtn" class="arrow-btn" onclick="changeChapter(1)">
+            <span>Next</span> <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
 </div>
 
 <footer>
     <div class="footer-links">
         <a onclick="showModal('Privacy Policy', `At JKM EDIT, your privacy is our priority.<br><br>We collect only the minimum information required to provide access to our eBooks and services.<br><br>Your personal data is kept strictly confidential and is never sold, shared, or misused.<br><br>All information is used solely to improve user experience and service quality.<br><br>We apply appropriate security measures to protect your data from unauthorized access.<br><br>Cookies may be used to enhance website functionality and browsing experience.<br><br>By using this website, you agree to our privacy practices and policies.<br><br>JKM EDIT reserves the right to update this privacy policy when necessary.`)">Privacy</a>
-
         <a onclick="showModal('Copyright', `© All content published on JKM EDIT is protected by copyright laws.<br><br>All eBooks, text, designs, and digital materials are the exclusive property of JKM EDIT.<br><br>Unauthorized copying, reproduction, distribution, or resale of any content is strictly prohibited.<br><br>No part of this website or its content may be reproduced in any form without prior written permission.<br><br>Any misuse or violation of copyright may result in legal action under applicable laws.<br><br>By accessing this website, you agree to respect and comply with our copyright policy.`)">Copyright</a>
-
         <a onclick="showModal('Contact Us', `<b>Email:</b> Mpurohit2414@gmail.com<br><br>If you have any questions, feedback, or support requests, feel free to reach out to us.<br><br>We are happy to assist you with eBook access, downloads, or general inquiries.<br><br>We aim to respond to all queries as quickly as possible.<br><br>Thank you for connecting with JKM EDIT.`)">Contact us</a>
     </div>
     <p style="color:var(--secondary-text); font-size:0.75rem; margin-top:15px;">&copy; 2025 JKM EDIT</p>
 </footer>
 
-<div id="infoModal" class="modal">
-    <div class="modal-content">
-        <h2 id="modalTitle"></h2>
-        <div id="modalBody"></div>
-        <button class="close-btn" onclick="closeModal()">Got it</button>
-    </div>
-</div>
+<div id="infoModal" class="modal"><div class="modal-content"><h2 id="modalTitle"></h2><div id="modalBody"></div><button class="close-btn" onclick="closeModal()">Got it</button></div></div>
 
 <script>
-    // Logic to load text files
-    async function loadContent(fileName, lang) {
-        const contentDiv = document.getElementById('bookContent');
-        
-        document.getElementById('btn-en').classList.remove('active');
-        document.getElementById('btn-hi').classList.remove('active');
-        document.getElementById('btn-' + lang).classList.add('active');
+    let currentChapter = 1;
+    let currentLang = 'en';
 
-        try {
-            const response = await fetch(fileName);
-            if (!response.ok) throw new Error('File not found');
-            const data = await response.text();
-            contentDiv.innerText = data;
-            window.scrollTo(0,0);
-        } catch (error) {
-            contentDiv.innerHTML = `<p style="color:red; text-align:center;">Could not load <b>${fileName}</b>. Ensure it is in the folder.</p>`;
-        }
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+        document.getElementById('btn-hi').classList.toggle('active', lang === 'hi');
+        loadChapter();
     }
 
-    // Original Modal Functions
+    function changeChapter(step) {
+        currentChapter += step;
+        if (currentChapter < 1) currentChapter = 1;
+        if (currentChapter > 18) currentChapter = 18;
+        loadChapter();
+    }
+
+    function loadChapter() {
+        const contentDiv = document.getElementById('bookContent');
+        const titleText = document.getElementById('chapterIndicator');
+        contentDiv.innerText = "Loading...";
+
+        // Update Heading
+        titleText.innerText = (currentLang === 'en' ? "Chapter " : "अध्याय ") + currentChapter;
+        
+        // Disable arrows at start/end
+        document.getElementById('prevBtn').disabled = (currentChapter === 1);
+        document.getElementById('nextBtn').disabled = (currentChapter === 18);
+
+        // Load JS file dynamically
+        const fileName = (currentLang === 'en' ? 'eng' : 'hin') + currentChapter + '.js';
+        
+        const oldScript = document.getElementById('chapterScript');
+        if (oldScript) oldScript.remove();
+
+        const script = document.createElement('script');
+        script.id = 'chapterScript';
+        script.src = fileName;
+        script.onload = () => {
+            contentDiv.innerText = typeof currentChapterText !== 'undefined' ? currentChapterText : "Text missing.";
+        };
+        script.onerror = () => {
+            contentDiv.innerText = "Please ensure " + fileName + " is in the folder.";
+        };
+        document.head.appendChild(script);
+        
+        window.scrollTo(0,0);
+    }
+
     function showModal(title, text) {
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('modalBody').innerHTML = text;
         document.getElementById('infoModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
     }
-
     function closeModal() {
         document.getElementById('infoModal').style.display = 'none';
         document.body.style.overflow = 'auto';
     }
 
-    window.onclick = function(event) {
-        if (event.target == document.getElementById('infoModal')) closeModal();
-    }
-
-    // Load initial content
-    window.onload = () => loadContent('english.txt', 'en');
+    window.onload = () => loadChapter();
 </script>
-
 </body>
 </html>
