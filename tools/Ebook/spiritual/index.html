@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="title" content="JKM EDIT | Official Digital Library">
+<meta name="description" content="Explore a curated collection of Spiritual, Motivation, and Poetry eBooks at JKM EDIT. Dedicated to M&M❣️, providing a modern reading experience.">
+<meta name="keywords" content="JKM EDIT, Bhagawat geeta, Aarti, Mantra, Bhajan, Lyrics, Digital Library, Ebooks">
+<meta name="author" content="JKM EDIT">
+<meta name="robots" content="index, follow">
+
+    <title>JKM EDIT | E-Book</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --corp-blue: #0071e3; 
+            --bg: #f5f5f7; 
+            --text: #1d1d1f; 
+            --secondary-text: #86868b;
+            --max-w: 850px; 
+        }
+        
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            background: var(--bg); margin: 0; color: var(--text); 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header { 
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+            padding: 12px 5%; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #d2d2d7; position: sticky; top: 0; z-index: 100;
+        }
+        .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #003366; font-weight: 600; }
+        .logo img { width: 32px; height: 32px; border-radius: 6px; }
+
+        .search-container { position: relative; }
+        #searchInput { 
+            padding: 8px 15px 8px 35px; border-radius: 20px; border: 1px solid #d2d2d7;
+            font-size: 0.9rem; outline: none; transition: 0.3s; width: 150px;
+        }
+        #searchInput:focus { border-color: var(--corp-blue); width: 200px; }
+        .search-icon { position: absolute; left: 12px; top: 10px; color: var(--secondary-text); }
+
+        .main-wrapper { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; }
+
+        .grid-container { 
+            display: grid; padding: 40px 0;
+            grid-template-columns: repeat(auto-fill, 150px); 
+            justify-content: space-between; gap: 20px; 
+        }
+        
+        .book-card { width: 150px; text-decoration: none; color: inherit; transition: 0.3s; }
+        .book-card:hover { transform: translateY(-5px); }
+        .photo-box { 
+            width: 150px; height: 220px; background: #fff; border-radius: 12px; 
+            overflow: hidden; border: 1px solid #d2d2d7; box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+        }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .book-card h3 { padding: 10px 0; margin: 0; font-size: 0.85rem; text-align: center; font-weight: 500; }
+
+        .about-section { 
+            margin: 20px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid #d2d2d7; box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--corp-blue); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        footer { padding: 40px 5%; text-align: center; border-top: 1px solid #d2d2d7; }
+        .footer-links a { color: var(--corp-blue); text-decoration: none; margin: 0 15px; font-size: 0.85rem; cursor: pointer; font-weight: 500; }
+
+        /* Professional Modal Styling - Scrollable & Fixed Size */
+        .modal { 
+            display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+            background:rgba(0,0,0,0.5); z-index:1000; backdrop-filter: blur(8px); 
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-content { 
+            background: white; 
+            width: 90%; 
+            max-width: 500px; 
+            max-height: 80vh; /* Limits height to 80% of screen */
+            margin: 10vh auto; 
+            border-radius: 24px; 
+            padding: 30px; 
+            position: relative; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #modalTitle { 
+            margin-top: 0; 
+            font-size: 1.4rem; 
+            color: var(--text); 
+            font-weight: 600; 
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f2f2f7;
+            flex-shrink: 0;
+        }
+
+        #modalBody { 
+            line-height: 1.7; 
+            color: #424245; 
+            font-size: 0.95rem; 
+            margin-top: 15px;
+            overflow-y: auto; /* Makes content scrollable */
+            padding-right: 10px;
+        }
+
+        /* Custom scrollbar for professional look */
+        #modalBody::-webkit-scrollbar { width: 5px; }
+        #modalBody::-webkit-scrollbar-track { background: #f1f1f1; }
+        #modalBody::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 10px; }
+        
+        .close-btn { 
+            display: block; width: 100%; margin-top: 20px; padding: 14px; 
+            background: var(--corp-blue); color: white; border: none; 
+            border-radius: 14px; font-weight: 600; cursor: pointer; transition: 0.2s;
+            flex-shrink: 0;
+        }
+        .close-btn:hover { opacity: 0.9; transform: scale(0.99); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        @media (max-width: 600px) { 
+            .grid-container { grid-template-columns: repeat(2, 1fr); gap: 15px; justify-content: center; } 
+            .book-card { width: 100%; } 
+            .photo-box { width: 100%; height: 210px; }
+            .about-section { padding: 20px; }
+            #searchInput { width: 100px; }
+            #searchInput:focus { width: 120px; }
+            .modal-content { padding: 25px; margin: 8vh auto; max-height: 85vh; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="https://jkmedit.in/" class="logo">
+        <img src="assets/jkm-edit-logo.png" alt="JKM" onerror="this.src='https://via.placeholder.com/32/0071e3/ffffff?text=J'">
+        <span>JKM EDIT</span>
+    </a>
+    <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search books..." onkeyup="searchBooks()">
+    </div>
+</header>
+
+<div class="main-wrapper">
+    <div class="grid-container" id="bookGrid">
+        <a href="bhagawatgeeta/index.html/" class="book-card"><div class="photo-box"><img src="bhagawatgeeta/cover.jpg"></div><h3>Spiritual</h3></a>
+        <a href="aarti/index.html" class="book-card"><div class="photo-box"><img src="aarti/cover.jpg"></div><h3>Motivation And Self Growth</h3></a>
+        <a href="mantra/index.html" class="book-card"><div class="photo-box"><img src="mantra/cover.jpg"></div><h3> Love & Poetry </h3></a>
+        <a href="vedas/index.html" class="book-card"><div class="photo-box"><img src="vedas/cover.jpg"></div><h3> Fiction </h3></a>
+    
+
+    </div>
+
+    <div class="about-section">
+        <h2>About the JKM EDIT Library</h2>
+        <p>Books have always been more than mere collections of pages; they are carriers of ideas, emotions, wisdom, and lived experiences that connect generations across time. At JKM EDIT, we believe reading is a deeply personal journey that allows individuals to pause, reflect, and grow through the power of words. Our platform is dedicated to creating a thoughtful digital space where readers can explore literature that nourishes the mind, touches the heart, and uplifts the soul. Each book offered here is chosen with care, ensuring that readers find depth, authenticity, and meaning rather than fleeting entertainment.</p>
+
+        <p>A significant part of our collection is devoted to spiritual literature and devotional works, including aarti and sacred writings that guide readers toward inner peace, mindfulness, and self-awareness. These books reflect timeless wisdom drawn from tradition, philosophy, and spiritual practice, offering comfort and clarity in an increasingly fast-paced world. Whether read during moments of worship or quiet reflection, our spiritual content aims to reconnect readers with faith, gratitude, and a deeper understanding of life beyond material pursuits.</p>
+
+        <p>Love and poetry form the emotional heart of JKM EDIT’s library, capturing the beauty and complexity of human relationships and inner feelings. Our love stories explore connection, longing, joy, sacrifice, and emotional growth, presenting narratives that resonate with real experiences and unspoken emotions. Poetry, in its many forms, offers a space where language becomes rhythm and feeling, expressing thoughts that are often difficult to articulate, from tender moments of affection to profound reflections on life, society, and the self.</p>
+        <p>Fiction on our platform invites readers into imagined worlds filled with compelling characters and meaningful storytelling. These narratives entertain while also encouraging reflection on human nature, social realities, and personal transformation. Through fiction, readers can escape routine, explore different perspectives, and experience stories that blend creativity with truth, making literature both enjoyable and thought-provoking.  </p>
+
+        <p>Complementing our fictional works, the non-fiction section at JKM EDIT provides knowledge, insight, and real-world understanding. These books focus on personal growth, philosophy, motivation, history, and lived experiences that inform and inspire readers. Non-fiction here is designed not only to educate but also to empower, helping individuals gain clarity, confidence, and a broader perspective on life and society.</p>
+<p>At JKM EDIT, we view books as lifelong companions rather than temporary distractions. Our mission is to preserve meaningful literature, celebrate diverse voices, and make quality reading accessible in a digital format that respects both tradition and modern convenience. Whether a reader seeks spiritual calm, emotional connection, creative expression, imaginative escape, or practical wisdom, our platform strives to offer a rich and balanced collection that reflects the depth and beauty of human thought and experience.</p>
+<H2>Thank you </H2>
+
+
+    </div>
+</div>
+
+<footer>
+    <div class="footer-links">
+        <a onclick="showModal('Privacy Policy', `At JKM EDIT, your privacy is our priority.<br><br>We collect only the minimum information required to provide access to our eBooks and services.<br><br>Your personal data is kept strictly confidential and is never sold, shared, or misused.<br><br>All information is used solely to improve user experience and service quality.<br><br>We apply appropriate security measures to protect your data from unauthorized access.<br><br>Cookies may be used to enhance website functionality and browsing experience.<br><br>By using this website, you agree to our privacy practices and policies.<br><br>JKM EDIT reserves the right to update this privacy policy when necessary.`)">Privacy</a>
+
+        <a onclick="showModal('Copyright', `© All content published on JKM EDIT is protected by copyright laws.<br><br>All eBooks, text, designs, and digital materials are the exclusive property of JKM EDIT.<br><br>Unauthorized copying, reproduction, distribution, or resale of any content is strictly prohibited.<br><br>No part of this website or its content may be reproduced in any form without prior written permission.<br><br>Any misuse or violation of copyright may result in legal action under applicable laws.<br><br>By accessing this website, you agree to respect and comply with our copyright policy.`)">Copyright</a>
+
+        <a onclick="showModal('Contact Us', `<b>Email:</b> Mpurohit2414@gmail.com<br><br>If you have any questions, feedback, or support requests, feel free to reach out to us.<br><br>We are happy to assist you with eBook access, downloads, or general inquiries.<br><br>We aim to respond to all queries as quickly as possible.<br><br>Thank you for connecting with JKM EDIT.`)">Contact us</a>
+    </div>
+    <p style="color:var(--secondary-text); font-size:0.75rem; margin-top:15px;">&copy; 2025 JKM EDIT</p>
+</footer>
+
+<div id="infoModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle"></h2>
+        <div id="modalBody"></div>
+        <button class="close-btn" onclick="closeModal()">Got it</button>
+    </div>
+</div>
+
+<script>
+    // Search Function
+    function searchBooks() {
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let cards = document.getElementsByClassName('book-card');
+        for (let i = 0; i < cards.length; i++) {
+            let title = cards[i].getElementsByTagName('h3')[0].innerText.toLowerCase();
+            cards[i].style.display = title.includes(input) ? "" : "none";
+        }
+    }
+
+    // Modal Function
+    function showModal(title, text) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalBody').innerHTML = text;
+        document.getElementById('infoModal').style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Locks background scroll
+    }
+
+    function closeModal() {
+        document.getElementById('infoModal').style.display = 'none';
+        document.body.style.overflow = 'auto'; // Enables background scroll
+    }
+
+    // Close modal when clicking on the dark background
+    window.onclick = function(event) {
+        let modal = document.getElementById('infoModal');
+        if (event.target == modal) closeModal();
+    }
+</script>
+
+</body>
+</html>
