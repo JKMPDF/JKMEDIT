@@ -1,13 +1,12 @@
 var englishContent = `    Shree Hanuman Chalisa
 
-    Doha
+    Doha :
 Shri Guru Charan Sarooja-raj Nija manu Mukura Sudhaari
 Baranau Rahubhara Bimala Yasha Jo Dayaka Phala Chari
 Budhee-Heen Thanu Jannikay Sumirow Pavana Kumara
 Bala-Budhee Vidya Dehoo Mohee Harahu Kalesha Vikaara
 
-    Chopai
-
+    Chopai :
      1.  Jai Hanuman gyan gun sagar ||
          Jai Kapis tihun lok ujagar ||
 
@@ -128,7 +127,7 @@ Bala-Budhee Vidya Dehoo Mohee Harahu Kalesha Vikaara
      40. Tulsidas sada hari chera |
 	 Keejai Nath Hridaye mein dera ||
 
-     Doha
+     Doha :
 	 Pavan Tanay Sankat Harana | 
 	 Mangala Murati Roop ||
 	 Ram Lakhan Sita Sahita |
