@@ -25,10 +25,10 @@ Vichalit N Ho Ye Man Lagan Men Teri Magan Rahen Ham,
 Bhakti Karen Ajeevan ।
 Aisi Bhakti Bana Do Guruvar, 
 Toote N Ye Bandhan
-Janm-janm Ham Paeँ Tumako, 
+Janm-janm Ham Pae Tumako, 
 As Karo Ye Pooran ।
-Jnan Prakash Ke Sahaj Puँj Ho,
+Gyan Prakash Ke Sahaj Pooj Ho,
 Tam Viheen Kar Do Man
-Jnanapradayak, Shakti Pradayak Shat-shat Tumako Vandan।
+Gyanpradayak, Shakti Pradayak Shat-shat Tumako Vandan।
 
 `;
