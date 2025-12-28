@@ -3,7 +3,7 @@ var englishContent = `    shri Ashutosh Maharaj Ji Ki Aarati
 He Ashutosh, Jay Ashutosh
 Deenabandhu, He Ashu Pita, 
 Arati Karen Teri Bhagavan
-Nit Charanan Nan Men Sheesh Jhukaeँ, 
+Nit Charanan Mein Sheesh Jhukaeँ, 
 Karen Tumhara Vandan।
 Dukhaharta, Sukhakarta Tum Hi, 
 Bhakton Ke Bhav-bhanjan Karunakar,
