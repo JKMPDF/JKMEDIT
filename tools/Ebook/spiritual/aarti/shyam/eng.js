@@ -1,34 +1,56 @@
-var englishContent = `    shri Ashutosh Maharaj Ji Ki Aarati
+var englishContent = `    Shyam Baba ki Aarti
 
-He Ashutosh, Jay Ashutosh
-Deenabandhu, He Ashu Pita, 
-Arati Karen Teri Bhagavan
-Nit Charanan Mein Sheesh Jhukaeँ, 
-Karen Tumhara Vandan।
-Dukhaharta, Sukhakarta Tum Hi, 
-Bhakton Ke Bhav-bhanjan Karunakar,
-Karunamay Svami, 
-Arpit Tumako Tan-man।
-Mat-pita Tum Bandhu Sakha Ho, 
-Shvason Ke Ho Spandan
-Man Mandir Men Vas Tumhara, 
-Ho Tera Aradhan।
-Ghat-ghat Vasi Ho Avinashi, 
-He Devan Ke Devan
-Tumhari Moorat Nit Nayan Men,
-Shvas-shvas Karen Poojan।
-Dhyan Dhare Jo Bhakt Tumhara, 
-Kare Tumhara Chintan Seva-sumiran Ratn Tumhare,
-Pave Nit-nit Darshan।
-Ho Vishvas Sada Dridha़ Aisa, 
-Vichalit N Ho Ye Man Lagan Men Teri Magan Rahen Ham, 
-Bhakti Karen Ajeevan ।
-Aisi Bhakti Bana Do Guruvar, 
-Toote N Ye Bandhan
-Janm-janm Ham Pae Tumako, 
-As Karo Ye Pooran ।
-Gyan Prakash Ke Sahaj Pooj Ho,
-Tam Viheen Kar Do Man
-Gyanpradayak, Shakti Pradayak Shat-shat Tumako Vandan।
+Om Jai Shri Shyam Hare,
+Baba Jai Shri Shyam Hare.
+Khatu Dham Virajat,
+Anupam Roop Dhare.
+Om Jai Shri Shyam Hare…
 
+Ratan Jadit Singhasan,
+Sar per Chanvar Dhure.
+Tan Kesariya Bago,
+Kundal Shravan Pade.
+Om Jai Shri Shyam Hare…
+
+Gal Pushpon Ki Maala,
+Sir per Mukut Dhare.
+Khevat Dhoop Agni Par,
+Deepak Jyoti Jale.
+Om Jai Shri Shyam Hare…
+
+Modak, Kheer, Choorma,
+Suvaran Thaal Bhare.
+Seval Bhog Lagavat,
+Seva Nitya Kare.
+Om Jai Shri Shyam Hare…
+
+Jhanj, Katora Aur Ghadiyaval,
+Shankh Mridang Ghure.
+Bhakt Aarti Gaave,
+Jai Jaikar Kare.
+Om Jai Shri Shyam Hare…
+
+Jo Dhyave Fal Paave,
+Sab Dukh Se Ubre.
+Sevak Jan Nij Mukh Se,
+Shri Shyam – Shyam Uchre.
+Om Jai Shri Shyam Hare…
+
+Shri Shyam Bihari Ji Ki Aarti,
+Jo Koi Nar Gaave.
+Kahat Bhakta Jan,
+Manvanchhit Fal Paave.
+Om Jai Shri Shyam Hare…
+
+Jai Shri Shyam Hare,
+Baba Jai Shri Shyam Hare.
+Nij Bhakton Ke Tumne,
+Pooran Kaaj Kare.
+Om Jai Shri Shyam Hare…
+
+Om Jai Shri Shyam Hare,
+Baba Jai Shri Shyam Hare.
+Khatu Dham Virajat,
+Anupam Roop Dhare.
+Om Jai Shri Shyam Hare…
 `;
