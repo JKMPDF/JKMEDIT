@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HinglishPro | Professional Transliteration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px 0;
+        }
+
+        /* JKM Edit Header Styling */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: opacity 0.2s;
+        }
+        .brand-header:hover { opacity: 0.8; }
+        .brand-logo { width: 40px; height: 40px; object-fit: contain; }
+        .brand-name { font-weight: 700; font-size: 20px; color: #0f172a; }
+
+        .container {
+            width: 90%;
+            max-width: 650px;
+            background: var(--card);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        h2 { margin: 0 0 10px 0; font-size: 28px; text-align: center; color: var(--primary); letter-spacing: -0.5px; }
+        p.subtitle { text-align: center; color: #64748b; font-size: 15px; margin-bottom: 30px; }
+
+        .box-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        textarea {
+            width: 100%;
+            height: 140px;
+            padding: 18px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            font-size: 17px;
+            resize: none;
+            box-sizing: border-box;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            line-height: 1.5;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        .output-wrapper {
+            position: relative;
+            background: #f1f5f9;
+            border-radius: 12px;
+            min-height: 100px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        #hinglishOutput {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.6;
+            color: #0f172a;
+            word-wrap: break-word;
+            padding-right: 70px;
+            white-space: pre-wrap;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 10px 16px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .copy-btn:hover { 
+            background: var(--primary); 
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .success-flash {
+            color: #10b981;
+            font-size: 12px;
+            display: none;
+            font-weight: 600;
+        }
+
+        /* Navigation Buttons */
+        .nav-footer {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            border-top: 1px solid var(--border);
+            padding-top: 25px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-dashboard {
+            background: #0f172a;
+            color: white;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<a href="https://jkmedit.in/" class="brand-header">
+    <img src="assets/logo.png" alt="JKM Edit Logo" class="brand-logo">
+    <span class="brand-name">JKM Edit</span>
+</a>
+
+<div class="container">
+    <h2>HinglishPro</h2>
+    <p class="subtitle">Professional Hindi to Roman Transliteration</p>
+    
+    <div class="box-label">Hindi Text</div>
+    <textarea id="hindiInput" placeholder="Type here... (e.g., हर अनुभव कुछ सिखाती है।)"></textarea>
+
+    <div class="box-label">
+        Converted Hinglish 
+        <span id="copyStatus" class="success-flash">✓ Copied</span>
+    </div>
+    <div class="output-wrapper">
+        <div id="hinglishOutput"></div>
+        <button class="copy-btn" id="copyBtn">Copy</button>
+    </div>
+
+    <div class="nav-footer">
+        <a href="javascript:history.back()" class="nav-btn btn-back">← Go Back</a>
+        <a href="https://jkmedit.in/" class="nav-btn btn-dashboard">Dashboard</a>
+    </div>
+</div>
+
+<script>
+    const charMap = {
+        'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri', 'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au',
+        'क': 'k', 'ख': 'kh', 'ग': 'g', 'घ': 'gh', 'ङ': 'n',
+        'च': 'ch', 'छ': 'chh', 'ज': 'j', 'झ': 'jh', 'ञ': 'n',
+        'ट': 't', 'ठ': 'th', 'ड': 'd', 'ढ': 'dh', 'ण': 'n',
+        'त': 't', 'थ': 'th', 'द': 'd', 'ध': 'dh', 'न': 'n',
+        'प': 'p', 'फ': 'ph', 'ब': 'b', 'भ': 'bh', 'म': 'm',
+        'य': 'y', 'र': 'r', 'ल': 'l', 'व': 'v', 'श': 'sh', 'ष': 'sh', 'स': 's', 'ह': 'h',
+        'ा': 'a', 'ि': 'i', 'ी': 'ee', 'ु': 'u', 'ू': 'oo', 'ृ': 'ri', 'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au', 'ं': 'n', 'ः': 'ah'
+    };
+
+    const input = document.getElementById('hindiInput');
+    const output = document.getElementById('hinglishOutput');
+    const copyBtn = document.getElementById('copyBtn');
+    const status = document.getElementById('copyStatus');
+
+    function convert(text) {
+        let result = "";
+        const isSymbolOrSpace = /[\s,.\/#!$%\^&\*;:{}=\-_`~()।?!]/;
+
+        for (let i = 0; i < text.length; i++) {
+            let char = text[i];
+            let nextChar = text[i + 1];
+
+            if (char === '्') continue; 
+
+            if (charMap[char]) {
+                let mappedValue = charMap[char];
+
+                if (char === 'ी' || char === 'ई') {
+                    const isEndOfWord = !nextChar || isSymbolOrSpace.test(nextChar);
+                    mappedValue = isEndOfWord ? 'i' : 'ee';
+                }
+
+                result += mappedValue;
+                
+                const isConsonant = /[\u0915-\u0939]/.test(char);
+                const isNextMatra = /[\u093E-\u094D]/.test(nextChar); 
+                const isNextNonHindi = !nextChar || isSymbolOrSpace.test(nextChar) || /[a-zA-Z0-9]/.test(nextChar);
+
+                if (isConsonant && !isNextMatra && !isNextNonHindi) {
+                    result += "a";
+                }
+            } else {
+                result += char;
+            }
+        }
+
+        return result
+            .replace(/aa/g, 'a') 
+            .replace(/Shree/g, 'Shri')
+            .replace(/^a/g, 'A') 
+            .replace(/\s[a-z]/g, (m) => m.toUpperCase());
+    }
+
+    input.addEventListener('input', () => {
+        output.innerText = convert(input.value);
+    });
+
+    copyBtn.addEventListener('click', () => {
+        if (output.innerText) {
+            navigator.clipboard.writeText(output.innerText);
+            status.style.display = "inline";
+            setTimeout(() => { status.style.display = "none"; }, 2000);
+        }
+    });
+</script>
+
+</body>
+</html>
