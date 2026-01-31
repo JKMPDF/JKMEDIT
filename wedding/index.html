@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M&M ❣️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@300;600&family=Hind:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --royal-maroon: #800000;
+            --gold: #D4AF37;
+            --ivory: #FFFDF5;
+            --text-dark: #333;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #f4e4bc; /* Sand/Beige base */
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Rajasthani Pattern Background */
+        .outer-wrapper {
+            width: 100%;
+            max-width: 480px;
+            margin: auto;
+            background-image: url('https://www.transparenttextures.com/patterns/mandala.png');
+            background-repeat: repeat;
+            min-height: 100vh;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .main-card {
+            background-color: var(--ivory);
+            border: 8px double var(--gold);
+            padding: 30px 15px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Top Spiritual Header */
+        .divine-header {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Hind', sans-serif;
+            font-size: 0.75rem;
+            color: var(--royal-maroon);
+            font-weight: 600;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 10px;
+        }
+
+        .ganesha-img {
+            width: 120px;
+            margin: 10px 0;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .intro-text {
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 5px;
+        }
+
+        .family-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--royal-maroon);
+            margin: 0 0 25px 0;
+        }
+
+        /* Couple Names */
+        .names-container {
+            margin: 30px 0;
+        }
+
+        .couple-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            color: var(--text-dark);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .weds-badge {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: var(--gold);
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .weds-badge::before, .weds-badge::after {
+            content: "";
+            height: 1px;
+            width: 50px;
+            background-color: var(--gold);
+            margin: 0 15px;
+        }
+
+        /* Professional Calendar UI */
+        .calendar-section {
+            margin: 35px auto;
+            width: 140px;
+            border: 2px solid var(--royal-maroon);
+            border-radius: 5px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .cal-month {
+            background: var(--royal-maroon);
+            color: white;
+            padding: 5px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .cal-date {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            padding: 10px 0;
+            color: var(--text-dark);
+        }
+
+        .cal-day {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            padding-bottom: 8px;
+            color: #666;
+        }
+
+        .venue-info {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px dashed var(--gold);
+        }
+
+        .map-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 25px;
+            background-color: var(--royal-maroon);
+            color: white;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 3px;
+            letter-spacing: 1px;
+        }
+
+        /* New Contact Section Styles */
+        .contact-details {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.85rem;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .contact-item {
+            margin-bottom: 12px;
+        }
+
+        .contact-label {
+            color: var(--gold);
+            font-weight: 600;
+            display: block;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .coming-soon-banner {
+            margin-top: 40px;
+            background-color: var(--royal-maroon);
+            color: var(--ivory);
+            padding: 12px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            font-weight: 600;
+            border-radius: 2px;
+        }
+
+        .blessing-footer {
+            font-size: 0.8rem;
+            line-height: 1.6;
+            font-style: italic;
+            color: #555;
+            margin-top: 40px;
+        }
+
+        .regards-section {
+            margin-top: 30px;
+            font-size: 0.85rem;
+        }
+
+        /* Animation */
+        .royal-fade {
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="outer-wrapper">
+    <div class="main-card royal-fade">
+        
+        <div class="divine-header">
+            <div>श्री कुंजल नमः</div>
+            <div style="font-size: 0.9rem;">ॐ गणेशाय नमः</div>
+            <div>जय श्री बालाजी</div>
+        </div>
+
+        <img src="assets/Ganesh.png" alt="Divine Ganesha" class="ganesha-img">
+        <div class="intro-text">With the blessings of elders</div>
+        <h2 class="family-title">Purohit Family</h2>
+        
+        <p style="font-size: 0.8rem; font-weight: 300;">cordially invites you to celebrate the wedding of</p>
+
+        <div class="names-container">
+            <h1 class="couple-name">Mahendra Purohit</h1>
+            <div class="weds-badge">weds</div>
+            <h1 class="couple-name">Manisha Tiwari</h1>
+            <h1>M&M❣️</h1>
+        </div>
+
+        <div class="calendar-section">
+            <div class="cal-month">MARCH 2026</div>
+            <div class="cal-date">11</div>
+            <div class="cal-day">WEDNESDAY</div>
+        </div>
+
+        <div class="venue-info">
+            <span style="font-size: 0.65rem; color: var(--gold); letter-spacing: 2px;">THE AUSPICIOUS VENUE</span>
+            <h3 style="font-family: 'Playfair Display'; margin: 10px 0;">Sandwa Village</h3>
+            <p style="font-size: 0.85rem; color: #666; margin: 0;">Sandwa, Churu, Rajasthan</p>
+            <a href="https://maps.google.com" class="map-link" target="_blank">
+                📍 VIEW ON GOOGLE MAPS
+            </a>
+        </div>
+
+        <p class="blessing-footer">
+            "Your gracious presence and warm blessings will make this joyous occasion truly memorable."
+        </p>
+
+        <div class="regards-section">
+            <span style="color: var(--gold); font-size: 0.7rem; letter-spacing: 1px;">WITH BEST REGARDS:</span><br>
+            <strong style="text-transform: uppercase; font-size: 1rem;">The Purohit Family</strong>
+        </div>
+
+        <div class="contact-details">
+            <div class="contact-item">
+                <span class="contact-label">Reach Out to Us</span>
+                <strong>+91 99646 13871</strong>
+            </div>
+            <div class="contact-item">
+                <span class="contact-label">Email Address</span>
+                <strong>mpurohit2414@gmail.com</strong>
+            </div>
+            <div class="contact-item">
+                <span class="contact-label">Home Address</span>
+                Ward no 4, Ramdevra Chock,<br>
+                Sandwa, Churu, Rajasthan
+            </div>
+        </div>
+
+        <div class="coming-soon-banner">
+            ✨ REST OF THE DETAILS COMING SOON ✨
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
