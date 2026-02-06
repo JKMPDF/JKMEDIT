@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JKM EDIT - Professional Biodata Maker</title>
+    <style>
+        :root {
+            --rose-gold: #e0b0ff; 
+            --bg-gradient: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            --accent-color: #8b4343;
+            --soft-white: #ffffff;
+            --border-color: #d1b8b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background: var(--bg-gradient); background-attachment: fixed; color: #333; overflow-x: hidden; }
+
+        /* --- Header & Hero (Untouched) --- */
+        header { padding: 20px 5%; display: flex; align-items: center; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; transition: 0.5s; }
+        .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--accent-color); }
+        .logo-img { width: 40px; height: 40px; margin-right: 15px; border-radius: 5px; }
+        .logo-text { font-size: 1.5rem; font-weight: bold; }
+
+        .hero { display: flex; align-items: center; justify-content: space-between; padding: 80px 5%; min-height: 80vh; transition: 0.5s; }
+        .hero-left { flex: 1; padding-right: 50px; }
+        .hero-left h1 { font-size: 3.5rem; color: var(--accent-color); line-height: 1.2; margin-bottom: 20px; }
+        .btn-create { padding: 15px 35px; background-color: var(--accent-color); color: white; border: none; border-radius: 30px; cursor: pointer; font-size: 1.1rem; transition: 0.3s; }
+        .btn-create:hover { background-color: #6d3333; transform: translateY(-2px); }
+
+        .hero-right { flex: 1; perspective: 1000px; display: flex; justify-content: center; }
+        .carousel { width: 200px; height: 280px; position: relative; transform-style: preserve-3d; animation: roll 20s linear infinite; }
+        .carousel div { position: absolute; width: 200px; height: 280px; border: 5px solid white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .carousel div:nth-child(1) { transform: rotateY(0deg) translateZ(250px); }
+        .carousel div:nth-child(2) { transform: rotateY(72deg) translateZ(250px); }
+        .carousel div:nth-child(3) { transform: rotateY(144deg) translateZ(250px); }
+        .carousel div:nth-child(4) { transform: rotateY(216deg) translateZ(250px); }
+        .carousel div:nth-child(5) { transform: rotateY(288deg) translateZ(250px); }
+        .carousel img { width: 100%; height: 100%; object-fit: cover; }
+        @keyframes roll { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+
+        .hidden { display: none !important; }
+
+        /* --- Professional Details Section --- */
+        .details-section { padding: 40px 5%; max-width: 950px; margin: 0 auto; }
+        .list-container { background: white; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 10px 25px rgba(139, 67, 67, 0.1); }
+        
+        .list-header { 
+            padding: 18px 25px; cursor: pointer; display: flex; justify-content: space-between; 
+            background: #fff; border-bottom: 1px solid #f5eaea; color: var(--accent-color); font-weight: 600; font-size: 1.1rem;
+        }
+        
+        .list-content { padding: 40px; display: none; background: #fff; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .list-content.active { display: block; }
+
+        /* Icon & Header Layout */
+        .top-branding { text-align: center; margin-bottom: 40px; position: relative; }
+        .clickable-icon { 
+            width: 70px; height: 70px; cursor: pointer; border: 2px solid transparent; 
+            padding: 5px; border-radius: 50%; transition: 0.3s;
+        }
+        .clickable-icon:hover { border-color: var(--accent-color); background: #fff8f8; }
+        
+        .branding-input {
+            display: block; margin: 10px auto; border: none; border-bottom: 1px solid #eee;
+            text-align: center; font-size: 1.1rem; padding: 5px; color: var(--accent-color); width: 250px;
+        }
+        .branding-input:focus { outline: none; border-bottom-color: var(--accent-color); }
+
+        /* Professional Rows */
+        .input-row { display: flex; align-items: center; margin-bottom: 18px; gap: 20px; }
+        .label-wrap { width: 180px; display: flex; align-items: center; gap: 10px; color: #555; }
+        .label-wrap span.edit { font-size: 12px; opacity: 0.5; cursor: pointer; }
+        
+        .input-field { 
+            flex: 1; padding: 12px 15px; border: 1px solid #e2e2e2; border-radius: 6px; 
+            font-size: 0.95rem; transition: 0.3s; 
+        }
+        .input-field:focus { border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(139, 67, 67, 0.05); outline: none; }
+        
+        .row-actions { display: flex; gap: 12px; color: #bbb; }
+        .row-actions span { cursor: pointer; transition: 0.2s; }
+        .row-actions span:hover { color: var(--accent-color); }
+
+        /* Modal for Icons */
+        .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { 
+            background: white; width: 350px; margin: 100px auto; padding: 25px; 
+            border-radius: 12px; text-align: center; 
+        }
+        .icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .icon-opt { padding: 10px; border: 1px solid #eee; border-radius: 8px; cursor: pointer; }
+        .icon-opt:hover { background: #fff1f1; border-color: var(--accent-color); }
+
+        .btn-custom { margin: 20px 0; border: 1px dashed var(--accent-color); color: var(--accent-color); background: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500; }
+        .theme-action-btn { width: 100%; padding: 18px; background: linear-gradient(to right, #8b4343, #a65a5a); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(139, 67, 67, 0.2); }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <a href="#" class="logo-container">
+            <img src="../../assets/jkm-edit-logo.png" alt="JKM" class="logo-img" onerror="this.src='https://via.placeholder.com/40'">
+            <span class="logo-text">JKM EDIT</span>
+        </a>
+    </header>
+
+    <section class="hero" id="hero-section">
+        <div class="hero-left">
+            <h1>Create your bio data <br>within seconds</h1>
+            <p>Fast, Easy & Professional. Generate your personalized marriage biodata beautifully.</p>
+            <button class="btn-create" onclick="startCreation()">Create Biodata Now</button>
+        </div>
+        <div class="hero-right">
+            <div class="carousel">
+                <div><img src="jkm/pic1.jpg" onerror="this.src='https://via.placeholder.com/200x280?text=1'"></div>
+                <div><img src="jkm/pic2.jpg" onerror="this.src='https://via.placeholder.com/200x280?text=2'"></div>
+                <div><img src="jkm/pic3.jpg" onerror="this.src='https://via.placeholder.com/200x280?text=3'"></div>
+                <div><img src="jkm/pic4.jpg" onerror="this.src='https://via.placeholder.com/200x280?text=4'"></div>
+                <div><img src="jkm/pic5.jpg" onerror="this.src='https://via.placeholder.com/200x280?text=5'"></div>
+            </div>
+        </div>
+    </section>
+
+    <div id="iconModal" class="modal">
+        <div class="modal-content">
+            <h3>Select Symbol</h3>
+            <div class="icon-grid">
+                <div class="icon-opt" onclick="selectIcon('ganesh.png')">Ganesh</div>
+                <div class="icon-opt" onclick="selectIcon('icon1.png')">Icon 1</div>
+                <div class="icon-opt" onclick="selectIcon('icon2.png')">Icon 2</div>
+                <div class="icon-opt" onclick="selectIcon('swastik.png')">Swastik</div>
+                <div class="icon-opt" onclick="selectIcon('om.png')">Om</div>
+            </div>
+            <button onclick="closeModal()" style="margin-top:20px; border:none; background:none; color:#999; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
+
+    <div class="details-section" id="form-area">
+        <div class="list-container">
+            
+            <div class="list-wrapper">
+                <div class="list-header" onclick="toggleList('personal')">Personal Details <span>▼</span></div>
+                <div class="list-content active" id="personal">
+                    
+                    <div class="top-branding">
+                        <img id="currentIcon" src="icon/ganesh.png" class="clickable-icon" onclick="openModal()" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2151/2151325.png'">
+                        <input type="text" class="branding-input" value="|| Shree Ganesh ||" placeholder="Header Line">
+                        <input type="text" class="branding-input" value="Biodata" style="font-weight: bold; font-size: 1.3rem;" placeholder="Title">
+                    </div>
+
+                    <div class="input-row">
+                        <div class="label-wrap"><span class="edit">✎</span> <label>Name</label></div>
+                        <input type="text" class="input-field" placeholder="Full Name">
+                        <div class="row-actions"><span>↑</span><span>↓</span><span>✕</span></div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="label-wrap"><span class="edit">✎</span> <label>Date of Birth</label></div>
+                        <input type="date" class="input-field">
+                        <div class="row-actions"><span>↑</span><span>↓</span><span>✕</span></div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="label-wrap"><span class="edit">✎</span> <label>Place of Birth</label></div>
+                        <input type="text" class="input-field" placeholder="City, State">
+                        <div class="row-actions"><span>↑</span><span>↓</span><span>✕</span></div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="label-wrap"><span class="edit">✎</span> <label>Height</label></div>
+                        <input type="text" class="input-field" placeholder="e.g. 5' 8''">
+                        <div class="row-actions"><span>↑</span><span>↓</span><span>✕</span></div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="label-wrap"><span class="edit">✎</span> <label>Rashi</label></div>
+                        <input type="text" class="input-field" placeholder="Enter Rashi">
+                        <div class="row-actions"><span>↑</span><span>↓</span><span>✕</span></div>
+                    </div>
+
+                    <button class="btn-custom">+ Add Customized Field</button>
+                </div>
+            </div>
+
+            <div class="list-header" onclick="toggleList('family')">Family Details <span>▼</span></div>
+            <div class="list-content" id="family">
+                <div class="input-row">
+                    <div class="label-wrap"><label>Father's Name</label></div>
+                    <input type="text" class="input-field">
+                </div>
+                <div class="input-row">
+                    <div class="label-wrap"><label>Mother's Name</label></div>
+                    <input type="text" class="input-field">
+                </div>
+                <button class="btn-custom">+ Add Customized Field</button>
+            </div>
+
+            <div class="list-header" onclick="toggleList('contact')">Contact Information <span>▼</span></div>
+            <div class="list-content" id="contact">
+                <div class="input-row">
+                    <div class="label-wrap"><label>Mobile</label></div>
+                    <input type="tel" class="input-field">
+                </div>
+                <button class="btn-custom">+ Add Customized Field</button>
+            </div>
+
+        </div>
+
+        <button class="theme-action-btn" onclick="generateOutput()" style="margin-top:25px">Choose Theme & Generate</button>
+    </div>
+
+    <script>
+        function startCreation() {
+            document.getElementById('main-header').classList.add('hidden');
+            document.getElementById('hero-section').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleList(id) {
+            const contents = document.querySelectorAll('.list-content');
+            contents.forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // Modal Logic
+        function openModal() { document.getElementById('iconModal').style.display = 'block'; }
+        function closeModal() { document.getElementById('iconModal').style.display = 'none'; }
+        function selectIcon(imgName) {
+            // In a real app: document.getElementById('currentIcon').src = 'icon/' + imgName;
+            // For now, let's just update the alt text to show it works
+            alert("Icon selected: " + imgName);
+            closeModal();
+        }
+
+        // Logic to "Count" only filled data
+        function generateOutput() {
+            const allInputs = document.querySelectorAll('.input-field, .branding-input');
+            let filledCount = 0;
+            
+            allInputs.forEach(input => {
+                if(input.value.trim() !== "") {
+                    filledCount++;
+                }
+            });
+
+            alert("Professional Profile Ready!\nFields containing data: " + filledCount + "\nOnly these will be shown on the final theme.");
+        }
+    </script>
+</body>
+</html>
