@@ -20,7 +20,7 @@
             font-family: 'Segoe UI', sans-serif;
         }
 
-        /* Full Screen Loader */
+        /* Professional Loader */
         #loader {
             position: fixed; inset: 0;
             background: var(--dark); z-index: 20000;
@@ -28,7 +28,7 @@
             transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
         .loader-content { text-align: center; width: 70%; }
-        .m-logo { font-size: 42px; color: var(--gold); letter-spacing: 10px; margin-bottom: 30px; }
+        .m-logo { font-size: 42px; color: var(--gold); letter-spacing: 10px; margin-bottom: 30px; font-weight: 300; }
         
         .progress-track {
             width: 100%; height: 2px; background: rgba(212, 175, 55, 0.1);
@@ -57,20 +57,23 @@
             transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        /* Scrollable Page Wrapper */
+        /* Enhanced Scrollable Wrapper */
         .page-wrapper { 
             width: 12.5%; height: 100%; 
-            flex-shrink: 0; overflow-y: scroll; /* Forces scroll capability */
+            flex-shrink: 0; 
+            overflow-y: auto; /* Enable Vertical Scroll */
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
+            position: relative;
         }
         
+        /* Iframe interaction enabled for scrolling */
         iframe { 
-            width: 100%; min-height: 100.1%; border: none; 
-            display: block; pointer-events: auto; /* Allows interaction/scroll inside */
+            width: 100%; min-height: 100%; border: none; 
+            display: block; pointer-events: auto; 
         }
 
-        /* Navigation Arrows */
+        /* Overlay UI */
         .nav-overlay {
             position: absolute; inset: 0; pointer-events: none; z-index: 9999;
         }
@@ -118,7 +121,7 @@
 
     <audio id="mainAudio" loop></audio>
 
-    <div class="phone-viewport">
+    <div class="phone-viewport" id="viewport">
         <button class="music-toggle" onclick="toggleMute()" id="muteBtn">🔊</button>
         
         <div class="nav-overlay" id="overlay">
@@ -147,8 +150,8 @@
         ];
 
         const pages = [
-            `<html><body style="margin:0; background:#4a0404; color:white; font-family:serif; text-align:center; padding:100px 20px; min-height:150vh;"><h1>WELCOME</h1><p>Scroll down to see the invite details</p><div style="margin-top:400px; color:#d4af37;">❤ M&M 2026 ❤</div></body></html>`,
-            `<html><body style="margin:0; background:#fdf5e6; color:#4a0404; font-family:serif; text-align:center; padding:100px 20px; min-height:100vh;"><h1>M&M ❣️</h1><p>The Celebration Begins</p></body></html>`,
+            `<html><body style="margin:0; background:#4a0404; color:white; font-family:serif; text-align:center; padding:100px 20px; min-height:180vh;"><h1>WELCOME</h1><p>Scroll down to explore</p><p>Swipe right for the story</p><div style="margin-top:600px; color:#d4af37; border:1px solid #d4af37; padding:20px;">SCROLL SUCCESSFUL<br>This part was hidden!</div></body></html>`,
+            `<html><body style="margin:0; background:#fdf5e6; color:#4a0404; font-family:serif; text-align:center; padding:100px 20px;"><h1>M&M ❣️</h1><p>Next Chapter</p></body></html>`,
             `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -441,11 +444,11 @@
 
 </body>
 </html>`,
-            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Venue</h1></body></html>`,
-            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Gallery</h1></body></html>`,
-            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Schedule</h1></body></html>`,
-            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Gift</h1></body></html>`,
-            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Contact</h1></body></html>`
+            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Page 4</h1></body></html>`,
+            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Page 5</h1></body></html>`,
+            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Page 6</h1></body></html>`,
+            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Page 7</h1></body></html>`,
+            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Page 8</h1></body></html>`
         ];
 
         let currentPos = 0;
@@ -455,11 +458,7 @@
             const bar = document.getElementById('progress-bar');
             let loaded = 0;
             for (let track of musicLinks) {
-                try {
-                    if(track !== "") await fetch(track);
-                    loaded++;
-                    bar.style.width = (loaded / musicLinks.length * 100) + "%";
-                } catch (e) { loaded++; }
+                try { if(track !== "") await fetch(track); loaded++; bar.style.width = (loaded / musicLinks.length * 100) + "%"; } catch (e) { loaded++; }
             }
             document.querySelector('.progress-track').style.display = 'none';
             document.getElementById('enter-btn').style.display = 'inline-block';
@@ -480,73 +479,59 @@
 
         function playMusic(index) {
             const src = musicLinks[index];
-            if (!src) return;
-
-            const currentFile = audio.src.split('/').pop();
-            const newFile = src.split('/').pop();
-
-            if (currentFile === newFile && !audio.paused) return;
-
-            // Using Fade for professional transition
+            if (!src || (audio.src.split('/').pop() === src.split('/').pop() && !audio.paused)) return;
             fadeVolume(0, () => {
                 audio.src = src;
-                audio.play().then(() => {
-                    if (!audio.muted) fadeVolume(1);
-                }).catch(e => console.log("Init touch needed"));
+                audio.play().then(() => { if (!audio.muted) fadeVolume(1); }).catch(e => console.log("Init needed"));
             });
         }
 
         function fadeVolume(target, cb) {
             let step = 0.05;
             let timer = setInterval(() => {
-                let diff = audio.volume - target;
-                if (Math.abs(diff) < step) {
-                    audio.volume = target;
-                    clearInterval(timer);
-                    if (cb) cb();
-                } else {
-                    audio.volume += (target > audio.volume ? step : -step);
-                }
+                if (Math.abs(audio.volume - target) < step) { audio.volume = target; clearInterval(timer); if (cb) cb(); } 
+                else { audio.volume += (target > audio.volume ? step : -step); }
             }, 30);
         }
 
         function toggleMute() {
-            audio.muted = !audio.muted; // This prevents restarting the song
+            audio.muted = !audio.muted;
             document.getElementById('muteBtn').innerText = audio.muted ? "🔇" : "🔊";
-            
-            if (!audio.muted && audio.paused) {
-                audio.play();
-                fadeVolume(1);
-            }
+            if (!audio.muted && audio.paused) audio.play();
         }
 
         function move(dir) {
             currentPos += dir;
             if (currentPos < 0) currentPos = 7;
             if (currentPos > 7) currentPos = 0;
-            
             document.getElementById('canvas').style.transform = `translateX(-${currentPos * 12.5}%)`;
             document.getElementById('indicator').innerText = `PAGE ${currentPos + 1} / 8`;
             playMusic(currentPos);
         }
 
-        // Swipe Logic (Optimized for internal scrolling)
+        // --- THE FIX: DIRECTIONAL SWIPE LOGIC ---
         let startX = 0;
         let startY = 0;
-        const canvas = document.getElementById('canvas');
 
-        canvas.addEventListener('touchstart', e => {
+        // Attach listener to the whole viewport
+        const viewport = document.getElementById('viewport');
+
+        viewport.addEventListener('touchstart', e => {
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
             resetTimer();
         }, {passive: true});
 
-        canvas.addEventListener('touchend', e => {
-            let diffX = startX - e.changedTouches[0].clientX;
-            let diffY = startY - e.changedTouches[0].clientY;
+        viewport.addEventListener('touchend', e => {
+            let endX = e.changedTouches[0].clientX;
+            let endY = e.changedTouches[0].clientY;
+            
+            let diffX = startX - endX;
+            let diffY = startY - endY;
 
-            // Detect if the user intended to swipe sideways or scroll vertically
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
+            // Only move if horizontal movement (X) is significantly larger than vertical (Y)
+            // This allows the browser to handle vertical scrolling naturally
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 70) {
                 move(diffX > 0 ? 1 : -1);
             }
         }, {passive: true});
@@ -558,18 +543,8 @@
             window.idleTimer = setTimeout(() => overlay.classList.add('hidden'), 4000);
         }
 
-        window.onload = () => {
-            loadPages();
-            preload();
-            resetTimer();
-        };
-
-        // Fix for iOS/Chrome auto-play block
-        document.addEventListener('click', () => {
-            if(!audio.muted && audio.paused && audio.src !== "") {
-                audio.play();
-            }
-        }, {once: false});
+        window.onload = () => { loadPages(); preload(); resetTimer(); };
+        document.addEventListener('click', () => { if(!audio.muted && audio.paused && audio.src !== "") audio.play(); }, {once: false});
     </script>
 </body>
 </html>
