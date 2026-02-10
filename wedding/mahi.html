@@ -3,41 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>M&M Wedding Dashboard</title>
+    <title>M&M Wedding Portal</title>
     <style>
-        /* 1. Reset and Full Screen Setup */
         * { box-sizing: border-box; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: #000; overflow: hidden; /* Removes main scrollbar */
+            background: #000; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* 2. Mobile Viewport Container */
         .phone-viewport {
             width: 100vw; height: 100vh;
             max-width: 450px; max-height: 850px;
             position: relative; background: #fff; overflow: hidden;
         }
 
-        /* 3. Sliding Canvas */
         .canvas {
-            display: flex; width: 800%; /* 8 Pages */
+            display: flex; width: 800%;
             height: 100%;
             transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         .page-wrapper { width: 12.5%; height: 100%; flex-shrink: 0; }
 
-        /* 4. Aggressive Scrollbar Removal (The Side Line Fix) */
         iframe {
             width: 100%; height: 100%; border: none;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* Edge */
+            scrollbar-width: none;
         }
         iframe::-webkit-scrollbar { display: none !important; width: 0 !important; }
 
-        /* 5. Minimalist UI Overlay */
+        /* UI Overlay */
         .nav-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 9999; transition: opacity 0.5s;
@@ -54,12 +49,25 @@
             color: white; background: rgba(0,0,0,0.5); padding: 5px 15px;
             border-radius: 20px; font-size: 11px; letter-spacing: 1px;
         }
+        
+        .music-toggle {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(0,0,0,0.5); color: white; border: none;
+            width: 35px; height: 35px; border-radius: 50%;
+            cursor: pointer; pointer-events: auto; z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+        }
+
         .hidden { opacity: 0 !important; pointer-events: none !important; }
     </style>
 </head>
 <body onmousemove="resetTimer()" ontouchstart="resetTimer()">
 
+    <audio id="mainAudio" loop></audio>
+
     <div class="phone-viewport">
+        <button class="music-toggle" onclick="toggleMute()" id="muteBtn">🔊</button>
+        
         <div class="nav-overlay" id="overlay">
             <button class="arrow prev" onclick="move(-1)">&#10094;</button>
             <button class="arrow next" onclick="move(1)">&#10095;</button>
@@ -79,326 +87,18 @@
     </div>
 
     <script>
-        // PASTE YOUR FULL CODES HERE BETWEEN THE BACKTICKS ( ` )
-        // This prevents the "White Blank" screen error.
+        // MUSIC LINKS
+        const musicLinks = [
+            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+            "", "", "", "", ""
+        ];
 
+        // PAGE HTML CODES
         const p1 = `<html><body style="margin:0;background:#800000;color:white;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;"><h1>WELCOME</h1></body></html>`;
-
-        const p2 = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <style>
-        body { margin: 0; background: #f4e4bc; font-family: sans-serif; text-align: center; overflow-x: hidden; scrollbar-width: none; }
-        body::-webkit-scrollbar { display: none !important; }
-        .card { border: 10px double #D4AF37; margin: 15px; background: #FFFDF5; padding: 20px; min-height: 95vh; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .maroon { color: #800000; }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h2 class="maroon">Purohit Family</h2>
-        <h1 style="font-size: 2.2rem; margin: 10px 0;">Mahendra & Manisha</h1>
-        <h2 style="color:#D4AF37;">M&M ❣️</h2>
-        <div style="height: 800px; margin-top: 20px; background: linear-gradient(#FFFDF5, #f4e4bc);">
-            <p>Paste the rest of your wedding details here!</p>
-        </div>
-    </div>
-</body>
-</html>`;
-
-        const p3 = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M&M ❣️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@300;600&family=Hind:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --royal-maroon: #800000;
-            --gold: #D4AF37;
-            --ivory: #FFFDF5;
-            --text-dark: #333;
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            background-color: #f4e4bc; /* Sand/Beige base */
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        /* Rajasthani Pattern Background */
-        .outer-wrapper {
-            width: 100%;
-            max-width: 480px;
-            margin: auto;
-            background-image: url('https://www.transparenttextures.com/patterns/mandala.png');
-            background-repeat: repeat;
-            min-height: 100vh;
-            padding: 15px;
-            box-sizing: border-box;
-        }
-
-        .main-card {
-            background-color: var(--ivory);
-            border: 8px double var(--gold);
-            padding: 30px 15px;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        /* Top Spiritual Header */
-        .divine-header {
-            display: flex;
-            justify-content: space-between;
-            font-family: 'Hind', sans-serif;
-            font-size: 0.75rem;
-            color: var(--royal-maroon);
-            font-weight: 600;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--gold);
-            padding-bottom: 10px;
-        }
-
-        .ganesha-img {
-            width: 120px;
-            margin: 10px 0;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-        }
-
-        .intro-text {
-            font-size: 0.6rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 5px;
-        }
-
-        .family-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            color: var(--royal-maroon);
-            margin: 0 0 25px 0;
-        }
-
-        /* Couple Names */
-        .names-container {
-            margin: 30px 0;
-        }
-
-        .couple-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.4rem;
-            color: var(--text-dark);
-            margin: 0;
-            font-weight: 700;
-        }
-
-        .weds-badge {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 1.3rem;
-            color: var(--gold);
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .weds-badge::before, .weds-badge::after {
-            content: "";
-            height: 1px;
-            width: 50px;
-            background-color: var(--gold);
-            margin: 0 15px;
-        }
-
-        /* Professional Calendar UI */
-        .calendar-section {
-            margin: 35px auto;
-            width: 140px;
-            border: 2px solid var(--royal-maroon);
-            border-radius: 5px;
-            overflow: hidden;
-            background: white;
-        }
-
-        .cal-month {
-            background: var(--royal-maroon);
-            color: white;
-            padding: 5px;
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-
-        .cal-date {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
-            padding: 10px 0;
-            color: var(--text-dark);
-        }
-
-        .cal-day {
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            padding-bottom: 8px;
-            color: #666;
-        }
-
-        .venue-info {
-            margin-top: 30px;
-            padding: 15px;
-            background: rgba(212, 175, 55, 0.05);
-            border: 1px dashed var(--gold);
-        }
-
-        .map-link {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 12px 25px;
-            background-color: var(--royal-maroon);
-            color: white;
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border-radius: 3px;
-            letter-spacing: 1px;
-        }
-
-        /* New Contact Section Styles */
-        .contact-details {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-            font-size: 0.85rem;
-            color: #444;
-            line-height: 1.6;
-        }
-
-        .contact-item {
-            margin-bottom: 12px;
-        }
-
-        .contact-label {
-            color: var(--gold);
-            font-weight: 600;
-            display: block;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .coming-soon-banner {
-            margin-top: 40px;
-            background-color: var(--royal-maroon);
-            color: var(--ivory);
-            padding: 12px;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            font-weight: 600;
-            border-radius: 2px;
-        }
-
-        .blessing-footer {
-            font-size: 0.8rem;
-            line-height: 1.6;
-            font-style: italic;
-            color: #555;
-            margin-top: 40px;
-        }
-
-        .regards-section {
-            margin-top: 30px;
-            font-size: 0.85rem;
-        }
-
-        /* Animation */
-        .royal-fade {
-            animation: fadeIn 2s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-    </style>
-</head>
-<body>
-
-<div class="outer-wrapper">
-    <div class="main-card royal-fade">
-        
-        <div class="divine-header">
-            <div>श्री कुंजल नमः</div>
-            <div style="font-size: 0.9rem;">ॐ गणेशाय नमः</div>
-            <div>जय श्री बालाजी</div>
-        </div>
-
-        <img src="assets/Ganesh.png" alt="Divine Ganesha" class="ganesha-img">
-        <div class="intro-text">With the blessings of elders</div>
-        <h2 class="family-title">Purohit Family</h2>
-        
-        <p style="font-size: 0.8rem; font-weight: 300;">cordially invites you to celebrate the wedding of</p>
-
-        <div class="names-container">
-            <h1 class="couple-name">Mahendra Purohit</h1>
-            <div class="weds-badge">weds</div>
-            <h1 class="couple-name">Manisha Tiwari</h1>
-            <h1>M&M❣️</h1>
-        </div>
-
-        <div class="calendar-section">
-            <div class="cal-month">MARCH 2026</div>
-            <div class="cal-date">11</div>
-            <div class="cal-day">WEDNESDAY</div>
-        </div>
-
-        <div class="venue-info">
-            <span style="font-size: 0.65rem; color: var(--gold); letter-spacing: 2px;">THE AUSPICIOUS VENUE</span>
-            <h3 style="font-family: 'Playfair Display'; margin: 10px 0;">Sandwa Village</h3>
-            <p style="font-size: 0.85rem; color: #666; margin: 0;">Sandwa, Churu, Rajasthan</p>
-            <a href="https://maps.app.goo.gl/HFcyUisxt4Lvwbjt5" class="map-link" target="_blank">
-                📍 VIEW ON GOOGLE MAPS
-            </a>
-        </div>
-
-        <p class="blessing-footer">
-            "Your gracious presence and warm blessings will make this joyous occasion truly memorable."
-        </p>
-
-        <div class="regards-section">
-            <span style="color: var(--gold); font-size: 0.7rem; letter-spacing: 1px;">WITH BEST REGARDS:</span><br>
-            <strong style="text-transform: uppercase; font-size: 1rem;">Purohit Family</strong>
-        </div>
-
-        <div class="contact-details">
-            <div class="contact-item">
-                <span class="contact-label">Reach Out to Us</span>
-                <strong>+91 99646 13871</strong>
-            </div>
-            <div class="contact-item">
-                <span class="contact-label">Email Address</span>
-                <strong>mpurohit2414@gmail.com</strong>
-            </div>
-            <div class="contact-item">
-                <span class="contact-label">Home Address</span>
-                Ward no 4, Ramdevra Chock,<br>
-                Sandwa, Churu, Rajasthan
-            </div>
-        </div>
-
-        <div class="coming-soon-banner">
-            ✨ REST OF THE DETAILS COMING SOON ✨
-        </div>
-
-    </div>
-</div>
-
-</body>
-</html>`;
+        const p2 = `<html><body style="background:#f4e4bc;text-align:center;padding:50px;font-family:sans-serif;"><h1>M&M ❣️</h1><p>Smooth Audio Transition Enabled</p></body></html>`;
+        const p3 = `<html><body><h1>Page 3</h1></body></html>`;
         const p4 = `<html><body><h1>Page 4</h1></body></html>`;
         const p5 = `<html><body><h1>Page 5</h1></body></html>`;
         const p6 = `<html><body><h1>Page 6</h1></body></html>`;
@@ -408,15 +108,66 @@
         const pages = [p1, p2, p3, p4, p5, p6, p7, p8];
         let currentPos = 0;
         let idleTimer;
+        let isMuted = false;
+        const audio = document.getElementById('mainAudio');
 
-        // LOAD CODES INTO IFRAMES
         function loadPages() {
             pages.forEach((html, i) => {
                 const frame = document.getElementById('f' + (i + 1));
-                // Use Blob to ensure special characters and quotes don't break the page
                 const blob = new Blob([html], { type: 'text/html' });
                 frame.src = URL.createObjectURL(blob);
             });
+        }
+
+        // SMOOTH FADE LOGIC
+        function playMusicSmoothly(index) {
+            const newSrc = musicLinks[index];
+            if (!newSrc || isMuted) {
+                fadeVolume(0, () => { audio.pause(); audio.src = ""; });
+                return;
+            }
+
+            if (audio.src.includes(newSrc)) return; // Don't restart if same song
+
+            fadeVolume(0, () => {
+                audio.src = newSrc;
+                audio.volume = 0;
+                audio.play().then(() => {
+                    fadeVolume(1); // Fade in to full volume
+                }).catch(e => console.log("Waiting for user interaction"));
+            });
+        }
+
+        function fadeVolume(targetVolume, callback) {
+            const step = 0.05;
+            const interval = 50; // Speed of fade
+            
+            let fadeOut = setInterval(() => {
+                if (targetVolume === 0) {
+                    if (audio.volume > step) {
+                        audio.volume -= step;
+                    } else {
+                        audio.volume = 0;
+                        clearInterval(fadeOut);
+                        if (callback) callback();
+                    }
+                } else {
+                    if (audio.volume < targetVolume - step) {
+                        audio.volume += step;
+                    } else {
+                        audio.volume = targetVolume;
+                        clearInterval(fadeOut);
+                        if (callback) callback();
+                    }
+                }
+            }, interval);
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('muteBtn').innerText = isMuted ? "🔇" : "🔊";
+            if (isMuted) fadeVolume(0, () => audio.pause()); 
+            else playMusicSmoothly(currentPos);
         }
 
         function move(dir) {
@@ -425,6 +176,7 @@
             if (currentPos > 7) currentPos = 0;
             document.getElementById('canvas').style.transform = `translateX(-${currentPos * 12.5}%)`;
             document.getElementById('indicator').innerText = `PAGE ${currentPos + 1} / 8`;
+            playMusicSmoothly(currentPos);
         }
 
         function resetTimer() {
@@ -434,7 +186,6 @@
             idleTimer = setTimeout(() => overlay.classList.add('hidden'), 5000);
         }
 
-        // Swipe
         let startX = 0;
         document.getElementById('canvas').addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.getElementById('canvas').addEventListener('touchend', e => {
@@ -445,6 +196,7 @@
 
         loadPages();
         resetTimer();
+        document.body.addEventListener('click', () => { if(audio.src === "") playMusicSmoothly(0); }, {once: true});
     </script>
 </body>
 </html>
