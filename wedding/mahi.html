@@ -5,63 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>M&M Wedding Portal</title>
     <style>
-        * { box-sizing: border-box; }
+        :root {
+            --gold: #d4af37;
+            --cream: #fdf5e6;
+            --dark-bg: #0a0a0a;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background: #000; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
+            font-family: 'Times New Roman', serif;
+        }
+
+        /* Best-in-class Loading Screen */
+        #loader {
+            position: fixed; inset: 0;
+            background: var(--dark-bg); z-index: 20000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 1s ease, visibility 1s;
+        }
+        .loader-content { text-align: center; width: 80%; max-width: 300px; }
+        .m-logo { 
+            font-size: 40px; color: var(--gold); letter-spacing: 8px; 
+            margin-bottom: 20px; font-weight: 300;
+        }
+        .progress-track {
+            width: 100%; height: 2px; background: rgba(212, 175, 55, 0.1);
+            position: relative; border-radius: 2px;
+        }
+        #progress-bar {
+            position: absolute; left: 0; top: 0; height: 100%;
+            width: 0%; background: var(--gold); transition: width 0.4s ease;
+            box-shadow: 0 0 15px var(--gold);
+        }
+        #percent-text { 
+            color: var(--gold); font-size: 10px; margin-top: 10px; 
+            letter-spacing: 2px; text-transform: uppercase;
         }
 
         .phone-viewport {
-            width: 100vw; height: 100vh;
-            max-width: 450px; max-height: 850px;
-            position: relative; background: #fff; overflow: hidden;
+            width: 100vw; height: 100vh; margin: 0 auto;
+            max-width: 450px; position: relative; background: #fff; overflow: hidden;
         }
 
         .canvas {
-            display: flex; width: 800%;
-            height: 100%;
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            display: flex; width: 800%; height: 100%;
+            transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+            will-change: transform;
         }
 
         .page-wrapper { width: 12.5%; height: 100%; flex-shrink: 0; }
+        iframe { width: 100%; height: 100%; border: none; pointer-events: none; }
 
-        iframe {
-            width: 100%; height: 100%; border: none;
-            scrollbar-width: none;
-        }
-        iframe::-webkit-scrollbar { display: none !important; width: 0 !important; }
-
-        /* UI Overlay */
+        /* Navigation UI */
         .nav-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9999; transition: opacity 0.5s;
+            position: absolute; inset: 0; pointer-events: none; z-index: 9999;
+            transition: opacity 0.5s ease;
         }
         .arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
-            background: none; border: none; color: white; font-size: 35px;
-            padding: 20px; cursor: pointer; pointer-events: auto;
-            text-shadow: 0 0 10px rgba(0,0,0,0.8); opacity: 0.7;
+            background: none; border: none; color: white; font-size: 30px;
+            padding: 30px 15px; cursor: pointer; pointer-events: auto;
+            opacity: 0.5; transition: opacity 0.3s;
         }
+        .arrow:active { opacity: 1; }
         .prev { left: 0; } .next { right: 0; }
+        
         .indicator {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            color: white; background: rgba(0,0,0,0.5); padding: 5px 15px;
-            border-radius: 20px; font-size: 11px; letter-spacing: 1px;
+            position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+            color: white; font-size: 11px; letter-spacing: 3px;
+            background: rgba(0,0,0,0.3); padding: 8px 20px; border-radius: 30px;
+            backdrop-filter: blur(5px);
         }
         
+        /* Speaker Icon - Bottom Right */
         .music-toggle {
-            position: absolute; top: 20px; right: 20px;
-            background: rgba(0,0,0,0.5); color: white; border: none;
-            width: 35px; height: 35px; border-radius: 50%;
+            position: absolute; bottom: 40px; right: 25px;
+            background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.3);
+            width: 50px; height: 50px; border-radius: 50%;
             cursor: pointer; pointer-events: auto; z-index: 10000;
             display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px); font-size: 20px;
+            transition: transform 0.2s;
         }
+        .music-toggle:active { transform: scale(0.9); }
 
-        .hidden { opacity: 0 !important; pointer-events: none !important; }
+        .hidden { opacity: 0 !important; visibility: hidden; }
     </style>
 </head>
 <body onmousemove="resetTimer()" ontouchstart="resetTimer()">
+
+    <div id="loader">
+        <div class="loader-content">
+            <div class="m-logo">M&M</div>
+            <div class="progress-track"><div id="progress-bar"></div></div>
+            <div id="percent-text">Loading Assets 0%</div>
+        </div>
+    </div>
 
     <audio id="mainAudio" loop></audio>
 
@@ -71,7 +111,7 @@
         <div class="nav-overlay" id="overlay">
             <button class="arrow prev" onclick="move(-1)">&#10094;</button>
             <button class="arrow next" onclick="move(1)">&#10095;</button>
-            <div class="indicator" id="indicator">PAGE 1 / 8</div>
+            <div class="indicator" id="indicator">1 / 8</div>
         </div>
 
         <div class="canvas" id="canvas">
@@ -87,29 +127,59 @@
     </div>
 
     <script>
-        // MUSIC LINKS
+        // Update these paths to match your folder (e.g., "music/song1.mp3")
         const musicLinks = [
-            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-            "", "", "", "", ""
+            "music/page1.mp3",
+            "music/page2.mp3",
+            "music/song3.mp3",
+            "music/song4.mp3",
+            "music/song5.mp3",
+            "music/song6.mp3",
+            "music/song7.mp3",
+            "music/song8.mp3"
         ];
 
-        // PAGE HTML CODES
-        const p1 = `<html><body style="margin:0;background:#800000;color:white;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;"><h1>WELCOME</h1></body></html>`;
-        const p2 = `<html><body style="background:#f4e4bc;text-align:center;padding:50px;font-family:sans-serif;"><h1>M&M ❣️</h1><p>Smooth Audio Transition Enabled</p></body></html>`;
-        const p3 = `<html><body><h1>Page 3</h1></body></html>`;
-        const p4 = `<html><body><h1>Page 4</h1></body></html>`;
-        const p5 = `<html><body><h1>Page 5</h1></body></html>`;
-        const p6 = `<html><body><h1>Page 6</h1></body></html>`;
-        const p7 = `<html><body><h1>Page 7</h1></body></html>`;
-        const p8 = `<html><body><h1>Page 8</h1></body></html>`;
+        const pages = [
+            `<html><body style="margin:0;background:#4a0404;color:white;display:flex;align-items:center;justify-content:center;height:100vh;font-family:serif;text-align:center;"><div><h1 style="letter-spacing:10px; font-weight:100;">WELCOME</h1><p style="opacity:0.6; font-style:italic;">Tap to Begin</p></div></body></html>`,
+            `<html><body style="margin:0;background:#fdf5e6;color:#4a0404;display:flex;align-items:center;justify-content:center;height:100vh;font-family:serif;text-align:center;"><div><h1 style="font-size:3em;">M&M ❣️</h1><p>Our Story Starts Here</p></div></body></html>`,
+            `<html><body style="background:#fff;"><h1>3</h1></body></html>`,
+            `<html><body style="background:#fff;"><h1>4</h1></body></html>`,
+            `<html><body style="background:#fff;"><h1>5</h1></body></html>`,
+            `<html><body style="background:#fff;"><h1>6</h1></body></html>`,
+            `<html><body style="background:#fff;"><h1>7</h1></body></html>`,
+            `<html><body style="background:#fff;"><h1>8</h1></body></html>`
+        ];
 
-        const pages = [p1, p2, p3, p4, p5, p6, p7, p8];
         let currentPos = 0;
         let idleTimer;
         let isMuted = false;
         const audio = document.getElementById('mainAudio');
+
+        // --- PRELOADER (FOR LOCAL ASSETS) ---
+        async function preloadMusic() {
+            const progressBar = document.getElementById('progress-bar');
+            const percentText = document.getElementById('percent-text');
+            
+            let loaded = 0;
+            const toLoad = musicLinks.filter(l => l !== "");
+
+            for (let path of toLoad) {
+                try {
+                    const res = await fetch(path);
+                    if (res.ok) {
+                        loaded++;
+                        let p = Math.round((loaded / toLoad.length) * 100);
+                        progressBar.style.width = p + "%";
+                        percentText.innerText = `Loading Experience ${p}%`;
+                    }
+                } catch (e) { console.error("Asset missing:", path); }
+            }
+
+            // Small delay for visual polish
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 600);
+        }
 
         function loadPages() {
             pages.forEach((html, i) => {
@@ -119,54 +189,40 @@
             });
         }
 
-        // SMOOTH FADE LOGIC
         function playMusicSmoothly(index) {
             const newSrc = musicLinks[index];
             if (!newSrc || isMuted) {
-                fadeVolume(0, () => { audio.pause(); audio.src = ""; });
+                fadeVolume(0, () => audio.pause());
                 return;
             }
 
-            if (audio.src.includes(newSrc)) return; // Don't restart if same song
+            // Check if current source is the same to avoid restart flicker
+            if (audio.src.split('/').pop() === newSrc.split('/').pop() && !audio.paused) return;
 
             fadeVolume(0, () => {
                 audio.src = newSrc;
                 audio.volume = 0;
-                audio.play().then(() => {
-                    fadeVolume(1); // Fade in to full volume
-                }).catch(e => console.log("Waiting for user interaction"));
+                audio.play().then(() => fadeVolume(1)).catch(e => console.log("User interaction required"));
             });
         }
 
-        function fadeVolume(targetVolume, callback) {
+        function fadeVolume(target, callback) {
             const step = 0.05;
-            const interval = 50; // Speed of fade
-            
-            let fadeOut = setInterval(() => {
-                if (targetVolume === 0) {
-                    if (audio.volume > step) {
-                        audio.volume -= step;
-                    } else {
-                        audio.volume = 0;
-                        clearInterval(fadeOut);
-                        if (callback) callback();
-                    }
+            let fade = setInterval(() => {
+                if (Math.abs(audio.volume - target) < step) {
+                    audio.volume = target;
+                    clearInterval(fade);
+                    if (callback) callback();
                 } else {
-                    if (audio.volume < targetVolume - step) {
-                        audio.volume += step;
-                    } else {
-                        audio.volume = targetVolume;
-                        clearInterval(fadeOut);
-                        if (callback) callback();
-                    }
+                    audio.volume += (target > audio.volume ? step : -step);
                 }
-            }, interval);
+            }, 30);
         }
 
         function toggleMute() {
             isMuted = !isMuted;
             document.getElementById('muteBtn').innerText = isMuted ? "🔇" : "🔊";
-            if (isMuted) fadeVolume(0, () => audio.pause()); 
+            if (isMuted) fadeVolume(0, () => audio.pause());
             else playMusicSmoothly(currentPos);
         }
 
@@ -175,7 +231,7 @@
             if (currentPos < 0) currentPos = 7;
             if (currentPos > 7) currentPos = 0;
             document.getElementById('canvas').style.transform = `translateX(-${currentPos * 12.5}%)`;
-            document.getElementById('indicator').innerText = `PAGE ${currentPos + 1} / 8`;
+            document.getElementById('indicator').innerText = `${currentPos + 1} / 8`;
             playMusicSmoothly(currentPos);
         }
 
@@ -183,20 +239,35 @@
             const overlay = document.getElementById('overlay');
             overlay.classList.remove('hidden');
             clearTimeout(idleTimer);
-            idleTimer = setTimeout(() => overlay.classList.add('hidden'), 5000);
+            idleTimer = setTimeout(() => overlay.classList.add('hidden'), 4000);
         }
 
-        let startX = 0;
-        document.getElementById('canvas').addEventListener('touchstart', e => startX = e.touches[0].clientX);
-        document.getElementById('canvas').addEventListener('touchend', e => {
-            let endX = e.changedTouches[0].clientX;
-            if (startX - endX > 50) move(1);
-            if (startX - endX < -50) move(-1);
-        });
+        // --- SWIPE GESTURES ---
+        let touchStartX = 0;
+        const canvasElement = document.getElementById('canvas');
+        
+        canvasElement.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+        }, {passive: true});
 
-        loadPages();
-        resetTimer();
-        document.body.addEventListener('click', () => { if(audio.src === "") playMusicSmoothly(0); }, {once: true});
+        canvasElement.addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 60) move(diff > 0 ? 1 : -1);
+        }, {passive: true});
+
+        // --- INITIALIZE ---
+        window.onload = () => {
+            loadPages();
+            preloadMusic();
+        };
+
+        // First tap allows audio to start
+        document.body.addEventListener('click', () => {
+            if (audio.src === "" || audio.paused) {
+                if(!isMuted) playMusicSmoothly(currentPos);
+            }
+        }, {once: false});
     </script>
 </body>
 </html>
