@@ -8,7 +8,7 @@
         :root {
             --gold: #d4af37;
             --dark: #121212;
-            --glass: rgba(0, 0, 0, 0.5);
+            --glass: rgba(0, 0, 0, 0.7);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -22,33 +22,21 @@
 
         /* Professional Loader */
         #loader {
-            position: fixed; inset: 0;
-            background: var(--dark); z-index: 20000;
+            position: fixed; inset: 0; background: var(--dark); z-index: 20000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
-        .loader-content { text-align: center; width: 70%; }
-        .m-logo { font-size: 42px; color: var(--gold); letter-spacing: 10px; margin-bottom: 30px; font-weight: 300; }
-        
-        .progress-track {
-            width: 100%; height: 2px; background: rgba(212, 175, 55, 0.1);
-            position: relative; margin-bottom: 20px;
-        }
-        #progress-bar {
-            position: absolute; left: 0; height: 100%; width: 0%;
-            background: var(--gold); transition: width 0.3s;
-        }
-
+        .m-logo { font-size: 42px; color: var(--gold); letter-spacing: 10px; margin-bottom: 30px; }
+        .progress-track { width: 200px; height: 2px; background: rgba(212, 175, 55, 0.1); margin-bottom: 20px; }
+        #progress-bar { height: 100%; width: 0%; background: var(--gold); transition: width 0.3s; }
         #enter-btn {
             background: transparent; border: 1px solid var(--gold);
             color: var(--gold); padding: 12px 40px; cursor: pointer;
-            font-size: 14px; letter-spacing: 2px; display: none;
-            text-transform: uppercase;
+            font-size: 14px; letter-spacing: 2px; display: none; text-transform: uppercase;
         }
 
         .phone-viewport {
-            width: 100vw; height: 100dvh;
-            max-width: 450px; margin: 0 auto;
+            width: 100vw; height: 100dvh; max-width: 450px; margin: 0 auto;
             position: relative; background: #000; overflow: hidden;
         }
 
@@ -57,66 +45,55 @@
             transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        /* Enhanced Scrollable Wrapper */
         .page-wrapper { 
-            width: 12.5%; height: 100%; 
-            flex-shrink: 0; 
-            overflow-y: auto; /* Enable Vertical Scroll */
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            position: relative;
+            width: 12.5%; height: 100%; flex-shrink: 0; 
+            overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
         }
         
-        /* Iframe interaction enabled for scrolling */
-        iframe { 
-            width: 100%; min-height: 100%; border: none; 
-            display: block; pointer-events: auto; 
+        iframe { width: 100%; min-height: 100%; border: none; display: block; pointer-events: auto; }
+
+        /* FIXED BOTTOM NAVIGATION BAR */
+        .bottom-nav {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            height: 100px; background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px env(safe-area-inset-bottom); z-index: 10000;
+            pointer-events: none;
         }
 
-        /* Overlay UI */
-        .nav-overlay {
-            position: absolute; inset: 0; pointer-events: none; z-index: 9999;
+        .nav-controls {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; pointer-events: auto;
         }
+
         .arrow {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            background: none; border: none; color: white; font-size: 30px;
-            padding: 30px 20px; cursor: pointer; pointer-events: auto;
-            text-shadow: 0 0 10px rgba(0,0,0,0.8); opacity: 0.6;
+            background: none; border: none; color: white; font-size: 24px;
+            padding: 15px; cursor: pointer; opacity: 0.8; transition: 0.3s;
         }
-        .prev { left: 0; }
-        .next { right: 0; }
-        
+        .arrow:active { color: var(--gold); transform: scale(1.2); }
+
         .indicator {
-            position: absolute; top: calc(20px + env(safe-area-inset-top));
-            left: 50%; transform: translateX(-50%);
-            color: white; font-size: 10px; letter-spacing: 3px;
-            background: var(--glass); padding: 8px 18px; border-radius: 20px;
-            backdrop-filter: blur(10px);
+            color: var(--gold); font-size: 12px; letter-spacing: 4px;
+            font-weight: bold; text-align: center;
         }
 
+        /* Speaker Fixed at Bottom Left to balance the UI */
         .music-toggle {
-            position: absolute; 
-            bottom: calc(30px + env(safe-area-inset-bottom)); 
-            right: 20px;
-            background: var(--glass); color: white; 
-            border: 1px solid rgba(255,255,255,0.2);
-            width: 50px; height: 50px; border-radius: 50%;
-            cursor: pointer; pointer-events: auto; z-index: 10001;
+            position: absolute; bottom: calc(110px + env(safe-area-inset-bottom)); right: 20px;
+            background: var(--glass); color: white; border: 1px solid rgba(255,255,255,0.2);
+            width: 45px; height: 45px; border-radius: 50%;
+            cursor: pointer; z-index: 10001;
             display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(15px); font-size: 20px;
+            backdrop-filter: blur(10px); font-size: 18px;
         }
-
-        .hidden { opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div id="loader">
-        <div class="loader-content">
-            <div class="m-logo">M&M</div>
-            <div class="progress-track"><div id="progress-bar"></div></div>
-            <button id="enter-btn" onclick="startExperience()">Enter Experience</button>
-        </div>
+        <div class="m-logo">Are you exicted</div>
+        <div class="progress-track"><div id="progress-bar"></div></div>
+        <button id="enter-btn" onclick="startExperience()">Lets start</button>
     </div>
 
     <audio id="mainAudio" loop></audio>
@@ -124,10 +101,12 @@
     <div class="phone-viewport" id="viewport">
         <button class="music-toggle" onclick="toggleMute()" id="muteBtn">🔊</button>
         
-        <div class="nav-overlay" id="overlay">
-            <button class="arrow prev" onclick="move(-1)">&#10094;</button>
-            <button class="arrow next" onclick="move(1)">&#10095;</button>
-            <div class="indicator" id="indicator">PAGE 1 / 8</div>
+        <div class="bottom-nav">
+            <div class="nav-controls">
+                <button class="arrow" onclick="move(-1)">&#10094;</button>
+                <div class="indicator" id="indicator">1 / 8</div>
+                <button class="arrow" onclick="move(1)">&#10095;</button>
+            </div>
         </div>
 
         <div class="canvas" id="canvas">
@@ -145,13 +124,13 @@
     <script>
         const musicLinks = [
             "music/page1.mp3", "music/page2.mp3", "music/page3.mp3", 
-            "music/song4.mp3", "music/song5.mp3", "music/song6.mp3", 
-            "music/song7.mp3", "music/song8.mp3"
+            "music/page4.mp3", "music/page5.mp3", "music/page6.mp3", 
+            "music/page7.mp3", "music/page8.mp3"
         ];
 
         const pages = [
-            `<html><body style="margin:0; background:#4a0404; color:white; font-family:serif; text-align:center; padding:100px 20px; min-height:180vh;"><h1>WELCOME</h1><p>Scroll down to explore</p><p>Swipe right for the story</p><div style="margin-top:600px; color:#d4af37; border:1px solid #d4af37; padding:20px;">SCROLL SUCCESSFUL<br>This part was hidden!</div></body></html>`,
-            `<html><body style="margin:0; background:#fdf5e6; color:#4a0404; font-family:serif; text-align:center; padding:100px 20px;"><h1>M&M ❣️</h1><p>Next Chapter</p></body></html>`,
+            `<html><body style="margin:0; background:#4a0404; color:white; font-family:serif; text-align:center; padding:100px 20px; min-height:150vh;"><h1>WELCOME</h1><p>Scroll & Swipe Enabled</p></body></html>`,
+            `<html><body style="margin:0; background:#fdf5e6; color:#4a0404; font-family:serif; text-align:center; padding:100px 20px;"><h1>M&M ❣️</h1><p>The Journey</p></body></html>`,
             `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -452,6 +431,7 @@
         ];
 
         let currentPos = 0;
+        let fadeInterval = null;
         const audio = document.getElementById('mainAudio');
 
         async function preload() {
@@ -460,7 +440,6 @@
             for (let track of musicLinks) {
                 try { if(track !== "") await fetch(track); loaded++; bar.style.width = (loaded / musicLinks.length * 100) + "%"; } catch (e) { loaded++; }
             }
-            document.querySelector('.progress-track').style.display = 'none';
             document.getElementById('enter-btn').style.display = 'inline-block';
         }
 
@@ -477,20 +456,36 @@
             });
         }
 
+        // --- MUSIC SYNC FIX: Stops previous transitions immediately ---
         function playMusic(index) {
             const src = musicLinks[index];
-            if (!src || (audio.src.split('/').pop() === src.split('/').pop() && !audio.paused)) return;
-            fadeVolume(0, () => {
-                audio.src = src;
-                audio.play().then(() => { if (!audio.muted) fadeVolume(1); }).catch(e => console.log("Init needed"));
-            });
+            if (!src) return;
+
+            const currentFile = audio.src.split('/').pop();
+            const newFile = src.split('/').pop();
+            if (currentFile === newFile && !audio.paused) return;
+
+            // Clear any existing fade-out/in
+            if (fadeInterval) clearInterval(fadeInterval);
+
+            // Instant volume drop for fast swiping
+            audio.volume = 0;
+            audio.src = src;
+            audio.play().then(() => {
+                if (!audio.muted) fadeTo(1);
+            }).catch(e => console.log("Tap needed"));
         }
 
-        function fadeVolume(target, cb) {
-            let step = 0.05;
-            let timer = setInterval(() => {
-                if (Math.abs(audio.volume - target) < step) { audio.volume = target; clearInterval(timer); if (cb) cb(); } 
-                else { audio.volume += (target > audio.volume ? step : -step); }
+        function fadeTo(target) {
+            if (fadeInterval) clearInterval(fadeInterval);
+            const step = 0.05;
+            fadeInterval = setInterval(() => {
+                if (Math.abs(audio.volume - target) < step) {
+                    audio.volume = target;
+                    clearInterval(fadeInterval);
+                } else {
+                    audio.volume += (target > audio.volume ? step : -step);
+                }
             }, 30);
         }
 
@@ -505,46 +500,28 @@
             if (currentPos < 0) currentPos = 7;
             if (currentPos > 7) currentPos = 0;
             document.getElementById('canvas').style.transform = `translateX(-${currentPos * 12.5}%)`;
-            document.getElementById('indicator').innerText = `PAGE ${currentPos + 1} / 8`;
+            document.getElementById('indicator').innerText = `${currentPos + 1} / 8`;
             playMusic(currentPos);
         }
 
-        // --- THE FIX: DIRECTIONAL SWIPE LOGIC ---
-        let startX = 0;
-        let startY = 0;
-
-        // Attach listener to the whole viewport
+        // Directional Swipe Logic
+        let startX = 0, startY = 0;
         const viewport = document.getElementById('viewport');
 
         viewport.addEventListener('touchstart', e => {
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
-            resetTimer();
         }, {passive: true});
 
         viewport.addEventListener('touchend', e => {
-            let endX = e.changedTouches[0].clientX;
-            let endY = e.changedTouches[0].clientY;
-            
-            let diffX = startX - endX;
-            let diffY = startY - endY;
-
-            // Only move if horizontal movement (X) is significantly larger than vertical (Y)
-            // This allows the browser to handle vertical scrolling naturally
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 70) {
+            let diffX = startX - e.changedTouches[0].clientX;
+            let diffY = startY - e.changedTouches[0].clientY;
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
                 move(diffX > 0 ? 1 : -1);
             }
         }, {passive: true});
 
-        function resetTimer() {
-            const overlay = document.getElementById('overlay');
-            overlay.classList.remove('hidden');
-            clearTimeout(window.idleTimer);
-            window.idleTimer = setTimeout(() => overlay.classList.add('hidden'), 4000);
-        }
-
-        window.onload = () => { loadPages(); preload(); resetTimer(); };
-        document.addEventListener('click', () => { if(!audio.muted && audio.paused && audio.src !== "") audio.play(); }, {once: false});
+        window.onload = () => { loadPages(); preload(); };
     </script>
 </body>
 </html>
