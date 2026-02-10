@@ -2,104 +2,117 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>M&M Wedding Portal</title>
     <style>
         :root {
             --gold: #d4af37;
-            --cream: #fdf5e6;
-            --dark-bg: #0a0a0a;
-        }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background: #000; overflow: hidden;
-            font-family: 'Times New Roman', serif;
+            --dark: #121212;
+            --glass: rgba(0, 0, 0, 0.5);
         }
 
-        /* Best-in-class Loading Screen */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body, html {
+            margin: 0; padding: 0; 
+            width: 100%; height: 100%;
+            background: #000; overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Full Screen Loader */
         #loader {
             position: fixed; inset: 0;
-            background: var(--dark-bg); z-index: 20000;
+            background: var(--dark); z-index: 20000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 1s ease, visibility 1s;
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
-        .loader-content { text-align: center; width: 80%; max-width: 300px; }
-        .m-logo { 
-            font-size: 40px; color: var(--gold); letter-spacing: 8px; 
-            margin-bottom: 20px; font-weight: 300;
-        }
+        .loader-content { text-align: center; width: 70%; }
+        .m-logo { font-size: 42px; color: var(--gold); letter-spacing: 10px; margin-bottom: 30px; }
+        
         .progress-track {
             width: 100%; height: 2px; background: rgba(212, 175, 55, 0.1);
-            position: relative; border-radius: 2px;
+            position: relative; margin-bottom: 20px;
         }
         #progress-bar {
-            position: absolute; left: 0; top: 0; height: 100%;
-            width: 0%; background: var(--gold); transition: width 0.4s ease;
-            box-shadow: 0 0 15px var(--gold);
+            position: absolute; left: 0; height: 100%; width: 0%;
+            background: var(--gold); transition: width 0.3s;
         }
-        #percent-text { 
-            color: var(--gold); font-size: 10px; margin-top: 10px; 
-            letter-spacing: 2px; text-transform: uppercase;
+
+        #enter-btn {
+            background: transparent; border: 1px solid var(--gold);
+            color: var(--gold); padding: 12px 40px; cursor: pointer;
+            font-size: 14px; letter-spacing: 2px; display: none;
+            text-transform: uppercase;
         }
 
         .phone-viewport {
-            width: 100vw; height: 100vh; margin: 0 auto;
-            max-width: 450px; position: relative; background: #fff; overflow: hidden;
+            width: 100vw; height: 100dvh;
+            max-width: 450px; margin: 0 auto;
+            position: relative; background: #000; overflow: hidden;
         }
 
         .canvas {
             display: flex; width: 800%; height: 100%;
-            transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-            will-change: transform;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        .page-wrapper { width: 12.5%; height: 100%; flex-shrink: 0; }
-        iframe { width: 100%; height: 100%; border: none; pointer-events: none; }
+        /* Scrollable Page Wrapper */
+        .page-wrapper { 
+            width: 12.5%; height: 100%; 
+            flex-shrink: 0; overflow-y: scroll; /* Forces scroll capability */
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        iframe { 
+            width: 100%; min-height: 100.1%; border: none; 
+            display: block; pointer-events: auto; /* Allows interaction/scroll inside */
+        }
 
-        /* Navigation UI */
+        /* Navigation Arrows */
         .nav-overlay {
             position: absolute; inset: 0; pointer-events: none; z-index: 9999;
-            transition: opacity 0.5s ease;
         }
         .arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
             background: none; border: none; color: white; font-size: 30px;
-            padding: 30px 15px; cursor: pointer; pointer-events: auto;
-            opacity: 0.5; transition: opacity 0.3s;
+            padding: 30px 20px; cursor: pointer; pointer-events: auto;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8); opacity: 0.6;
         }
-        .arrow:active { opacity: 1; }
-        .prev { left: 0; } .next { right: 0; }
+        .prev { left: 0; }
+        .next { right: 0; }
         
         .indicator {
-            position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
-            color: white; font-size: 11px; letter-spacing: 3px;
-            background: rgba(0,0,0,0.3); padding: 8px 20px; border-radius: 30px;
-            backdrop-filter: blur(5px);
+            position: absolute; top: calc(20px + env(safe-area-inset-top));
+            left: 50%; transform: translateX(-50%);
+            color: white; font-size: 10px; letter-spacing: 3px;
+            background: var(--glass); padding: 8px 18px; border-radius: 20px;
+            backdrop-filter: blur(10px);
         }
-        
-        /* Speaker Icon - Bottom Right */
-        .music-toggle {
-            position: absolute; bottom: 40px; right: 25px;
-            background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.3);
-            width: 50px; height: 50px; border-radius: 50%;
-            cursor: pointer; pointer-events: auto; z-index: 10000;
-            display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(8px); font-size: 20px;
-            transition: transform 0.2s;
-        }
-        .music-toggle:active { transform: scale(0.9); }
 
-        .hidden { opacity: 0 !important; visibility: hidden; }
+        .music-toggle {
+            position: absolute; 
+            bottom: calc(30px + env(safe-area-inset-bottom)); 
+            right: 20px;
+            background: var(--glass); color: white; 
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 50px; height: 50px; border-radius: 50%;
+            cursor: pointer; pointer-events: auto; z-index: 10001;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(15px); font-size: 20px;
+        }
+
+        .hidden { opacity: 0; pointer-events: none; }
     </style>
 </head>
-<body onmousemove="resetTimer()" ontouchstart="resetTimer()">
+<body>
 
     <div id="loader">
         <div class="loader-content">
             <div class="m-logo">M&M</div>
             <div class="progress-track"><div id="progress-bar"></div></div>
-            <div id="percent-text">Loading Assets 0%</div>
+            <button id="enter-btn" onclick="startExperience()">Enter Experience</button>
         </div>
     </div>
 
@@ -111,7 +124,7 @@
         <div class="nav-overlay" id="overlay">
             <button class="arrow prev" onclick="move(-1)">&#10094;</button>
             <button class="arrow next" onclick="move(1)">&#10095;</button>
-            <div class="indicator" id="indicator">1 / 8</div>
+            <div class="indicator" id="indicator">PAGE 1 / 8</div>
         </div>
 
         <div class="canvas" id="canvas">
@@ -127,21 +140,15 @@
     </div>
 
     <script>
-        // Update these paths to match your folder (e.g., "music/song1.mp3")
         const musicLinks = [
-            "music/page1.mp3",
-            "music/page2.mp3",
-            "music/page3.mp3",
-            "music/song4.mp3",
-            "music/song5.mp3",
-            "music/song6.mp3",
-            "music/song7.mp3",
-            "music/song8.mp3"
+            "music/page1.mp3", "music/page2.mp3", "music/page3.mp3", 
+            "music/song4.mp3", "music/song5.mp3", "music/song6.mp3", 
+            "music/song7.mp3", "music/song8.mp3"
         ];
 
         const pages = [
-            `<html><body style="margin:0;background:#4a0404;color:white;display:flex;align-items:center;justify-content:center;height:100vh;font-family:serif;text-align:center;"><div><h1 style="letter-spacing:10px; font-weight:100;">WELCOME</h1><p style="opacity:0.6; font-style:italic;">Tap to Begin</p></div></body></html>`,
-            `<html><body style="margin:0;background:#fdf5e6;color:#4a0404;display:flex;align-items:center;justify-content:center;height:100vh;font-family:serif;text-align:center;"><div><h1 style="font-size:3em;">M&M ❣️</h1><p>Our Story Starts Here</p></div></body></html>`,
+            `<html><body style="margin:0; background:#4a0404; color:white; font-family:serif; text-align:center; padding:100px 20px; min-height:150vh;"><h1>WELCOME</h1><p>Scroll down to see the invite details</p><div style="margin-top:400px; color:#d4af37;">❤ M&M 2026 ❤</div></body></html>`,
+            `<html><body style="margin:0; background:#fdf5e6; color:#4a0404; font-family:serif; text-align:center; padding:100px 20px; min-height:100vh;"><h1>M&M ❣️</h1><p>The Celebration Begins</p></body></html>`,
             `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -434,42 +441,33 @@
 
 </body>
 </html>`,
-            `<html><body style="background:#fff;"><h1>4</h1></body></html>`,
-            `<html><body style="background:#fff;"><h1>5</h1></body></html>`,
-            `<html><body style="background:#fff;"><h1>6</h1></body></html>`,
-            `<html><body style="background:#fff;"><h1>7</h1></body></html>`,
-            `<html><body style="background:#fff;"><h1>8</h1></body></html>`
+            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Venue</h1></body></html>`,
+            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Gallery</h1></body></html>`,
+            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Schedule</h1></body></html>`,
+            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Gift</h1></body></html>`,
+            `<html><body style="background:white; text-align:center; padding:50px;"><h1>Contact</h1></body></html>`
         ];
 
         let currentPos = 0;
-        let idleTimer;
-        let isMuted = false;
         const audio = document.getElementById('mainAudio');
 
-        // --- PRELOADER (FOR LOCAL ASSETS) ---
-        async function preloadMusic() {
-            const progressBar = document.getElementById('progress-bar');
-            const percentText = document.getElementById('percent-text');
-            
+        async function preload() {
+            const bar = document.getElementById('progress-bar');
             let loaded = 0;
-            const toLoad = musicLinks.filter(l => l !== "");
-
-            for (let path of toLoad) {
+            for (let track of musicLinks) {
                 try {
-                    const res = await fetch(path);
-                    if (res.ok) {
-                        loaded++;
-                        let p = Math.round((loaded / toLoad.length) * 100);
-                        progressBar.style.width = p + "%";
-                        percentText.innerText = `Loading Experience ${p}%`;
-                    }
-                } catch (e) { console.error("Asset missing:", path); }
+                    if(track !== "") await fetch(track);
+                    loaded++;
+                    bar.style.width = (loaded / musicLinks.length * 100) + "%";
+                } catch (e) { loaded++; }
             }
+            document.querySelector('.progress-track').style.display = 'none';
+            document.getElementById('enter-btn').style.display = 'inline-block';
+        }
 
-            // Small delay for visual polish
-            setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-            }, 600);
+        function startExperience() {
+            document.getElementById('loader').style.transform = 'translateY(-100%)';
+            playMusic(0);
         }
 
         function loadPages() {
@@ -480,30 +478,32 @@
             });
         }
 
-        function playMusicSmoothly(index) {
-            const newSrc = musicLinks[index];
-            if (!newSrc || isMuted) {
-                fadeVolume(0, () => audio.pause());
-                return;
-            }
+        function playMusic(index) {
+            const src = musicLinks[index];
+            if (!src) return;
 
-            // Check if current source is the same to avoid restart flicker
-            if (audio.src.split('/').pop() === newSrc.split('/').pop() && !audio.paused) return;
+            const currentFile = audio.src.split('/').pop();
+            const newFile = src.split('/').pop();
 
+            if (currentFile === newFile && !audio.paused) return;
+
+            // Using Fade for professional transition
             fadeVolume(0, () => {
-                audio.src = newSrc;
-                audio.volume = 0;
-                audio.play().then(() => fadeVolume(1)).catch(e => console.log("User interaction required"));
+                audio.src = src;
+                audio.play().then(() => {
+                    if (!audio.muted) fadeVolume(1);
+                }).catch(e => console.log("Init touch needed"));
             });
         }
 
-        function fadeVolume(target, callback) {
-            const step = 0.05;
-            let fade = setInterval(() => {
-                if (Math.abs(audio.volume - target) < step) {
+        function fadeVolume(target, cb) {
+            let step = 0.05;
+            let timer = setInterval(() => {
+                let diff = audio.volume - target;
+                if (Math.abs(diff) < step) {
                     audio.volume = target;
-                    clearInterval(fade);
-                    if (callback) callback();
+                    clearInterval(timer);
+                    if (cb) cb();
                 } else {
                     audio.volume += (target > audio.volume ? step : -step);
                 }
@@ -511,52 +511,63 @@
         }
 
         function toggleMute() {
-            isMuted = !isMuted;
-            document.getElementById('muteBtn').innerText = isMuted ? "🔇" : "🔊";
-            if (isMuted) fadeVolume(0, () => audio.pause());
-            else playMusicSmoothly(currentPos);
+            audio.muted = !audio.muted; // This prevents restarting the song
+            document.getElementById('muteBtn').innerText = audio.muted ? "🔇" : "🔊";
+            
+            if (!audio.muted && audio.paused) {
+                audio.play();
+                fadeVolume(1);
+            }
         }
 
         function move(dir) {
             currentPos += dir;
             if (currentPos < 0) currentPos = 7;
             if (currentPos > 7) currentPos = 0;
+            
             document.getElementById('canvas').style.transform = `translateX(-${currentPos * 12.5}%)`;
-            document.getElementById('indicator').innerText = `${currentPos + 1} / 8`;
-            playMusicSmoothly(currentPos);
+            document.getElementById('indicator').innerText = `PAGE ${currentPos + 1} / 8`;
+            playMusic(currentPos);
         }
+
+        // Swipe Logic (Optimized for internal scrolling)
+        let startX = 0;
+        let startY = 0;
+        const canvas = document.getElementById('canvas');
+
+        canvas.addEventListener('touchstart', e => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            resetTimer();
+        }, {passive: true});
+
+        canvas.addEventListener('touchend', e => {
+            let diffX = startX - e.changedTouches[0].clientX;
+            let diffY = startY - e.changedTouches[0].clientY;
+
+            // Detect if the user intended to swipe sideways or scroll vertically
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
+                move(diffX > 0 ? 1 : -1);
+            }
+        }, {passive: true});
 
         function resetTimer() {
             const overlay = document.getElementById('overlay');
             overlay.classList.remove('hidden');
-            clearTimeout(idleTimer);
-            idleTimer = setTimeout(() => overlay.classList.add('hidden'), 4000);
+            clearTimeout(window.idleTimer);
+            window.idleTimer = setTimeout(() => overlay.classList.add('hidden'), 4000);
         }
 
-        // --- SWIPE GESTURES ---
-        let touchStartX = 0;
-        const canvasElement = document.getElementById('canvas');
-        
-        canvasElement.addEventListener('touchstart', e => {
-            touchStartX = e.touches[0].clientX;
-        }, {passive: true});
-
-        canvasElement.addEventListener('touchend', e => {
-            const touchEndX = e.changedTouches[0].clientX;
-            const diff = touchStartX - touchEndX;
-            if (Math.abs(diff) > 60) move(diff > 0 ? 1 : -1);
-        }, {passive: true});
-
-        // --- INITIALIZE ---
         window.onload = () => {
             loadPages();
-            preloadMusic();
+            preload();
+            resetTimer();
         };
 
-        // First tap allows audio to start
-        document.body.addEventListener('click', () => {
-            if (audio.src === "" || audio.paused) {
-                if(!isMuted) playMusicSmoothly(currentPos);
+        // Fix for iOS/Chrome auto-play block
+        document.addEventListener('click', () => {
+            if(!audio.muted && audio.paused && audio.src !== "") {
+                audio.play();
             }
         }, {once: false});
     </script>
