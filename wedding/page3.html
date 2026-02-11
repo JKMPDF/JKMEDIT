@@ -38,7 +38,6 @@
             overflow: hidden;
         }
 
-        /* Animated Petals Background */
         .petal {
             position: absolute;
             background: var(--marigold-orange);
@@ -57,16 +56,16 @@
         .haldi-card {
             position: relative;
             z-index: 5;
-            margin: auto 20px 80px 20px;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(8px);
-            padding: 35px 25px;
-            border-radius: 50px 0 50px 0;
+            margin: 50px 20px 80px 20px;
+            background: transparent;
+            padding: 70px 30px;
+            border-radius: 50px 50px 0px 0;
             border: 3px solid var(--haldi-yellow);
             outline: 6px double var(--marigold-orange);
             outline-offset: -15px;
             text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            width: calc(100% - 150px);
         }
 
         .title {
@@ -81,37 +80,60 @@
             font-family: 'Dancing Script', cursive;
             font-size: 1.8rem;
             color: var(--deep-red);
-            margin: 10px 0;
+            margin: 5px 0;
         }
 
         .tagline {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             color: #555;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .info-box {
             border-top: 1px dashed var(--marigold-orange);
             border-bottom: 1px dashed var(--marigold-orange);
-            padding: 15px 0;
-            margin: 20px 0;
+            padding: 10px 0;
+            margin: 15px 0;
         }
 
         .time {
             font-weight: 600;
-            color: var(--maroon);
-            font-size: 1.1rem;
+            color: var(--deep-red);
+            font-size: 1rem;
         }
 
-        .dress-code {
-            font-size: 0.75rem;
-            margin-top: 15px;
-            color: #444;
+        /* TIMER STYLES */
+        .timer-wrap {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 15px 0;
         }
+        .time-unit {
+            background: var(--marigold-orange);
+            color: white;
+            min-width: 50px;
+            padding: 5px;
+            border-radius: 8px;
+        }
+        .time-unit span { display: block; font-weight: 600; font-size: 1.1rem; }
+        .time-unit label { font-size: 0.5rem; text-transform: uppercase; }
 
-        .dress-code b { color: var(--marigold-orange); }
+        /* CALENDAR BUTTON */
+        .btn-cal {
+            background: var(--deep-red);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
@@ -121,40 +143,69 @@
         <p class="tagline">Traditional Ceremony</p>
         <h1 class="title">HALDI</h1>
         <p class="sub-title">A Splash of Sunshine</p>
+        <p style="font-size: 0.85rem; line-height: 1.4;">With fragrant haldi and joyful hearts,<br> we begin the sacred wedding rituals.</p>
         
         <div class="info-box">
-            <p style="font-family: 'Cinzel'; font-weight: bold;">10 MARCH 2026</p>
-            <p class="time">Morning 10:30 AM onwards</p>
+            <p style="font-family: 'Cinzel'; font-weight: bold;">06 MARCH 2026</p>
+            <p class="time">Evening 05:15 PM onwards</p>
+        </div>
+
+        <div class="timer-wrap" id="timer">
+            <div class="time-unit"><span id="d">00</span><label>Days</label></div>
+            <div class="time-unit"><span id="h">00</span><label>Hrs</label></div>
+            <div class="time-unit"><span id="m">00</span><label>Min</label></div>
+            <div class="time-unit"><span id="s">00</span><label>Sec</label></div>
         </div>
 
         <div class="venue-info">
-            <p style="font-size: 0.7rem; letter-spacing: 2px; font-weight: bold;">LOCATION</p>
-            <p style="font-size: 0.95rem; color: var(--deep-red); font-weight: 600;">Sandwa, Churu, Rajasthan</p>
+            <p style="font-size: 0.65rem; letter-spacing: 2px; font-weight: bold; margin-bottom: 2px;">LOCATION</p>
+            <p style="font-size: 0.9rem; color: var(--deep-red); font-weight: 600;">Sandwa, Churu, Rajasthan</p>
         </div>
 
-        <div class="dress-code">
-            ✨ Dress Code: <b>Vibrant Yellow</b> ✨
-        </div>
+        <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Haldi+Ceremony+|+Mahendra+%26+Manisha&dates=20260306T114500Z/20260306T153000Z&details=Join+us+for+the+vibrant+Haldi+rituals.&location=Sandwa,+Churu,+Rajasthan" 
+           target="_blank" class="btn-cal">
+            📅 ADD TO CALENDAR
+        </a>
     </div>
 </div>
 
 <script>
-    // Create falling petals
-    const container = document.getElementById('container');
-    const petalCount = 15;
+    // TIMER LOGIC
+    const target = new Date("March 6, 2026 17:15:00").getTime();
+    
+    function update() {
+        const now = new Date().getTime();
+        const gap = target - now;
 
-    for (let i = 0; i < petalCount; i++) {
+        if (gap < 0) {
+            document.getElementById('timer').innerHTML = "<b>CEREMONY STARTED</b>";
+            return;
+        }
+
+        const d = Math.floor(gap / 86400000);
+        const h = Math.floor((gap % 86400000) / 3600000);
+        const m = Math.floor((gap % 3600000) / 60000);
+        const s = Math.floor((gap % 60000) / 1000);
+
+        document.getElementById('d').innerText = d < 10 ? '0'+d : d;
+        document.getElementById('h').innerText = h < 10 ? '0'+h : h;
+        document.getElementById('m').innerText = m < 10 ? '0'+m : m;
+        document.getElementById('s').innerText = s < 10 ? '0'+s : s;
+    }
+    setInterval(update, 1000);
+    update();
+
+    // PETAL ANIMATION
+    const container = document.getElementById('container');
+    for (let i = 0; i < 15; i++) {
         const petal = document.createElement('div');
         petal.className = 'petal';
-        
-        // Randomize appearance and animation
         const size = Math.random() * 10 + 10 + 'px';
         petal.style.width = size;
         petal.style.height = size;
         petal.style.left = Math.random() * 100 + 'vw';
         petal.style.animationDuration = Math.random() * 3 + 4 + 's';
         petal.style.animationDelay = Math.random() * 5 + 's';
-        
         container.appendChild(petal);
     }
 </script>
