@@ -23,23 +23,16 @@
 
         .container {
             width: 100vw; max-width: 500px; height: 100vh;
-            /* Initial Mehandi Background */
-            background: var(--cream) url('LINK_FOR_MAHENDI_PHOTO') center/cover no-repeat;
+            background: var(--cream) center/cover no-repeat;
             position: relative; display: flex; flex-direction: column; align-items: center; overflow: hidden;
         }
 
         .event-card {
-            position: relative; z-index: 5; margin: 50px 20px 80px 20px;
+            position: relative; z-index: 5; margin: 150px 20px 80px 20px;
             background: transparent;
             padding: 0px 20px;
-            border-radius: 50px 50px 0px 0;
-            border: transparent;
-            outline: transparent;
-            outline-offset: 0px;
             text-align: center;
-            box-shadow: transparent;
             width: calc(100% - 40px);
-            margin-top: 150px
         }
 
         .title { font-family: 'Cinzel', serif; color: var(--m-green); font-size: 1.8rem; letter-spacing: 3px; }
@@ -51,24 +44,53 @@
         .unit span { display: block; font-weight: 600; font-size: 1.1rem; font-family: 'Cinzel'; }
         .unit label { font-size: 0.5rem; text-transform: uppercase; }
 
+        /* ATTRACTIVE SWITCH BUTTON */
         .switch-btn {
-            background: var(--m-green); color: white; padding: 10px 25px; border-radius: 25px;
-            font-size: 0.75rem; display: inline-block; margin-top: 10px;
-            font-weight: 600; cursor: pointer; border: none; letter-spacing: 1px;
+            background: linear-gradient(45deg, var(--m-green), #4a7c59);
+            color: white; 
+            padding: 14px 30px; 
+            border-radius: 50px;
+            font-size: 0.85rem; 
+            display: inline-block; 
+            margin-top: 15px;
+            font-weight: 700; 
+            cursor: pointer; 
+            border: none; 
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 15px rgba(46, 83, 57, 0.4);
+            position: relative;
+            animation: pulse-mehandi 2s infinite;
         }
 
         .btn-cal {
             background: #b32d29; color: white; padding: 12px 25px; border-radius: 30px;
-            text-decoration: none; font-size: 0.8rem; display: inline-block; margin-top: 15px;
+            text-decoration: none; font-size: 0.8rem; display: inline-block; margin-top: 20px;
             font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         /* SANGEET THEME STYLES */
-        .sangeet-mode .event-card { border-color: var(--s-pink); outline-color: var(--s-purple); }
         .sangeet-mode .title { color: var(--s-purple); }
         .sangeet-mode .unit { background: var(--s-purple); }
-        .sangeet-mode .switch-btn { background: var(--s-pink); }
         .sangeet-mode .btn-cal { background: var(--s-purple); }
+        
+        .sangeet-mode .switch-btn { 
+            background: linear-gradient(45deg, var(--s-pink), #ff69b4); 
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.5);
+            animation: pulse-sangeet 2s infinite;
+        }
+
+        /* KEYFRAMES FOR ATTENTION */
+        @keyframes pulse-mehandi {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 83, 57, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(46, 83, 57, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 83, 57, 0); }
+        }
+
+        @keyframes pulse-sangeet {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 20, 147, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 20, 147, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 20, 147, 0); }
+        }
     </style>
 </head>
 <body>
@@ -91,7 +113,7 @@
             <div class="unit"><span id="s">00</span><label>Sec</label></div>
         </div>
 
-        <button class="switch-btn" onclick="toggleTheme()" id="btnText">SWITCH TO SANGEET</button><br>
+        <button class="switch-btn" onclick="toggleTheme()" id="btnText">✨ SWITCH TO SANGEET ✨</button><br>
         
         <a href="" target="_blank" class="btn-cal" id="calBtn">📅 SAVE THE DATE</a>
     </div>
@@ -100,15 +122,12 @@
 <script>
     let isSangeet = false;
     
-    // --- PASTE YOUR TWO PHOTO LINKS HERE ---
     const bgMehandi = "https://jkmedit.in/wedding/assets/page5.png"; 
     const bgSangeet = "https://jkmedit.in/wedding/assets/page5a.jpg"; 
 
-    // Target Times
     const timeMehandi = new Date("March 09, 2026 17:15:00").getTime();
     const timeSangeet = new Date("March 09, 2026 20:00:00").getTime();
 
-    // Calendar URLs (Fixed format for Google Calendar)
     const calMehandi = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Mehandi+Ceremony+|Purohit parivar&dates=20260310T114500Z/20260310T143000Z&details=Join+us+for+the+Mehandi+ritual.&location=Sandwa,+Churu,+Rajasthan";
     const calSangeet = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Sangeet+Night+|Purohit parivar&dates=20260310T143000Z/20260310T183000Z&details=Join+us+for+the+Sangeet+celebration.&location=Sandwa,+Churu,+Rajasthan";
 
@@ -128,7 +147,7 @@
             title.innerText = "SANGEET";
             sub.innerText = "Dance, Music & Masti";
             tag.innerText = "MUSICAL NIGHT";
-            btn.innerText = "SWITCH TO MEHANDI";
+            btn.innerText = "✨ SWITCH TO MEHANDI ✨";
             timeText.innerText = "Night 08:00 PM Onwards";
             calBtn.href = calSangeet;
         } else {
@@ -137,7 +156,7 @@
             title.innerText = "MEHANDI";
             sub.innerText = "Hands full of Love";
             tag.innerText = "TRADITIONAL RITUALS";
-            btn.innerText = "SWITCH TO SANGEET";
+            btn.innerText = "✨ SWITCH TO SANGEET ✨";
             timeText.innerText = "Evening 05:15 PM Onwards";
             calBtn.href = calMehandi;
         }
@@ -165,9 +184,7 @@
         document.getElementById('s').innerText = s.toString().padStart(2, '0');
     }
 
-    // Set Initial Calendar Link
     document.getElementById('calBtn').href = calMehandi;
-    // Set Initial Background
     document.getElementById('mainContainer').style.backgroundImage = `url('${bgMehandi}')`;
 
     setInterval(updateTimer, 1000);
