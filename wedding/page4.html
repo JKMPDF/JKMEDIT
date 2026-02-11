@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mayra Ceremony | M&M</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --royal-pink: #E75480;
+            --deep-saffron: #FF9933;
+            --gold: #D4AF37;
+            --cream: #FFFDF5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background: #000;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100vw;
+            max-width: 500px;
+            height: 100vh;
+            /* Update the URL to your specific Mayra background asset if available */
+            background: var(--cream) url('https://jkmedit.in/wedding/assets/page4.png') center/cover no-repeat;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Rotating Mandala Background Element */
+        .mandala-bg {
+            position: absolute;
+            top: -50px;
+            width: 200px;
+            opacity: 0.2;
+            animation: rotate 20s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .mayra-card {
+            position: relative;
+            z-index: 5;
+            margin: 50px 20px 80px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px 20px;
+            border-radius: 60px 0 60px 0;
+            border: 2px solid var(--gold);
+            outline: 4px double var(--royal-pink);
+            outline-offset: -12px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            width: calc(100% - 40px);
+        }
+
+        .title {
+            font-family: 'Cinzel', serif;
+            color: var(--royal-pink);
+            font-size: 2.2rem;
+            letter-spacing: 4px;
+            text-shadow: 1px 1px 0px var(--gold);
+        }
+
+        .sub-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+            color: var(--deep-saffron);
+            margin: 5px 0;
+        }
+
+        .info-box {
+            border-top: 1px solid var(--gold);
+            border-bottom: 1px solid var(--gold);
+            padding: 12px 0;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .time {
+            font-weight: 600;
+            color: var(--royal-pink);
+            font-size: 1rem;
+        }
+
+        /* TIMER STYLES */
+        .timer-wrap {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .time-unit {
+            background: var(--royal-pink);
+            color: white;
+            min-width: 52px;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid var(--gold);
+        }
+        .time-unit span { display: block; font-weight: 600; font-size: 1.2rem; font-family: 'Cinzel'; }
+        .time-unit label { font-size: 0.5rem; text-transform: uppercase; display: block; opacity: 0.9; }
+
+        /* CALENDAR BUTTON */
+        .btn-cal {
+            background: linear-gradient(45deg, var(--royal-pink), var(--deep-saffron));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-top: 15px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(231, 84, 128, 0.3);
+            border: 1px solid var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="https://jkmedit.in/wedding/assets/Ganesh.png" class="mandala-bg" alt="">
+    
+    <div class="mayra-card">
+        <p style="font-size: 0.7rem; letter-spacing: 3px; color: #666; font-weight: bold; text-transform: uppercase;">A Traditional Welcome</p>
+        <h1 class="title">MAYRA</h1>
+        <p class="sub-title">Bhaat Nyotana</p>
+        <p style="font-size: 0.85rem; line-height: 1.5; color: #444; font-weight: 500;">Celebrating the bond of love and tradition as we welcome our maternal family with open arms.</p>
+        
+        <div class="info-box">
+            <p style="font-family: 'Cinzel'; font-weight: bold; font-size: 1.1rem; color: #333;">09 MARCH 2026<br>(Monday)</p>
+            <p class="time">10:15 AM Onwards</p>
+        </div>
+
+        <div class="timer-wrap" id="timer">
+            <div class="time-unit"><span id="d">00</span><label>Days</label></div>
+            <div class="time-unit"><span id="h">00</span><label>Hrs</label></div>
+            <div class="time-unit"><span id="m">00</span><label>Min</label></div>
+            <div class="time-unit"><span id="s">00</span><label>Sec</label></div>
+        </div>
+
+        <div class="venue-info">
+            <p style="font-size: 0.6rem; letter-spacing: 2px; font-weight: bold; margin-bottom: 2px; color: #777;">VENUE</p>
+            <p style="font-size: 0.95rem; color: var(--royal-pink); font-weight: 600;">Sandwa, Churu, Rajasthan</p>
+        </div>
+
+        <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Mayra+Ceremony+|+Purohit Parivar&dates=20260309T034500Z/20260309T073000Z&details=The+auspicious+Mayra+ceremony+rituals.&location=Sandwa,+Churu,+Rajasthan" 
+           target="_blank" class="btn-cal">
+            📅 SAVE THE DATE
+        </a>
+    </div>
+</div>
+
+<script>
+    // TIMER LOGIC for March 11, 2026
+    const target = new Date("March 11, 2026 09:15:00").getTime();
+    
+    function update() {
+        const now = new Date().getTime();
+        const gap = target - now;
+
+        if (gap < 0) {
+            document.getElementById('timer').innerHTML = "<b style='color:var(--royal-pink)'>CEREMONY IN PROGRESS</b>";
+            return;
+        }
+
+        const d = Math.floor(gap / 86400000);
+        const h = Math.floor((gap % 86400000) / 3600000);
+        const m = Math.floor((gap % 3600000) / 60000);
+        const s = Math.floor((gap % 60000) / 1000);
+
+        document.getElementById('d').innerText = d.toString().padStart(2, '0');
+        document.getElementById('h').innerText = h.toString().padStart(2, '0');
+        document.getElementById('m').innerText = m.toString().padStart(2, '0');
+        document.getElementById('s').innerText = s.toString().padStart(2, '0');
+    }
+    setInterval(update, 1000);
+    update();
+</script>
+
+</body>
+</html>
