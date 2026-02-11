@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mehandi & Sangeet | M&M</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --m-green: #2E5339;
+            --m-gold: #C5A059;
+            --s-purple: #4B0082;
+            --s-pink: #FF1493;
+            --cream: #FFFDF5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        body { background: #000; font-family: 'Poppins', sans-serif; overflow: hidden; display: flex; justify-content: center; }
+
+        .container {
+            width: 100vw; max-width: 500px; height: 100vh;
+            /* Initial Mehandi Background */
+            background: var(--cream) url('LINK_FOR_MAHENDI_PHOTO') center/cover no-repeat;
+            position: relative; display: flex; flex-direction: column; align-items: center; overflow: hidden;
+        }
+
+        .event-card {
+            position: relative; z-index: 5; margin: 50px 20px 80px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 35px 20px;
+            border-radius: 50px 50px 0px 0;
+            border: 3px solid var(--m-green);
+            outline: 6px double var(--m-gold);
+            outline-offset: -15px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            width: calc(100% - 40px);
+        }
+
+        .title { font-family: 'Cinzel', serif; color: var(--m-green); font-size: 1.8rem; letter-spacing: 3px; }
+        .sub-title { font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: #b32d29; margin: 5px 0; }
+        .info-box { border-top: 1px dashed #ccc; border-bottom: 1px dashed #ccc; padding: 10px 0; margin: 15px 0; }
+
+        .timer-wrap { display: flex; justify-content: center; gap: 8px; margin: 15px 0; }
+        .unit { background: var(--m-green); color: white; min-width: 50px; padding: 5px; border-radius: 8px; }
+        .unit span { display: block; font-weight: 600; font-size: 1.1rem; font-family: 'Cinzel'; }
+        .unit label { font-size: 0.5rem; text-transform: uppercase; }
+
+        .switch-btn {
+            background: var(--m-green); color: white; padding: 10px 25px; border-radius: 25px;
+            font-size: 0.75rem; display: inline-block; margin-top: 10px;
+            font-weight: 600; cursor: pointer; border: none; letter-spacing: 1px;
+        }
+
+        .btn-cal {
+            background: #b32d29; color: white; padding: 12px 25px; border-radius: 30px;
+            text-decoration: none; font-size: 0.8rem; display: inline-block; margin-top: 15px;
+            font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* SANGEET THEME STYLES */
+        .sangeet-mode .event-card { border-color: var(--s-pink); outline-color: var(--s-purple); }
+        .sangeet-mode .title { color: var(--s-purple); }
+        .sangeet-mode .unit { background: var(--s-purple); }
+        .sangeet-mode .switch-btn { background: var(--s-pink); }
+        .sangeet-mode .btn-cal { background: var(--s-purple); }
+    </style>
+</head>
+<body>
+
+<div class="container" id="mainContainer">
+    <div class="event-card">
+        <p style="font-size: 0.7rem; letter-spacing: 3px; font-weight: bold; color: #555;" id="tagline">TRADITIONAL RITUALS</p>
+        <h1 class="title" id="mainTitle">MEHANDI</h1>
+        <p class="sub-title" id="mainSub">Hands full of Love</p>
+        
+        <div class="info-box">
+            <p style="font-family: 'Cinzel'; font-weight: bold;" id="dateText">10 MARCH 2026</p>
+            <p style="color: #b32d29; font-weight: 600;" id="timeText">Evening 05:15 PM Onwards</p>
+        </div>
+
+        <div class="timer-wrap" id="timer">
+            <div class="unit"><span id="d">00</span><label>Days</label></div>
+            <div class="unit"><span id="h">00</span><label>Hrs</label></div>
+            <div class="unit"><span id="m">00</span><label>Min</label></div>
+            <div class="unit"><span id="s">00</span><label>Sec</label></div>
+        </div>
+
+        <button class="switch-btn" onclick="toggleTheme()" id="btnText">SWITCH TO SANGEET</button><br>
+        
+        <a href="" target="_blank" class="btn-cal" id="calBtn">📅 SAVE THE DATE</a>
+    </div>
+</div>
+
+<script>
+    let isSangeet = false;
+    
+    // --- PASTE YOUR TWO PHOTO LINKS HERE ---
+    const bgMehandi = "https://jkmedit.in/wedding/assets/page5.png"; 
+    const bgSangeet = "https://jkmedit.in/wedding/assets/page5a.jpg"; 
+
+    // Target Times
+    const timeMehandi = new Date("March 10, 2026 17:15:00").getTime();
+    const timeSangeet = new Date("March 10, 2026 20:00:00").getTime();
+
+    // Calendar URLs (Fixed format for Google Calendar)
+    const calMehandi = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Mehandi+Ceremony+|+M%26M&dates=20260310T114500Z/20260310T143000Z&details=Join+us+for+the+Mehandi+ritual.&location=Sandwa,+Churu,+Rajasthan";
+    const calSangeet = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Sangeet+Night+|+M%26M&dates=20260310T143000Z/20260310T183000Z&details=Join+us+for+the+Sangeet+celebration.&location=Sandwa,+Churu,+Rajasthan";
+
+    function toggleTheme() {
+        isSangeet = !isSangeet;
+        const container = document.getElementById('mainContainer');
+        const title = document.getElementById('mainTitle');
+        const sub = document.getElementById('mainSub');
+        const btn = document.getElementById('btnText');
+        const calBtn = document.getElementById('calBtn');
+        const timeText = document.getElementById('timeText');
+        const tag = document.getElementById('tagline');
+
+        if(isSangeet) {
+            container.classList.add('sangeet-mode');
+            container.style.backgroundImage = `url('${bgSangeet}')`;
+            title.innerText = "SANGEET";
+            sub.innerText = "Dance, Music & Masti";
+            tag.innerText = "MUSICAL NIGHT";
+            btn.innerText = "SWITCH TO MEHANDI";
+            timeText.innerText = "Night 08:00 PM Onwards";
+            calBtn.href = calSangeet;
+        } else {
+            container.classList.remove('sangeet-mode');
+            container.style.backgroundImage = `url('${bgMehandi}')`;
+            title.innerText = "MEHANDI";
+            sub.innerText = "Hands full of Love";
+            tag.innerText = "TRADITIONAL RITUALS";
+            btn.innerText = "SWITCH TO SANGEET";
+            timeText.innerText = "Evening 05:15 PM Onwards";
+            calBtn.href = calMehandi;
+        }
+        updateTimer();
+    }
+
+    function updateTimer() {
+        const now = new Date().getTime();
+        const target = isSangeet ? timeSangeet : timeMehandi;
+        const gap = target - now;
+
+        if (gap < 0) {
+            document.getElementById('timer').innerHTML = "<b>EVENT STARTED</b>";
+            return;
+        }
+
+        const d = Math.floor(gap / 86400000);
+        const h = Math.floor((gap % 86400000) / 3600000);
+        const m = Math.floor((gap % 3600000) / 60000);
+        const s = Math.floor((gap % 60000) / 1000);
+
+        document.getElementById('d').innerText = d.toString().padStart(2, '0');
+        document.getElementById('h').innerText = h.toString().padStart(2, '0');
+        document.getElementById('m').innerText = m.toString().padStart(2, '0');
+        document.getElementById('s').innerText = s.toString().padStart(2, '0');
+    }
+
+    // Set Initial Calendar Link
+    document.getElementById('calBtn').href = calMehandi;
+    // Set Initial Background
+    document.getElementById('mainContainer').style.backgroundImage = `url('${bgMehandi}')`;
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
+</script>
+
+</body>
+</html>
