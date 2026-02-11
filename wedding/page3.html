@@ -21,7 +21,8 @@
         body {
             background: #000;
             font-family: 'Poppins', sans-serif;
-            overflow: hidden;
+            /* Fixed: Changed hidden to auto to allow scrolling */
+            overflow-y: auto; 
             display: flex;
             justify-content: center;
         }
@@ -29,13 +30,17 @@
         .container {
             width: 100vw;
             max-width: 500px;
-            height: 100vh;
+            /* Fixed: Changed height to min-height for scrolling content */
+            min-height: 100vh;
             background: var(--cream) url('https://jkmedit.in/wedding/assets/page3.png') center/cover no-repeat;
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow: hidden;
+            /* Fixed: Changed hidden to auto */
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-bottom: 50px;
         }
 
         .petal {
@@ -56,17 +61,16 @@
         .haldi-card {
             position: relative;
             z-index: 5;
-            margin: 50px 20px 80px 20px;
+            margin: 150px 20px 40px 20px;
             background: transparent;
-            padding: 60px 80px;
-            border-radius: 50px 50px 50px 50px;
-            border: 3px solid var(--haldi-yellow);
-            outline: 6px double var(--marigold-orange);
+            padding: 40px 20px;
+            border-radius: 50px;
+            border: transparent;
+            outline: transparent;
             outline-offset: -15px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            width: calc(100% - 100px);
-            margin-top: 150px
+            box-shadow: transparent;
+            width: calc(100% - 40px);
         }
 
         .title {
@@ -93,8 +97,6 @@
         }
 
         .info-box {
-            border-top: 1px dashed var(--marigold-orange);
-            border-bottom: 1px dashed var(--marigold-orange);
             padding: 10px 0;
             margin: 15px 0;
         }
@@ -105,7 +107,6 @@
             font-size: 1rem;
         }
 
-        /* TIMER STYLES */
         .timer-wrap {
             display: flex;
             justify-content: center;
@@ -122,25 +123,27 @@
         .time-unit span { display: block; font-weight: 600; font-size: 1.1rem; }
         .time-unit label { font-size: 0.5rem; text-transform: uppercase; }
 
-        /* CALENDAR BUTTON */
         .btn-cal {
             background: var(--deep-red);
             color: white;
-            padding: 10px 45px;
+            padding: 10px 30px;
             border-radius: 150px;
             text-decoration: none;
             font-size: 0.8rem;
             display: inline-block;
-            margin-top: 10px;
+            margin-top: 20px;
             font-weight: 600;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            /* Fixed: Force one line */
+            white-space: nowrap;
         }
 
          .venue-info {
             margin-top: 25px;
             font-family: 'Cinzel', serif;
-            font-size: 0.9rem;
-            color: #10;
+            /* Fixed: Force one line */
+            white-space: nowrap;
+        }
 
     </style>
 </head>
@@ -178,7 +181,6 @@
 </div>
 
 <script>
-    // TIMER LOGIC
     const target = new Date("March 6, 2026 17:15:00").getTime();
     
     function update() {
@@ -203,7 +205,6 @@
     setInterval(update, 1000);
     update();
 
-    // PETAL ANIMATION
     const container = document.getElementById('container');
     for (let i = 0; i < 15; i++) {
         const petal = document.createElement('div');
