@@ -134,12 +134,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Wedding | Mahendra & Anju</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <title>Royal Wedding | Mahendra & Manisha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Dancing+Script:wght@600&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --royal-maroon: #5D0E11;
             --gold-leaf: #D4AF37;
+            --deep-gold: #B8860B;
             --cream-bg: #fffdf5;
         }
 
@@ -150,117 +154,148 @@
         }
 
         body {
-            background: #121212;
-            font-family: 'Kalam', cursive;
+            background: #000;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
+            overflow-x: hidden;
         }
 
-        /* The main container that mimics a mobile invite card */
         .container {
             width: 100vw;
             max-width: 500px;
             background-color: var(--cream-bg);
-            background-image: url('assets/background.jpg'); 
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
+            background-image: url('https://jkmedit.in/wedding/assets/background.jpg'); 
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-size: 100% 100%; 
             min-height: 100vh;
             position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
             padding-bottom: 50px;
         }
 
         .overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.2);
             z-index: 1;
+        }
+
+        /* NEW: Header Deity Names Row */
+        .divine-header {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            width: 100%;
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--royal-maroon);
+            background: rgba(255, 255, 255, 0.3);
+            border-bottom: 1px solid var(--gold-leaf);
         }
 
         .section {
             position: relative;
             z-index: 5;
-            padding: 40px 20px;
+            padding: 20px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
         }
 
-        /* Header Section Styles */
         .ganesh-modern {
-            width: 120px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
-            animation: float 3s infinite ease-in-out;
+            width: 90px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+            animation: softFloat 4s infinite ease-in-out;
         }
 
-        @keyframes float {
+        @keyframes softFloat {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
         }
 
         .mantra-card {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 25px 20px;
-            border-radius: 20px;
-            border: 2px solid var(--gold-leaf);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--gold-leaf);
             color: var(--royal-maroon);
-            font-weight: bold;
-            line-height: 1.8;
-            font-size: 1.1rem;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-
-        /* Main Invite Card Styles */
-        .invite-container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px 15px;
-            border-radius: 20px;
-            border: 4px double var(--royal-maroon);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
             width: 100%;
         }
 
+        .purohit-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: block;
+            margin-top: 10px;
+            color: var(--deep-gold);
+            letter-spacing: 2px;
+        }
+
+        .invite-container {
+            background: rgba(255, 255, 255, 0.92);
+            padding: 35px 20px;
+            border-radius: 0 40px 0 40px;
+            border: 2px solid var(--gold-leaf);
+            outline: 5px double var(--royal-maroon);
+            outline-offset: -12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            width: 95%;
+        }
+
+        .khamaghani {
+            font-family: 'Cinzel', serif;
+            color: var(--deep-gold);
+            letter-spacing: 5px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
         .names {
-            font-family: 'Great Vibes', cursive;
-            font-size: 2.5rem;
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.6rem;
             color: var(--royal-maroon);
-            margin: 10px 0;
+            margin: 5px 0;
         }
 
         .date-text {
-            color: #d43f3a;
-            font-weight: bold;
+            font-family: 'Cinzel', serif;
+            color: #b32d29;
+            font-weight: 700;
             font-size: 1.1rem;
-            letter-spacing: 1px;
         }
 
         .divider {
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: var(--gold-leaf);
-            margin: 20px 0;
+            margin: 10px 0;
         }
 
         .venue-box {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-            font-size: 1.1rem;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0,0,0,0.1);
         }
 
         .padharo-text {
-            font-family: 'Great Vibes', cursive;
+            font-family: 'Dancing Script', cursive;
             font-size: 2.2rem;
-            margin-top: 15px;
+            margin-top: 10px;
             color: var(--royal-maroon);
         }
-
-        /* Decorative scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--gold-leaf); }
     </style>
 </head>
 <body>
@@ -268,35 +303,41 @@
 <div class="container">
     <div class="overlay"></div>
 
+    <div class="divine-header">
+        <span>श्री कुंजल नमः</span>
+        <span>ॐ गणेशाय नमः</span>
+        <span>जय श्री बालाजी</span>
+    </div>
+
     <div class="section">
-        <img src="assets/Ganesh.png" alt="Ganesh Ji" class="ganesh-modern">
+        <img src="https://jkmedit.in/wedding/assets/Ganesh.png" alt="Ganesh Ji" class="ganesh-modern">
         <div class="mantra-card">
-            || श्री गणेशाय नमः || <br>
             वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ।<br>
-            निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥<br><br> 
-            <span style="font-size: 1.3rem;">Purohit Parivar</span><br>
-            Welcomes You
+            निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥<br>
+            <span class="purohit-title">Purohit Parivar</span>
+            <small style="letter-spacing: 3px; text-transform: uppercase; font-size: 0.7rem;">Welcomes You</small>
         </div>
     </div>
 
     <div class="section">
         <div class="invite-container">
-            <p style="color: var(--gold-leaf); letter-spacing: 4px; font-weight: bold; font-size: 1.2rem;">KHAMAGHANI</p>
+            <p class="khamaghani">KHAMAGHANI</p>
             
-            <div style="margin: 20px 0;">
-                <h2 class="names">Anju & Nishant Ji</h2>
+            <div style="margin: 15px 0;">
+                <h2 class="names">Anju <br>&<br> Nishant Ji</h2>
                 <p class="date-text">10 March 2026</p>
             </div>
 
-            <div class="divider">❈</div>
+            <div class="divider">✦ ❈ ✦</div>
 
-            <div style="margin: 20px 0;">
-                <h2 class="names">Mahendra & Manisha</h2>
+            <div style="margin: 15px 0;">
+                <h2 class="names">Mahendra <br>&<br> Manisha</h2>
                 <p class="date-text">11 March 2026</p>
             </div>
 
             <div class="venue-box">
-                <p><b>Venue:</b> Sandwa, Churu, Rajasthan</p>
+                <p style="font-size: 0.8rem; color: #555; letter-spacing: 2px;"><b>VENUE</b></p>
+                <p style="font-family: 'Cinzel', serif; font-weight: bold;">Sandwa, Churu, Rajasthan</p>
                 <p class="padharo-text">Padharo Mhare Desh</p>
             </div>
         </div>
@@ -304,7 +345,7 @@
 </div>
 
 </body>
-</html> `,
+</html>`,
 
 
 
