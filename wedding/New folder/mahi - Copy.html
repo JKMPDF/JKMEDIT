@@ -129,7 +129,7 @@
         ];
 
         const pages = [
-            `page1.html`,
+            `https://jkmedit.in/wedding/page1.html`,
             ``,
             ``,
             `<html><body style="background:white; text-align:center; padding:50px;"><h1>Page 4</h1></body></html>`,
@@ -158,12 +158,17 @@
         }
 
         function loadPages() {
-            pages.forEach((html, i) => {
-                const frame = document.getElementById('f' + (i + 1));
-                const blob = new Blob([html], { type: 'text/html' });
-                frame.src = URL.createObjectURL(blob);
-            });
+    pages.forEach((url, i) => {
+        const frame = document.getElementById('f' + (i + 1));
+
+        if (url.startsWith("http")) {
+            frame.src = url; // external page
+        } else {
+            const blob = new Blob([url], { type: 'text/html' });
+            frame.src = URL.createObjectURL(blob);
         }
+    });
+}
 
         // --- MUSIC SYNC FIX: Stops previous transitions immediately ---
         function playMusic(index) {
