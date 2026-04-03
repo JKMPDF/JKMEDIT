@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Hierarchy Sitemap Architect</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --primary: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
+        .wrapper { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        
+        .header { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--border); }
+        .main-layout { display: grid; grid-template-columns: 400px 1fr; gap: 20px; }
+        
+        /* Sidebar */
+        .card { background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); position: sticky; top: 20px; }
+        textarea { width: 100%; height: 300px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Courier New', monospace; font-size: 13px; box-sizing: border-box; transition: 0.3s; }
+        textarea:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+        
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; margin-top: 10px; transition: 0.2s; }
+        .btn-build { background: var(--primary); color: white; }
+        .btn-download { background: var(--secondary); color: white; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* Tree Visualization */
+        .viewport { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 60px 40px; overflow: auto; min-height: 600px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; transition: all 0.5s; }
+        .tree li { float: left; text-align: center; list-style-type: none; position: relative; padding: 20px 5px 0 5px; transition: all 0.5s; }
+        
+        /* Connector Lines */
+        .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 2px solid var(--border); width: 50%; height: 20px; }
+        .tree li::after { right: auto; left: 50%; border-left: 2px solid var(--border); }
+        .tree li:only-child::after, .tree li:only-child::before { display: none; }
+        .tree li:only-child { padding-top: 0; }
+        .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
+        .tree li:last-child::before { border-right: 2px solid var(--border); border-radius: 0 5px 0 0; }
+        .tree li:first-child::after { border-radius: 5px 0 0 0; }
+        .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid var(--border); width: 0; height: 20px; }
+
+        .node-box { 
+            background: #fff; border: 2px solid var(--border); padding: 12px; 
+            border-radius: 10px; display: inline-block; min-width: 140px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: 0.3s;
+        }
+        .node-box:hover { border-color: var(--primary); transform: scale(1.05); }
+        .node-box span { display: block; font-size: 10px; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; }
+        .node-box strong { font-size: 13px; color: var(--primary); word-break: break-all; }
+
+        /* Notification Popup */
+        #toast { 
+            position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white; 
+            padding: 15px 25px; border-radius: 8px; font-weight: bold; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+            display: none; z-index: 1000; animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        #xmlPreview { background: #0f172a; color: #a5f3fc; padding: 15px; border-radius: 8px; font-size: 11px; margin-top: 15px; display: none; overflow: auto; max-height: 150px; }
+    </style>
+</head>
+<body>
+
+<div id="toast">Links Merged!</div>
+
+<div class="wrapper">
+    <div class="header">
+        <h1 style="margin:0; font-size: 1.5rem;">Sitemap Architect Pro</h1>
+        <p style="margin: 5px 0 0; color: #64748b;">Auto-normalization, Trailing Slashes, and Deduplication.</p>
+    </div>
+
+    <div class="main-layout">
+        <div class="card">
+            <label style="font-weight: bold; font-size: 0.9rem;">Input URLs:</label>
+            <textarea id="urlInput" placeholder="Paste URLs here...">https://example.com/
+https://example.com/services
+https://example.com/services/
+https://example.com/blog
+https://example.com/blog/article-1
+https://example.com/blog/article-1/</textarea>
+            
+            <button class="btn btn-build" onclick="processSitemap()">Clean & Build Sitemap</button>
+            <button class="btn btn-download" onclick="downloadXML()">Download sitemap.xml</button>
+            
+            <div id="xmlPreview"></div>
+        </div>
+
+        <div class="viewport">
+            <div id="treeCanvas" class="tree"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function processSitemap() {
+        const input = document.getElementById('urlInput').value.trim();
+        if(!input) return;
+
+        // 1. Clean and Normalize URLs
+        let rawUrls = input.split('\n').map(u => u.trim()).filter(u => u !== "");
+        let initialCount = rawUrls.length;
+        
+        // Ensure trailing slash and deduplicate
+        let cleanUrls = [...new Set(rawUrls.map(url => {
+            try {
+                let u = new URL(url);
+                // Ensure trailing slash on pathname if not a file
+                if (!u.pathname.endsWith('/') && !u.pathname.split('/').pop().includes('.')) {
+                    u.pathname += '/';
+                }
+                return u.toString();
+            } catch(e) { return url; }
+        }))];
+
+        let mergedCount = initialCount - cleanUrls.length;
+
+        // 2. Show Toast if duplicates were found
+        if (mergedCount > 0) {
+            showToast(`${mergedCount} duplicate links merged/updated with trailing slashes.`);
+            // Update the textarea with cleaned links
+            document.getElementById('urlInput').value = cleanUrls.join('\n');
+        }
+
+        // 3. Build Visual Hierarchy
+        const treeData = buildHierarchy(cleanUrls);
+        document.getElementById('treeCanvas').innerHTML = `<ul>${renderTreeHTML(treeData)}</ul>`;
+        
+        // 4. Build XML
+        generateXML(cleanUrls);
+    }
+
+    function buildHierarchy(urls) {
+        let root = { name: "Home", children: {} };
+        urls.forEach(url => {
+            try {
+                const urlObj = new URL(url);
+                const segments = urlObj.pathname.split('/').filter(s => s !== "");
+                let current = root;
+                segments.forEach(seg => {
+                    if (!current.children[seg]) {
+                        current.children[seg] = { name: seg.replace(/-/g, ' '), children: {} };
+                    }
+                    current = current.children[seg];
+                });
+            } catch(e) {}
+        });
+        return root;
+    }
+
+    function renderTreeHTML(node) {
+        let html = `<li>
+            <div class="node-box">
+                <span>Folder/Page</span>
+                <strong>${node.name}</strong>
+            </div>`;
+        const keys = Object.keys(node.children);
+        if (keys.length > 0) {
+            html += "<ul>" + keys.map(k => renderTreeHTML(node.children[k])).join('') + "</ul>";
+        }
+        return html + "</li>";
+    }
+
+    function generateXML(urls) {
+        const date = new Date().toISOString().split('T')[0];
+        let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+        urls.forEach(url => {
+            xml += `  <url>\n    <loc>${url}</loc>\n    <lastmod>${date}</lastmod>\n    <priority>0.8</priority>\n  </url>\n`;
+        });
+        xml += `</urlset>`;
+        const prev = document.getElementById('xmlPreview');
+        prev.textContent = xml;
+        prev.style.display = 'block';
+    }
+
+    function downloadXML() {
+        const xml = document.getElementById('xmlPreview').textContent;
+        if(!xml) return alert("Generate sitemap first");
+        const blob = new Blob([xml], {type: 'text/xml'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'sitemap.xml';
+        a.click();
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.style.display = 'block';
+        setTimeout(() => { t.style.display = 'none'; }, 4000);
+    }
+
+    // Run on init
+    processSitemap();
+</script>
+
+</body>
+</html>
