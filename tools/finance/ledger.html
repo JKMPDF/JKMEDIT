@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LedgerPro | Professional Sync</title>
+    <title>JKM Ledger | Professional Sync</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- PDF Generation Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -79,7 +79,7 @@
 
 <header>
     <div style="font-weight: 800; font-size: 22px; display: flex; align-items: center; gap: 12px;">
-        <img id="nav-avatar" src="" class="avatar" style="width:36px; height:36px; display:none;"> LedgerPro
+        <img id="nav-avatar" src="" class="avatar" style="width:36px; height:36px; display:none;"> JKM Ledger
     </div>
     <div id="header-tools" class="hidden" style="display: flex; align-items: center; gap: 12px;">
         <span id="sync-status" class="sync-badge">☁️ Synced</span>
@@ -90,7 +90,7 @@
 <div class="container">
     <!-- LOGIN / IMPORT VIEWS -->
     <div id="login-view" class="card hidden" style="text-align: center; margin-top: 8vh; padding: 40px 20px;">
-        <h2 style="font-size: 28px;">Cloud Ledger Sync</h2>
+        <h2 style="font-size: 28px;">Drive Ledger Sync</h2>
         <p>Sign in to securely access your synced transactions.</p>
         <button class="btn btn-primary" id="login-btn" style="padding: 14px 28px; margin-top: 20px;">Continue with Google</button>
     </div>
@@ -422,7 +422,6 @@
                 
                 const normPhone = phone ? phone.replace(/\D/g, '').slice(-10) : '';
 
-                // Prevent duplication by normalized phone or name
                 const exists = state.users.find(u => {
                     const uPhone = u.phone ? u.phone.replace(/\D/g, '').slice(-10) : '';
                     if (normPhone && uPhone) return normPhone === uPhone;
@@ -704,7 +703,7 @@
         if (!entryId && state.admin.smsEnabled && (user.smsEnabled !== false)) {
             if (confirm("Entry Saved! Do you want to send an SMS to the client?")) {
                 const action = type === 'give' ? 'received from us' : 'given to us';
-                const msg = `Dear ${user.name},\nA new transaction of Rs.${amount} (${action}) has been recorded.\nNarration: ${note || 'N/A'}\nYour Current Balance: Rs.${Math.abs(user.balance)} (${user.balance < 0 ? 'Payable' : 'Receivable'}).\nThank you, ${state.admin.name || 'LedgerPro'}`;
+                const msg = `Dear ${user.name},\nA new transaction of Rs.${amount} (${action}) has been recorded.\nNarration: ${note || 'N/A'}\nYour Current Balance: Rs.${Math.abs(user.balance)} (${user.balance < 0 ? 'Payable' : 'Receivable'}).\nThank you, ${state.admin.name || 'JKM Ledger'}\n\nManage your accounts easily:\nApp: https://jkmedit.in/tools/finance/ledger.html\nVisit: https://jkmedit.in/`;
                 window.open(`sms:${user.phone || ''}?body=${encodeURIComponent(msg)}`, '_blank');
             }
         }
