@@ -116,10 +116,10 @@
         </button>
     </div>
 
-    <!-- 2. IMPORT VIEW (Shown after login to prevent auto-loading errors) -->
+    <!-- 2. IMPORT VIEW -->
     <div id="import-view" class="card hidden" style="text-align: center; margin-top: 8vh; padding: 40px 20px;">
         <div style="background: var(--success-bg); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-            <span style="font-size: 24px;">✓</span>
+            <span style="font-size: 24px; color: var(--success);">✓</span>
         </div>
         <h2 style="font-size: 24px;">Account Connected</h2>
         <p>Ready to securely load your data from Google Drive.</p>
@@ -128,8 +128,16 @@
         </button>
     </div>
 
-    <!-- 3. MAIN DASHBOARD (User List) -->
+    <!-- 3. MAIN DASHBOARD -->
     <div id="dashboard-view" class="hidden">
+        
+        <!-- Overall Balance Card -->
+        <div class="card" style="text-align: center; padding: 24px 20px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border: none;">
+            <p style="margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); font-weight: 600;">Overall Net Balance</p>
+            <h1 id="total-net-balance" style="margin: 10px 0; font-size: 40px; letter-spacing: -1px; color: white;">₹0</h1>
+            <span id="total-net-status" style="font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; background: rgba(255,255,255,0.2); display: inline-block;">SETTLED</span>
+        </div>
+
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
             <div>
                 <h2 id="greeting" style="margin-bottom: 4px;">Accounts</h2>
@@ -330,7 +338,6 @@
     }
 
     async function setupFolderAndFile() {
-        // 1. Check or Create JKM Folder
         if (!folderId) {
             const qFolder = encodeURIComponent("mimeType='application/vnd.google-apps.folder' and name='JKM' and trashed=false");
             const resF = await fetch(`https://www.googleapis.com/drive/v3/files?q=${qFolder}&spaces=drive`, { headers: { Authorization: `Bearer ${accessToken}` }});
@@ -351,7 +358,6 @@
             localStorage.setItem('jkm_folder_id', folderId);
         }
 
-        // 2. Find Exact JSON File globally to prevent duplicates
         if (!fileId && folderId) {
             const qFile = encodeURIComponent(`name='ledger_v4.json' and trashed=false`);
             const resFile = await fetch(`https://www.googleapis.com/drive/v3/files?q=${qFile}&spaces=drive`, { headers: { Authorization: `Bearer ${accessToken}` }});
@@ -359,14 +365,14 @@
             const dataFile = await resFile.json();
             
             if (dataFile.files && dataFile.files.length > 0) {
-                fileId = dataFile.files[0].id; // Grabs the existing file even if app was logged out
+                fileId = dataFile.files[0].id; 
                 localStorage.setItem('jkm_file_id', fileId);
             }
         }
     }
 
     async function syncFromDrive() {
-        if (!fileId) return; // If it truly doesn't exist, start fresh
+        if (!fileId) return; 
         const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
             headers: { Authorization: `Bearer ${accessToken}` }
         });
@@ -401,7 +407,6 @@
         statusEl.classList.add('active');
 
         try {
-            // Check if we are still the active device before overwriting
             if (!skipCheck && fileId) {
                 const checkRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, { headers: { Authorization: `Bearer ${accessToken}` } });
                 if (checkRes.status === 401) throw new Error('AUTH_EXPIRED');
@@ -425,20 +430,23 @@
             }
 
             let body;
+            let boundary;
+            
             if (method === 'PATCH') {
-                body = blob; // Metadata doesn't need to change for patch
+                body = blob; 
             } else {
+                boundary = 'jkm_json_boundary_' + Date.now();
                 const metadata = { name: 'ledger_v4.json', mimeType: 'application/json', parents: [folderId] };
-                const boundary = 'jkm_json_boundary_' + Date.now();
                 body = new Blob([
                     `\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}`,
                     `\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n`, blob, `\r\n--${boundary}--`
                 ]);
-                url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
             }
 
             const headers = { Authorization: `Bearer ${accessToken}` };
-            if (method === 'POST') headers['Content-Type'] = `multipart/related; boundary=${body.slice(4, body.indexOf('\r\n', 4)).text()}`;
+            if (method === 'POST') {
+                headers['Content-Type'] = `multipart/related; boundary=${boundary}`;
+            }
 
             const res = await fetch(url, { method, headers, body });
 
@@ -452,10 +460,10 @@
                 statusEl.innerText = "☁️ Synced";
                 statusEl.classList.remove('active');
             } else {
-                statusEl.innerText = "⚠️ Failed";
-                statusEl.classList.remove('active');
+                throw new Error("API_ERROR");
             }
         } catch (e) {
+            console.error(e);
             if (e.message === 'AUTH_EXPIRED') handleAuthExpired();
             statusEl.innerText = "⚠️ Offline";
             statusEl.classList.remove('active');
@@ -516,6 +524,25 @@
     }
 
     function renderUsers() {
+        // Calculate Total Net Balance
+        let totalBalance = 0;
+        state.users.forEach(u => totalBalance += u.balance);
+        
+        const totalBalEl = document.getElementById('total-net-balance');
+        const totalStatEl = document.getElementById('total-net-status');
+        
+        totalBalEl.innerText = `₹${Math.abs(totalBalance).toLocaleString('en-IN')}`;
+        if (totalBalance < 0) {
+            totalStatEl.innerText = 'YOU OWE OVERALL (-)';
+            totalStatEl.style.background = 'rgba(255,255,255,0.2)';
+        } else if (totalBalance > 0) {
+            totalStatEl.innerText = 'OVERALL RECEIVABLE (+)';
+            totalStatEl.style.background = 'rgba(255,255,255,0.3)';
+        } else {
+            totalStatEl.innerText = 'ALL SETTLED';
+            totalStatEl.style.background = 'rgba(255,255,255,0.1)';
+        }
+
         const container = document.getElementById('user-container');
         container.innerHTML = '';
 
@@ -738,7 +765,6 @@
 
     // --- AUTHENTICATION & SECURITY LOGIC ---
     function handleAuthExpired() {
-        // Just removes the expired token but keeps the device identities intact
         localStorage.removeItem('access_token');
         accessToken = null;
         document.getElementById('dashboard-view').classList.add('hidden');
@@ -750,7 +776,6 @@
     }
 
     function securityLogout() {
-        // Completely wipes the app locally.
         localStorage.clear();
         location.reload();
     }
