@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LedgerPro | Cloud Accounting</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007AFF;
+            --success: #34C759;
+            --danger: #FF3B30;
+            --bg: #F8F9FB;
+            --surface: rgba(255, 255, 255, 0.9);
+            --border: #E5E7EB;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            margin: 0; color: #111827;
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        header {
+            background: white; padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        .status-pill {
+            padding: 4px 12px; border-radius: 20px; font-size: 12px;
+            font-weight: 600; background: #E0EBFF; color: var(--primary);
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+        .pulse { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .app-container {
+            width: 100%; max-width: 900px; margin: 0 auto;
+            padding: 20px; flex-grow: 1;
+        }
+
+        .glass-card {
+            background: var(--surface); backdrop-filter: blur(12px);
+            border-radius: 20px; border: 1px solid white;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            margin-bottom: 16px;
+        }
+
+        .user-card {
+            display: grid; grid-template-columns: 1fr auto;
+            padding: 20px; align-items: center; gap: 15px;
+        }
+
+        .user-meta h3 { margin: 0; font-size: 18px; font-weight: 700; color: #1F2937; }
+        .balance-label { font-size: 14px; font-weight: 500; margin-top: 4px; }
+
+        .action-btns { display: flex; gap: 10px; }
+        
+        .btn {
+            border: none; border-radius: 12px; padding: 10px 18px;
+            font-weight: 700; cursor: pointer; transition: all 0.2s;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+
+        .btn-give { background: #FFF1F0; color: var(--danger); border: 1px solid #FFCCC7; }
+        .btn-receive { background: #F6FFED; color: var(--success); border: 1px solid #B7EB8F; }
+        .btn-primary { background: var(--primary); color: white; width: 100%; font-size: 16px; padding: 14px; }
+
+        .footer-stats {
+            background: white; padding: 24px; border-top: 1px solid var(--border);
+            text-align: center; border-radius: 24px 24px 0 0;
+            box-shadow: 0 -5 -20px rgba(0,0,0,0.02);
+        }
+
+        .grand-total { font-size: 24px; font-weight: 800; }
+        .hidden { display: none !important; }
+
+        @media (max-width: 640px) {
+            .user-card { grid-template-columns: 1fr; }
+            .action-btns { width: 100%; }
+            .action-btns .btn { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="font-weight: 800; font-size: 20px; color: var(--primary);">LedgerPro</div>
+    <div id="nav-right" class="hidden">
+        <div class="status-pill"><div class="dot pulse"></div> <span id="sync-text">Cloud Sync Active</span></div>
+    </div>
+</header>
+
+<div class="app-container">
+    <div id="login-view" class="glass-card" style="height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+        <h1 style="font-size: 32px; margin-bottom: 8px;">Smart Ledger</h1>
+        <p style="color: #6B7280; margin-bottom: 30px; padding: 0 20px;">Manage your daily transactions with secure Google Drive backup.</p>
+        <button class="btn btn-primary" id="login-btn" style="max-width: 280px;">
+            Sign in with Google
+        </button>
+    </div>
+
+    <div id="dashboard-view" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h2 style="margin: 0;">Accounts</h2>
+            <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="addUser()">+ Add New User</button>
+        </div>
+        <div id="ledger-list"></div>
+    </div>
+</div>
+
+<div id="summary-view" class="footer-stats hidden">
+    <div class="grand-total" id="total-amount">₹0.00</div>
+    <div style="font-size: 13px; color: #6B7280; font-weight: 600; margin-top: 4px;" id="total-type">NET BALANCE</div>
+</div>
+
+<script>
+    // YOUR CLIENT ID
+    const CLIENT_ID = '690707353467-92ktj6ah0mn7f7gq0e8812o1a73gujlh.apps.googleusercontent.com';
+    const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+
+    let tokenClient;
+    let accessToken = localStorage.getItem('access_token');
+    let state = { users: [] };
+    let driveFileId = localStorage.getItem('drive_file_id');
+
+    // Initialize the client on load
+    window.onload = function() {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: CLIENT_ID,
+            scope: SCOPES,
+            callback: (tokenResponse) => {
+                if (tokenResponse && tokenResponse.access_token) {
+                    accessToken = tokenResponse.access_token;
+                    localStorage.setItem('access_token', accessToken);
+                    startApp();
+                }
+            },
+        });
+
+        document.getElementById('login-btn').onclick = () => {
+            tokenClient.requestAccessToken({prompt: 'consent'});
+        };
+
+        // If we already have a token, skip login
+        if (accessToken) {
+            startApp();
+        }
+    };
+
+    async function startApp() {
+        document.getElementById('login-view').classList.add('hidden');
+        document.getElementById('dashboard-view').classList.remove('hidden');
+        document.getElementById('nav-right').classList.remove('hidden');
+        document.getElementById('summary-view').classList.remove('hidden');
+
+        const local = localStorage.getItem('ledger_data');
+        if (local) state = JSON.parse(local);
+        render();
+
+        await syncFromDrive();
+    }
+
+    function addUser() {
+        const name = prompt("Enter Person's Name:");
+        if (!name) return;
+        state.users.push({ id: Date.now(), name, balance: 0 });
+        save();
+    }
+
+    function recordTransaction(userId, type) {
+        const amt = parseFloat(prompt(`Amount for this entry:`));
+        if (isNaN(amt)) return;
+        
+        const user = state.users.find(u => u.id === userId);
+        user.balance += (type === 'receive' ? amt : -amt);
+        save();
+    }
+
+    function deleteUser(id) {
+        if (confirm("Permanently delete this user?")) {
+            state.users = state.users.filter(u => u.id !== id);
+            save();
+        }
+    }
+
+    function save() {
+        localStorage.setItem('ledger_data', JSON.stringify(state));
+        render();
+        uploadToDrive();
+    }
+
+    function render() {
+        const list = document.getElementById('ledger-list');
+        list.innerHTML = '';
+        let grandTotal = 0;
+
+        state.users.forEach(u => {
+            grandTotal += u.balance;
+            const isPayable = u.balance < 0;
+            
+            list.innerHTML += `
+                <div class="glass-card user-card">
+                    <div class="user-meta">
+                        <h3>${u.name}</h3>
+                        <div class="balance-label" style="color: ${isPayable ? 'var(--danger)' : 'var(--success)'}">
+                            ${isPayable ? 'To Pay' : 'To Receive'}: ₹${Math.abs(u.balance).toLocaleString('en-IN')}
+                        </div>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-give" onclick="recordTransaction(${u.id}, 'give')">Give</button>
+                        <button class="btn btn-receive" onclick="recordTransaction(${u.id}, 'receive')">Receive</button>
+                        <button onclick="deleteUser(${u.id})" style="background:none; border:none; padding:10px; cursor:pointer; font-size:18px;">🗑️</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        const totalEl = document.getElementById('total-amount');
+        totalEl.innerText = `₹${Math.abs(grandTotal).toLocaleString('en-IN')}`;
+        totalEl.style.color = grandTotal >= 0 ? 'var(--success)' : 'var(--danger)';
+        document.getElementById('total-type').innerText = grandTotal >= 0 ? 'TOTAL RECEIVABLE' : 'TOTAL PAYABLE';
+    }
+
+    // Google Drive Functions
+    async function uploadToDrive() {
+        if (!accessToken) return;
+        document.getElementById('sync-text').innerText = "Syncing...";
+
+        try {
+            const metadata = { name: 'ledger_v2_data.json', mimeType: 'application/json' };
+            const blob = new Blob([JSON.stringify(state)], { type: 'application/json' });
+
+            let url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+            let method = 'POST';
+
+            if (driveFileId) {
+                url = `https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`;
+                method = 'PATCH';
+            }
+
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Authorization': `Bearer ${accessToken}` },
+                body: method === 'PATCH' ? blob : createMultipartBody(metadata, blob)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.id) {
+                    driveFileId = data.id;
+                    localStorage.setItem('drive_file_id', driveFileId);
+                }
+                document.getElementById('sync-text').innerText = "Cloud Sync Active";
+            }
+        } catch (err) {
+            document.getElementById('sync-text').innerText = "Sync Error";
+        }
+    }
+
+    async function syncFromDrive() {
+        if (!accessToken) return;
+        try {
+            const listResp = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='ledger_v2_data.json' and trashed=false`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+            const listData = await listResp.json();
+            
+            if (listData.files && listData.files.length > 0) {
+                driveFileId = listData.files[0].id;
+                localStorage.setItem('drive_file_id', driveFileId);
+                
+                const fileResp = await fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`, {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                const cloudState = await fileResp.json();
+                
+                // Automatic Sync: Merge if cloud data exists
+                if (cloudState.users) {
+                    state = cloudState;
+                    render();
+                }
+            }
+        } catch (e) { console.error("Cloud data not found."); }
+    }
+
+    function createMultipartBody(metadata, blob) {
+        const boundary = 'ledger_boundary';
+        const d = "\r\n--" + boundary + "\r\n";
+        return new Blob([
+            d + 'Content-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(metadata),
+            d + 'Content-Type: application/json\r\n\r\n',
+            blob,
+            "\r\n--" + boundary + "--"
+        ]);
+    }
+</script>
+</body>
+</html>
