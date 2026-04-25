@@ -3,12 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JKM Ledger | Professional Sync</title>
+    <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+    
+    <!-- Basic SEO Meta Tags -->
+    <title>JKM Ledger | Free Drive Synced Digital Ledger & Khata Book</title>
+    <meta name="description" content="Manage your daily expenses, udhar, and client accounts with LedgerPro. A free, secure, Google Drive-synced digital ledger with PDF reports and SMS alerts.">
+    <meta name="keywords" content="digital ledger, khata book, online accounting app, expense tracker, udhar khata, secure cloud ledger, Google Drive sync ledger, free ledger software, LedgerPro, small business accounting, JKM Ledger, JKMEDIT">
+    <meta name="author" content="JKM Edit">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://jkmedit.in/tools/finance/ledger.html">
+
+    <!-- Open Graph / Facebook / WhatsApp (When you share the link) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jkmedit.in/tools/finance/ledger.html">
+    <meta property="og:title" content="JKM Ledger | Secure Drive Ledger">
+    <meta property="og:description" content="Manage client balances, generate PDFs, and automatically sync your financial data directly to your personal Google Drive safely.">
+    <meta property="og:image" content="https://jkmedit.in/your-banner-image-url.jpg"> <!-- Add a link to a banner image here -->
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://jkmedit.in/tools/finance/ledger.html">
+    <meta name="twitter:title" content="JKM Ledger | Secure Drive Ledger">
+    <meta name="twitter:description" content="Track your finances, send SMS alerts, and backup data to Google Drive securely.">
+    <meta name="twitter:image" content="https://jkmedit.in/your-banner-image-url.jpg"> <!-- Add a link to a banner image here -->
+
+    <!-- Schema Markup (Helps Google understand this is a Software Application) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "LedgerPro",
+      "url": "https://jkmedit.in/tools/finance/ledger.html",
+      "description": "A secure, Drive-synced digital ledger for managing daily finances, client accounts, and generating PDF reports.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "JKM Edit",
+        "url": "https://jkmedit.in/"
+      }
+    }
+    </script>
+
+    <!-- Essential Scripts & Styles -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <!-- PDF Generation Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --primary: #0A66C2; --primary-hover: #084e96;
@@ -74,6 +121,9 @@
     </style>
 </head>
 <body>
+<noscript>
+   JKM Ledger requires JavaScript to run. It is a secure, Drive-synced digital ledger and accounting web application. Please enable JavaScript in your browser settings.
+</noscript>
 
 <div id="loader" class="hidden"><div class="spinner"></div><p style="margin-top: 20px; font-weight: 600;" id="loader-text">Loading...</p></div>
 
@@ -90,10 +140,10 @@
 <div class="container">
     <!-- LOGIN / IMPORT VIEWS -->
     <div id="login-view" class="card hidden" style="text-align: center; margin-top: 8vh; padding: 40px 20px;">
-        <h2 style="font-size: 28px;">Drive Ledger Sync</h2>
-        <p>Sign in to securely access your synced transactions.</p>
-        <button class="btn btn-primary" id="login-btn" style="padding: 14px 28px; margin-top: 20px;">Continue with Google</button>
-    </div>
+    <h1 style="font-size: 28px;">JKM Ledger Drive Sync</h1>
+    <p>JKM Ledger is a free, secure digital ledger software that syncs your daily financial transactions, udhar khata, and client accounts directly to your personal Google Drive. Send SMS alerts, calculate itemized bills, and generate instant PDF statements.</p>
+    <button class="btn btn-primary" id="login-btn" style="padding: 14px 28px; margin-top: 20px;">Continue with Google</button>
+</div>
     <div id="import-view" class="card hidden" style="text-align: center; margin-top: 8vh; padding: 40px 20px;">
         <h2 style="font-size: 24px;">Account Connected</h2>
         <button class="btn btn-primary" style="padding: 14px 28px; margin-top: 15px;" onclick="startApp()">☁️ Import Data</button>
