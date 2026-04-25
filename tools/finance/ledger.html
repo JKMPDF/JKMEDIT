@@ -3,69 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LedgerPro | Advanced Cloud Sync</title>
+    <title>LedgerPro | Professional Sync</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #007AFF; --success: #34C759; --danger: #FF3B30;
-            --bg: #F8F9FB; --surface: #FFFFFF; --text: #111827; --border: #E5E7EB;
+            --primary: #0056D2; --success: #198754; --danger: #DC3545;
+            --bg: #F0F2F5; --surface: #FFFFFF; --text: #1C1E21; --border: #E4E6EB;
         }
-
         [data-theme="dark"] {
-            --bg: #121212; --surface: #1E1E1E; --text: #F3F4F6; --border: #333333;
+            --bg: #18191A; --surface: #242526; --text: #E4E6EB; --border: #3A3B3C;
         }
-
-        * { box-sizing: border-box; transition: background 0.3s, color 0.3s; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); margin: 0; color: var(--text); }
+        * { box-sizing: border-box; transition: background 0.2s, color 0.2s; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
         
+        /* Loading Overlay */
+        #loader {
+            position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Header */
         header { 
-            background: var(--surface); padding: 15px 24px; border-bottom: 1px solid var(--border);
+            background: var(--surface); padding: 15px 20px; border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;
         }
-
+        
         .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
-        .glass-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .card { background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         
-        .user-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .transaction-list { margin-top: 15px; border-top: 1px solid var(--border); padding-top: 10px; font-size: 14px; }
-        .trx-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border); }
-
-        .btn { padding: 10px 16px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        /* Buttons & Inputs */
+        .btn { padding: 10px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; }
         .btn-primary { background: var(--primary); color: white; }
+        .btn-danger { background: #FFEBEB; color: var(--danger); }
+        .btn-success { background: #E7F9ED; color: var(--success); }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); margin-bottom: 10px; }
         
+        /* Profiles */
+        .avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; background: var(--border); }
+        .avatar-lg { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px; display: block; object-fit: cover; }
+        .user-row { display: flex; align-items: center; gap: 15px; cursor: pointer; }
+        
+        /* Modals */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: var(--surface); width: 95%; max-width: 450px; border-radius: 16px; padding: 25px; max-height: 90vh; overflow-y: auto; }
         .hidden { display: none !important; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: var(--surface); width: 90%; max-width: 500px; border-radius: 20px; padding: 25px; }
-
-        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); margin: 10px 0; }
-        
-        .sync-badge { font-size: 12px; color: var(--primary); font-weight: bold; }
-        .delete-btn:disabled { opacity: 0.2; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
+<div id="loader" class="hidden">
+    <div class="spinner"></div>
+    <p style="margin-top: 15px; font-weight: 600;" id="loader-text">Loading...</p>
+</div>
+
 <header>
-    <div style="font-weight: 800; font-size: 20px;">LedgerPro</div>
-    <div id="header-tools" class="hidden" style="display: flex; gap: 15px; align-items: center;">
-        <span id="sync-status" class="sync-badge">Cloud Synced</span>
-        <button class="btn btn-outline" onclick="toggleModal('settings-modal')">⚙️</button>
+    <div style="font-weight: 800; font-size: 20px; display: flex; align-items: center; gap: 10px;">
+        <img id="nav-avatar" src="" class="avatar" style="width:35px; height:35px; display:none;">
+        LedgerPro
+    </div>
+    <div id="header-tools" class="hidden">
+        <span id="sync-status" style="font-size: 12px; color: var(--success); font-weight: bold; margin-right: 10px;"></span>
+        <button class="btn btn-outline" onclick="openSettings()">⚙️ Settings</button>
     </div>
 </header>
 
 <div class="container">
-    <div id="login-view" class="glass-card" style="text-align: center; margin-top: 50px;">
-        <h2>Welcome Back</h2>
-        <p>Syncing your ledger across all devices.</p>
-        <button class="btn btn-primary" id="login-btn" style="margin: 20px auto;">Login with Google</button>
+    <div id="login-view" class="card" style="text-align: center; margin-top: 10vh;">
+        <h2>Secure Cloud Ledger</h2>
+        <p style="color: #65676B;">Single-device sync architecture.</p>
+        <button class="btn btn-primary" id="login-btn" style="padding: 12px 24px; font-size: 16px; margin-top: 20px;">Sign in with Google</button>
     </div>
 
     <div id="dashboard-view" class="hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 id="greeting">Hello!</h2>
-            <button class="btn btn-primary" onclick="addUser()">+ New User</button>
+            <h2 id="greeting">Accounts</h2>
+            <button class="btn btn-primary" onclick="openUserModal()">+ Add Client</button>
         </div>
         <div id="user-container"></div>
     </div>
@@ -73,219 +89,385 @@
 
 <div id="settings-modal" class="modal hidden">
     <div class="modal-content">
-        <h3>Settings</h3>
-        <label>Your Name</label>
-        <input type="text" id="set-handler-name">
-        <div style="display:flex; justify-content: space-between; align-items: center; margin: 20px 0;">
-            <span>Dark Mode</span>
-            <input type="checkbox" id="theme-toggle" style="width: auto;" onchange="toggleTheme()">
+        <h3 style="margin-top:0; border-bottom: 1px solid var(--border); padding-bottom:10px;">Your Profile & Settings</h3>
+        <label>Profile Picture</label>
+        <input type="file" id="admin-pic-upload" accept="image/*" onchange="processImage(this, 'admin-pic-preview')">
+        <img id="admin-pic-preview" class="avatar-lg" src="">
+        
+        <input type="text" id="admin-name" placeholder="Full Name">
+        <input type="email" id="admin-email" placeholder="Email Address">
+        <input type="text" id="admin-phone" placeholder="Phone Number">
+        <textarea id="admin-address" placeholder="Your Address"></textarea>
+        
+        <div style="display:flex; justify-content: space-between; align-items: center; margin: 15px 0;">
+            <strong>Dark Mode</strong>
+            <input type="checkbox" id="theme-toggle" style="width: auto;">
         </div>
-        <button class="btn btn-primary" style="width: 100%;" onclick="saveSettings()">Save & Sync</button>
-        <button class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="toggleModal('settings-modal')">Close</button>
+        
+        <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="saveSettings()">Save Details</button>
+        <button class="btn btn-danger" style="width: 100%; margin-bottom: 10px;" onclick="logout()">Log Out</button>
+        <button class="btn btn-outline" style="width: 100%;" onclick="closeModal('settings-modal')">Cancel</button>
+    </div>
+</div>
+
+<div id="user-modal" class="modal hidden">
+    <div class="modal-content">
+        <h3 id="user-modal-title" style="margin-top:0;">Add / Edit Client</h3>
+        <input type="hidden" id="editing-user-id">
+        
+        <label>Client Picture</label>
+        <input type="file" id="user-pic-upload" accept="image/*" onchange="processImage(this, 'user-pic-preview')">
+        <img id="user-pic-preview" class="avatar-lg" src="">
+        
+        <input type="text" id="user-name" placeholder="Client Name *">
+        <input type="email" id="user-email" placeholder="Email">
+        <input type="text" id="user-phone" placeholder="Phone Number">
+        <textarea id="user-address" placeholder="Address"></textarea>
+        
+        <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="saveUser()">Save Client</button>
+        <button class="btn btn-outline" style="width: 100%;" onclick="closeModal('user-modal')">Cancel</button>
     </div>
 </div>
 
 <script>
+    // --- CORE CONFIGURATION ---
     const CLIENT_ID = '690707353467-92ktj6ah0mn7f7gq0e8812o1a73gujlh.apps.googleusercontent.com';
     const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
     let tokenClient;
     let accessToken = localStorage.getItem('access_token');
-    let driveFileId = localStorage.getItem('drive_file_id');
+    
+    // Single Device Login Token Logic
+    let myDeviceToken = localStorage.getItem('my_device_token');
+    if (!myDeviceToken) {
+        myDeviceToken = 'dev_' + Date.now() + Math.random().toString(36).substr(2, 5);
+        localStorage.setItem('my_device_token', myDeviceToken);
+    }
+
+    let folderId = localStorage.getItem('jkm_folder_id');
+    let fileId = localStorage.getItem('jkm_file_id');
+    
+    // Application State Database
     let state = {
-        handler: 'User',
+        activeDeviceToken: myDeviceToken,
         theme: 'light',
+        admin: { name: '', email: '', phone: '', address: '', pic: '' },
         users: []
     };
 
+    // --- INITIALIZATION ---
     window.onload = function() {
         tokenClient = google.accounts.oauth2.initTokenClient({
             client_id: CLIENT_ID,
             scope: SCOPES,
-            callback: (resp) => {
+            callback: async (resp) => {
                 accessToken = resp.access_token;
                 localStorage.setItem('access_token', accessToken);
-                startApp();
+                // When logging in manually, WE claim the active device token
+                state.activeDeviceToken = myDeviceToken; 
+                await startApp();
             }
         });
 
-        document.getElementById('login-btn').onclick = () => tokenClient.requestAccessToken();
+        document.getElementById('login-btn').onclick = () => tokenClient.requestAccessToken({prompt: 'consent'});
         if (accessToken) startApp();
     };
 
+    // --- CLOUD SYNC & FOLDER LOGIC ---
     async function startApp() {
+        showLoader("Connecting to Cloud...");
         document.getElementById('login-view').classList.add('hidden');
-        document.getElementById('dashboard-view').classList.remove('hidden');
-        document.getElementById('header-tools').classList.remove('hidden');
-
-        // Initial render from local
-        const local = localStorage.getItem('ledger_data_v3');
-        if (local) {
-            state = JSON.parse(local);
-            applyTheme(state.theme);
-        }
         
-        render();
-        await syncFromDrive();
+        try {
+            await setupFolderAndFile();
+            await syncFromDrive();
+            
+            // SINGLE DEVICE CHECK
+            if (state.activeDeviceToken && state.activeDeviceToken !== myDeviceToken) {
+                alert("Security Alert: You have been logged out because your account was accessed from another device.");
+                logout();
+                return;
+            }
+
+            // Ensure our device is the active one in the state
+            state.activeDeviceToken = myDeviceToken;
+            applyTheme();
+            render();
+            
+            document.getElementById('dashboard-view').classList.remove('hidden');
+            document.getElementById('header-tools').classList.remove('hidden');
+        } catch (error) {
+            console.error("Startup Error", error);
+            alert("Failed to sync. Please try logging in again.");
+            logout();
+        } finally {
+            hideLoader();
+        }
     }
 
-    function addUser() {
-        const name = prompt("User Name:");
-        if (name) {
-            state.users.push({ id: Date.now(), name, balance: 0, history: [] });
-            saveAndSync();
+    async function setupFolderAndFile() {
+        if (!folderId) {
+            // Check if "JKM" folder exists
+            const q = encodeURIComponent("mimeType='application/vnd.google-apps.folder' and name='JKM' and trashed=false");
+            const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}`, {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            const data = await res.json();
+            
+            if (data.files && data.files.length > 0) {
+                folderId = data.files[0].id;
+            } else {
+                // Create "JKM" Folder
+                const folderRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: 'JKM', mimeType: 'application/vnd.google-apps.folder' })
+                });
+                const folderData = await folderRes.json();
+                folderId = folderData.id;
+            }
+            localStorage.setItem('jkm_folder_id', folderId);
+        }
+
+        if (!fileId) {
+            // Look for file inside JKM folder
+            const q = encodeURIComponent(`name='ledger_v4.json' and '${folderId}' in parents and trashed=false`);
+            const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}`, {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            const data = await res.json();
+            if (data.files && data.files.length > 0) {
+                fileId = data.files[0].id;
+                localStorage.setItem('jkm_file_id', fileId);
+            }
         }
     }
 
-    function recordEntry(userId, type) {
-        const amount = parseFloat(prompt("Enter Amount:"));
-        const note = prompt("Narration:");
-        if (isNaN(amount)) return;
-
-        const user = state.users.find(u => u.id === userId);
-        const change = type === 'receive' ? amount : -amount;
-        
-        user.balance += change;
-        user.history.push({
-            date: new Date().toLocaleDateString(),
-            amount,
-            note: note || 'General',
-            type
+    async function syncFromDrive() {
+        if (!fileId) return; // No file exists yet
+        const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+            headers: { Authorization: `Bearer ${accessToken}` }
         });
-        saveAndSync();
+        if (res.ok) {
+            state = await res.json();
+        }
     }
 
-    function toggleDetails(userId) {
-        const el = document.getElementById(`details-${userId}`);
-        el.classList.toggle('hidden');
+    async function uploadToDrive() {
+        document.getElementById('sync-status').innerText = "Syncing...";
+        const blob = new Blob([JSON.stringify(state)], { type: 'application/json' });
+        
+        let url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+        let method = 'POST';
+        
+        if (fileId) {
+            url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`;
+            method = 'PATCH';
+        }
+
+        const metadata = { name: 'ledger_v4.json', mimeType: 'application/json', parents: [folderId] };
+        const body = method === 'PATCH' ? blob : createMultipart(metadata, blob);
+
+        const res = await fetch(url, {
+            method, headers: { Authorization: `Bearer ${accessToken}` }, body
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            if (data.id) {
+                fileId = data.id;
+                localStorage.setItem('jkm_file_id', fileId);
+            }
+            document.getElementById('sync-status').innerText = "Cloud Synced";
+        }
     }
 
-    function deleteUser(userId) {
-        const user = state.users.find(u => u.id === userId);
-        if (user.balance !== 0) {
-            alert("Cannot delete user with non-zero balance!");
-            return;
-        }
-        if (confirm("Delete this ledger?")) {
-            state.users = state.users.filter(u => u.id !== userId);
-            saveAndSync();
-        }
+    function createMultipart(metadata, blob) {
+        const boundary = 'foo_bar_jkm';
+        return new Blob([
+            `\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}`,
+            `\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n`, blob, `\r\n--${boundary}--`
+        ]);
+    }
+
+    // --- APP LOGIC ---
+    function saveAndSync() {
+        render();
+        uploadToDrive();
     }
 
     function render() {
-        document.getElementById('greeting').innerText = `Hello, ${state.handler}`;
-        document.getElementById('set-handler-name').value = state.handler;
+        // Admin UI
+        if (state.admin.name) document.getElementById('greeting').innerText = `Accounts (${state.admin.name})`;
+        if (state.admin.pic) {
+            document.getElementById('nav-avatar').src = state.admin.pic;
+            document.getElementById('nav-avatar').style.display = 'block';
+        }
+
+        // Users UI
         const container = document.getElementById('user-container');
         container.innerHTML = '';
 
         state.users.forEach(u => {
             const isRed = u.balance < 0;
+            const defaultPic = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
+            
             container.innerHTML += `
-                <div class="glass-card">
-                    <div class="user-header" onclick="toggleDetails(${u.id})">
-                        <div>
-                            <strong>${u.name}</strong>
-                            <div style="font-size: 12px; color: ${isRed ? 'var(--danger)' : 'var(--success)'}">
-                                ${isRed ? 'Payable' : 'Receivable'}: ₹${Math.abs(u.balance)}
-                            </div>
+                <div class="card">
+                    <div class="user-row" onclick="openUserModal(${u.id})">
+                        <img src="${u.pic || defaultPic}" class="avatar">
+                        <div style="flex-grow: 1;">
+                            <strong style="font-size: 16px;">${u.name}</strong><br>
+                            <span style="font-size: 12px; color: #65676B;">${u.phone || 'No phone'}</span>
                         </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-outline" style="color:var(--danger)" onclick="event.stopPropagation(); recordEntry(${u.id}, 'give')">Give</button>
-                            <button class="btn btn-outline" style="color:var(--success)" onclick="event.stopPropagation(); recordEntry(${u.id}, 'receive')">Recv</button>
-                            <button class="delete-btn" style="border:none; background:none; font-size:18px;" 
-                                ${u.balance !== 0 ? 'disabled' : ''} 
-                                onclick="event.stopPropagation(); deleteUser(${u.id})">🗑️</button>
+                        <div style="text-align: right;">
+                            <div style="color: ${isRed ? 'var(--danger)' : 'var(--success)'}; font-weight: bold;">
+                                ₹${Math.abs(u.balance)}
+                            </div>
+                            <span style="font-size: 10px; color: #65676B;">${isRed ? 'PAYABLE' : 'RECEIVABLE'}</span>
                         </div>
                     </div>
-                    <div id="details-${u.id}" class="transaction-list hidden">
-                        ${u.history.length === 0 ? '<p>No history yet</p>' : u.history.map(h => `
-                            <div class="trx-item">
-                                <span>${h.date} - ${h.note}</span>
-                                <span style="color:${h.type === 'receive' ? 'var(--success)' : 'var(--danger)'}">
-                                    ${h.type === 'receive' ? '+' : '-'}₹${h.amount}
-                                </span>
-                            </div>
-                        `).join('')}
+                    
+                    <div style="display: flex; gap: 8px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
+                        <button class="btn btn-danger" style="flex: 1;" onclick="addEntry(${u.id}, 'give')">Give</button>
+                        <button class="btn btn-success" style="flex: 1;" onclick="addEntry(${u.id}, 'receive')">Receive</button>
+                        <button class="btn btn-outline" onclick="deleteUser(${u.id})" ${u.balance !== 0 ? 'disabled' : ''}>🗑️</button>
                     </div>
                 </div>
             `;
         });
     }
 
-    // Settings Functions
-    function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
-    
-    function toggleTheme() {
-        state.theme = document.getElementById('theme-toggle').checked ? 'dark' : 'light';
-        applyTheme(state.theme);
-    }
-
-    function applyTheme(t) {
-        document.body.setAttribute('data-theme', t);
-        document.getElementById('theme-toggle').checked = (t === 'dark');
-    }
-
-    function saveSettings() {
-        state.handler = document.getElementById('set-handler-name').value;
-        toggleModal('settings-modal');
+    function addEntry(userId, type) {
+        const amt = parseFloat(prompt("Enter Amount:"));
+        if (isNaN(amt)) return;
+        const note = prompt("Narration:");
+        
+        const user = state.users.find(u => u.id === userId);
+        user.balance += (type === 'receive' ? amt : -amt);
+        if(!user.history) user.history = [];
+        user.history.push({ date: new Date().toISOString(), amount: amt, note, type });
         saveAndSync();
     }
 
-    // Drive Sync Logic
-    function saveAndSync() {
-        localStorage.setItem('ledger_data_v3', JSON.stringify(state));
-        render();
-        uploadToDrive();
+    function deleteUser(id) {
+        if (confirm("Delete this client permanently?")) {
+            state.users = state.users.filter(u => u.id !== id);
+            saveAndSync();
+        }
     }
 
-    async function uploadToDrive() {
-        if (!accessToken) return;
-        document.getElementById('sync-status').innerText = "Syncing...";
-        const blob = new Blob([JSON.stringify(state)], { type: 'application/json' });
-        const metadata = { name: 'ledger_v3.json', mimeType: 'application/json' };
+    // --- MODALS & PROFILES ---
+    function openSettings() {
+        document.getElementById('admin-name').value = state.admin.name || '';
+        document.getElementById('admin-email').value = state.admin.email || '';
+        document.getElementById('admin-phone').value = state.admin.phone || '';
+        document.getElementById('admin-address').value = state.admin.address || '';
+        document.getElementById('admin-pic-preview').src = state.admin.pic || '';
+        document.getElementById('theme-toggle').checked = (state.theme === 'dark');
+        document.getElementById('settings-modal').classList.remove('hidden');
+    }
+
+    function saveSettings() {
+        state.admin.name = document.getElementById('admin-name').value;
+        state.admin.email = document.getElementById('admin-email').value;
+        state.admin.phone = document.getElementById('admin-phone').value;
+        state.admin.address = document.getElementById('admin-address').value;
+        state.admin.pic = document.getElementById('admin-pic-preview').src;
         
-        let url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
-        let method = 'POST';
-
-        if (driveFileId) {
-            url = `https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`;
-            method = 'PATCH';
-        }
-
-        const resp = await fetch(url, {
-            method, headers: { Authorization: `Bearer ${accessToken}` },
-            body: method === 'PATCH' ? blob : createMultipart(metadata, blob)
-        });
-
-        if (resp.ok) {
-            const data = await resp.json();
-            if (data.id) { driveFileId = data.id; localStorage.setItem('drive_file_id', driveFileId); }
-            document.getElementById('sync-status').innerText = "Cloud Synced";
-        }
-    }
-
-    async function syncFromDrive() {
-        if (!accessToken) return;
-        const listResp = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='ledger_v3.json' and trashed=false`, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-        });
-        const listData = await listResp.json();
+        state.theme = document.getElementById('theme-toggle').checked ? 'dark' : 'light';
+        applyTheme();
         
-        if (listData.files?.length > 0) {
-            driveFileId = listData.files[0].id;
-            localStorage.setItem('drive_file_id', driveFileId);
-            const fileResp = await fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`, {
-                headers: { Authorization: `Bearer ${accessToken}` }
-            });
-            state = await fileResp.json();
-            applyTheme(state.theme);
-            render();
+        closeModal('settings-modal');
+        saveAndSync();
+    }
+
+    function openUserModal(id = null) {
+        document.getElementById('user-modal').classList.remove('hidden');
+        if (id) {
+            const u = state.users.find(x => x.id === id);
+            document.getElementById('user-modal-title').innerText = "Edit Client";
+            document.getElementById('editing-user-id').value = id;
+            document.getElementById('user-name').value = u.name;
+            document.getElementById('user-email').value = u.email || '';
+            document.getElementById('user-phone').value = u.phone || '';
+            document.getElementById('user-address').value = u.address || '';
+            document.getElementById('user-pic-preview').src = u.pic || '';
+        } else {
+            document.getElementById('user-modal-title').innerText = "Add New Client";
+            document.getElementById('editing-user-id').value = '';
+            document.getElementById('user-name').value = '';
+            document.getElementById('user-email').value = '';
+            document.getElementById('user-phone').value = '';
+            document.getElementById('user-address').value = '';
+            document.getElementById('user-pic-preview').src = '';
         }
     }
 
-    function createMultipart(m, b) {
-        const bound = 'foo_bar';
-        return new Blob([`\r\n--${bound}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(m)}\r\n--${bound}\r\nContent-Type: application/json\r\n\r\n`, b, `\r\n--${bound}--`]);
+    function saveUser() {
+        const name = document.getElementById('user-name').value;
+        if (!name) return alert("Name is required");
+
+        const id = document.getElementById('editing-user-id').value;
+        const details = {
+            name,
+            email: document.getElementById('user-email').value,
+            phone: document.getElementById('user-phone').value,
+            address: document.getElementById('user-address').value,
+            pic: document.getElementById('user-pic-preview').src
+        };
+
+        if (id) {
+            const idx = state.users.findIndex(u => u.id == id);
+            state.users[idx] = { ...state.users[idx], ...details };
+        } else {
+            state.users.push({ id: Date.now(), balance: 0, history: [], ...details });
+        }
+        
+        closeModal('user-modal');
+        saveAndSync();
+    }
+
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    
+    function applyTheme() { document.body.setAttribute('data-theme', state.theme); }
+
+    // --- UTILITIES ---
+    function logout() {
+        // Clear all local data so next login starts fresh
+        localStorage.clear();
+        location.reload();
+    }
+
+    function showLoader(text) { 
+        document.getElementById('loader-text').innerText = text;
+        document.getElementById('loader').classList.remove('hidden'); 
+    }
+    
+    function hideLoader() { document.getElementById('loader').classList.add('hidden'); }
+
+    // Image Compressor (Prevents large files from breaking Drive API)
+    function processImage(input, previewId) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_SIZE = 150; // Compress heavily for fast JSON syncing
+                let width = img.width, height = img.height;
+                if (width > height && width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } 
+                else if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+                
+                canvas.width = width; canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                document.getElementById(previewId).src = canvas.toDataURL('image/jpeg', 0.8);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
     }
 </script>
 </body>
