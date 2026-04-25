@@ -106,10 +106,15 @@
             <h1 id="total-net-balance" style="margin: 10px 0; font-size: 40px; color: white;">₹0</h1>
             <span id="total-net-status" style="font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; background: rgba(255,255,255,0.2);">SETTLED</span>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+        
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 15px;">
             <div><h2 id="greeting" style="margin-bottom: 4px;">Accounts</h2><p style="margin:0; font-size: 14px;">Select a client to manage.</p></div>
-            <button class="btn btn-primary" onclick="openUserModal()">+ Add Client</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-outline hidden" id="import-contacts-btn" onclick="importFromContacts()" style="padding: 10px 14px; font-size: 14px;">📖 Import Contacts</button>
+                <button class="btn btn-primary" onclick="openUserModal()" style="padding: 10px 14px; font-size: 14px;">+ Add Client</button>
+            </div>
         </div>
+        
         <div id="user-container"></div>
     </div>
 
@@ -229,6 +234,23 @@
     </div>
 </div>
 
+<!-- FULL IMAGE VIEWER MODAL -->
+<div id="image-viewer-modal" class="modal hidden" onclick="closeModal('image-viewer-modal')">
+    <div style="position: relative; max-width: 95%; max-height: 95vh; display: flex; justify-content: center; align-items: center;">
+        <img id="full-screen-image" src="" style="max-width: 100%; max-height: 90vh; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); object-fit: contain;">
+        <button class="btn btn-danger" style="position: absolute; top: -15px; right: -15px; border-radius: 50%; width: 35px; height: 35px; padding: 0;" onclick="closeModal('image-viewer-modal')">X</button>
+    </div>
+</div>
+
+<!-- ITEM DETAILS (READ-ONLY) MODAL -->
+<div id="item-details-modal" class="modal hidden">
+    <div class="modal-content">
+        <h3 style="margin-top:0; border-bottom: 1px solid var(--border); padding-bottom:10px;">Itemized Receipt</h3>
+        <div id="item-details-list" style="margin-bottom: 15px; max-height: 50vh; overflow-y: auto;"></div>
+        <button class="btn btn-outline" style="width: 100%; padding: 12px;" onclick="closeModal('item-details-modal')">Close Details</button>
+    </div>
+</div>
+
 <script>
     // --- CONFIG & STATE ---
     const CLIENT_ID = '690707353467-92ktj6ah0mn7f7gq0e8812o1a73gujlh.apps.googleusercontent.com';
@@ -245,7 +267,7 @@
     
     let currentUserId = null;
     let pendingAdminPic = null, pendingUserPic = null, pendingEntryPic = null;
-    let currentEntryPicId = null; // Keeps track if editing an entry with an existing image
+    let currentEntryPicId = null; 
     let imageCache = {}, deviceCheckInterval, isSyncing = false;
 
     let state = {
@@ -262,6 +284,11 @@
         });
         document.getElementById('login-btn').onclick = () => tokenClient.requestAccessToken({prompt: 'consent'});
         if (accessToken) showImportView(); else document.getElementById('login-view').classList.remove('hidden');
+        
+        // Show Import Contacts button if the device/browser supports the Web Contacts API
+        if ('contacts' in navigator && 'ContactsManager' in window) {
+            document.getElementById('import-contacts-btn').classList.remove('hidden');
+        }
     };
 
     function showImportView() { document.getElementById('login-view').classList.add('hidden'); document.getElementById('import-view').classList.remove('hidden'); }
@@ -368,6 +395,70 @@
         } catch (e) { return null; }
     }
 
+    async function deleteDriveFile(fId) {
+        if (!fId) return;
+        try {
+            await fetch(`https://www.googleapis.com/drive/v3/files/${fId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${accessToken}` } });
+            delete imageCache[fId]; 
+        } catch(e) { console.error("Failed to delete file from Drive", e); }
+    }
+
+    // --- CONTACT IMPORT ---
+    async function importFromContacts() {
+        try {
+            const props = ['name', 'tel', 'email'];
+            const opts = { multiple: true };
+            const contacts = await navigator.contacts.select(props, opts);
+            if (!contacts || contacts.length === 0) return;
+            
+            showLoader("Importing Contacts...");
+            let addedCount = 0;
+            let skippedCount = 0;
+
+            for (const c of contacts) {
+                const name = c.name && c.name.length > 0 ? c.name[0] : 'Unknown';
+                const phone = c.tel && c.tel.length > 0 ? c.tel[0] : '';
+                const email = c.email && c.email.length > 0 ? c.email[0] : '';
+                
+                const normPhone = phone ? phone.replace(/\D/g, '').slice(-10) : '';
+
+                // Prevent duplication by normalized phone or name
+                const exists = state.users.find(u => {
+                    const uPhone = u.phone ? u.phone.replace(/\D/g, '').slice(-10) : '';
+                    if (normPhone && uPhone) return normPhone === uPhone;
+                    return u.name.toLowerCase() === name.toLowerCase();
+                });
+
+                if (!exists) {
+                    state.users.push({
+                        id: Date.now() + Math.floor(Math.random() * 10000),
+                        name: name,
+                        phone: phone,
+                        email: email,
+                        address: '',
+                        pic: null,
+                        balance: 0,
+                        history:[],
+                        smsEnabled: true
+                    });
+                    addedCount++;
+                } else {
+                    skippedCount++;
+                }
+            }
+
+            if (addedCount > 0) {
+                await safeUploadToDrive();
+                renderUsers();
+            }
+            hideLoader();
+            alert(`Import Complete!\nAdded: ${addedCount} contact(s).\nSkipped (Duplicates): ${skippedCount} contact(s).`);
+        } catch (ex) {
+            hideLoader();
+            console.error("Contact import failed or canceled.", ex);
+        }
+    }
+
     // --- BALANCE CALCULATOR ---
     function updateUserBalance(user) {
         user.balance = (user.history ||[]).reduce((acc, tx) => acc + (tx.type === 'receive' ? tx.amount : -tx.amount), 0);
@@ -429,17 +520,16 @@
 
         const list = document.getElementById('transaction-list'); list.innerHTML = '';
         if (!user.history || user.history.length === 0) list.innerHTML = '<div class="card" style="text-align:center;"><p style="margin:0;">No transactions yet.</p></div>';
-        else {
-            [...user.history].sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(tx => {
+        else {[...user.history].sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(tx => {
                 const isGive = tx.type === 'give';
-                const hasImg = tx.pic ? `🖼️ Attached` : '';
-                const itemSummary = tx.items && tx.items.length > 0 ? `<br><span style="font-size:11px; color:var(--primary);">${tx.items.length} items calculated</span>` : '';
+                const hasImg = tx.pic ? `<span style="font-size:11px; background:var(--bg); padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="viewFullImage('${tx.pic}')">🖼️ View Bill</span>` : '';
+                const itemSummary = tx.items && tx.items.length > 0 ? `<br><span style="font-size:12px; color:var(--primary); cursor:pointer; font-weight:600;" onclick="viewEntryItems(${tx.id})">📋 ${tx.items.length} items (Click to view)</span>` : '';
                 
                 list.innerHTML += `
                     <div class="card" style="padding: 16px; margin-bottom: 12px; border-left: 4px solid ${isGive ? 'var(--danger)' : 'var(--success)'};">
                         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                             <div>
-                                <strong style="font-size: 15px;">${tx.note || 'No Narration'}</strong> ${hasImg ? `<span style="font-size:11px; background:var(--bg); padding:2px 6px; border-radius:4px;">${hasImg}</span>` : ''}
+                                <strong style="font-size: 15px;">${tx.note || 'No Narration'}</strong> ${hasImg}
                                 <br><span style="font-size: 12px; color: var(--text-muted);">${new Date(tx.date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>
                                 ${itemSummary}
                             </div>
@@ -453,6 +543,52 @@
                     </div>`;
             });
         }
+    }
+
+    // --- FULL IMAGE & ITEMS VIEWER LOGIC ---
+    function viewFullImage(fileId) {
+        showLoader("Loading Image...");
+        getDriveImageUrl(fileId).then(url => {
+            hideLoader();
+            if(url) {
+                document.getElementById('full-screen-image').src = url;
+                document.getElementById('image-viewer-modal').classList.remove('hidden');
+            } else {
+                alert("Could not load image.");
+            }
+        });
+    }
+
+    function viewEntryItems(entryId) {
+        const user = state.users.find(u => u.id === currentUserId);
+        const tx = user.history.find(t => t.id === entryId);
+        const container = document.getElementById('item-details-list');
+        container.innerHTML = '';
+        
+        let total = 0;
+        if(tx.items) {
+            tx.items.forEach(item => {
+                const val = safeEvalMath(item.calc);
+                total += val;
+                container.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid var(--border);">
+                        <div>
+                            <strong style="font-size:14px;">${item.desc || 'Item'}</strong><br>
+                            <span style="font-size:12px; color:var(--text-muted);">${item.calc}</span>
+                        </div>
+                        <div style="font-weight:600; color:var(--text);">₹${val}</div>
+                    </div>
+                `;
+            });
+        }
+        
+        container.innerHTML += `
+            <div style="display:flex; justify-content:space-between; padding: 15px 0 5px 0; font-size:18px; font-weight:bold;">
+                <span>Total:</span>
+                <span style="color:var(--primary);">₹${total}</span>
+            </div>
+        `;
+        document.getElementById('item-details-modal').classList.remove('hidden');
     }
 
     // --- MATH & ENTRY LOGIC ---
@@ -497,14 +633,14 @@
         
         document.getElementById('entry-items-container').innerHTML = '';
         document.getElementById('entry-note').value = '';
-        removeEntryPic(); // resets pic
+        removeEntryPic(); 
 
         if (entryId) {
             const user = state.users.find(u => u.id === currentUserId);
             const tx = user.history.find(t => t.id === entryId);
             document.getElementById('entry-note').value = tx.note || '';
             if (tx.items && tx.items.length > 0) tx.items.forEach(i => addEntryRow(i.desc, i.calc));
-            else addEntryRow('', tx.amount.toString()); // legacy support
+            else addEntryRow('', tx.amount.toString()); 
             
             if (tx.pic) {
                 currentEntryPicId = tx.pic;
@@ -549,7 +685,7 @@
 
         if (entryId) {
             const idx = user.history.findIndex(t => t.id === parseInt(entryId));
-            entryData.date = user.history[idx].date; // preserve date
+            entryData.date = user.history[idx].date; 
             entryData.id = user.history[idx].id;
             user.history[idx] = entryData;
         } else {
@@ -565,7 +701,6 @@
         await safeUploadToDrive();
         hideLoader();
 
-        // SMS Notification Trigger
         if (!entryId && state.admin.smsEnabled && (user.smsEnabled !== false)) {
             if (confirm("Entry Saved! Do you want to send an SMS to the client?")) {
                 const action = type === 'give' ? 'received from us' : 'given to us';
@@ -593,7 +728,7 @@
         doc.text(`Net Balance: Rs.${Math.abs(user.balance)} ${user.balance < 0 ? '(Payable)' : '(Receivable)'}`, 14, 40);
 
         const tableColumn =["Date", "Details", "Give (-)", "Receive (+)", "Balance"];
-        const tableRows = [];
+        const tableRows =[];
         let runningBal = 0;
 
         const sorted =[...(user.history||[])].sort((a,b) => new Date(a.date) - new Date(b.date));
@@ -689,9 +824,27 @@
 
     async function deleteCurrentUser() {
         const id = parseInt(document.getElementById('editing-user-id').value);
-        if (confirm("Delete this client permanently? This cannot be undone.")) {
+        if (confirm("Delete this client permanently? All their profile pictures, bills, and transactions will be erased from Google Drive. This cannot be undone.")) {
+            
+            const user = state.users.find(u => u.id === id);
+            if (!user) return;
+
+            showLoader("Deleting client & cleaning up files...");
+            
+            if (user.pic) await deleteDriveFile(user.pic);
+
+            if (user.history && user.history.length > 0) {
+                for (const tx of user.history) {
+                    if (tx.pic) await deleteDriveFile(tx.pic);
+                }
+            }
+
             state.users = state.users.filter(u => u.id !== id);
-            closeModal('user-modal'); goBackToDashboard(); await safeUploadToDrive();
+            
+            closeModal('user-modal'); 
+            goBackToDashboard(); 
+            await safeUploadToDrive();
+            hideLoader();
         }
     }
 
