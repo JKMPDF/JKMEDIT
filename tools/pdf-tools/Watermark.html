@@ -22,48 +22,9 @@
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Add Watermark to PDF - Protect Documents">
-    <meta name="twitter:description" content="Secure your documents by adding custom text or image watermarks. Adjust opacity, position, and font styles in your browser.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/pdf-tools/Watermark.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/pdf-tools/Watermark.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- FONTS & ICONS -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
-    <!-- PDF LIBRARIES -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
@@ -76,9 +37,10 @@
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s;
         }
         
-        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
         .hidden { display: none !important; }
 
@@ -88,41 +50,33 @@
             background: var(--surface-color);
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             border-bottom: 3px solid var(--primary-color);
+            justify-content: flex-start;
         }
         .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
         .logo-image { height: 50px; width: auto; object-fit: contain; }
-        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* Main Layout */
         .tool-container { padding: 2rem 1rem; max-width: 1100px; margin: auto; width: 100%; flex: 1; }
         
-        /* Ad Box */
-        .ad-placeholder { 
-            max-width: 728px; width: 100%; height: 90px; 
-            background-color: #e0e0e0; border: 1px dashed #999; 
-            margin: 0 auto 2rem auto; 
-            display: flex; align-items: center; justify-content: center; 
-            color: #555; font-size: 0.9rem; border-radius: 8px; 
-        }
-
-        /* Header Text */
-        .tool-header h2 { font-size: 2rem; margin-bottom: 0.5rem; text-align: center; color: var(--primary-color); }
-        .tool-header p { text-align: center; margin-bottom: 2rem; color: #666; }
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; color: var(--text-color); }
+        .tool-header p { text-align: center; margin-bottom: 2rem; color: #666; font-size: 1.1rem;}
 
         /* Upload Zone */
         #dropzone { 
             border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
             text-align: center; cursor: pointer; background-color: var(--surface-color); 
-            transition: 0.3s; 
+            transition: 0.3s; margin: 0 auto; max-width: 900px;
         }
         #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
-        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+        #dropzone i { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+        #dropzone p { margin: 0; font-size: 1.1rem; font-weight: 600; }
 
         /* Workspace */
         .workspace {
             display: flex; flex-wrap: wrap; gap: 2rem;
             background: var(--surface-color); padding: 2rem;
-            border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
         .preview-area {
@@ -133,13 +87,14 @@
         }
 
         .canvas-wrapper { position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        canvas { display: block; max-width: 100%; height: auto; }
+        canvas { display: block; max-width: 100%; height: auto; background: white; }
 
         /* Controls */
         .controls-area { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 1.5rem; }
         
         .control-group label { display: block; margin-bottom: 5px; font-weight: 600; }
-        .control-group input, .control-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+        .control-group input, .control-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Poppins', sans-serif;}
+        .control-group input[type="range"] { accent-color: var(--primary-color); }
         
         .section-title {
             font-size: 1.2rem; font-weight: 700; color: var(--primary-color);
@@ -147,37 +102,73 @@
         }
 
         .btn {
-            width: 100%; padding: 12px; border: none; border-radius: 6px;
-            font-weight: 600; cursor: pointer; transition: 0.3s;
+            width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 1.1rem;
+            font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-primary { background: var(--gradient); color: white; }
-        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
         .btn-secondary { background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); margin-top: 10px; }
+        .btn-secondary:hover { background: rgba(0, 82, 204, 0.05); }
 
         /* Navigation */
-        .navigation-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 3rem; }
-        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .nav-back { background: #e9ecef; color: #333; }
-        .nav-dash { background: var(--primary-color); color: white; }
+        .navigation-buttons { display: flex; justify-content: center; gap: 1.5rem; margin-top: 3rem; flex-wrap: wrap; }
+        .nav-btn { padding: 0.8rem 2.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; transition: all 0.2s;}
+        .nav-back { background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); }
+        .nav-back:hover { background: rgba(0, 82, 204, 0.05); }
+        .nav-dash { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .nav-dash:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+
+        /* Ad Box */
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #f0f0f0; border: 1px dashed #ccc; 
+            margin: 2rem auto; display: flex; align-items: center; 
+            justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        /* Extra Sections */
+        .about-section { 
+            margin: 40px auto 50px auto; padding: 40px; max-width: 1100px;
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
+            margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color);
+            max-width: 1100px; margin: 0 auto; border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;           
+        }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+
+        @media (max-width: 768px) {
+            .workspace { flex-direction: column; }
+            .tool-container { padding: 2rem 1.5rem; }
+        }
     </style>
 </head>
 <body>
 
     <header class="branding-bar">
         <a href='https://jkmedit.in/' class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
-            <h1>JKM Edit</h1>
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
     <main class='tool-container'>
-        <div class="ad-placeholder">Advertisement Space (728x90)</div>
 
-        <!-- STAGE 1: UPLOAD -->
         <div id="upload-stage">
             <div class='tool-header'>
-                <h2>Add Watermark to PDF</h2>
-                <p>Stamp text on your documents securely in your browser.</p>
+                <h1>Add Watermark to PDF</h1>
+                <p>Stamp custom text on your documents to protect your copyright.</p>
             </div>
             <input type="file" id="file-input" class="hidden" accept="application/pdf"/>
             <div id="dropzone">
@@ -186,17 +177,14 @@
             </div>
         </div>
 
-        <!-- STAGE 2: EDITOR -->
         <div id="edit-stage" class="hidden">
             <div class="workspace">
-                <!-- Canvas Preview (Read Only) -->
                 <div class="preview-area">
                     <div class="canvas-wrapper" id="canvas-container">
                         <canvas id="pdf-canvas"></canvas>
                     </div>
                 </div>
 
-                <!-- Sidebar Controls -->
                 <div class="controls-area">
                     <div class="section-title">
                         <i class="fa-solid fa-sliders"></i> Watermark Settings
@@ -204,17 +192,12 @@
 
                     <div class="control-group">
                         <label>Watermark Text</label>
-                        <input type="text" id="wm-text" value="JKM Edit" placeholder="Enter text here...">
+                        <input type="text" id="wm-text" value="CONFIDENTIAL" placeholder="Enter text here...">
                     </div>
 
                     <div class="control-group">
-                        <label>Opacity (Transparency)</label>
-                        <select id="wm-opacity">
-                            <option value="0.2">Light (0.2)</option>
-                            <option value="0.5" selected>Medium (0.5)</option>
-                            <option value="0.8">Dark (0.8)</option>
-                            <option value="1">Solid (1.0)</option>
-                        </select>
+                        <label>Opacity: <span id="opacity-val">50%</span></label>
+                        <input type="range" id="wm-opacity" min="10" max="100" value="50">
                     </div>
 
                     <div class="control-group">
@@ -228,7 +211,7 @@
 
                     <div style="margin-top: 20px;">
                         <button id="process-btn" class="btn btn-primary" onclick="processPDF()">
-                            <i class="fa-solid fa-download"></i> Add Watermark & Download
+                            <i class="fa-solid fa-download"></i> Apply & Download
                         </button>
                         <button class="btn btn-secondary" onclick="location.reload()">
                             <i class="fa-solid fa-rotate-left"></i> Start Over
@@ -242,85 +225,105 @@
             <a href="javascript:history.back()" class="nav-btn nav-back"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
             <a href="https://jkmedit.in/tools/pdf-tools.html" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
         </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Add Watermark Tool</h2>
+            <p>The PDF Watermark Tool is a vital, highly specialized digital security utility designed explicitly to help creators, legal professionals, authors, and corporate administrators protect their intellectual property and maintain strict document confidentiality. In an era where digital files can be endlessly duplicated, forwarded, and claimed by unauthorized third parties with a single click, establishing clear ownership over your documents is absolutely essential. By permanently embedding a semi-transparent text overlay—such as "CONFIDENTIAL," "DRAFT," "DO NOT COPY," or your company's copyright notice—directly into the physical structure of your PDF, you dramatically deter unauthorized sharing and ensure that the origin of the document is undeniably clear.</p>
+            <p>We built this tool with a heavy emphasis on intuitive customization and real-time visualization. Once you upload your target PDF, our responsive configuration panel allows you to tailor the watermark to your exact specifications. You can type any custom text phrase, and then effortlessly adjust its physical placement. Choose a bold, diagonal center stamp for maximum visibility across the entire page, or tuck the watermark discreetly into the top-center or bottom-center margins for a more subtle branding approach. Furthermore, the integrated opacity slider gives you precise granular control over the transparency of the text stamp. This ensures that your watermark remains highly visible for security purposes without ever completely obscuring or interfering with the underlying, critical text of your actual document.</p>
+            <p>Beyond customization, the true power of this application lies in its architecture. Leveraging the highly advanced client-side JavaScript library PDF-lib, all document processing, rendering, and watermark embedding occurs securely and instantaneously within your local web browser. Your private corporate blueprints, sensitive legal drafts, and proprietary manuscripts are never uploaded to a cloud server, ensuring 100% data confidentiality and privacy. Additionally, this localized processing guarantees zero network latency, allowing you to instantly stamp massive, multi-page PDFs without waiting for slow internet uploads. Thank you for relying on our platform to secure your digital workflow.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
     </main>
 
     <script>
-        // 1. SETUP LIBRARIES
-        // Ensure worker matches lib version
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // 2. DOM ELEMENTS
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('file-input');
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
+        const opacitySlider = document.getElementById('wm-opacity');
+        const opacityVal = document.getElementById('opacity-val');
 
         let currentFileBuffer = null;
         let currentFileName = "document.pdf";
 
-        // 3. UPLOAD HANDLERS
-        dropzone.onclick = () => fileInput.click();
-        
-        dropzone.ondragover = (e) => {
-            e.preventDefault();
-            dropzone.style.borderColor = 'var(--primary-color)';
-            dropzone.style.backgroundColor = '#f0f7ff';
-        };
-        
-        dropzone.ondragleave = () => {
-            dropzone.style.borderColor = '#ccc';
-            dropzone.style.backgroundColor = 'var(--surface-color)';
-        };
-        
-        dropzone.ondrop = (e) => {
-            e.preventDefault();
-            handleFiles(e.dataTransfer.files);
-        };
+        // Transitions
+        document.querySelectorAll('a').forEach(link => {
+            const linkUrl = link.getAttribute('href');
+            if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                if (isInternalLink && !link.target) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault(); document.body.classList.add('fade-out');
+                        setTimeout(() => { window.location.href = this.href; }, 400);
+                    });
+                }
+            }
+        });
 
+        // UI Handlers
+        opacitySlider.addEventListener('input', (e) => {
+            opacityVal.textContent = e.target.value + '%';
+        });
+
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.borderColor = 'var(--primary-color)'; dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondragleave = () => { dropzone.style.borderColor = '#ccc'; dropzone.style.backgroundColor = 'var(--surface-color)'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
         fileInput.onchange = (e) => handleFiles(e.target.files);
 
         function handleFiles(files) {
-            if (!files[0] || files[0].type !== 'application/pdf') {
-                alert("Please upload a valid PDF file.");
-                return;
-            }
+            if (!files[0] || files[0].type !== 'application/pdf') return alert("Please upload a valid PDF.");
+            
             currentFileName = files[0].name;
             const reader = new FileReader();
             reader.onload = (e) => {
                 currentFileBuffer = e.target.result;
-                
                 document.getElementById('upload-stage').classList.add('hidden');
                 document.getElementById('edit-stage').classList.remove('hidden');
-                
-                // Render Preview using a copy of the buffer (prevents "Detached" error)
                 renderPreview(currentFileBuffer.slice(0));
             };
             reader.readAsArrayBuffer(files[0]);
         }
 
-        // 4. PREVIEW LOGIC
         async function renderPreview(buffer) {
             try {
-                const loadingTask = pdfjsLib.getDocument({ data: buffer });
-                const pdf = await loadingTask.promise;
+                const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
                 const page = await pdf.getPage(1);
-                
-                // Scale for good visibility
                 const viewport = page.getViewport({ scale: 1.5 });
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
-
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
             } catch (err) {
                 console.error(err);
-                alert("Error generating preview. Proceeding without preview.");
+                alert("Error generating preview.");
             }
         }
 
-        // 5. MAIN FUNCTION: ADD WATERMARK
         async function processPDF() {
-            if (!currentFileBuffer) return alert("No file loaded.");
-
+            if (!currentFileBuffer) return;
             const btn = document.getElementById('process-btn');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
@@ -328,64 +331,52 @@
 
             try {
                 const { PDFDocument, rgb, degrees, StandardFonts } = PDFLib;
-                
-                // Load the PDF (Using slice(0) to ensure we have a fresh buffer)
                 const pdfDoc = await PDFDocument.load(currentFileBuffer.slice(0));
                 const pages = pdfDoc.getPages();
                 const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-                // Get User Inputs
                 const text = document.getElementById('wm-text').value || "JKM Edit";
-                const opacity = parseFloat(document.getElementById('wm-opacity').value);
+                const opacity = parseInt(document.getElementById('wm-opacity').value) / 100;
                 const position = document.getElementById('wm-position').value;
 
-                // Loop through all pages
                 pages.forEach(page => {
                     const { width, height } = page.getSize();
-                    const size = 40; // Font size
-                    const textWidth = font.widthOfTextAtSize(text, size);
-                    
+                    let size = 60; 
                     let x, y, rotate = degrees(0);
 
                     if (position === 'top') {
+                        size = 40;
+                        const textWidth = font.widthOfTextAtSize(text, size);
                         x = (width / 2) - (textWidth / 2);
                         y = height - 60;
                     } else if (position === 'bottom') {
+                        size = 40;
+                        const textWidth = font.widthOfTextAtSize(text, size);
                         x = (width / 2) - (textWidth / 2);
                         y = 40;
                     } else {
-                        // Center Diagonal
+                        const textWidth = font.widthOfTextAtSize(text, size);
                         x = (width / 2) - (textWidth / 2 * 0.7);
                         y = height / 2;
                         rotate = degrees(45);
                     }
 
                     page.drawText(text, {
-                        x: x,
-                        y: y,
-                        size: size,
-                        font: font,
-                        color: rgb(0.6, 0.6, 0.6), // Grey color
-                        opacity: opacity,
-                        rotate: rotate,
+                        x: x, y: y, size: size, font: font,
+                        color: rgb(0.5, 0.5, 0.5), opacity: opacity, rotate: rotate,
                     });
                 });
 
-                // Save
                 const pdfBytes = await pdfDoc.save();
-
-                // Trigger Download
                 const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                 const url = URL.createObjectURL(blob);
+                
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = "Watermarked_" + currentFileName;
                 document.body.appendChild(a);
                 a.click();
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
-                }, 500);
+                setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 500);
 
             } catch (error) {
                 console.error(error);
