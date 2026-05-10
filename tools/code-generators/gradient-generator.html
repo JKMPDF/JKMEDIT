@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang='en' data-theme='corporate-blue'>
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <title>CSS Linear Gradient Maker - Modern UI Backgrounds</title>
-    <meta name="description" content="Create stunning linear and radial gradients with a live preview. Copy-paste clean CSS3 code for web backgrounds and UI elements."/>
+    <meta name="description" content="Create stunning linear gradients with a live preview. Copy-paste clean CSS3 code for web backgrounds and UI elements instantly."/>
     <meta name="author" content="JKM Edit"/>
-    <meta name="keywords" content="JKM Edit, JKM, CSS Linear Gradient Maker - Modern UI Backgrounds, ">
+    <meta name="keywords" content="JKM Edit, JKM, CSS Linear Gradient Maker, gradient generator online, CSS background code, UI gradients, ">
 
     <meta name="robots" content="index, follow"/>
     <link rel="canonical" href="https://jkmedit.in/tools/code-generators/gradient-generator.html"/>
@@ -17,54 +17,15 @@
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="CSS Linear Gradient Maker - Modern UI Backgrounds">
-    <meta property="og:description" content="Create stunning linear and radial gradients with a live preview. Copy-paste clean CSS3 code for web backgrounds and UI elements.">
+    <meta property="og:description" content="Create stunning linear gradients with a live preview. Copy-paste clean CSS3 code for web backgrounds and UI elements instantly.">
     <meta property="og:url" content="https://jkmedit.in/tools/code-generators/gradient-generator.html">
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="CSS Linear Gradient Maker - Modern UI Backgrounds">
-    <meta name="twitter:description" content="Create stunning linear and radial gradients with a live preview. Copy-paste clean CSS3 code for web backgrounds and UI elements.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/code-generators/gradient-generator.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/code-generators/gradient-generator.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
-    
+
     <style>
-        /* --- Corporate Blue Theme Variables --- */
         :root { 
             font-family: 'Poppins', sans-serif; 
             --primary-color: #0052cc; 
@@ -73,360 +34,196 @@
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
             --border-color: #dfe1e6;
-            --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
-            --transition-speed: 0.3s; 
             --success-color: #28a745;
+            --transition-speed: 0.3s; 
         }
 
-        /* --- Basic Reset & Layout --- */
-        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
 
-        /* --- Header Section (Left Aligned) --- */
-        .main-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 1rem 2rem;
-            background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid var(--primary-color);
+        /* --- Header Section --- */
+        .branding-bar {
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 1rem 2rem; background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color);
         }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            width: 50px; 
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .brand-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--text-color);
-        }
-
-        /* --- Advertisement Box (728x90) --- */
-        .ad-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin: 2rem 0;
-            padding: 0 1rem;
-        }
-
-        .ad-slot {
-            width: 728px;
-            height: 90px;
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            overflow: hidden;
-        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- Main Tool Container --- */
-        .dashboard-container { 
-            padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 1100px; 
-            margin: auto; 
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .dashboard-container { padding: 2rem 1.5rem; max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center;}
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%;}
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
-        
+
         .tool-content-wrapper { 
-            background: var(--surface-color); 
-            padding: 2rem; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%;
         }
 
-        /* --- Generator Layout --- */
+        /* --- Editor Grid --- */
         .generator-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            align-items: start;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
         }
-
-        @media (max-width: 850px) {
+        @media (max-width: 900px) {
             .generator-grid { grid-template-columns: 1fr; }
-            .tool-content-wrapper { padding: 1.5rem; }
         }
 
-        /* --- Preview Box --- */
-        .preview-container {
-            background-color: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
-            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-            background-size: 20px 20px;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 350px;
+        /* Controls Panel */
+        .settings-panel { display: flex; flex-direction: column; gap: 20px; }
+        
+        .control-group {
+            background: #f9fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);
+        }
+        .control-header {
+            display: flex; justify-content: space-between; font-weight: 600; color: var(--secondary-color); margin-bottom: 15px; font-size: 1rem;
         }
 
-        #gradient-preview {
-            width: 100%;
-            height: 350px;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            transition: background 0.1s linear;
+        /* Colors Row */
+        .colors-row { display: flex; justify-content: space-between; gap: 20px; align-items: center;}
+        .color-box { flex: 1; display: flex; flex-direction: column; gap: 8px; align-items: center;}
+        .color-box label { font-size: 0.85rem; font-weight: 600; color: #666; text-transform: uppercase;}
+        
+        input[type="color"] {
+            width: 100%; height: 50px; border: 2px solid #ddd; cursor: pointer; border-radius: 8px; padding: 0; transition: 0.2s;
         }
-
-        /* --- Controls Panel --- */
-        .controls-panel {
-            background: #f9fafc;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .control-group { margin-bottom: 1.5rem; }
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-        .label-row label { font-weight: 600; font-size: 0.95rem; color: var(--text-color); }
-        .value-display { font-size: 0.9rem; color: var(--primary-color); font-weight: 600; }
+        input[type="color"]:hover { border-color: var(--primary-color); }
 
         /* Range Slider */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 8px;
-            background: #dce3f1;
-            border-radius: 4px;
-            outline: none;
-            cursor: pointer;
+        input[type="range"] {
+            -webkit-appearance: none; width: 100%; height: 8px; background: #dfe1e6;
+            border-radius: 5px; outline: none; cursor: pointer;
         }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-            transition: transform .15s ease;
-            border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 24px; height: 24px; background: var(--primary-color);
+            border-radius: 50%; cursor: pointer; transition: 0.2s; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
-        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
 
-        /* Color Inputs */
-        .color-pickers {
-            display: flex;
-            gap: 1rem;
+        .btn-random {
+            width: 100%; padding: 12px; background: #eef2ff; color: var(--primary-color); border: 2px solid var(--primary-color);
+            border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        
-        .color-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        .btn-random:hover { background: var(--primary-color); color: white; transform: translateY(-2px); }
+
+        /* Preview Panel */
+        .preview-panel { display: flex; flex-direction: column; gap: 20px; }
+
+        .preview-box {
+            width: 100%; height: 350px; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: background 0.2s; border: 1px solid rgba(0,0,0,0.05);
         }
 
-        input[type="color"] {
-            width: 100%;
-            height: 50px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            cursor: pointer;
-            padding: 0;
-            background: none;
-            -webkit-appearance: none;
+        /* Code Block */
+        .code-block {
+            background: #282c34; color: #abb2bf; padding: 25px; border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace; font-size: 1rem; position: relative;
         }
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
+        .code-block pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+        .css-prop { color: #c678dd; }
+        .css-val { color: #98c379; font-weight: bold;}
 
-        /* Buttons Row */
-        .buttons-row {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
+        .btn-copy {
+            width: 100%; padding: 15px; background: var(--gradient); color: white; border: none;
+            border-radius: 6px; font-weight: 700; font-size: 1.2rem; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
+        .btn-copy:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
-        .btn {
-            flex: 1;
-            padding: 0.7rem 1rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
+        /* --- Navigation & Ads --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.15); }
 
-        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
-        
-        .btn-secondary { background-color: #e2e6ea; color: var(--text-color); border: 1px solid #ced4da; }
-        .btn-secondary:hover { background-color: #dbe0e5; }
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        /* Code Output */
-        .code-output-container {
-            margin-top: 1.5rem;
-            position: relative;
-            background: #282c34;
-            border-radius: 8px;
-            padding: 1.2rem;
-        }
-        
-        code {
-            font-family: 'Courier New', Courier, monospace;
-            color: #abb2bf;
-            display: block;
-            word-wrap: break-word;
-            line-height: 1.6;
-            font-size: 0.9rem;
-        }
-        
-        .property { color: #c678dd; }
-        .value { color: #98c379; }
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1200px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-        /* --- Bottom Navigation Buttons --- */
-        .bottom-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: auto; 
-            padding-top: 2rem;
-            flex-wrap: wrap;
-        }
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1200px; margin: 0 auto; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
 
-        .nav-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 2rem;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .nav-btn-outline {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
-
-        .nav-btn-fill {
-            background: var(--primary-color);
-            color: white;
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-fill:hover {
-            background: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-
-        @media (max-width: 768px) {
-            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
-        }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
     </style>
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
-    <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+    <header class="branding-bar">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
+        
         <div class="tool-header">
-            <h2>CSS Linear Gradient Generator</h2>
-            <p>Create stunning background gradients for your website with ease.</p>
+            <h1>CSS Linear Gradient Maker</h1>
+            <p>Generate beautiful, modern CSS gradients and copy the raw code instantly.</p>
         </div>
 
         <div class="tool-content-wrapper">
             
             <div class="generator-grid">
                 
-                <!-- Preview Area -->
-                <div class="preview-container">
-                    <div id="gradient-preview"></div>
-                </div>
-
-                <!-- Controls Area -->
-                <div class="controls-panel">
+                <div class="settings-panel">
                     
                     <div class="control-group">
-                        <div class="label-row">
-                            <label>Angle / Direction</label>
-                            <span class="value-display" id="angle-val">90deg</span>
+                        <div class="control-header">
+                            <label><i class="fa-solid fa-palette"></i> Select Colors</label>
                         </div>
-                        <input type="range" id="angle-input" min="0" max="360" value="90">
+                        <div class="colors-row">
+                            <div class="color-box">
+                                <label for="color1">Color 1 (Start)</label>
+                                <input type="color" id="color1" value="#0052cc">
+                            </div>
+                            <i class="fa-solid fa-arrow-right-long" style="color:#aaa; font-size:1.5rem; margin-top:15px;"></i>
+                            <div class="color-box">
+                                <label for="color2">Color 2 (End)</label>
+                                <input type="color" id="color2" value="#00d2ff">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="control-group">
-                        <label style="display:block; margin-bottom:0.8rem; font-weight:600;">Colors</label>
-                        <div class="color-pickers">
-                            <div class="color-wrapper">
-                                <input type="color" id="color-1" value="#0052cc">
-                            </div>
-                            <div class="color-wrapper">
-                                <input type="color" id="color-2" value="#00c6ff">
-                            </div>
+                        <div class="control-header">
+                            <label><i class="fa-solid fa-compass"></i> Gradient Angle</label>
+                            <span id="angle-val" style="color:var(--primary-color); font-weight:bold;">45°</span>
                         </div>
+                        <input type="range" id="angle" min="0" max="360" value="45">
                     </div>
 
-                    <div class="code-output-container">
-                        <code id="css-code">
-                            <span class="property">background:</span> <span class="value">linear-gradient(90deg, #0052cc, #00c6ff);</span>
-                        </code>
+                    <button class="btn-random" id="random-btn">
+                        <i class="fa-solid fa-shuffle"></i> Randomize Colors
+                    </button>
+
+                </div>
+
+                <div class="preview-panel">
+                    
+                    <div class="preview-box" id="preview-box"></div>
+
+                    <div class="code-block">
+                        <pre><span class="css-prop">background:</span> <span class="css-val" id="css-code"></span></pre>
                     </div>
 
-                    <div class="buttons-row">
-                        <button class="btn btn-secondary" id="random-btn">
-                            <i class="fa-solid fa-shuffle"></i> Randomize
-                        </button>
-                        <button class="btn btn-primary" id="copy-btn">
-                            <i class="fa-regular fa-copy"></i> Copy CSS
-                        </button>
-                    </div>
+                    <button class="btn-copy" id="copy-btn">
+                        <i class="fa-regular fa-copy"></i> Copy CSS Code
+                    </button>
 
                 </div>
 
@@ -434,49 +231,89 @@
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
-        <div class="bottom-nav">
-            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/tools/code-generators.html" class="nav-btn btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the CSS Linear Gradient Maker</h2>
+            <p>The CSS Linear Gradient Maker is a brilliantly intuitive, incredibly powerful visual design utility developed exclusively for modern web designers, user interface (UI) developers, and front-end engineers. In contemporary web development, utilizing heavy, static image files (such as JPEGs or PNGs) simply to create colorful page backgrounds, call-to-action buttons, or aesthetic header banners is an archaic and inefficient practice. Heavy image files drastically slow down website loading speeds and destroy bandwidth efficiency. Transitioning to pure CSS3 gradients completely solves this issue, allowing browsers to natively render beautiful, infinitely scalable color transitions using zero graphical assets. However, manually calculating and typing out the complex hexadecimal color codes and precise rotational angles required for valid CSS syntax is incredibly tedious and highly prone to syntax errors. Our tool automates this coding process effortlessly.</p>
+            <p>The user interface has been expertly designed to prioritize creative visual flow. The primary configuration panel allows you to seamlessly select your starting and ending color anchors utilizing native operating system color pickers. Beneath the color selection, a highly responsive slider allows you to precisely dial in the rotational angle of the gradient axis—spanning a full 360 degrees—so you can easily generate subtle horizontal blends, striking vertical fades, or dynamic diagonal cross-cuts. For designers looking to break out of a creative block, we have also integrated a "Randomize Colors" feature. With a single click, the underlying JavaScript algorithm instantly pairs two mathematically diverse hexadecimal colors, providing immediate, unexpected visual inspiration.</p>
+            <p>As you actively manipulate the sliders and color inputs, the massive central preview canvas updates instantaneously, providing a flawless, real-time representation of exactly how the gradient will render in a live web environment. Simultaneously, the application dynamically compiles the corresponding standard CSS3 property code inside a clean, syntax-highlighted code block beneath the preview. Once you have perfected your color blend, clicking the robust "Copy CSS Code" button securely ports the formatted string directly to your computer's clipboard, ready to be instantly pasted into your active stylesheet. Thank you for utilizing our developer tools to optimize and beautify your digital creations.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
         </div>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const preview = document.getElementById('gradient-preview');
-            const angleInput = document.getElementById('angle-input');
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
+            });
+
+            const color1 = document.getElementById('color1');
+            const color2 = document.getElementById('color2');
+            const angleInput = document.getElementById('angle');
             const angleVal = document.getElementById('angle-val');
-            const color1 = document.getElementById('color-1');
-            const color2 = document.getElementById('color-2');
+            
+            const previewBox = document.getElementById('preview-box');
             const cssCode = document.getElementById('css-code');
             
             const randomBtn = document.getElementById('random-btn');
             const copyBtn = document.getElementById('copy-btn');
 
-            // --- Update Logic ---
+            // --- Update UI ---
             function updateGradient() {
-                const angle = angleInput.value;
                 const c1 = color1.value;
                 const c2 = color2.value;
+                const ang = angleInput.value;
+                
+                angleVal.textContent = ang + '°';
 
-                // Update Display Text
-                angleVal.textContent = angle + 'deg';
-
-                // Construct CSS String
-                const gradientString = `linear-gradient(${angle}deg, ${c1}, ${c2})`;
-
-                // Apply to Preview
-                preview.style.background = gradientString;
-
-                // Update Code Block
-                cssCode.innerHTML = `<span class="property">background:</span> <span class="value">${gradientString};</span>`;
+                const gradientString = `linear-gradient(${ang}deg, ${c1}, ${c2})`;
+                
+                // Apply to preview
+                previewBox.style.background = gradientString;
+                
+                // Update Code block
+                cssCode.innerText = gradientString + ';';
             }
 
-            // --- Random Color Generator ---
+            // --- Randomizer ---
             function getRandomHex() {
                 const letters = '0123456789ABCDEF';
                 let color = '#';
@@ -495,10 +332,10 @@
 
             // --- Copy to Clipboard ---
             function copyCSS() {
-                const text = cssCode.innerText;
+                const text = `background: ${cssCode.innerText}`;
                 navigator.clipboard.writeText(text).then(() => {
                     const originalHTML = copyBtn.innerHTML;
-                    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+                    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
                     copyBtn.style.background = 'var(--success-color)';
                     copyBtn.style.boxShadow = 'none';
                     

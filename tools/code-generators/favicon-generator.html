@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang='en' data-theme='corporate-blue'>
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
@@ -22,49 +22,10 @@
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Favicon Generator & Preview - All Device Formats">
-    <meta name="twitter:description" content="Create and preview favicons for all modern browsers and mobile home screens. Export ICO, PNG, and Apple Touch icons in one click.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/code-generators/favicon-generator.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/code-generators/favicon-generator.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
-    
+
     <style>
-        /* --- Corporate Blue Theme Variables --- */
         :root { 
             font-family: 'Poppins', sans-serif; 
             --primary-color: #0052cc; 
@@ -73,603 +34,400 @@
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
             --border-color: #dfe1e6;
-            --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
             --transition-speed: 0.3s; 
         }
 
-        /* --- Basic Reset & Layout --- */
-        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
 
-        /* --- Header Section (Left Aligned) --- */
-        .main-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 1rem 2rem;
-            background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid var(--primary-color);
+        /* --- Header Section --- */
+        .branding-bar {
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 1rem 2rem; background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color);
         }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            width: 50px; 
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .brand-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--text-color);
-        }
-
-        /* --- Advertisement Box (728x90) --- */
-        .ad-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin: 2rem 0;
-            padding: 0 1rem;
-        }
-
-        .ad-slot {
-            width: 728px;
-            height: 90px;
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            overflow: hidden;
-        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- Main Tool Container --- */
-        .dashboard-container { 
-            padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 1100px; 
-            margin: auto; 
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .dashboard-container { padding: 2rem 1.5rem; max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center;}
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%;}
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
-        
+
         .tool-content-wrapper { 
-            background: var(--surface-color); 
-            padding: 2rem; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%;
         }
 
-        /* --- Grid Layout (2 Columns) --- */
+        /* --- Layout Grid --- */
         .generator-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: start;
         }
-
-        @media (max-width: 850px) {
+        @media (max-width: 900px) {
             .generator-grid { grid-template-columns: 1fr; }
         }
 
-        /* --- Left Column: Controls --- */
-        .controls-panel {
-            background: #f9fafc;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .tabs {
-            display: flex;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 0.8rem;
-            background: none;
-            border: none;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .tab-btn.active {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            margin-bottom: -2px;
-        }
-
-        .input-group { margin-bottom: 1.2rem; }
-        .input-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
-
-        /* Inputs */
-        input[type="text"], input[type="number"], select {
-            width: 100%;
-            padding: 0.6rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-family: 'Poppins', sans-serif;
-        }
+        /* Controls Panel */
+        .controls-panel { display: flex; flex-direction: column; gap: 20px; }
         
-        input[type="color"] {
-            width: 100%;
-            height: 40px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            cursor: pointer;
-            padding: 2px;
+        .control-group {
+            background: #f9fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);
         }
+        .control-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; color: var(--text-color);}
+        
+        .color-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        input[type="color"] { width: 50px; height: 40px; border: none; border-radius: 4px; cursor: pointer; padding: 0;}
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 1.2rem; text-align: center; text-transform: uppercase;}
+        input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; background: #dfe1e6; border-radius: 5px; outline: none; margin-top: 10px;}
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: var(--primary-color); border-radius: 50%; cursor: pointer; }
 
-        /* Upload Box */
-        .upload-box {
-            border: 2px dashed var(--primary-color);
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            background: white;
-            transition: background 0.2s;
+        /* Main Canvas Editor */
+        .editor-container {
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
         }
-        .upload-box:hover { background: rgba(0, 82, 204, 0.05); }
-        .upload-box i { font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .canvas-wrapper {
+            background-image: linear-gradient(45deg, #eee 25%, transparent 25%), linear-gradient(-45deg, #eee 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #eee 75%), linear-gradient(-45deg, transparent 75%, #eee 75%);
+            background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden;
+            display: flex; justify-content: center; align-items: center; width: 250px; height: 250px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin: 0 auto;
+        }
+        canvas { display: block; }
 
-        /* --- Right Column: Preview --- */
-        .preview-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
+        /* Download Section */
+        .download-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; margin-top: 20px;
         }
+        .btn-download {
+            padding: 12px 10px; background: white; color: var(--primary-color); border: 2px solid var(--primary-color);
+            border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.95rem;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+        }
+        .btn-download:hover { background: var(--primary-color); color: white; transform: translateY(-2px); }
+        .btn-download span { font-size: 0.75rem; font-weight: 400; opacity: 0.8; }
+
+        /* Previews */
+        .previews-container {
+            margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px; width: 100%;
+        }
+        .preview-title { font-weight: 700; font-size: 1.2rem; color: var(--secondary-color); margin-bottom: 20px; text-align: center; }
+        
+        .preview-boxes { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
 
         /* Browser Tab Preview */
-        .browser-mockup {
-            background: #dce0e6;
-            border-radius: 8px 8px 0 0;
-            padding: 10px 10px 0 10px;
-            border: 1px solid #ccc;
-        }
         .browser-tab {
-            background: white;
-            border-radius: 8px 8px 0 0;
-            padding: 8px 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            width: 200px;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+            background: #dee1e6; padding: 10px 10px 0 10px; border-radius: 10px 10px 0 0;
+            width: 300px; display: flex; align-items: flex-end; border-bottom: 1px solid #ccc;
         }
-        .browser-content {
-            background: white;
-            height: 100px;
-            border-top: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ccc;
+        .tab-content {
+            background: white; border-radius: 8px 8px 0 0; padding: 8px 15px; display: flex; align-items: center; gap: 10px; flex: 1; font-size: 0.85rem; color: #333; font-weight: 600;
         }
-        .fav-preview-icon { width: 16px; height: 16px; object-fit: contain; }
+        .tab-content img { width: 16px; height: 16px; }
 
-        /* Mobile Preview */
-        .mobile-mockup {
-            background: linear-gradient(135deg, #1e2024 0%, #23272b 100%);
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 150px;
-        }
-        .app-icon-wrapper {
-            text-align: center;
-            color: white;
-            font-size: 0.8rem;
+        /* Mobile App Preview */
+        .mobile-home {
+            width: 150px; height: 250px; background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=300&auto=format&fit=crop') center/cover;
+            border-radius: 20px; border: 6px solid #333; position: relative; display: flex; padding: 20px 15px; align-items: flex-start;
         }
         .app-icon {
-            width: 64px;
-            height: 64px;
-            background: white;
-            border-radius: 14px; /* iOS style */
-            margin-bottom: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
         }
+        .app-icon img { width: 48px; height: 48px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .app-icon span { font-size: 0.65rem; color: white; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
-        /* --- Download Section --- */
-        .download-section {
-            margin-top: 2rem;
-            border-top: 1px solid #eee;
-            padding-top: 2rem;
-        }
-        .download-grid {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        /* --- Navigation & Ads --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.15); }
 
-        .btn {
-            padding: 0.7rem 1.2rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        .btn-download { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn-download:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1200px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-        /* --- Hidden Canvas --- */
-        #generator-canvas { display: none; }
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1200px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
 
-        /* --- Bottom Navigation --- */
-        .bottom-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: auto; 
-            padding-top: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .nav-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 2rem;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .nav-btn-outline {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
-
-        .nav-btn-fill {
-            background: var(--primary-color);
-            color: white;
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-fill:hover {
-            background: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
 
         @media (max-width: 768px) {
-            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+            .download-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
-    <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+    <header class="branding-bar">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
+        
         <div class="tool-header">
-            <h2>Favicon Generator</h2>
-            <p>Create icons for browsers, Android, and iOS from images or text.</p>
+            <h1>Favicon Generator</h1>
+            <p>Design custom website icons and preview how they look across all devices.</p>
         </div>
 
         <div class="tool-content-wrapper">
             
             <div class="generator-grid">
                 
-                <!-- Controls -->
                 <div class="controls-panel">
-                    <div class="tabs">
-                        <button class="tab-btn active" onclick="switchTab('text')">Text / Emoji</button>
-                        <button class="tab-btn" onclick="switchTab('image')">Upload Image</button>
+                    <div class="control-group">
+                        <label>Main Text (Max 2 chars)</label>
+                        <input type="text" id="fav-text" value="JK" maxlength="3">
                     </div>
 
-                    <!-- Text Mode Controls -->
-                    <div id="mode-text">
-                        <div class="input-group">
-                            <label>Text or Emoji</label>
-                            <input type="text" id="input-text" value="J" maxlength="2">
-                        </div>
-                        <div class="input-group">
-                            <label>Background Color</label>
-                            <input type="color" id="bg-color" value="#0052cc">
-                        </div>
-                        <div class="input-group">
+                    <div class="control-group">
+                        <div class="color-row">
                             <label>Text Color</label>
                             <input type="color" id="text-color" value="#ffffff">
                         </div>
-                        <div class="input-group">
+                        <div class="color-row">
+                            <label>Background Color</label>
+                            <input type="color" id="bg-color" value="#0052cc">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div style="display:flex; justify-content:space-between;">
                             <label>Font Size</label>
-                            <input type="range" id="font-size" min="100" max="500" value="350" style="width:100%">
+                            <span id="font-size-val" style="font-weight:600; color:var(--primary-color);">110px</span>
                         </div>
-                        <div class="input-group">
-                            <label>Shape</label>
-                            <select id="shape-select">
-                                <option value="square">Square</option>
-                                <option value="circle">Circle</option>
-                                <option value="rounded">Rounded Square</option>
-                            </select>
-                        </div>
+                        <input type="range" id="font-size" min="40" max="200" value="110">
                     </div>
 
-                    <!-- Image Mode Controls -->
-                    <div id="mode-image" style="display: none;">
-                        <div class="upload-box" id="upload-trigger">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                            <p>Click to upload Image</p>
-                            <p style="font-size:0.8rem; color:#888;">PNG, JPG (Max 5MB)</p>
+                    <div class="control-group">
+                        <div style="display:flex; justify-content:space-between;">
+                            <label>Border Radius</label>
+                            <span id="radius-val" style="font-weight:600; color:var(--primary-color);">40px</span>
                         </div>
-                        <input type="file" id="file-upload" accept="image/png, image/jpeg" style="display:none;">
+                        <input type="range" id="border-radius" min="0" max="125" value="40">
                     </div>
                 </div>
 
-                <!-- Previews -->
-                <div class="preview-panel">
+                <div class="editor-container">
+                    <div class="canvas-wrapper">
+                        <canvas id="fav-canvas" width="250" height="250"></canvas>
+                    </div>
+
+                    <div class="download-grid">
+                        <button class="btn-download" onclick="downloadIcon(32)">
+                            <i class="fa-solid fa-download"></i> 32x32
+                            <span>Standard Web</span>
+                        </button>
+                        <button class="btn-download" onclick="downloadIcon(180)">
+                            <i class="fa-solid fa-download"></i> 180x180
+                            <span>Apple Touch Icon</span>
+                        </button>
+                        <button class="btn-download" onclick="downloadIcon(512)">
+                            <i class="fa-solid fa-download"></i> 512x512
+                            <span>Android / PWA</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="previews-container">
+                <div class="preview-title"><i class="fa-solid fa-eye"></i> Real-time Device Preview</div>
+                <div class="preview-boxes">
                     
-                    <!-- Browser Tab Mockup -->
                     <div>
-                        <label style="font-weight:600; display:block; margin-bottom:0.5rem;">Browser Tab Preview</label>
-                        <div class="browser-mockup">
-                            <div class="browser-tab">
-                                <img src="" class="fav-preview-icon" id="prev-browser">
-                                <span>JKM Edit - Tool</span>
+                        <div style="text-align:left; font-size:0.85rem; color:#666; margin-bottom:5px; font-weight:600;">Desktop Browser</div>
+                        <div class="browser-tab">
+                            <div class="tab-content">
+                                <img id="prev-browser" src="" alt="Favicon">
+                                <span>My Awesome Website</span>
                             </div>
-                            <div class="browser-content">Page Content</div>
                         </div>
                     </div>
 
-                    <!-- Mobile Icon Mockup -->
                     <div>
-                        <label style="font-weight:600; display:block; margin-bottom:0.5rem;">Mobile Home Screen</label>
-                        <div class="mobile-mockup">
-                            <div class="app-icon-wrapper">
-                                <img src="" class="app-icon" id="prev-mobile">
-                                <div>My App</div>
+                        <div style="text-align:left; font-size:0.85rem; color:#666; margin-bottom:5px; font-weight:600;">Mobile Home Screen</div>
+                        <div class="mobile-home">
+                            <div class="app-icon">
+                                <img id="prev-mobile" src="" alt="App Icon">
+                                <span>My App</span>
                             </div>
                         </div>
                     </div>
 
                 </div>
             </div>
-
-            <!-- Download Section -->
-            <div class="download-section">
-                <h3 style="text-align:center; margin-bottom:1.5rem;">Download Favicons</h3>
-                <div class="download-grid">
-                    <button class="btn btn-download" onclick="downloadIcon(16)">16x16 (Classic)</button>
-                    <button class="btn btn-download" onclick="downloadIcon(32)">32x32 (Retina)</button>
-                    <button class="btn btn-download" onclick="downloadIcon(180)">180x180 (iOS)</button>
-                    <button class="btn btn-download" onclick="downloadIcon(192)">192x192 (Android)</button>
-                    <button class="btn btn-download" onclick="downloadIcon(512)">512x512 (PWA)</button>
-                </div>
-            </div>
-
-            <!-- Canvas for Processing -->
-            <canvas id="generator-canvas" width="512" height="512"></canvas>
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
-        <div class="bottom-nav">
-            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
-                <i class="fa-solid fa-arrow-left"></i> Go Back
-            </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
-                <i class="fa-solid fa-table-columns"></i> Dashboard
-            </a>
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="nav-btn btn-fill"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Favicon Generator</h2>
+            <p>The Favicon Generator is an essential, highly refined graphical utility specifically engineered for front-end web developers, digital agency owners, and independent bloggers. A "favicon" (short for "favorite icon") is the tiny, highly recognizable graphical emblem that sits perfectly next to your website's title inside a desktop browser tab. Furthermore, in our increasingly mobile-first digital ecosystem, these same icons are heavily utilized by iOS and Android operating systems when a user saves your website directly to their mobile home screen as a Progressive Web App (PWA). Failing to deploy a properly scaled, beautifully designed favicon makes your website look incredibly unprofessional, generic, and exceptionally difficult for users to locate when they have two dozen browser tabs open simultaneously.</p>
+            <p>Our intuitive web interface completely eliminates the frustrating necessity of opening heavy graphic design software simply to create a tiny icon. Within the streamlined control panel, you can type your brand's initials, and explicitly select matching background and typography hexadecimal colors to align perfectly with your corporate brand guidelines. The tool also provides granular slider controls that allow you to dictate the exact typographical font size, and more importantly, the border-radius of the icon's background. This allows you to effortlessly toggle between a sharp, corporate square graphic, a modern rounded-rectangle Apple Touch Icon style, or a perfectly circular Android-friendly app bubble in a fraction of a second.</p>
+            <p>A major feature of this utility is the interactive, real-time "Device Preview" dashboard located directly beneath the editor. As you actively modify your colors and typography, this split-view panel dynamically renders exactly how your resulting favicon will look when actively deployed on a desktop browser tab, and how it will sit against a high-resolution mobile smartphone background wallpaper. Once your design is perfected, the application's underlying HTML5 Canvas engine allows you to instantly download precisely scaled, perfectly crisp PNG files generated at the three most critical internet resolution standards (32x32, 180x180, and 512x512). All of this complex graphical rendering is executed seamlessly via client-side processing directly in your own browser, guaranteeing 100% data privacy and absolute zero network latency. Thank you for utilizing our design platform.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
         </div>
     </main>
 
     <script>
-        const canvas = document.getElementById('generator-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Mode Elements
-        const modeTextDiv = document.getElementById('mode-text');
-        const modeImageDiv = document.getElementById('mode-image');
-        const tabs = document.querySelectorAll('.tab-btn');
-
-        // Preview Elements
-        const prevBrowser = document.getElementById('prev-browser');
-        const prevMobile = document.getElementById('prev-mobile');
-
-        // Inputs
-        const inputText = document.getElementById('input-text');
-        const bgColor = document.getElementById('bg-color');
-        const textColor = document.getElementById('text-color');
-        const fontSize = document.getElementById('font-size');
-        const shapeSelect = document.getElementById('shape-select');
-        
-        // Upload
-        const uploadTrigger = document.getElementById('upload-trigger');
-        const fileUpload = document.getElementById('file-upload');
-
-        let currentMode = 'text';
-        let uploadedImage = null;
-
-        // --- Initialization ---
-        function init() {
-            drawFavicon(); // Initial draw
-            
-            // Event Listeners for Text Mode
-            [inputText, bgColor, textColor, fontSize, shapeSelect].forEach(el => {
-                el.addEventListener('input', drawFavicon);
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
             });
 
-            // Upload Logic
-            uploadTrigger.addEventListener('click', () => fileUpload.click());
-            fileUpload.addEventListener('change', handleImageUpload);
-        }
-
-        // --- Switch Tabs ---
-        window.switchTab = function(mode) {
-            currentMode = mode;
-            tabs.forEach(t => t.classList.remove('active'));
+            // Elements
+            const canvas = document.getElementById('fav-canvas');
+            const ctx = canvas.getContext('2d');
             
-            if(mode === 'text') {
-                tabs[0].classList.add('active');
-                modeTextDiv.style.display = 'block';
-                modeImageDiv.style.display = 'none';
-            } else {
-                tabs[1].classList.add('active');
-                modeTextDiv.style.display = 'none';
-                modeImageDiv.style.display = 'block';
-            }
-            drawFavicon();
-        }
+            const inputs = {
+                text: document.getElementById('fav-text'),
+                textColor: document.getElementById('text-color'),
+                bgColor: document.getElementById('bg-color'),
+                fontSize: document.getElementById('font-size'),
+                borderRadius: document.getElementById('border-radius')
+            };
 
-        // --- Handle Image Upload ---
-        function handleImageUpload(e) {
-            if(e.target.files && e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const img = new Image();
-                    img.onload = function() {
-                        uploadedImage = img;
-                        drawFavicon();
-                    }
-                    img.src = event.target.result;
-                }
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        }
+            const labels = {
+                fontSize: document.getElementById('font-size-val'),
+                radius: document.getElementById('radius-val')
+            };
 
-        // --- Core Draw Function ---
-        function drawFavicon() {
-            // Clear Canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const prevBrowser = document.getElementById('prev-browser');
+            const prevMobile = document.getElementById('prev-mobile');
 
-            const size = 512; // Base Resolution
+            // --- Render Logic ---
+            function render() {
+                const w = canvas.width;
+                const h = canvas.height;
+                const radius = parseInt(inputs.borderRadius.value);
+                const fontSize = parseInt(inputs.fontSize.value);
+                
+                // Update Labels
+                labels.fontSize.textContent = fontSize + 'px';
+                labels.radius.textContent = radius + 'px';
 
-            if (currentMode === 'text') {
-                // 1. Draw Background & Shape
-                ctx.fillStyle = bgColor.value;
-                const shape = shapeSelect.value;
+                // Clear
+                ctx.clearRect(0, 0, w, h);
 
-                if (shape === 'square') {
-                    ctx.fillRect(0, 0, size, size);
-                } else if (shape === 'circle') {
-                    ctx.beginPath();
-                    ctx.arc(size/2, size/2, size/2, 0, 2 * Math.PI);
-                    ctx.fill();
-                } else if (shape === 'rounded') {
-                    roundRect(ctx, 0, 0, size, size, 100); // 100px radius
-                    ctx.fill();
-                }
+                // Draw Background with Border Radius
+                ctx.fillStyle = inputs.bgColor.value;
+                ctx.beginPath();
+                roundRect(ctx, 0, 0, w, h, radius);
+                ctx.fill();
 
-                // 2. Draw Text/Emoji
-                ctx.fillStyle = textColor.value;
+                // Draw Text
+                ctx.fillStyle = inputs.textColor.value;
+                ctx.font = `bold ${fontSize}px Poppins, sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 
-                // Calculate font size relative to canvas
-                const fSize = parseInt(fontSize.value);
-                ctx.font = `${fSize}px sans-serif`; // Use sans-serif to support emojis better
-                
-                // Adjust Y for visual centering (textBaseline middle isn't always perfect for emojis)
-                const yOffset = size / 2 + (fSize * 0.05); 
-                ctx.fillText(inputText.value || "J", size / 2, yOffset);
+                // Fine-tune vertical alignment
+                ctx.fillText(inputs.text.value, w / 2, (h / 2) + (fontSize * 0.05));
 
-            } else if (currentMode === 'image' && uploadedImage) {
-                // Draw Uploaded Image
-                // Simple fit: center and contain
-                const ratio = Math.min(size / uploadedImage.width, size / uploadedImage.height);
-                const centerShift_x = (size - uploadedImage.width * ratio) / 2;
-                const centerShift_y = (size - uploadedImage.height * ratio) / 2;
-                
-                ctx.drawImage(uploadedImage, 0, 0, uploadedImage.width, uploadedImage.height, centerShift_x, centerShift_y, uploadedImage.width * ratio, uploadedImage.height * ratio);
+                updatePreviews();
             }
 
-            // Update Previews
-            updatePreviews();
-        }
+            // Helper for rounded rectangles on canvas
+            function roundRect(ctx, x, y, width, height, radius) {
+                if (typeof radius === 'undefined') radius = 5;
+                if (typeof radius === 'number') {
+                    radius = {tl: radius, tr: radius, br: radius, bl: radius};
+                }
+                ctx.moveTo(x + radius.tl, y);
+                ctx.lineTo(x + width - radius.tr, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+                ctx.lineTo(x + width, y + height - radius.br);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+                ctx.lineTo(x + radius.bl, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+                ctx.lineTo(x, y + radius.tl);
+                ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+                ctx.closePath();
+            }
 
-        // --- Helper: Rounded Rect Path ---
-        function roundRect(ctx, x, y, width, height, radius) {
-            ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + width - radius, y);
-            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-            ctx.lineTo(x + width, y + height - radius);
-            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-            ctx.lineTo(x + radius, y + height);
-            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-            ctx.lineTo(x, y + radius);
-            ctx.quadraticCurveTo(x, y, x + radius, y);
-            ctx.closePath();
-        }
+            // --- Update Preview Images ---
+            function updatePreviews() {
+                const dataUrl = canvas.toDataURL('image/png');
+                prevBrowser.src = dataUrl;
+                prevMobile.src = dataUrl;
+            }
 
-        // --- Update Preview Images ---
-        function updatePreviews() {
-            const dataUrl = canvas.toDataURL('image/png');
-            prevBrowser.src = dataUrl;
-            prevMobile.src = dataUrl;
-        }
+            // --- Download Function ---
+            window.downloadIcon = function(targetSize) {
+                // Create a temporary canvas to resize
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = targetSize;
+                tempCanvas.height = targetSize;
 
-        // --- Download Function ---
-        window.downloadIcon = function(targetSize) {
-            // Create a temporary canvas to resize
-            const tempCanvas = document.createElement('canvas');
-            const tempCtx = tempCanvas.getContext('2d');
-            tempCanvas.width = targetSize;
-            tempCanvas.height = targetSize;
+                // Draw the main canvas onto the smaller canvas (high quality downscaling)
+                tempCtx.drawImage(canvas, 0, 0, targetSize, targetSize);
 
-            // Draw the main canvas onto the smaller canvas (high quality downscaling)
-            tempCtx.drawImage(canvas, 0, 0, targetSize, targetSize);
+                // Trigger Download
+                const link = document.createElement('a');
+                link.download = `JKM-Favicon-${targetSize}x${targetSize}.png`;
+                link.href = tempCanvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
 
-            // Trigger Download
-            const link = document.createElement('a');
-            link.download = `favicon-${targetSize}x${targetSize}.png`;
-            link.href = tempCanvas.toDataURL('image/png');
-            link.click();
-        }
+            // Attach Listeners
+            Object.values(inputs).forEach(input => {
+                input.addEventListener('input', render);
+            });
 
-        // Run init
-        init();
-    });
+            // Initial Render
+            document.fonts.ready.then(() => render()); // ensure font is loaded
+        });
     </script>
 </body>
 </html>

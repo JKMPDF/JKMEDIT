@@ -1,68 +1,32 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang="en" data-theme="corporate-blue">
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>CSS Box Shadow Generator - Interactive Shadow Tool</title>
-    <meta name="description" content="Design beautiful, soft shadows visually. Get clean CSS code for spread, blur, and inset shadows with real-time browser preview."/>
+    <title>QR Scan to Excel - Fast Data Entry & Inventory</title>
+    <meta name="description" content="Scan multiple QR codes and export the data directly to an Excel sheet. Streamline your inventory and check-ins with JKM Edit."/>
     <meta name="author" content="JKM Edit"/>
-    <meta name="keywords" content="JKM Edit, JKM, CSS box shadow, shadow generator, box shadow tool, CSS shadow code, UI shadow design, ">
+    <meta name="keywords" content="JKM Edit, JKM, QR scan to excel, QR to spreadsheet, scan QR to CSV, bulk QR scanning, QR inventory tool, ">
 
     <meta name="robots" content="index, follow"/>
-    <link rel="canonical" href="https://jkmedit.in/tools/code-generators/box-shadow.html"/>
+    <link rel="canonical" href="https://jkmedit.in/tools/code-generators/qr-excel.html"/>
     <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="CSS Box Shadow Generator - Interactive Shadow Tool">
-    <meta property="og:description" content="Design beautiful, soft shadows visually. Get clean CSS code for spread, blur, and inset shadows with real-time browser preview.">
-    <meta property="og:url" content="https://jkmedit.in/tools/code-generators/box-shadow.html">
+    <meta property="og:title" content="QR Scan to Excel - Fast Data Entry & Inventory">
+    <meta property="og:description" content="Scan multiple QR codes and export the data directly to an Excel sheet. Streamline your inventory and check-ins with JKM Edit.">
+    <meta property="og:url" content="https://jkmedit.in/tools/code-generators/qr-excel.html">
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="CSS Box Shadow Generator - Interactive Shadow Tool">
-    <meta name="twitter:description" content="Design beautiful, soft shadows visually. Get clean CSS code for spread, blur, and inset shadows with real-time browser preview.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/code-generators/box-shadow.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/code-generators/box-shadow.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
     <style>
         /* --- Corporate Blue Theme Variables --- */
         :root { 
@@ -75,540 +39,414 @@
             --border-color: #dfe1e6;
             --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
-            --transition-speed: 0.3s; 
             --success-color: #28a745;
+            --danger-color: #dc3545;
         }
 
-        /* --- Basic Reset & Layout --- */
-        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
 
-        /* --- Header Section (Left Aligned) --- */
-        .main-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 1rem 2rem;
-            background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid var(--primary-color);
+        /* --- Header Section --- */
+        .branding-bar {
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 1rem 2rem; background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color);
         }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            width: 50px; 
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .brand-title h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--text-color);
-        }
-
-        /* --- Advertisement Box (728x90) --- */
-        .ad-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin: 2rem 0;
-            padding: 0 1rem;
-        }
-
-        .ad-slot {
-            width: 728px;
-            height: 90px;
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            overflow: hidden;
-        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- Main Tool Container --- */
-        .dashboard-container { 
-            padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 1200px; 
-            margin: auto; 
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .dashboard-container { padding: 2rem 1.5rem; max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center;}
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%;}
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
-        
+
         .tool-content-wrapper { 
-            background: var(--surface-color); 
-            padding: 2rem; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%;
         }
 
-        /* --- Generator Grid --- */
-        .generator-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+        /* --- Layout Grid --- */
+        .workspace-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;
+        }
+        @media (max-width: 900px) {
+            .workspace-grid { grid-template-columns: 1fr; }
         }
 
-        @media (max-width: 850px) {
-            .generator-grid { grid-template-columns: 1fr; }
+        /* Scan Section */
+        .scan-panel { background: #f9fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;}
+        .camera-box {
+            width: 100%; max-width: 400px; margin: 0 auto 20px auto; overflow: hidden; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid var(--primary-color); background: #000;
+            min-height: 250px; display: flex; align-items: center; justify-content: center;
         }
+        #reader { width: 100%; }
 
-        /* --- Controls Panel (Left) --- */
-        .controls-panel {
-            background: #f9fafc;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+        .scan-controls { display: flex; flex-direction: column; gap: 15px; }
+        .input-group { display: flex; flex-direction: column; text-align: left; }
+        .input-group label { font-weight: 600; font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 5px; }
+        .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 1rem; }
+        .input-group input:focus { outline: none; border-color: var(--primary-color); }
+
+        .action-row { display: flex; gap: 10px; margin-top: 10px;}
+        .btn {
+            flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem;
         }
+        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        .btn-danger { background: #fff0f0; color: var(--danger-color); border: 1px solid #ffcdd2; }
+        .btn-danger:hover { background: var(--danger-color); color: white; }
 
-        .control-group { margin-bottom: 1.2rem; }
+        /* Data Section */
+        .data-panel { background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); height: 100%; display: flex; flex-direction: column;}
+        .data-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;}
+        .data-header h3 { margin: 0; color: var(--text-color); font-size: 1.2rem;}
         
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-        .label-row label { font-weight: 600; font-size: 0.9rem; color: var(--text-color); }
-        .value-display { font-size: 0.9rem; color: var(--primary-color); font-weight: 600; }
+        .table-container { flex: 1; overflow-y: auto; max-height: 400px; border: 1px solid #eee; border-radius: 6px;}
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem;}
+        th { background: #f4f5f7; position: sticky; top: 0; color: var(--primary-color); font-weight: 600;}
+        tr:hover { background: #f9fafc; }
+        .del-btn { color: var(--danger-color); cursor: pointer; background: none; border: none; font-size: 1rem; }
 
-        /* Range Slider Styling */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #dce3f1;
-            border-radius: 3px;
-            outline: none;
-            cursor: pointer;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-            transition: background .15s ease-in-out;
-            border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+        .data-actions { display: flex; gap: 10px; margin-top: 15px; }
 
-        /* Color Inputs */
-        .color-row {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.2rem;
-        }
-        .color-input-group { flex: 1; }
-        
-        input[type="color"] {
-            width: 100%;
-            height: 40px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            cursor: pointer;
-            padding: 2px;
-            background: white;
-        }
+        /* Flash Message */
+        #flash-msg { position: fixed; top: 20px; right: 20px; background: var(--success-color); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; display: none; animation: slideIn 0.3s ease-out;}
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        /* Checkbox */
-        .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-weight: 600;
-            user-select: none;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .checkbox-wrapper input { width: 18px; height: 18px; accent-color: var(--primary-color); cursor: pointer; }
+        /* --- Navigation & Ads --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
 
-        /* --- Preview Panel (Right) --- */
-        .preview-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        .preview-box-container {
-            flex: 1;
-            background-color: white; /* Default preview bg */
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 300px;
-            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-
-        #preview-box {
-            width: 150px;
-            height: 150px;
-            background-color: var(--primary-color);
-            border-radius: 8px;
-            transition: all 0.1s; /* Fast transition for smooth sliding */
-        }
-
-        /* Code Output */
-        .code-output-container {
-            position: relative;
-            background: #282c34;
-            border-radius: 8px;
-            padding: 1rem;
-        }
-        
-        code {
-            font-family: 'Courier New', Courier, monospace;
-            color: #abb2bf;
-            display: block;
-            word-wrap: break-word;
-            line-height: 1.5;
-        }
-        
-        .property { color: #c678dd; }
-        .value { color: #98c379; }
-
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-        .copy-btn:hover { background: rgba(255,255,255,0.2); }
-
-        /* --- Bottom Navigation Buttons --- */
-        .bottom-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: auto; 
-            padding-top: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .nav-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 2rem;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .nav-btn-outline {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
-
-        .nav-btn-fill {
-            background: var(--primary-color);
-            color: white;
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-fill:hover {
-            background: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-
-        @media (max-width: 768px) {
-            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
-        }
-
-        .about-section { 
-            margin: 40px 0 50px 0; padding: 40px; 
-            background: white; border-radius: 18px; 
-            border: 1px solid #d2d2d7; box-sizing: border-box;
-        }
-        .about-section h2 { color: var(--corp-Red); margin-top: 0; }
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1200px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
         .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-.footer-offerings {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-            max-width: 1000px;
-            border: 1px solid #d2d2d7; box-sizing: border-box;
-            background: white; border-radius: 18px;           
-        }
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1200px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
 
-
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
     </style>
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
-    <header class="main-header">
+    <header class="branding-bar">
         <a href="https://jkmedit.in/" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h2 class="brand-title">JKM Edit</h2>
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Main Tool Content -->
+    <div id="flash-msg"><i class="fa-solid fa-check-circle"></i> Successfully Scanned!</div>
+
     <main class="dashboard-container">
+        
         <div class="tool-header">
-            <h1>CSS Box Shadow Generator</h1>
-            <p>Design beautiful shadows for your elements and get the CSS code instantly.</p>
+            <h1>QR Scan to Excel</h1>
+            <p>Scan barcodes or QR codes with your webcam and export directly to CSV.</p>
         </div>
 
         <div class="tool-content-wrapper">
-            
-            <div class="generator-grid">
+            <div class="workspace-grid">
                 
-                <!-- Left: Controls -->
-                <div class="controls-panel">
+                <div class="scan-panel">
+                    <div class="camera-box">
+                        <div id="reader"></div>
+                    </div>
                     
-                    <!-- Sliders -->
-                    <div class="control-group">
-                        <div class="label-row">
-                            <label>Horizontal Offset</label>
-                            <span class="value-display" id="val-h">10px</span>
+                    <div class="scan-controls">
+                        <div class="input-group">
+                            <label>Category (Optional)</label>
+                            <input type="text" id="category-input" placeholder="e.g., Warehouse A" list="cat-list">
+                            <datalist id="cat-list"></datalist>
                         </div>
-                        <input type="range" id="ctrl-h" min="-100" max="100" value="10">
-                    </div>
-
-                    <div class="control-group">
-                        <div class="label-row">
-                            <label>Vertical Offset</label>
-                            <span class="value-display" id="val-v">10px</span>
+                        <div class="input-group">
+                            <label>Item Name (Optional)</label>
+                            <input type="text" id="item-input" placeholder="e.g., Monitor X200" list="item-list">
+                            <datalist id="item-list"></datalist>
                         </div>
-                        <input type="range" id="ctrl-v" min="-100" max="100" value="10">
-                    </div>
-
-                    <div class="control-group">
-                        <div class="label-row">
-                            <label>Blur Radius</label>
-                            <span class="value-display" id="val-blur">20px</span>
-                        </div>
-                        <input type="range" id="ctrl-blur" min="0" max="200" value="20">
-                    </div>
-
-                    <div class="control-group">
-                        <div class="label-row">
-                            <label>Spread Radius</label>
-                            <span class="value-display" id="val-spread">0px</span>
-                        </div>
-                        <input type="range" id="ctrl-spread" min="-100" max="100" value="0">
-                    </div>
-
-                    <div class="control-group">
-                        <div class="label-row">
-                            <label>Shadow Opacity</label>
-                            <span class="value-display" id="val-opacity">0.35</span>
-                        </div>
-                        <input type="range" id="ctrl-opacity" min="0" max="1" step="0.01" value="0.35">
-                    </div>
-
-                    <!-- Colors -->
-                    <div class="color-row">
-                        <div class="color-input-group">
-                            <label style="display:block; margin-bottom:5px; font-weight:600; font-size:0.9rem;">Shadow Color</label>
-                            <input type="color" id="ctrl-shadow-color" value="#000000">
-                        </div>
-                        <div class="color-input-group">
-                            <label style="display:block; margin-bottom:5px; font-weight:600; font-size:0.9rem;">Box Color</label>
-                            <input type="color" id="ctrl-box-color" value="#0052cc">
-                        </div>
-                        <div class="color-input-group">
-                            <label style="display:block; margin-bottom:5px; font-weight:600; font-size:0.9rem;">BG Color</label>
-                            <input type="color" id="ctrl-bg-color" value="#ffffff">
+                        
+                        <div class="action-row">
+                            <button id="scan-btn" class="btn btn-primary">
+                                <i class="fa-solid fa-camera"></i> Start Camera
+                            </button>
+                            <button id="stop-btn" class="btn btn-danger" style="display: none;">
+                                <i class="fa-solid fa-stop"></i> Stop
+                            </button>
                         </div>
                     </div>
-
-                    <!-- Toggle -->
-                    <label class="checkbox-wrapper">
-                        <input type="checkbox" id="ctrl-inset"> Inset Shadow
-                    </label>
-
                 </div>
 
-                <!-- Right: Preview & Code -->
-                <div class="preview-panel">
-                    
-                    <div class="preview-box-container" id="preview-container">
-                        <div id="preview-box"></div>
+                <div class="data-panel">
+                    <div class="data-header">
+                        <h3>Scanned Data (<span id="count-badge">0</span>)</h3>
                     </div>
 
-                    <div class="code-output-container">
-                        <button class="copy-btn" id="copy-btn"><i class="fa-regular fa-copy"></i> Copy</button>
-                        <code>
-                            <span class="property">box-shadow:</span> <span class="value" id="code-val">10px 10px 20px 0px rgba(0,0,0,0.35);</span>
-                        </code>
-                        <code style="margin-top: 5px;">
-                            <span class="property">-webkit-box-shadow:</span> <span class="value" id="code-val-webkit">10px 10px 20px 0px rgba(0,0,0,0.35);</span>
-                        </code>
-                    </div>
+                    <div class="table-container" id="history-table">
+                        </div>
 
+                    <div class="data-actions">
+                        <button id="clear-btn" class="btn btn-danger" onclick="clearAllData()">
+                            <i class="fa-solid fa-trash"></i> Clear All
+                        </button>
+                        <button id="export-btn" class="btn btn-primary" style="background:#28a745;" onclick="downloadExcel()">
+                            <i class="fa-solid fa-file-csv"></i> Export to CSV
+                        </button>
+                    </div>
                 </div>
 
             </div>
-
         </div>
 
-        <!-- Bottom Navigation Buttons -->
-        <div class="bottom-nav">
-            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/tools/code-generators.html" class="nav-btn btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
-<!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
-    </div>
 
-<div class="about-section">
-    <h2>About the CSS box shadow Generators</h2>
-    <p>The CSS Box Shadow Generator is a visual coding tool that helps developers create depth and "pop" on their websites. It allows users to design soft or sharp shadows for containers without having to manually calculate the complex syntax of CSS code.</p>
-    <p>It works by providing interactive sliders for horizontal and vertical offsets, blur radius, spread, and color. As you move the sliders, the tool displays a live preview of the shadow and automatically generates the corresponding `box-shadow` CSS property for you to copy and paste.</p>
-    <p>You require this tool to save time and achieve pixel-perfect UI designs. Manually coding box shadows involves a lot of trial and error; this tool provides instant visual feedback, helping you create modern, "Neumorphic" or layered designs with ease.</p>
-    <h2>Thank you </h2>
-</div>
+        <div class="about-section">
+            <h2>About the QR Scan to Excel Tool</h2>
+            <p>The QR Scan to Excel tool is an incredibly robust, high-performance data aggregation utility designed specifically for warehouse managers, event coordinators, retail inventory clerks, and logistics professionals. Historically, conducting a comprehensive physical inventory check required employees to walk around with clipboards, manually writing down complex serial numbers or alphanumeric SKUs, and then returning to a desk to painstakingly re-type hundreds of lines of data into Microsoft Excel. This archaic process is not only immensely time-consuming, but it is also highly susceptible to costly human data-entry errors. Our advanced web application completely modernizes this workflow by turning your laptop, tablet, or smartphone webcam into a professional-grade barcode and QR scanner.</p>
+            <p>The user interface is designed for rapid, frictionless data capture. By clicking the "Start Camera" button, the application instantly interfaces with your device’s native camera lens. As you hold a QR code or standard barcode up to the viewfinder, the optical recognition engine automatically decodes the payload in milliseconds, triggering a satisfying visual flash notification. Before scanning, you can configure the "Category" and "Item Name" input fields; the tool intelligently groups your subsequent scans under these tags, which is perfect for organizing data by specific warehouse aisles or specific product models. As you scan, the data is automatically appended to a clean, easy-to-read graphical table on the right side of the screen, complete with a highly precise, timestamped audit trail.</p>
+            <p>The true power of this application lies in its localized architecture and seamless export capabilities. Once your inventory cycle or event check-in session is complete, a single click of the "Export to CSV" button instantly compiles your aggregated data and downloads a perfectly formatted, comma-separated values file directly to your hard drive, ready to be opened in Excel or Google Sheets. Crucially, we built this tool prioritizing your digital security. The entire optical scanning and data aggregation process runs using client-side JavaScript. This means your proprietary corporate inventory codes, event attendee IDs, and tracking hashes are never uploaded to the cloud or transmitted to an external server. Your data remains strictly confined to your local browser’s storage, ensuring absolute confidentiality. Thank you for relying on our platform to optimize your physical inventory operations.</p>
+            <h2>Thank you</h2>
+        </div>
 
-<div class="footer-offerings">
-                    <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
-                    <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
-                    <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
-                    <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
-                    <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
-                    <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
-                    <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
-                    <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
-                    <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
-                    <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
-                    <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
-                    <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
-                </div>
- 
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Elements
-            const inputs = {
-                h: document.getElementById('ctrl-h'),
-                v: document.getElementById('ctrl-v'),
-                blur: document.getElementById('ctrl-blur'),
-                spread: document.getElementById('ctrl-spread'),
-                opacity: document.getElementById('ctrl-opacity'),
-                shadowColor: document.getElementById('ctrl-shadow-color'),
-                boxColor: document.getElementById('ctrl-box-color'),
-                bgColor: document.getElementById('ctrl-bg-color'),
-                inset: document.getElementById('ctrl-inset')
-            };
-
-            const displays = {
-                h: document.getElementById('val-h'),
-                v: document.getElementById('val-v'),
-                blur: document.getElementById('val-blur'),
-                spread: document.getElementById('val-spread'),
-                opacity: document.getElementById('val-opacity')
-            };
-
-            const previewBox = document.getElementById('preview-box');
-            const previewContainer = document.getElementById('preview-container');
-            const codeVal = document.getElementById('code-val');
-            const codeValWebkit = document.getElementById('code-val-webkit');
-            const copyBtn = document.getElementById('copy-btn');
-
-            // Helper: Hex to RGBA
-            function hexToRgba(hex, alpha) {
-                const r = parseInt(hex.slice(1, 3), 16);
-                const g = parseInt(hex.slice(3, 5), 16);
-                const b = parseInt(hex.slice(5, 7), 16);
-                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-            }
-
-            // Update Function
-            function updateShadow() {
-                // Update Display Values
-                displays.h.textContent = inputs.h.value + 'px';
-                displays.v.textContent = inputs.v.value + 'px';
-                displays.blur.textContent = inputs.blur.value + 'px';
-                displays.spread.textContent = inputs.spread.value + 'px';
-                displays.opacity.textContent = inputs.opacity.value;
-
-                // Calculate Shadow String
-                const insetPrefix = inputs.inset.checked ? 'inset ' : '';
-                const rgbaColor = hexToRgba(inputs.shadowColor.value, inputs.opacity.value);
-                
-                const shadowString = `${insetPrefix}${inputs.h.value}px ${inputs.v.value}px ${inputs.blur.value}px ${inputs.spread.value}px ${rgbaColor}`;
-
-                // Apply to Preview Box
-                previewBox.style.boxShadow = shadowString;
-                previewBox.style.backgroundColor = inputs.boxColor.value;
-                previewContainer.style.backgroundColor = inputs.bgColor.value;
-
-                // Update Code Block
-                codeVal.textContent = shadowString + ';';
-                codeValWebkit.textContent = shadowString + ';';
-            }
-
-            // Event Listeners
-            Object.values(inputs).forEach(input => {
-                input.addEventListener('input', updateShadow);
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
             });
-
-            // Copy Functionality
-            copyBtn.addEventListener('click', () => {
-                const cssCode = `box-shadow: ${codeVal.textContent}\n-webkit-box-shadow: ${codeValWebkit.textContent}`;
-                navigator.clipboard.writeText(cssCode).then(() => {
-                    const originalHTML = copyBtn.innerHTML;
-                    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
-                    copyBtn.style.background = 'rgba(40, 167, 69, 0.2)';
-                    
-                    setTimeout(() => {
-                        copyBtn.innerHTML = originalHTML;
-                        copyBtn.style.background = '';
-                    }, 1500);
-                });
-            });
-
-            // Initial Run
-            updateShadow();
         });
+
+        // --- SCANNER LOGIC ---
+        const KEY_ENTRIES = 'jkm_qr_entries';
+        const KEY_CATS = 'jkm_qr_categories';
+        const KEY_ITEMS = 'jkm_qr_items';
+
+        let html5QrcodeScanner;
+        let savedEntries = JSON.parse(localStorage.getItem(KEY_ENTRIES)) || [];
+        let savedCategories = JSON.parse(localStorage.getItem(KEY_CATS)) || [];
+        let savedItems = JSON.parse(localStorage.getItem(KEY_ITEMS)) || [];
+
+        const startBtn = document.getElementById('scan-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const categoryInput = document.getElementById('category-input');
+        const itemInput = document.getElementById('item-input');
+        const flashMsg = document.getElementById('flash-msg');
+        
+        initDataLists();
+        renderTable();
+
+        startBtn.addEventListener('click', () => {
+            html5QrcodeScanner = new Html5Qrcode("reader");
+            
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+            html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess)
+            .then(() => {
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'inline-flex';
+            })
+            .catch(err => alert("Camera error: " + err));
+        });
+
+        stopBtn.addEventListener('click', () => {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    startBtn.style.display = 'inline-flex';
+                    stopBtn.style.display = 'none';
+                });
+            }
+        });
+
+        function onScanSuccess(decodedText) {
+            const cat = categoryInput.value.trim() || 'Uncategorized';
+            const itm = itemInput.value.trim() || 'Unknown Item';
+            
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString();
+            const fullStr = now.toLocaleString();
+
+            const newEntry = {
+                id: Date.now(),
+                category: cat,
+                item: itm,
+                qr: decodedText,
+                time: timeStr,
+                fullTime: fullStr
+            };
+
+            savedEntries.unshift(newEntry); 
+            
+            if (cat !== 'Uncategorized' && !savedCategories.includes(cat)) savedCategories.push(cat);
+            if (itm !== 'Unknown Item' && !savedItems.includes(itm)) savedItems.push(itm);
+
+            saveToLocal();
+            initDataLists();
+            renderTable();
+
+            // Flash effect
+            flashMsg.style.display = 'block';
+            setTimeout(() => { flashMsg.style.display = 'none'; }, 1500);
+        }
+
+        function saveToLocal() {
+            localStorage.setItem(KEY_ENTRIES, JSON.stringify(savedEntries));
+            localStorage.setItem(KEY_CATS, JSON.stringify(savedCategories));
+            localStorage.setItem(KEY_ITEMS, JSON.stringify(savedItems));
+        }
+
+        function initDataLists() {
+            const catList = document.getElementById('cat-list');
+            const itmList = document.getElementById('item-list');
+            
+            catList.innerHTML = savedCategories.map(c => `<option value="${c}">`).join('');
+            itmList.innerHTML = savedItems.map(i => `<option value="${i}">`).join('');
+        }
+
+        window.deleteEntry = function(id) {
+            savedEntries = savedEntries.filter(e => e.id !== id);
+            saveToLocal();
+            renderTable();
+        };
+
+        function renderTable() {
+            const container = document.getElementById('history-table');
+            const badge = document.getElementById('count-badge');
+            
+            badge.innerText = savedEntries.length;
+
+            if (savedEntries.length === 0) {
+                container.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">No scans yet.</div>';
+                return;
+            }
+
+            // Group by category
+            const grouped = savedEntries.reduce((acc, curr) => {
+                if (!acc[curr.category]) acc[curr.category] = [];
+                acc[curr.category].push(curr);
+                return acc;
+            }, {});
+
+            container.innerHTML = '';
+            
+            Object.keys(grouped).forEach(cat => {
+                const catHeader = document.createElement('div');
+                catHeader.style.padding = '8px 10px';
+                catHeader.style.backgroundColor = 'var(--primary-color)';
+                catHeader.style.color = 'white';
+                catHeader.style.fontWeight = 'bold';
+                catHeader.style.fontSize = '0.9rem';
+                catHeader.innerText = cat;
+                container.appendChild(catHeader);
+
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Time</th>
+                            <th>QR Content</th>
+                            <th>Del</th>
+                        </tr>
+                    </thead>
+                `;
+                
+                const rows = grouped[cat].map(e => `
+                    <tr>
+                        <td style="font-weight:600;">${e.item}</td>
+                        <td style="color:#666;">${e.time}</td>
+                        <td style="word-break: break-all; font-family:monospace;">${e.qr}</td>
+                        <td>
+                            <button class="del-btn" onclick="deleteEntry(${e.id})"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                table.innerHTML += `<tbody>${rows}</tbody>`;
+                container.appendChild(table);
+            });
+        }
+
+        window.downloadExcel = function() {
+            if (savedEntries.length === 0) return alert("No data to export.");
+
+            const sorted = savedEntries.slice().sort((a, b) => a.item.localeCompare(b.item));
+            let csv = "data:text/csv;charset=utf-8,Category,Date Time,QR Content\n";
+            
+            sorted.forEach(e => {
+                const safeQr = e.qr.replace(/"/g, '""');
+                const safeItem = e.item.replace(/"/g, '""');
+                csv += `"${e.category}","${safeItem}","${e.fullTime}","${safeQr}"\n`;
+            });
+
+            const link = document.createElement("a");
+            link.href = encodeURI(csv);
+            link.download = "jkm_inventory_scan.csv";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        window.clearAllData = function() {
+            if (confirm("Delete ALL history and categories? This cannot be undone.")) {
+                localStorage.removeItem(KEY_ENTRIES);
+                localStorage.removeItem(KEY_ITEMS);
+                localStorage.removeItem(KEY_CATS);
+                savedEntries = []; savedCategories = []; savedItems = [];
+                initDataLists();
+                renderTable();
+            }
+        };
     </script>
 </body>
 </html>

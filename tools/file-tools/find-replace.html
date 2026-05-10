@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang='en' data-theme='corporate-blue'>
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
@@ -22,47 +22,9 @@
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Online Find and Replace Text - Bulk Text Editor">
-    <meta name="twitter:description" content="Search and replace text across large documents. Supports case sensitivity and multi-line replacement. Save time on bulk edits.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/file-tools/find-replace.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/file-tools/find-replace.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
-    
+
     <style>
         /* --- Corporate Blue Theme Variables --- */
         :root { 
@@ -73,385 +35,290 @@
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
             --border-color: #dfe1e6;
-            --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
-            --transition-speed: 0.3s; 
             --success-color: #28a745;
-            --error-color: #dc3545;
+            --danger-color: #dc3545;
         }
 
-        /* --- Basic Reset & Layout --- */
-        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
 
-        /* --- Header Section (Left Aligned) --- */
-        .main-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 1rem 2rem;
-            background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid var(--primary-color);
-            margin-bottom: 2rem;
+        /* --- Header Section --- */
+        .branding-bar {
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 1rem 2rem; background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color);
         }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            width: 50px; 
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .brand-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--text-color);
-        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- Main Tool Container --- */
-        .dashboard-container { 
-            padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 1200px; 
-            margin: auto; 
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .dashboard-container { padding: 2rem 1.5rem; max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center;}
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%;}
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
-        
+
         .tool-content-wrapper { 
-            background: var(--surface-color); 
-            padding: 2rem; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%;
         }
 
-        /* --- Inputs Row --- */
-        .search-replace-bar {
-            background-color: #f9fafc;
-            border: 1px solid var(--border-color);
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
+        /* Controls Panel */
+        .controls-panel {
+            background: #f9fafc; padding: 20px; border-radius: 8px; border: 1px solid #eee;
+            margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center;
         }
 
-        .inputs-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
+        .input-group { flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-weight: 600; color: var(--secondary-color); font-size: 0.95rem; }
+        .input-group input[type="text"] {
+            padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;
+            font-family: 'Poppins', sans-serif; font-size: 1rem;
         }
+        .input-group input:focus { outline: none; border-color: var(--primary-color); }
 
-        @media (max-width: 768px) {
-            .inputs-grid { grid-template-columns: 1fr; }
+        .options-group { display: flex; flex-direction: column; gap: 10px; margin-top: 25px;}
+        .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+        .checkbox-label input { accent-color: var(--primary-color); width: 16px; height: 16px; cursor: pointer;}
+
+        .btn-replace {
+            padding: 12px 30px; background: var(--gradient); color: white; border: none; border-radius: 6px;
+            font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            align-self: flex-end; margin-bottom: 5px; height: 45px;
         }
+        .btn-replace:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
-        .input-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .input-group label { font-weight: 600; font-size: 0.9rem; color: var(--secondary-color); }
+        /* Editor Grid */
+        .editor-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media(min-width: 850px) { .editor-grid { grid-template-columns: 1fr 1fr; } }
+
+        .editor-box { display: flex; flex-direction: column; gap: 10px; }
+        .box-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--text-color); font-size: 1rem;}
         
-        .text-input {
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-        .text-input:focus { outline: none; border-color: var(--primary-color); }
-
-        /* --- Options & Actions --- */
-        .actions-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .options-group { display: flex; gap: 1.5rem; align-items: center; }
-        
-        .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-size: 0.9rem;
-            user-select: none;
-        }
-        .checkbox-wrapper input { margin-right: 0.5rem; width: 16px; height: 16px; cursor: pointer; }
-
-        .btn {
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
-        
-        .btn-secondary { background-color: #e2e6ea; color: var(--text-color); }
-        .btn-secondary:hover { background-color: #dbe0e5; }
-
-        /* --- Editor Grid --- */
-        .editor-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        @media (max-width: 768px) { .editor-grid { grid-template-columns: 1fr; } }
-
-        .editor-column { display: flex; flex-direction: column; }
-        .editor-label {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
         textarea {
-            width: 100%;
-            height: 350px;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 14px;
-            resize: vertical;
-            background-color: #f9fafc;
-            transition: border-color 0.3s;
+            width: 100%; height: 350px; padding: 15px; border: 1px solid var(--border-color);
+            border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.95rem;
+            resize: vertical; background: #fff; transition: border-color 0.3s;
         }
-        textarea:focus { outline: none; border-color: var(--primary-color); background-color: #fff; }
+        textarea:focus { outline: none; border-color: var(--primary-color); }
+        #output-text { background: #f0f3f7; }
 
-        /* --- Message Box --- */
-        .status-msg {
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 6px;
-            text-align: center;
-            font-weight: 600;
-            display: none;
-        }
-        .status-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .status-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        /* Actions */
+        .action-row { display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap;}
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-danger { color: var(--danger-color); border-color: var(--danger-color); }
+        .btn-danger:hover { background: #fdf0f1; }
 
-        /* --- Bottom Navigation Buttons --- */
-        .bottom-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: auto; 
-            padding-top: 2rem;
-            flex-wrap: wrap;
-        }
+        .status-box { text-align: center; margin-bottom: 15px; padding: 10px; border-radius: 6px; font-weight: 600; display: none; }
+        .status-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
-        .nav-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 2rem;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
+        /* --- Navigation & Ads --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .nav-dash { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .nav-dash:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.15); }
 
-        .nav-btn-outline {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        .nav-btn-fill {
-            background: var(--primary-color);
-            color: white;
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-fill:hover {
-            background: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1200px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1200px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+
     </style>
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
-    <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+    <header class="branding-bar">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
+        
         <div class="tool-header">
-            <h2>Find and Replace</h2>
-            <p>Search for text and replace it instantly. Supports Case Sensitivity and Regex.</p>
+            <h1>Find and Replace Text</h1>
+            <p>Search, identify, and bulk-replace text sequences instantly.</p>
         </div>
 
         <div class="tool-content-wrapper">
             
-            <!-- Search & Replace Inputs -->
-            <div class="search-replace-bar">
-                <div class="inputs-grid">
-                    <div class="input-group">
-                        <label for="find-input">Find what:</label>
-                        <input type="text" id="find-input" class="text-input" placeholder="Enter text to find...">
-                    </div>
-                    <div class="input-group">
-                        <label for="replace-input">Replace with:</label>
-                        <input type="text" id="replace-input" class="text-input" placeholder="Enter replacement text...">
-                    </div>
+            <div id="status-box" class="status-box"></div>
+
+            <div class="controls-panel">
+                <div class="input-group">
+                    <label>Find Text</label>
+                    <input type="text" id="find-input" placeholder="Text to find...">
                 </div>
                 
-                <div class="actions-row">
-                    <div class="options-group">
-                        <label class="checkbox-wrapper">
-                            <input type="checkbox" id="opt-case"> Match Case
-                        </label>
-                        <label class="checkbox-wrapper">
-                            <input type="checkbox" id="opt-regex"> Use Regular Expression
-                        </label>
-                    </div>
-                    <div style="display:flex; gap:1rem;">
-                        <button class="btn btn-secondary" id="clear-btn">Clear</button>
-                        <button class="btn btn-primary" id="replace-btn">
-                            <i class="fa-solid fa-rotate"></i> Replace All
-                        </button>
-                    </div>
+                <div class="input-group">
+                    <label>Replace With</label>
+                    <input type="text" id="replace-input" placeholder="Replacement text...">
                 </div>
+
+                <div class="options-group">
+                    <label class="checkbox-label" title="Match exact casing">
+                        <input type="checkbox" id="case-sensitive"> Case Sensitive
+                    </label>
+                    <label class="checkbox-label" title="Use Regular Expressions">
+                        <input type="checkbox" id="use-regex"> Use Regex
+                    </label>
+                </div>
+
+                <button class="btn-replace" id="replace-btn">Replace All</button>
             </div>
 
-            <!-- Editor Grid -->
             <div class="editor-grid">
-                <div class="editor-column">
-                    <div class="editor-label">
-                        <span>Original Text</span>
-                        <button class="btn btn-secondary" id="sample-btn" style="padding: 0.2rem 0.6rem; font-size: 0.8rem;">
-                            Load Sample
-                        </button>
+                
+                <div class="editor-box">
+                    <div class="box-header">
+                        <span><i class="fa-solid fa-file-lines"></i> Original Text</span>
+                        <button class="btn btn-outline" id="sample-btn" style="padding: 4px 10px; font-size: 0.8rem;">Load Sample</button>
                     </div>
-                    <textarea id="source-text" placeholder="Paste your content here..."></textarea>
+                    <textarea id="source-text" placeholder="Paste your original document or code here..."></textarea>
                 </div>
 
-                <div class="editor-column">
-                    <div class="editor-label">
-                        <span>Result</span>
-                        <button class="btn btn-secondary" id="copy-btn" style="padding: 0.2rem 0.6rem; font-size: 0.8rem;">
+                <div class="editor-box">
+                    <div class="box-header">
+                        <span><i class="fa-solid fa-code"></i> Modified Text</span>
+                        <button class="btn btn-outline" id="copy-btn" style="padding: 4px 10px; font-size: 0.8rem; border-color:var(--success-color); color:var(--success-color);">
                             <i class="fa-regular fa-copy"></i> Copy
                         </button>
                     </div>
-                    <textarea id="output-text" readonly placeholder="Result will appear here..."></textarea>
+                    <textarea id="output-text" placeholder="Results will appear here..." readonly></textarea>
                 </div>
+
             </div>
 
-            <!-- Status Message -->
-            <div id="status-box" class="status-msg"></div>
+            <div class="action-row">
+                <button class="btn btn-outline btn-danger" id="clear-btn">
+                    <i class="fa-solid fa-trash"></i> Clear All Fields
+                </button>
+            </div>
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
-        <div class="bottom-nav">
-            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/tools/file-tools.html" class="nav-btn nav-dash">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Online Find & Replace Tool</h2>
+            <p>The Online Find and Replace Text Tool is a high-speed, incredibly precise bulk text editing utility specifically engineered for copywriters, software developers, and data-entry professionals who need to execute massive, sweeping changes across large bodies of text. In any professional writing or coding environment, discovering that a crucial variable name, a specific corporate brand term, or a highly repeated formatting structure was typed incorrectly throughout a massive document is a nightmare. Attempting to manually hunt down and individually correct hundreds of identical errors is not only a massive drain on your productivity, but it is also highly prone to human error. Our advanced web application completely automates this tedious process, allowing you to instantly eradicate and substitute text with surgical precision.</p>
+            <p>The tool provides a robust, dual-pane workspace designed for maximum visual efficiency. You can paste massive blocks of raw text, HTML code, or data strings into the source area. Below the primary input, the intuitive configuration panel gives you absolute control over your replacement criteria. For standard edits, you can simply input your target word and the desired replacement text. However, for power users and programmers, the tool fully supports advanced Regular Expressions (Regex) and Case-Sensitive toggling. This means you can execute highly complex, conditional search patterns—such as finding all incorrectly formatted phone numbers, identifying specific HTML tags, or capturing dynamic structural variables—and systematically replace them in a fraction of a second across the entire document.</p>
+            <p>A fundamental advantage of this utility is its strict reliance on native client-side JavaScript execution. When you paste your raw text into the input field and run a complex Regex search-and-replace operation, the intricate string manipulation occurs entirely within your local device's memory cache. Your private corporate emails, confidential business manuscripts, proprietary software codebases, and sensitive legal documents are never uploaded to the cloud or transmitted to an external server. This localized architecture guarantees absolute data confidentiality. Furthermore, because no data is sent across the internet, the tool operates with zero network latency, providing you with instantaneous output results. Thank you for utilizing our platform to optimize your digital writing workflow.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
         </div>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
+            });
+
             const sourceText = document.getElementById('source-text');
             const outputText = document.getElementById('output-text');
             const findInput = document.getElementById('find-input');
             const replaceInput = document.getElementById('replace-input');
-            const statusBox = document.getElementById('status-box');
-
-            // Options
-            const optCase = document.getElementById('opt-case');
-            const optRegex = document.getElementById('opt-regex');
-
-            // Buttons
+            const caseSensitive = document.getElementById('case-sensitive');
+            const useRegex = document.getElementById('use-regex');
+            
             const replaceBtn = document.getElementById('replace-btn');
             const clearBtn = document.getElementById('clear-btn');
-            const copyBtn = document.getElementById('copy-btn');
             const sampleBtn = document.getElementById('sample-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            const statusBox = document.getElementById('status-box');
 
-            // Helper: Escape Regex special characters
-            function escapeRegExp(string) {
-                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
-            }
-
-            // Helper: Show Status
-            function showStatus(message, type) {
-                statusBox.textContent = message;
-                statusBox.className = `status-msg status-${type}`;
+            function showStatus(msg, type) {
+                statusBox.textContent = msg;
+                statusBox.className = `status-box status-${type}`;
                 statusBox.style.display = 'block';
             }
 
-            // Main Replace Logic
+            // Replace Logic
             replaceBtn.addEventListener('click', () => {
-                const source = sourceText.value;
-                const find = findInput.value;
-                const replace = replaceInput.value;
+                const src = sourceText.value;
+                const findStr = findInput.value;
+                const replaceStr = replaceInput.value;
 
-                if (!source) {
-                    showStatus("Please enter some text in the Original Text box.", "error");
-                    return;
-                }
-                if (!find) {
-                    showStatus("Please enter text to find.", "error");
-                    return;
-                }
+                if (!src) return showStatus("Please enter some source text.", "error");
+                if (!findStr) return showStatus("Please enter the text to find.", "error");
+
+                let modifiers = "g"; // Global by default
+                if (!caseSensitive.checked) modifiers += "i";
 
                 try {
                     let regex;
-                    let flags = 'g'; // Global replace by default
-                    if (!optCase.checked) {
-                        flags += 'i'; // Case insensitive
-                    }
-
-                    if (optRegex.checked) {
-                        // Use user input as raw Regex
-                        regex = new RegExp(find, flags);
+                    if (useRegex.checked) {
+                        regex = new RegExp(findStr, modifiers);
                     } else {
-                        // Escape user input to treat as literal string
-                        regex = new RegExp(escapeRegExp(find), flags);
+                        // Escape regex special chars if not using regex mode
+                        const escapedFindStr = findStr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        regex = new RegExp(escapedFindStr, modifiers);
                     }
 
-                    // Count occurrences before replacing
-                    const matches = source.match(regex);
+                    // Count matches before replacing
+                    const matches = src.match(regex);
                     const count = matches ? matches.length : 0;
 
-                    // Execute replace
-                    const result = source.replace(regex, replace);
-                    outputText.value = result;
-
                     if (count > 0) {
-                        showStatus(`Success! Replaced ${count} occurrence(s).`, "success");
+                        const result = src.replace(regex, replaceStr);
+                        outputText.value = result;
+                        showStatus(`Successfully replaced ${count} occurrence(s).`, "success");
                     } else {
+                        outputText.value = src;
                         showStatus("No matches found to replace.", "error");
                     }
 

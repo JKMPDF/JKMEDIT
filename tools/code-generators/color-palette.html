@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang='en' data-theme='corporate-blue'>
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
@@ -22,49 +22,10 @@
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="AI Color Palette Generator - Trending UI Schemes">
-    <meta name="twitter:description" content="Discover beautiful, accessible color palettes for web and mobile design. Get HEX, RGB, and HSL codes for modern, high-contrast UI/UX.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/code-generators/color-palette.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/code-generators/color-palette.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
-    
+
     <style>
-        /* --- Corporate Blue Theme Variables --- */
         :root { 
             font-family: 'Poppins', sans-serif; 
             --primary-color: #0052cc; 
@@ -73,293 +34,204 @@
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
             --border-color: #dfe1e6;
-            --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
             --transition-speed: 0.3s; 
         }
 
-        /* --- Basic Reset & Layout --- */
-        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
 
-        /* --- Header Section (Left Aligned) --- */
-        .main-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 1rem 2rem;
-            background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid var(--primary-color);
+        /* --- Header Section --- */
+        .branding-bar {
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 1rem 2rem; background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color);
         }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            width: 50px; 
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .brand-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--text-color);
-        }
-
-        /* --- Advertisement Box (728x90) --- */
-        .ad-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin: 2rem 0;
-            padding: 0 1rem;
-        }
-
-        .ad-slot {
-            width: 728px;
-            height: 90px;
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            overflow: hidden;
-        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- Main Tool Container --- */
-        .dashboard-container { 
-            padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 1200px; 
-            margin: auto; 
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .dashboard-container { padding: 2rem 1.5rem; max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center;}
         
-        .tool-header { text-align: center; margin-bottom: 1.5rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%;}
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
-        
-        /* --- Palette Grid --- */
-        .palette-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
+
+        .tool-content-wrapper { 
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; text-align: center;
         }
 
-        .palette-display {
-            display: flex;
-            height: 400px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        /* Toolbar */
+        .toolbar {
+            display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;
         }
 
-        .color-col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            transition: flex 0.2s;
+        .btn-generate {
+            padding: 12px 30px; background: var(--gradient); color: white; border: none; border-radius: 30px;
+            font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px;
+        }
+        .btn-generate:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        .hint { font-size: 0.9rem; color: #888; font-weight: 600; }
+
+        /* Palette Grid */
+        .palette-container {
+            display: flex; height: 400px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        /* Hover Info Overlay */
-        .color-col:hover {
-            flex: 1.1; /* Slightly expand on hover */
+        .color-column {
+            flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+            padding-bottom: 30px; transition: flex 0.3s ease, background 0.3s; position: relative;
         }
+        .color-column:hover { flex: 1.2; }
 
-        /* Lock Button */
-        .lock-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-            transition: all 0.2s;
-            padding: 10px;
-            border-radius: 50%;
+        /* Controls inside column */
+        .color-actions {
+            position: absolute; top: 30px; display: flex; flex-direction: column; gap: 15px;
+            opacity: 0; transition: opacity 0.2s;
         }
-        .lock-btn:hover { opacity: 1; background: rgba(0,0,0,0.1); }
-        .lock-btn.locked { opacity: 1; color: var(--text-color); }
+        .color-column:hover .color-actions { opacity: 1; }
 
-        /* Hex Code */
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4);
+            color: white; width: 45px; height: 45px; border-radius: 50%; font-size: 1.1rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .icon-btn:hover { background: rgba(255, 255, 255, 0.4); transform: scale(1.1); }
+        .icon-btn.locked { background: rgba(0, 0, 0, 0.5); border-color: transparent; }
+
+        /* Hex Code Display */
         .hex-code {
-            font-family: 'Courier New', monospace;
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: background 0.2s;
-            text-transform: uppercase;
+            font-size: 1.5rem; font-weight: 700; color: white; text-transform: uppercase;
+            cursor: pointer; transition: transform 0.2s; text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
         }
-        .hex-code:hover {
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(2px);
-        }
+        .hex-code:hover { transform: scale(1.1); }
 
-        /* Controls Bar */
-        .controls-bar {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
+        /* --- Navigation & Ads --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.15); }
 
-        .tooltip {
-            position: absolute;
-            bottom: 10%;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-        }
-        .hex-code:active + .tooltip, .hex-code:focus + .tooltip { opacity: 1; }
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        /* --- Buttons --- */
-        .btn {
-            padding: 0.8rem 2.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 1.1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1200px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 15px rgba(0, 82, 204, 0.2); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 82, 204, 0.3); }
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1200px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
 
-        /* --- Bottom Navigation --- */
-        .bottom-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: auto; 
-            padding-top: 3rem;
-            flex-wrap: wrap;
-        }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
 
-        .nav-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 2rem;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .nav-btn-outline {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
-
-        .nav-btn-fill {
-            background: var(--primary-color);
-            color: white;
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-fill:hover {
-            background: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-
-        /* Mobile Responsiveness */
         @media (max-width: 768px) {
-            .palette-display { flex-direction: column; height: 600px; }
-            .color-col { flex-direction: row; justify-content: space-between; padding: 0 2rem; }
-            .lock-btn { margin-bottom: 0; order: 2; }
-            .hex-code { order: 1; }
-            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+            .palette-container { flex-direction: column; height: auto; min-height: 600px; }
+            .color-column { padding: 30px 0; justify-content: center; }
+            .color-actions { top: auto; right: 20px; flex-direction: row; opacity: 1; }
+            .hex-code { position: absolute; left: 20px; }
+            .tool-container { padding: 1rem; }
+            .navigation-buttons { flex-direction: column; }
+            .nav-btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
-    <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+    <header class="branding-bar">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) - Fixed Display -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
+        
         <div class="tool-header">
-            <h2>Color Palette Generator</h2>
-            <p>Press <strong>Spacebar</strong> to generate new palettes. Click lock icons to save colors.</p>
+            <h1>AI Color Palette Generator</h1>
+            <p>Generate beautiful, trending color schemes for your next UI project instantly.</p>
         </div>
 
-        <div class="palette-wrapper">
+        <div class="tool-content-wrapper">
             
-            <!-- Color Columns Container -->
-            <div class="palette-display" id="palette-container">
-                <!-- Columns generated by JS -->
+            <div class="toolbar">
+                <button class="btn-generate" id="generate-btn">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Palette
+                </button>
+                <span class="hint">Press "Spacebar" to generate quickly</span>
             </div>
 
-            <!-- Controls -->
-            <div class="controls-bar">
-                <button class="btn btn-primary" id="generate-btn">
-                    <i class="fa-solid fa-shuffle"></i> Generate New Palette
-                </button>
-            </div>
+            <div class="palette-container" id="palette-container">
+                </div>
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
-        <div class="bottom-nav">
-            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/tools/code-generators.html" class="nav-btn btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Color Palette Generator</h2>
+            <p>The AI Color Palette Generator is a fundamental, incredibly inspiring visual design tool meticulously engineered for UI/UX designers, front-end developers, digital artists, and brand strategists. In modern digital aesthetics, selecting the perfect color scheme is arguably the most critical step in establishing a brand's visual identity and ensuring accessibility. A poorly matched color palette can completely ruin the readability of a mobile app, clash with a corporate logo, or drive users away from a landing page due to immense visual fatigue. Generating a harmonious palette that incorporates primary, secondary, and accent colors requires an acute understanding of color theory—or, alternatively, it requires a tool that handles the complex algorithmic color matching for you.</p>
+            <p>Our intuitive interface is designed to maximize your creative flow. With a single click of the prominent "Generate Palette" button—or simply by rapidly tapping the Spacebar on your keyboard—the application instantly computes and renders a five-column, full-screen array of complimentary, mathematically balanced hexadecimal colors. As you cycle through hundreds of random palettes, you will inevitably find a specific color that perfectly anchors your design vision. Our tool allows you to easily click the "Lock" icon on that specific column. Once locked, subsequent generations will automatically preserve that chosen color while seamlessly calculating and rendering four new companion colors that perfectly harmonize with your locked selection. This allows you to iteratively build the perfect brand aesthetic step by step.</p>
+            <p>To ensure maximum efficiency during your web development workflow, we have heavily optimized the copy-and-paste mechanics of the application. Every single color column boldly displays its exact 6-character Hexadecimal code. Simply clicking directly on the HEX code instantly securely copies the value straight to your operating system's clipboard, ready to be immediately pasted into your CSS stylesheet, Figma canvas, or Adobe Illustrator project. All color generation logic is executed instantly within your local browser memory, ensuring an incredibly fast, zero-latency design experience without requiring any bloated server uploads. Thank you for utilizing our digital platform to design your next beautiful project.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
         </div>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
+            });
+
             const paletteContainer = document.getElementById('palette-container');
             const generateBtn = document.getElementById('generate-btn');
-            
-            // State to hold 5 colors
+
             let colors = [
                 { hex: '', locked: false },
                 { hex: '', locked: false },
@@ -368,64 +240,64 @@
                 { hex: '', locked: false }
             ];
 
-            // --- Helper: Generate Random Hex ---
+            // Helper: Generate Random Hex
             function generateRandomHex() {
                 const chars = '0123456789ABCDEF';
-                let color = '#';
-                for (let i = 0; i < 6; i++) {
-                    color += chars[Math.floor(Math.random() * 16)];
-                }
-                return color;
+                let hex = '#';
+                for (let i = 0; i < 6; i++) hex += chars[Math.floor(Math.random() * 16)];
+                return hex;
             }
 
-            // --- Helper: Calculate Text Contrast (Black or White) ---
-            function getContrastColor(hex) {
-                // Convert hex to RGB
-                const r = parseInt(hex.substr(1, 2), 16);
-                const g = parseInt(hex.substr(3, 2), 16);
-                const b = parseInt(hex.substr(5, 2), 16);
-                // Calculate YIQ ratio
-                const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-                return (yiq >= 128) ? '#000000' : '#ffffff';
+            // Helper: Determine text color based on bg brightness
+            function getContrastYIQ(hexcolor){
+                hexcolor = hexcolor.replace("#", "");
+                const r = parseInt(hexcolor.substr(0,2),16);
+                const g = parseInt(hexcolor.substr(2,2),16);
+                const b = parseInt(hexcolor.substr(4,2),16);
+                const yiq = ((r*299)+(g*587)+(b*114))/1000;
+                return (yiq >= 128) ? 'black' : 'white';
             }
 
-            // --- Core: Create/Update Columns ---
+            // --- Logic: Render Palette ---
             function renderPalette() {
                 paletteContainer.innerHTML = '';
-
-                colors.forEach((colorObj, index) => {
+                
+                colors.forEach((color, index) => {
                     const col = document.createElement('div');
-                    col.className = 'color-col';
-                    col.style.backgroundColor = colorObj.hex;
+                    col.className = 'color-column';
+                    col.style.backgroundColor = color.hex;
                     
-                    // Text color based on background brightness
-                    const textColor = getContrastColor(colorObj.hex);
-                    col.style.color = textColor;
+                    const textColor = getContrastYIQ(color.hex);
+                    
+                    const hexCode = document.createElement('div');
+                    hexCode.className = 'hex-code';
+                    hexCode.innerText = color.hex;
+                    hexCode.style.color = textColor;
+                    hexCode.onclick = () => copyToClipboard(color.hex, hexCode);
 
-                    // Lock Button
+                    const actions = document.createElement('div');
+                    actions.className = 'color-actions';
+                    
                     const lockBtn = document.createElement('button');
-                    lockBtn.className = `lock-btn ${colorObj.locked ? 'locked' : ''}`;
-                    lockBtn.innerHTML = colorObj.locked ? '<i class="fa-solid fa-lock"></i>' : '<i class="fa-solid fa-lock-open"></i>';
+                    lockBtn.className = `icon-btn ${color.locked ? 'locked' : ''}`;
                     lockBtn.style.color = textColor;
-                    lockBtn.onclick = (e) => {
-                        e.stopPropagation(); // Prevent triggering copy
-                        toggleLock(index);
-                    };
+                    lockBtn.style.borderColor = textColor === 'black' ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.4)';
+                    lockBtn.innerHTML = color.locked ? '<i class="fa-solid fa-lock"></i>' : '<i class="fa-solid fa-lock-open"></i>';
+                    lockBtn.onclick = () => toggleLock(index);
 
-                    // Hex Text
-                    const hexText = document.createElement('div');
-                    hexText.className = 'hex-code';
-                    hexText.innerText = colorObj.hex;
-                    hexText.onclick = () => copyToClipboard(colorObj.hex, hexText);
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'icon-btn';
+                    copyBtn.style.color = textColor;
+                    copyBtn.style.borderColor = textColor === 'black' ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.4)';
+                    copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+                    copyBtn.onclick = () => copyToClipboard(color.hex, hexCode);
 
-                    // Tooltip for Copy
-                    const tooltip = document.createElement('span');
-                    tooltip.className = 'tooltip';
-                    tooltip.innerText = 'Copied!';
-
-                    col.appendChild(lockBtn);
-                    col.appendChild(hexText);
-                    col.appendChild(tooltip);
+                    actions.appendChild(lockBtn);
+                    actions.appendChild(copyBtn);
+                    
+                    col.appendChild(actions);
+                    col.appendChild(hexCode);
+                    
                     paletteContainer.appendChild(col);
                 });
             }
@@ -448,10 +320,10 @@
             // --- Logic: Copy ---
             function copyToClipboard(text, element) {
                 navigator.clipboard.writeText(text).then(() => {
-                    // Visual feedback specific to the element
+                    const originalText = element.innerText;
                     element.innerText = "COPIED!";
                     setTimeout(() => {
-                        element.innerText = text;
+                        element.innerText = originalText;
                     }, 1000);
                 });
             }
@@ -462,8 +334,11 @@
             // Spacebar Shortcut
             document.addEventListener('keydown', (e) => {
                 if (e.code === 'Space') {
-                    e.preventDefault(); // Stop page scroll
-                    generatePalette();
+                    // Prevent page scroll if not focused on inputs
+                    if(document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
+                        e.preventDefault(); 
+                        generatePalette();
+                    }
                 }
             });
 

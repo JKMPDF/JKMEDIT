@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="corporate-blue">
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
@@ -22,551 +22,431 @@
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="QR Scan to Excel - Fast Data Entry & Inventory">
-    <meta name="twitter:description" content="Scan multiple QR codes and export the data directly to an Excel sheet. Streamline your inventory and check-ins with JKM Edit.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/code-generators/qr-excel.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/code-generators/qr-excel.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
     <style>
-        /* --- Apple/Professional Theme Variables --- */
-        :root {
-            --bg-color: #f2f2f7;
-            --card-bg: #ffffff;
-            --primary-color: #007aff; /* Apple Blue */
-            --danger-color: #ff3b30;  /* Apple Red */
-            --text-color: #1d1d1f;
-            --sub-text: #86868b;
-            --border-radius: 12px;
-            --input-bg: #eef0f2;
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --success-color: #28a745;
+            --danger-color: #dc3545;
         }
 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color); 
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px 10px;
-            -webkit-font-smoothing: antialiased;
-        }
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
 
-        .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
+        /* --- Header Section --- */
+        .branding-bar {
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 1rem 2rem; background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color);
         }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { padding: 2rem 1.5rem; max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center;}
         
-        h1 { 
-            text-align: center; 
-            font-weight: 700; 
-            font-size: 1.5rem; 
-            margin-bottom: 20px; 
-            color: #000;
+        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%;}
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+
+        .tool-content-wrapper { 
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%;
         }
 
-        /* --- Cards --- */
-        .card { 
-            background: var(--card-bg); 
-            border-radius: var(--border-radius); 
-            padding: 20px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
-            margin-bottom: 20px; 
+        /* --- Layout Grid --- */
+        .workspace-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;
+        }
+        @media (max-width: 900px) {
+            .workspace-grid { grid-template-columns: 1fr; }
         }
 
-        /* --- Inputs & Labels --- */
-        label { 
-            font-size: 0.85rem; 
-            font-weight: 600; 
-            color: var(--sub-text); 
-            margin-bottom: 6px; 
-            display: block; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        /* Scan Section */
+        .scan-panel { background: #f9fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;}
+        .camera-box {
+            width: 100%; max-width: 400px; margin: 0 auto 20px auto; overflow: hidden; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid var(--primary-color); background: #000;
+            min-height: 250px; display: flex; align-items: center; justify-content: center;
         }
+        #reader { width: 100%; }
 
-        input[type="text"], select { 
-            width: 100%; 
-            padding: 12px 14px; 
-            border: none;
-            background: var(--input-bg);
-            border-radius: 8px; 
-            font-size: 16px; /* Prevents zoom on iOS */
-            color: var(--text-color);
-            box-sizing: border-box; 
-            margin-bottom: 15px;
-            outline: none;
-            transition: background 0.2s;
-        }
-        input[type="text"]:focus, select:focus {
-            background: #e0e0e0;
-        }
+        .scan-controls { display: flex; flex-direction: column; gap: 15px; }
+        .input-group { display: flex; flex-direction: column; text-align: left; }
+        .input-group label { font-weight: 600; font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 5px; }
+        .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 1rem; }
+        .input-group input:focus { outline: none; border-color: var(--primary-color); }
 
-        /* --- Buttons --- */
-        .btn { 
-            width: 100%; 
-            padding: 14px; 
-            border: none; 
-            border-radius: 10px; 
-            font-size: 16px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: opacity 0.2s;
+        .action-row { display: flex; gap: 10px; margin-top: 10px;}
+        .btn {
+            flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem;
         }
-        .btn:active { opacity: 0.7; }
+        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        .btn-danger { background: #fff0f0; color: var(--danger-color); border: 1px solid #ffcdd2; }
+        .btn-danger:hover { background: var(--danger-color); color: white; }
+
+        /* Data Section */
+        .data-panel { background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); height: 100%; display: flex; flex-direction: column;}
+        .data-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;}
+        .data-header h3 { margin: 0; color: var(--text-color); font-size: 1.2rem;}
         
-        .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-success { background-color: #34c759; color: white; margin-top: 5px; } /* Apple Green */
-        .btn-danger { background-color: var(--input-bg); color: var(--danger-color); font-weight: 500;} /* Ghost button style */
-        .btn-outline { background-color: var(--input-bg); color: var(--primary-color); }
+        .table-container { flex: 1; overflow-y: auto; max-height: 400px; border: 1px solid #eee; border-radius: 6px;}
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem;}
+        th { background: #f4f5f7; position: sticky; top: 0; color: var(--primary-color); font-weight: 600;}
+        tr:hover { background: #f9fafc; }
+        .del-btn { color: var(--danger-color); cursor: pointer; background: none; border: none; font-size: 1rem; }
 
-        /* --- Row for Dropdown + Buttons --- */
-        .input-row { display: flex; gap: 10px; align-items: flex-start; }
-        .input-row select { flex: 1; }
-        
-        .btn-icon { 
-            width: 46px; 
-            height: 43px; 
-            padding: 0; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 20px; 
-            border-radius: 8px;
-            background: var(--input-bg);
-            color: var(--primary-color);
-            border: none;
-            cursor: pointer;
-        }
-        
-        /* Specific style for delete category button */
-        .btn-icon.delete-cat {
-            color: var(--danger-color);
-            font-size: 18px;
-        }
+        .data-actions { display: flex; gap: 10px; margin-top: 15px; }
 
-        /* --- Scanner --- */
-        #reader { 
-            width: 100%; 
-            border-radius: 10px; 
-            overflow: hidden; 
-            background: black;
-            margin-bottom: 15px;
-        }
-        
-        /* --- Modal (Popup) --- */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal {
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            width: 85%;
-            max-width: 320px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        .modal h3 { margin-top: 0; margin-bottom: 15px; }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 10px; }
+        /* Flash Message */
+        #flash-msg { position: fixed; top: 20px; right: 20px; background: var(--success-color); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; display: none; animation: slideIn 0.3s ease-out;}
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        /* --- Grouped Tables --- */
-        .group-header { 
-            font-size: 1.1rem; 
-            font-weight: 700; 
-            margin: 25px 0 10px 5px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-        }
-        .badge {
-            background: #e5e5ea; 
-            color: #8e8e93; 
-            font-size: 0.8rem; 
-            padding: 2px 8px; 
-            border-radius: 6px;
-        }
+        /* --- Navigation & Ads --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
 
-        .data-table {
-            width: 100%;
-            background: white;
-            border-radius: 10px;
-            border-collapse: separate;
-            border-spacing: 0;
-            overflow: hidden;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            table-layout: fixed;
-        }
-        .data-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 0.95rem;
-            vertical-align: top;
-            word-wrap: break-word;
-        }
-        .data-table tr:last-child td { border-bottom: none; }
-        
-        .timestamp-col { color: var(--sub-text); font-size: 0.8rem; width: 75px; }
-        .action-col { width: 40px; text-align: right; vertical-align: middle !important; }
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        /* Delete row button */
-        .btn-delete-row {
-            background: transparent;
-            border: none;
-            color: #c7c7cc;
-            font-size: 20px;
-            line-height: 1;
-            padding: 5px;
-            cursor: pointer;
-        }
-        .btn-delete-row:hover { color: var(--danger-color); }
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1200px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-        .footer-controls { margin-top: 40px; display: flex; flex-direction: column; gap: 10px; }
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1200px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Inventory Scan</h1>
+    <header class="branding-bar">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
+        </a>
+    </header>
 
-    <div class="card">
-        <div id="reader"></div>
-        <button id="start-scan-btn" class="btn btn-primary">Start Camera</button>
-    </div>
+    <div id="flash-msg"><i class="fa-solid fa-check-circle"></i> Successfully Scanned!</div>
 
-    <div class="card">
-        <label>Scanned Data</label>
-        <input type="text" id="qr-data" placeholder="Scan a QR code..." readonly>
-
-        <label>Select Item Category</label>
-        <div class="input-row">
-            <select id="item-select">
-                <option value="" disabled selected>Select Category</option>
-            </select>
-            <button onclick="deleteCurrentCategory()" class="btn-icon delete-cat" title="Delete Selected Category">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-            </button>
-            <button onclick="openModal()" class="btn-icon" title="Add New Category">+</button>
-        </div>
-
-        <button onclick="saveEntry()" class="btn btn-success">Save Entry</button>
-    </div>
-
-    <div id="grouped-data-area">
-        </div>
-
-    <div class="footer-controls">
-        <button onclick="downloadExcel()" class="btn btn-outline">Export to Excel</button>
-        <button onclick="clearAllData()" class="btn btn-danger">Clear All History</button>
-    </div>
-</div>
-
-<div id="modal-overlay" class="modal-overlay">
-    <div class="modal">
-        <h3>Add Category</h3>
-        <input type="text" id="new-category-input" placeholder="E.g. Box A, Shelf 1..." autofocus>
-        <div class="modal-buttons">
-            <button onclick="closeModal()" class="btn" style="background:#e5e5ea; color:#333;">Cancel</button>
-            <button onclick="addNewItem()" class="btn btn-primary">Add</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    /* --- CONFIG --- */
-    const KEY_ENTRIES = 'qr_pro_entries';
-    const KEY_ITEMS = 'qr_pro_items';
-    
-    let html5QrcodeScanner = null;
-    let savedEntries = JSON.parse(localStorage.getItem(KEY_ENTRIES)) || [];
-    let availableItems = JSON.parse(localStorage.getItem(KEY_ITEMS)) || [];
-
-    /* --- INITIALIZATION --- */
-    window.onload = function() {
-        updateDropdown();
-        renderGroupedData();
-    };
-
-    /* --- MODAL LOGIC --- */
-    const modal = document.getElementById('modal-overlay');
-    const modalInput = document.getElementById('new-category-input');
-
-    function openModal() {
-        modal.style.display = 'flex';
-        modalInput.focus();
-    }
-
-    function closeModal() {
-        modal.style.display = 'none';
-        modalInput.value = '';
-    }
-
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeModal();
-    });
-
-    /* --- CATEGORY MANAGEMENT --- */
-    function addNewItem() {
-        const itemName = modalInput.value.trim();
-
-        if (!itemName) {
-            alert("Please enter a name.");
-            return;
-        }
-        if (availableItems.includes(itemName)) {
-            alert("This category already exists.");
-            return;
-        }
-
-        availableItems.push(itemName);
-        localStorage.setItem(KEY_ITEMS, JSON.stringify(availableItems));
+    <main class="dashboard-container">
         
-        updateDropdown();
-        closeModal();
+        <div class="tool-header">
+            <h1>QR Scan to Excel</h1>
+            <p>Scan barcodes or QR codes with your webcam and export directly to CSV.</p>
+        </div>
+
+        <div class="tool-content-wrapper">
+            <div class="workspace-grid">
+                
+                <div class="scan-panel">
+                    <div class="camera-box">
+                        <div id="reader"></div>
+                    </div>
+                    
+                    <div class="scan-controls">
+                        <div class="input-group">
+                            <label>Category (Optional)</label>
+                            <input type="text" id="category-input" placeholder="e.g., Warehouse A" list="cat-list">
+                            <datalist id="cat-list"></datalist>
+                        </div>
+                        <div class="input-group">
+                            <label>Item Name (Optional)</label>
+                            <input type="text" id="item-input" placeholder="e.g., Monitor X200" list="item-list">
+                            <datalist id="item-list"></datalist>
+                        </div>
+                        
+                        <div class="action-row">
+                            <button id="scan-btn" class="btn btn-primary">
+                                <i class="fa-solid fa-camera"></i> Start Camera
+                            </button>
+                            <button id="stop-btn" class="btn btn-danger" style="display: none;">
+                                <i class="fa-solid fa-stop"></i> Stop
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-panel">
+                    <div class="data-header">
+                        <h3>Scanned Data (<span id="count-badge">0</span>)</h3>
+                    </div>
+
+                    <div class="table-container" id="history-table">
+                        </div>
+
+                    <div class="data-actions">
+                        <button id="clear-btn" class="btn btn-danger" onclick="clearAllData()">
+                            <i class="fa-solid fa-trash"></i> Clear All
+                        </button>
+                        <button id="export-btn" class="btn btn-primary" style="background:#28a745;" onclick="downloadExcel()">
+                            <i class="fa-solid fa-file-csv"></i> Export to CSV
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="nav-btn btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the QR Scan to Excel Tool</h2>
+            <p>The QR Scan to Excel tool is an incredibly robust, high-performance data aggregation utility designed specifically for warehouse managers, event coordinators, retail inventory clerks, and logistics professionals. Historically, conducting a comprehensive physical inventory check required employees to walk around with clipboards, manually writing down complex serial numbers or alphanumeric SKUs, and then returning to a desk to painstakingly re-type hundreds of lines of data into Microsoft Excel. This archaic process is not only immensely time-consuming, but it is also highly susceptible to costly human data-entry errors. Our advanced web application completely modernizes this workflow by turning your laptop, tablet, or smartphone webcam into a professional-grade barcode and QR scanner.</p>
+            <p>The user interface is designed for rapid, frictionless data capture. By clicking the "Start Camera" button, the application instantly interfaces with your device’s native camera lens. As you hold a QR code or standard barcode up to the viewfinder, the optical recognition engine automatically decodes the payload in milliseconds, triggering a satisfying visual flash notification. Before scanning, you can configure the "Category" and "Item Name" input fields; the tool intelligently groups your subsequent scans under these tags, which is perfect for organizing data by specific warehouse aisles or specific product models. As you scan, the data is automatically appended to a clean, easy-to-read graphical table on the right side of the screen, complete with a highly precise, timestamped audit trail.</p>
+            <p>The true power of this application lies in its localized architecture and seamless export capabilities. Once your inventory cycle or event check-in session is complete, a single click of the "Export to CSV" button instantly compiles your aggregated data and downloads a perfectly formatted, comma-separated values file directly to your hard drive, ready to be opened in Excel or Google Sheets. Crucially, we built this tool prioritizing your digital security. The entire optical scanning and data aggregation process runs using client-side JavaScript. This means your proprietary corporate inventory codes, event attendee IDs, and tracking hashes are never uploaded to the cloud or transmitted to an external server. Your data remains strictly confined to your local browser’s storage, ensuring absolute confidentiality. Thank you for relying on our platform to optimize your physical inventory operations.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
+            });
+        });
+
+        // --- SCANNER LOGIC ---
+        const KEY_ENTRIES = 'jkm_qr_entries';
+        const KEY_CATS = 'jkm_qr_categories';
+        const KEY_ITEMS = 'jkm_qr_items';
+
+        let html5QrcodeScanner;
+        let savedEntries = JSON.parse(localStorage.getItem(KEY_ENTRIES)) || [];
+        let savedCategories = JSON.parse(localStorage.getItem(KEY_CATS)) || [];
+        let savedItems = JSON.parse(localStorage.getItem(KEY_ITEMS)) || [];
+
+        const startBtn = document.getElementById('scan-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const categoryInput = document.getElementById('category-input');
+        const itemInput = document.getElementById('item-input');
+        const flashMsg = document.getElementById('flash-msg');
         
-        // Auto-select the newly created item
-        document.getElementById('item-select').value = itemName;
-    }
+        initDataLists();
+        renderTable();
 
-    function deleteCurrentCategory() {
-        const select = document.getElementById('item-select');
-        const categoryToDelete = select.value;
-
-        if (!categoryToDelete) {
-            alert("Please select a category to delete.");
-            return;
-        }
-
-        // CONSTRAINT CHECK: Is this category used in any saved entry?
-        const isUsed = savedEntries.some(entry => entry.item === categoryToDelete);
-
-        if (isUsed) {
-            alert(`Cannot delete "${categoryToDelete}" because it contains saved entries. \n\nPlease delete the entries associated with this category first.`);
-            return;
-        }
-
-        if (confirm(`Are you sure you want to delete the category "${categoryToDelete}"?`)) {
-            // Remove from array
-            availableItems = availableItems.filter(item => item !== categoryToDelete);
-            localStorage.setItem(KEY_ITEMS, JSON.stringify(availableItems));
+        startBtn.addEventListener('click', () => {
+            html5QrcodeScanner = new Html5Qrcode("reader");
             
-            updateDropdown();
-            // Reset selection
-            select.value = "";
-        }
-    }
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
-    function updateDropdown() {
-        const select = document.getElementById('item-select');
-        const currentVal = select.value;
-        
-        select.innerHTML = '<option value="" disabled selected>Select Category</option>';
-        
-        availableItems.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item;
-            option.textContent = item;
-            select.appendChild(option);
+            html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess)
+            .then(() => {
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'inline-flex';
+            })
+            .catch(err => alert("Camera error: " + err));
         });
 
-        // Restore selection if it still exists
-        if (availableItems.includes(currentVal)) {
-            select.value = currentVal;
-        }
-    }
-
-    /* --- SCANNER LOGIC --- */
-    const startBtn = document.getElementById('start-scan-btn');
-    
-    startBtn.addEventListener('click', () => {
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.stop().then(() => {
-                html5QrcodeScanner.clear();
-                html5QrcodeScanner = null;
-                startBtn.textContent = "Start Camera";
-                startBtn.classList.remove('btn-danger');
-                startBtn.classList.add('btn-primary');
-            }).catch(err => console.error(err));
-            return;
-        }
-
-        html5QrcodeScanner = new Html5Qrcode("reader");
-        const qrBoxSize = Math.min(250, window.innerWidth - 60);
-
-        html5QrcodeScanner.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: qrBoxSize, height: qrBoxSize } },
-            (decodedText) => {
-                document.getElementById('qr-data').value = decodedText;
-                if(navigator.vibrate) navigator.vibrate(50);
-            },
-            (error) => { }
-        ).then(() => {
-            startBtn.textContent = "Stop Camera";
-            startBtn.classList.remove('btn-primary');
-            startBtn.classList.add('btn-danger'); // Red when active
+        stopBtn.addEventListener('click', () => {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    startBtn.style.display = 'inline-flex';
+                    stopBtn.style.display = 'none';
+                });
+            }
         });
-    });
 
-    /* --- ENTRY MANAGEMENT --- */
-    function saveEntry() {
-        const qrInput = document.getElementById('qr-data');
-        const itemSelect = document.getElementById('item-select');
-        
-        const qrData = qrInput.value;
-        const itemType = itemSelect.value;
+        function onScanSuccess(decodedText) {
+            const cat = categoryInput.value.trim() || 'Uncategorized';
+            const itm = itemInput.value.trim() || 'Unknown Item';
+            
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString();
+            const fullStr = now.toLocaleString();
 
-        if (!qrData) {
-            alert("Please scan a code first.");
-            return;
+            const newEntry = {
+                id: Date.now(),
+                category: cat,
+                item: itm,
+                qr: decodedText,
+                time: timeStr,
+                fullTime: fullStr
+            };
+
+            savedEntries.unshift(newEntry); 
+            
+            if (cat !== 'Uncategorized' && !savedCategories.includes(cat)) savedCategories.push(cat);
+            if (itm !== 'Unknown Item' && !savedItems.includes(itm)) savedItems.push(itm);
+
+            saveToLocal();
+            initDataLists();
+            renderTable();
+
+            // Flash effect
+            flashMsg.style.display = 'block';
+            setTimeout(() => { flashMsg.style.display = 'none'; }, 1500);
         }
-        if (!itemType) {
-            alert("Please select a category.");
-            return;
+
+        function saveToLocal() {
+            localStorage.setItem(KEY_ENTRIES, JSON.stringify(savedEntries));
+            localStorage.setItem(KEY_CATS, JSON.stringify(savedCategories));
+            localStorage.setItem(KEY_ITEMS, JSON.stringify(savedItems));
         }
 
-        const newEntry = {
-            id: Date.now(),
-            timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-            fullTime: new Date().toLocaleString(),
-            qr: qrData,
-            item: itemType
+        function initDataLists() {
+            const catList = document.getElementById('cat-list');
+            const itmList = document.getElementById('item-list');
+            
+            catList.innerHTML = savedCategories.map(c => `<option value="${c}">`).join('');
+            itmList.innerHTML = savedItems.map(i => `<option value="${i}">`).join('');
+        }
+
+        window.deleteEntry = function(id) {
+            savedEntries = savedEntries.filter(e => e.id !== id);
+            saveToLocal();
+            renderTable();
         };
 
-        savedEntries.push(newEntry);
-        localStorage.setItem(KEY_ENTRIES, JSON.stringify(savedEntries));
-
-        renderGroupedData();
-        
-        // --- RESET FIELDS ---
-        qrInput.value = '';        // Clear QR
-        itemSelect.value = "";     // Reset Category to default (Select Category)
-    }
-
-    function deleteEntry(id) {
-        if (confirm("Delete this entry?")) {
-            savedEntries = savedEntries.filter(entry => entry.id !== id);
-            localStorage.setItem(KEY_ENTRIES, JSON.stringify(savedEntries));
-            renderGroupedData();
-        }
-    }
-
-    /* --- RENDER DATA LOGIC --- */
-    function renderGroupedData() {
-        const container = document.getElementById('grouped-data-area');
-        container.innerHTML = '';
-
-        if (savedEntries.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: #86868b; margin-top: 30px;">No scans recorded yet.</p>';
-            return;
-        }
-
-        // Loop through available items to maintain order, plus handle orphans
-        const uniqueItems = [...new Set([...availableItems, ...savedEntries.map(e=>e.item)])];
-
-        uniqueItems.forEach(item => {
-            const itemEntries = savedEntries.filter(entry => entry.item === item);
+        function renderTable() {
+            const container = document.getElementById('history-table');
+            const badge = document.getElementById('count-badge');
             
-            if (itemEntries.length > 0) {
-                // Header
-                const header = document.createElement('div');
-                header.className = 'group-header';
-                header.innerHTML = `${item} <span class="badge">${itemEntries.length}</span>`;
-                container.appendChild(header);
+            badge.innerText = savedEntries.length;
 
-                // Table
+            if (savedEntries.length === 0) {
+                container.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">No scans yet.</div>';
+                return;
+            }
+
+            // Group by category
+            const grouped = savedEntries.reduce((acc, curr) => {
+                if (!acc[curr.category]) acc[curr.category] = [];
+                acc[curr.category].push(curr);
+                return acc;
+            }, {});
+
+            container.innerHTML = '';
+            
+            Object.keys(grouped).forEach(cat => {
+                const catHeader = document.createElement('div');
+                catHeader.style.padding = '8px 10px';
+                catHeader.style.backgroundColor = 'var(--primary-color)';
+                catHeader.style.color = 'white';
+                catHeader.style.fontWeight = 'bold';
+                catHeader.style.fontSize = '0.9rem';
+                catHeader.innerText = cat;
+                container.appendChild(catHeader);
+
                 const table = document.createElement('table');
-                table.className = 'data-table';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Time</th>
+                            <th>QR Content</th>
+                            <th>Del</th>
+                        </tr>
+                    </thead>
+                `;
                 
-                // Reverse to show newest on top
-                const rows = itemEntries.slice().reverse().map(e => `
+                const rows = grouped[cat].map(e => `
                     <tr>
-                        <td class="timestamp-col">${e.timestamp}</td>
-                        <td>${e.qr}</td>
-                        <td class="action-col">
-                            <button onclick="deleteEntry(${e.id})" class="btn-delete-row" title="Delete Entry">&times;</button>
+                        <td style="font-weight:600;">${e.item}</td>
+                        <td style="color:#666;">${e.time}</td>
+                        <td style="word-break: break-all; font-family:monospace;">${e.qr}</td>
+                        <td>
+                            <button class="del-btn" onclick="deleteEntry(${e.id})"><i class="fa-solid fa-trash-can"></i></button>
                         </td>
                     </tr>
                 `).join('');
                 
-                table.innerHTML = `<tbody>${rows}</tbody>`;
+                table.innerHTML += `<tbody>${rows}</tbody>`;
                 container.appendChild(table);
+            });
+        }
+
+        window.downloadExcel = function() {
+            if (savedEntries.length === 0) return alert("No data to export.");
+
+            const sorted = savedEntries.slice().sort((a, b) => a.item.localeCompare(b.item));
+            let csv = "data:text/csv;charset=utf-8,Category,Date Time,QR Content\n";
+            
+            sorted.forEach(e => {
+                const safeQr = e.qr.replace(/"/g, '""');
+                const safeItem = e.item.replace(/"/g, '""');
+                csv += `"${e.category}","${safeItem}","${e.fullTime}","${safeQr}"\n`;
+            });
+
+            const link = document.createElement("a");
+            link.href = encodeURI(csv);
+            link.download = "jkm_inventory_scan.csv";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        window.clearAllData = function() {
+            if (confirm("Delete ALL history and categories? This cannot be undone.")) {
+                localStorage.removeItem(KEY_ENTRIES);
+                localStorage.removeItem(KEY_ITEMS);
+                localStorage.removeItem(KEY_CATS);
+                savedEntries = []; savedCategories = []; savedItems = [];
+                initDataLists();
+                renderTable();
             }
-        });
-    }
-
-    /* --- EXPORT/CLEAR LOGIC --- */
-    function downloadExcel() {
-        if (savedEntries.length === 0) {
-            alert("No data to export.");
-            return;
-        }
-
-        const sorted = savedEntries.slice().sort((a, b) => a.item.localeCompare(b.item));
-        let csv = "data:text/csv;charset=utf-8,Category,Date Time,QR Content\n";
-        
-        sorted.forEach(e => {
-            const safeQr = e.qr.replace(/"/g, '""');
-            const safeItem = e.item.replace(/"/g, '""');
-            csv += `"${safeItem}","${e.fullTime}","${safeQr}"\n`;
-        });
-
-        const link = document.createElement("a");
-        link.href = encodeURI(csv);
-        link.download = "inventory_scan.csv";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    function clearAllData() {
-        if (confirm("Delete ALL history and categories? This cannot be undone.")) {
-            localStorage.removeItem(KEY_ENTRIES);
-            localStorage.removeItem(KEY_ITEMS);
-            savedEntries = [];
-            availableItems = [];
-            updateDropdown();
-            renderGroupedData();
-        }
-    }
-</script>
-
+        };
+    </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang='en' data-theme='corporate-blue'>
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
@@ -22,47 +22,9 @@
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Online File Splitter - Split Large Files Instantly">
-    <meta name="twitter:description" content="Divide large text or CSV files into smaller chunks. Set your own part size or number of files. No data loss, fast processing.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/file-tools/file-splitter.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/file-tools/file-splitter.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
-    
+
     <style>
         /* --- Corporate Blue Theme Variables --- */
         :root { 
@@ -73,474 +35,308 @@
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
             --border-color: #dfe1e6;
-            --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
-            --transition-speed: 0.3s; 
+            --success-color: #28a745;
         }
 
-        /* --- Basic Reset & Layout --- */
-        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
 
-        /* --- Header Section (Left Aligned) --- */
-        .main-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 1rem 2rem;
-            background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid var(--primary-color);
+        /* --- Header Section --- */
+        .branding-bar {
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 1rem 2rem; background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color);
         }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            width: 50px; 
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .brand-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--text-color);
-        }
-
-        /* --- Advertisement Box (728x90) --- */
-        .ad-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin: 2rem 0;
-            padding: 0 1rem;
-        }
-
-        .ad-slot {
-            width: 728px;
-            height: 90px;
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            overflow: hidden;
-            /* In production, replace text content with your Ad code */
-        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- Main Tool Container --- */
-        .dashboard-container { 
-            padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 1000px; 
-            margin: auto; 
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .dashboard-container { padding: 2rem 1.5rem; max-width: 1000px; margin: auto; display: flex; flex-direction: column; align-items: center;}
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%;}
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
-        
+
         .tool-content-wrapper { 
-            background: var(--surface-color); 
-            padding: 2rem; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; text-align: center;
         }
 
-        /* --- Upload Area --- */
-        .upload-area { 
-            border: 3px dashed var(--primary-color); 
-            border-radius: 10px; 
-            padding: 2.5rem 1.5rem; 
-            margin-bottom: 2rem; 
-            cursor: pointer; 
-            transition: background-color var(--transition-speed); 
-            background-color: #f9fafc;
-            text-align: center;
+        /* --- Upload Zone --- */
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
+            text-align: center; cursor: pointer; background-color: var(--surface-color); 
+            transition: 0.3s; margin: 0 auto 20px auto; max-width: 800px;
         }
-        .upload-area:hover, .upload-area.drag-over { 
-            background-color: rgba(0, 82, 204, 0.05); 
-        }
-        .upload-icon { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
-        .upload-text { font-size: 1.1rem; font-weight: 600; }
-        #file-upload { display: none; }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+        
+        .file-info { font-size: 1.1rem; font-weight: 600; color: var(--primary-color); margin-bottom: 20px; }
 
-        /* --- Settings Section --- */
+        /* --- Settings --- */
         .settings-panel {
-            background: #f4f5f7;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border-color);
+            background: #f9fafc; padding: 20px; border-radius: 8px; border: 1px solid #eee;
+            margin-bottom: 20px; text-align: left; max-width: 600px; margin: 0 auto 20px auto;
         }
-
-        .split-options {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .radio-group {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .radio-item {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .radio-item input { margin-right: 0.5rem; width: 18px; height: 18px; }
-
-        .input-group {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .text-input {
-            padding: 0.6rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            width: 120px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-        }
-
-        select {
-            padding: 0.6rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            background: white;
+        
+        .control-group { margin-bottom: 15px; }
+        .control-group label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-color); }
+        .control-group input[type="number"], .control-group select {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 1rem;
         }
 
         /* --- Buttons --- */
         .btn {
-            padding: 0.8rem 2rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 1.1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            width: 100%; max-width: 400px; padding: 12px; border: none; border-radius: 6px;
+            font-weight: 600; cursor: pointer; transition: 0.3s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.1rem; margin: 0 auto;
         }
-
-        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; justify-content: center; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
-        .btn-primary:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.2); }
+        
+        .btn-reset { background: transparent; color: #666; text-decoration: underline; margin-top: 15px; width: auto; font-size: 0.95rem; }
 
         /* --- Results Area --- */
-        .results-area {
-            margin-top: 2rem;
-            display: none;
-        }
+        #results-area { margin-top: 2rem; border-top: 2px solid #eee; padding-top: 2rem; display: none; }
+        #results-area h3 { color: var(--success-color); margin-bottom: 1.5rem; }
         
-        .results-title {
-            font-weight: 700;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .chunks-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;
         }
-
-        .chunks-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
         .chunk-card {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            transition: all 0.2s;
+            background: #fff; border: 1px solid var(--border-color); padding: 15px;
+            border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center;
         }
-        .chunk-card:hover { border-color: var(--primary-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-
-        .chunk-name { font-weight: 600; font-size: 0.9rem; word-break: break-all; }
-        .chunk-size { font-size: 0.8rem; color: #666; }
-
+        .chunk-name { font-weight: 600; color: var(--text-color); font-size: 0.95rem; margin-bottom: 5px; word-break: break-all; }
+        .chunk-size { font-size: 0.85rem; color: #666; margin-bottom: 15px; }
+        
         .download-chunk-btn {
-            margin-top: auto;
-            padding: 0.4rem;
-            background: var(--primary-color);
-            color: white;
-            text-align: center;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 0.9rem;
+            display: inline-block; padding: 8px 15px; background: #e9ecef; color: var(--primary-color);
+            text-decoration: none; border-radius: 4px; font-size: 0.9rem; font-weight: 600; transition: 0.2s;
         }
-        .download-chunk-btn:hover { background: var(--secondary-color); }
+        .download-chunk-btn:hover { background: var(--primary-color); color: white; }
 
-        /* --- Bottom Navigation --- */
-        .bottom-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: auto; 
-            padding-top: 2rem;
-            flex-wrap: wrap;
-        }
+        /* --- Navigation & Ads --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.15); }
 
-        .nav-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 2rem;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        .nav-btn-outline {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1100px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-        .nav-btn-fill {
-            background: var(--primary-color);
-            color: white;
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-fill:hover {
-            background: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1100px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
 
-        /* Responsive Ad */
-        @media (max-width: 768px) {
-            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
-        }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
     </style>
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
-    <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+    <header class="branding-bar">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
+        
         <div class="tool-header">
-            <h2>File Splitter</h2>
-            <p>Split large files into smaller, manageable chunks locally.</p>
+            <h1>Online File Splitter</h1>
+            <p>Divide large text or CSV files into smaller, manageable chunks instantly.</p>
         </div>
 
         <div class="tool-content-wrapper">
             
-            <!-- Upload Area -->
-            <div class="upload-area" id="upload-area">
-                <input type="file" id="file-upload">
-                <div class="upload-icon"><i class="fa-solid fa-scissors"></i></div>
-                <div class="upload-text">
-                    <p id="file-status"><strong>Drag & Drop file here</strong></p>
-                    <p id="file-name-display">or click to browse</p>
+            <div id="upload-stage">
+                <input type="file" id="file-input" class="hidden" accept=".txt,.csv,.log,.md"/>
+                <div id="dropzone">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <p><strong>Click to Upload File</strong><br><span style="font-weight:400; font-size:0.95rem; color:#666;">or drag and drop a Text/CSV file here</span></p>
                 </div>
             </div>
 
-            <!-- Configuration Panel -->
-            <div class="settings-panel">
-                <div class="radio-group">
-                    <label class="radio-item">
-                        <input type="radio" name="split-mode" value="size" checked> Split by Size
-                    </label>
-                    <label class="radio-item">
-                        <input type="radio" name="split-mode" value="quantity"> Split by Quantity
-                    </label>
-                </div>
+            <div id="editor-stage" class="hidden">
+                <div class="file-info" id="file-info">Loaded: document.txt (0 KB)</div>
 
-                <div class="split-options">
-                    <!-- Option 1: By Size -->
-                    <div id="opt-size-container" class="input-group">
-                        <label>Max size per chunk:</label>
-                        <input type="number" id="chunk-size-val" class="text-input" value="10" min="1">
-                        <select id="chunk-size-unit">
-                            <option value="1024">KB</option>
-                            <option value="1048576" selected>MB</option>
-                            <option value="1073741824">GB</option>
+                <div class="settings-panel">
+                    <div class="control-group">
+                        <label>Split Method</label>
+                        <select id="split-method">
+                            <option value="lines">Split by Number of Lines</option>
+                            <option value="parts">Split into Number of Files</option>
                         </select>
                     </div>
-
-                    <!-- Option 2: By Quantity -->
-                    <div id="opt-quantity-container" class="input-group" style="display: none;">
-                        <label>Number of parts:</label>
-                        <input type="number" id="chunk-quantity-val" class="text-input" value="2" min="2">
+                    <div class="control-group">
+                        <label id="split-val-label">Lines per file</label>
+                        <input type="number" id="split-val" value="1000" min="1">
                     </div>
                 </div>
-            </div>
 
-            <!-- Action Button -->
-            <button class="btn btn-primary" id="split-btn" disabled>
-                <i class="fa-solid fa-bolt"></i> Split File Now
-            </button>
-            
-            <!-- Results List -->
-            <div class="results-area" id="results-area">
-                <div class="results-title">
-                    <span>Created Chunks:</span>
-                    <span id="total-parts-count" style="font-weight: 400; font-size: 0.9rem; color: #666;"></span>
+                <button class="btn btn-primary" id="process-btn">
+                    <i class="fa-solid fa-scissors"></i> Split File
+                </button>
+                <br>
+                <button class="btn btn-reset" onclick="location.reload()">Start Over</button>
+
+                <div id="results-area">
+                    <h3><i class="fa-solid fa-check-circle"></i> File Successfully Split!</h3>
+                    <div class="chunks-grid" id="chunks-list">
+                        </div>
                 </div>
-                <div class="chunks-list" id="chunks-list"></div>
             </div>
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
-        <div class="bottom-nav">
-            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/tools/file-tools.html" class="nav-btn btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Online File Splitter</h2>
+            <p>The Online File Splitter is a critically essential, highly robust digital utility engineered explicitly for data scientists, administrative professionals, and web developers who frequently interact with massive, cumbersome datasets. In the modern data-driven landscape, it is incredibly common to export enormous CSV files, comprehensive server logs, or sprawling plain text databases that easily exceed massive file sizes. Opening these massive files in standard spreadsheet software like Microsoft Excel or text editors like Notepad often leads to immediate software crashes, frozen computer screens, and corrupted data. Furthermore, most email clients, corporate messaging platforms, and web-based database import tools enforce strict file size limits. Our powerful web application provides an instant, elegant solution by allowing you to surgically partition your colossal documents into perfectly sized, manageable chunks.</p>
+            <p>By utilizing an incredibly intuitive user interface, you can drag and drop your massive file directly into the browser. From there, you have absolute granular control over how the document is divided. You can choose to split the file by a specific number of lines—which is absolutely perfect for ensuring CSV headers align properly across chunked database imports—or you can split the file into a specific total number of smaller files. The dynamic splitting engine processes your request instantly, generating a visually clean grid of downloadable file chunks, complete with automatically sequentially numbered file extensions (e.g., part001, part002) so you never lose track of your data order.</p>
+            <p>The most revolutionary aspect of this utility is its underlying processing architecture. By leveraging the advanced HTML5 File API, the entire heavy lifting of parsing, calculating, and splitting your massive files occurs strictly on the client side, entirely within your local device's memory cache. Your highly confidential financial spreadsheets, proprietary corporate data logs, and sensitive customer email lists are never uploaded to the cloud or transmitted to an external server. This localized execution model guarantees 100% data security and absolute user privacy. Furthermore, this local processing ensures that you are never throttled by slow internet upload speeds or frustrating artificial file-size limits imposed by cloud-based competitors, granting you a lightning-fast, zero-latency experience. Thank you for relying on our platform.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
         </div>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const uploadArea = document.getElementById('upload-area');
-            const fileInput = document.getElementById('file-upload');
-            const fileStatus = document.getElementById('file-status');
-            const fileNameDisplay = document.getElementById('file-name-display');
-            
-            const splitBtn = document.getElementById('split-btn');
-            const chunksList = document.getElementById('chunks-list');
-            const resultsArea = document.getElementById('results-area');
-            const totalPartsCount = document.getElementById('total-parts-count');
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
+            });
 
-            // Inputs
-            const radios = document.getElementsByName('split-mode');
-            const sizeContainer = document.getElementById('opt-size-container');
-            const quantityContainer = document.getElementById('opt-quantity-container');
-            const sizeVal = document.getElementById('chunk-size-val');
-            const sizeUnit = document.getElementById('chunk-size-unit');
-            const quantityVal = document.getElementById('chunk-quantity-val');
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('file-input');
+            const uploadStage = document.getElementById('upload-stage');
+            const editorStage = document.getElementById('editor-stage');
+            const fileInfo = document.getElementById('file-info');
+            
+            const splitMethod = document.getElementById('split-method');
+            const splitValLabel = document.getElementById('split-val-label');
+            const splitVal = document.getElementById('split-val');
+            
+            const processBtn = document.getElementById('process-btn');
+            const resultsArea = document.getElementById('results-area');
+            const chunksList = document.getElementById('chunks-list');
 
             let selectedFile = null;
 
-            // --- Toggle Modes ---
-            radios.forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    if (e.target.value === 'size') {
-                        sizeContainer.style.display = 'flex';
-                        quantityContainer.style.display = 'none';
-                    } else {
-                        sizeContainer.style.display = 'none';
-                        quantityContainer.style.display = 'flex';
-                    }
-                });
-            });
+            dropzone.onclick = () => fileInput.click();
+            dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; dropzone.style.borderColor = 'var(--primary-color)'; };
+            dropzone.ondragleave = () => { dropzone.style.backgroundColor = 'var(--surface-color)'; dropzone.style.borderColor = '#ccc'; };
+            dropzone.ondrop = (e) => { e.preventDefault(); dropzone.style.backgroundColor = 'var(--surface-color)'; handleFile(e.dataTransfer.files[0]); };
+            fileInput.onchange = (e) => handleFile(e.target.files[0]);
 
-            // --- File Handling ---
-            uploadArea.addEventListener('click', () => fileInput.click());
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('drag-over');
-            });
-            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('drag-over');
-                if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-            });
-            fileInput.addEventListener('change', (e) => {
-                if(e.target.files.length) handleFile(e.target.files[0]);
+            splitMethod.addEventListener('change', (e) => {
+                if(e.target.value === 'lines') {
+                    splitValLabel.innerText = "Lines per file";
+                    splitVal.value = 1000;
+                } else {
+                    splitValLabel.innerText = "Number of files to create";
+                    splitVal.value = 5;
+                }
             });
 
             function handleFile(file) {
+                if (!file) return;
                 selectedFile = file;
-                fileStatus.innerHTML = `<strong>Selected:</strong>`;
-                fileNameDisplay.textContent = `${file.name} (${formatBytes(file.size)})`;
-                splitBtn.disabled = false;
-                resultsArea.style.display = 'none';
+                fileInfo.innerText = `Loaded: ${file.name} (${formatBytes(file.size)})`;
+                uploadStage.classList.add('hidden');
+                editorStage.classList.remove('hidden');
             }
 
-            // --- Split Logic ---
-            splitBtn.addEventListener('click', () => {
+            processBtn.addEventListener('click', () => {
                 if (!selectedFile) return;
+                
+                const val = parseInt(splitVal.value);
+                if (!val || val <= 0) return alert("Please enter a valid number.");
 
-                resultsArea.style.display = 'block';
-                chunksList.innerHTML = ''; // Clear previous
-                splitBtn.disabled = true;
-                splitBtn.textContent = 'Processing...';
+                const reader = new FileReader();
+                processBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+                processBtn.disabled = true;
 
-                // Wait a tick to let UI update
-                setTimeout(() => {
-                    processSplit();
-                    splitBtn.disabled = false;
-                    splitBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Split File Now';
-                }, 100);
+                reader.onload = (e) => {
+                    const text = e.target.result;
+                    processText(text, val, splitMethod.value);
+                    
+                    resultsArea.style.display = 'block';
+                    processBtn.innerHTML = '<i class="fa-solid fa-check"></i> Split Complete';
+                };
+                
+                reader.readAsText(selectedFile);
             });
 
-            function processSplit() {
-                const fileSize = selectedFile.size;
-                let chunkSize = 0;
-                let totalChunks = 0;
+            function processText(text, val, method) {
+                chunksList.innerHTML = ''; // Clear old
 
-                const mode = document.querySelector('input[name="split-mode"]:checked').value;
+                // Split text by lines
+                const lines = text.split(/\r?\n/);
+                let chunks = [];
 
-                if (mode === 'size') {
-                    const unitMultiplier = parseInt(sizeUnit.value);
-                    chunkSize = parseFloat(sizeVal.value) * unitMultiplier;
-                    if (chunkSize <= 0) chunkSize = 1024 * 1024; // Default 1MB safety
-                    totalChunks = Math.ceil(fileSize / chunkSize);
+                if (method === 'lines') {
+                    for (let i = 0; i < lines.length; i += val) {
+                        chunks.push(lines.slice(i, i + val).join('\n'));
+                    }
                 } else {
-                    totalChunks = parseInt(quantityVal.value);
-                    if (totalChunks < 2) totalChunks = 2;
-                    chunkSize = Math.ceil(fileSize / totalChunks);
+                    const linesPerChunk = Math.ceil(lines.length / val);
+                    for (let i = 0; i < lines.length; i += linesPerChunk) {
+                        chunks.push(lines.slice(i, i + linesPerChunk).join('\n'));
+                    }
                 }
 
-                totalPartsCount.textContent = `${totalChunks} parts`;
-
-                // Create Chunks
-                for (let i = 0; i < totalChunks; i++) {
-                    const start = i * chunkSize;
-                    const end = Math.min(start + chunkSize, fileSize);
-                    
-                    const blob = selectedFile.slice(start, end);
-                    
-                    // Create UI Card
+                // Generate Blobs
+                for (let i = 0; i < chunks.length; i++) {
+                    const blob = new Blob([chunks[i]], { type: 'text/plain' });
                     createChunkCard(i + 1, blob, selectedFile.name);
                 }
             }
@@ -549,7 +345,7 @@
                 const card = document.createElement('div');
                 card.className = 'chunk-card';
                 
-                // Simple naming convention: file.ext.001, file.ext.002
+                // Naming convention: file.ext.part001
                 const partExt = index.toString().padStart(3, '0');
                 const partName = `${origName}.part${partExt}`;
                 const url = URL.createObjectURL(blob);

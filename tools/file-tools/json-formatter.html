@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang='en' data-theme='corporate-blue'>
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
@@ -22,47 +22,9 @@
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="JSON Formatter & Validator - Pretty Print JSON">
-    <meta name="twitter:description" content="Format, beautify, and validate JSON code online. Easy-to-read tree view with syntax highlighting and error detection.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/file-tools/json-formatter.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/file-tools/json-formatter.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
-    
+
     <style>
         /* --- Corporate Blue Theme Variables --- */
         :root { 
@@ -75,357 +37,275 @@
             --border-color: #dfe1e6;
             --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
-            --transition-speed: 0.3s; 
-            --error-color: #dc3545;
+            --danger-color: #dc3545;
             --success-color: #28a745;
         }
 
-        /* --- Basic Reset & Layout --- */
-        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
 
-        /* --- Header Section (Left Aligned) --- */
-        .main-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 1rem 2rem;
-            background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid var(--primary-color);
-            margin-bottom: 2rem;
+        /* --- Header Section --- */
+        .branding-bar {
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 1rem 2rem; background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color);
         }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            width: 50px; 
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .brand-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--text-color);
-        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- Main Tool Container --- */
-        .dashboard-container { 
-            padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 1200px; 
-            margin: auto; 
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .dashboard-container { padding: 2rem 1.5rem; max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center;}
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%;}
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
-        
+
         .tool-content-wrapper { 
-            background: var(--surface-color); 
-            padding: 2rem; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%;
         }
 
-        /* --- Controls --- */
-        .controls-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+        /* Toolbar */
+        .config-toolbar {
+            display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center;
+            background: #f9fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;
         }
 
-        .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
-
-        .btn {
-            padding: 0.6rem 1.2rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .btn-action {
+            padding: 10px 20px; border: 1px solid var(--primary-color); background: white;
+            color: var(--primary-color); border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: 'Poppins', sans-serif;
+            display: inline-flex; align-items: center; gap: 5px;
         }
+        .btn-action:hover { background: var(--primary-color); color: white; }
 
-        .btn-primary { background: var(--gradient); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .btn-format { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-format:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.15); }
         
-        .btn-secondary { background-color: #e2e6ea; color: var(--text-color); }
-        .btn-secondary:hover { background-color: #dbe0e5; }
+        .btn-danger { color: var(--danger-color); border-color: var(--danger-color); }
+        .btn-danger:hover { background: var(--danger-color); color: white; }
 
-        .btn-outline { border: 1px solid var(--text-color); background: transparent; }
-        .btn-outline:hover { background: #f4f5f7; }
+        /* Editor Grid */
+        .editor-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media(min-width: 850px) { .editor-grid { grid-template-columns: 1fr 1fr; } }
 
-        /* --- Editor Grid --- */
-        .editor-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .editor-grid { grid-template-columns: 1fr; }
-        }
-
-        .editor-column { display: flex; flex-direction: column; }
-
-        .editor-label {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--secondary-color);
-        }
+        .editor-box { display: flex; flex-direction: column; gap: 8px; }
+        .box-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--secondary-color); font-size: 0.95rem; padding: 0 5px;}
+        .stats { font-size: 0.8rem; color: #888; font-weight: normal; }
         
-        .file-size { font-size: 0.8rem; color: #888; font-weight: normal; }
-
         textarea {
-            width: 100%;
-            height: 400px;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: 'Courier New', Courier, monospace; /* Monospace for code */
-            font-size: 14px;
-            resize: vertical;
-            background-color: #f9fafc;
-            color: #333;
-            transition: border-color 0.3s;
-            white-space: pre;
-            overflow-wrap: normal;
-            overflow-x: auto;
+            width: 100%; height: 450px; padding: 15px; border: 1px solid var(--border-color);
+            border-radius: 8px; font-family: 'Courier New', Courier, monospace; font-size: 0.95rem;
+            resize: vertical; background: #fff; transition: border-color 0.3s;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); white-space: pre;
         }
+        textarea:focus { outline: none; border-color: var(--primary-color); }
+        #json-output { background: #f0f3f7; }
 
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+        /* Status Box */
+        .status-box {
+            padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; font-weight: 600;
+            display: none; text-align: left; font-size: 0.95rem;
         }
+        .status-error { background: #f8d7da; color: var(--danger-color); border: 1px solid #f5c6cb; }
+        .status-success { background: #d4edda; color: var(--success-color); border: 1px solid #c3e6cb; }
 
-        /* --- Message Box --- */
-        .status-msg {
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            display: none;
-        }
-        .status-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .status-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        /* --- Navigation & Ads --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.15); }
 
-        /* --- Bottom Navigation Buttons --- */
-        .bottom-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: auto; 
-            padding-top: 2rem;
-            flex-wrap: wrap;
-        }
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        .nav-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 2rem;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1200px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-        .nav-btn-outline {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-outline:hover {
-            background: rgba(0, 82, 204, 0.05);
-        }
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1200px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
 
-        .nav-btn-fill {
-            background: var(--primary-color);
-            color: white;
-            border: 2px solid var(--primary-color);
-        }
-        .nav-btn-fill:hover {
-            background: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+
     </style>
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
-    <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+    <header class="branding-bar">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
+        
         <div class="tool-header">
-            <h2>JSON Formatter / Minifier</h2>
-            <p>Beautify, validate, and minify your JSON data.</p>
+            <h1>JSON Formatter & Validator</h1>
+            <p>Beautify, parse, and debug your JSON data strings instantly.</p>
         </div>
 
         <div class="tool-content-wrapper">
             
-            <!-- Controls -->
-            <div class="controls-bar">
-                <div class="btn-group">
-                    <button class="btn btn-outline" id="load-sample-btn">Sample</button>
-                    <button class="btn btn-secondary" id="clear-btn">Clear</button>
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="format-btn">
-                        <i class="fa-solid fa-align-left"></i> Format (Prettify)
-                    </button>
-                    <button class="btn btn-primary" id="minify-btn">
-                        <i class="fa-solid fa-compress"></i> Minify
-                    </button>
-                </div>
+            <div class="config-toolbar">
+                <button class="btn-action" id="sample-btn"><i class="fa-solid fa-code"></i> Load Sample</button>
+                <button class="btn-action btn-danger" id="clear-btn"><i class="fa-solid fa-trash"></i> Clear</button>
+                <div style="width: 1px; height: 30px; background: #ddd; margin: 0 10px;"></div>
+                <button class="btn-action" id="minify-btn"><i class="fa-solid fa-minimize"></i> Minify (Compress)</button>
+                <button class="btn-action btn-format" id="format-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> Format / Beautify</button>
             </div>
 
-            <!-- Editor Grid -->
+            <div id="status-box" class="status-box"></div>
+
             <div class="editor-grid">
-                <div class="editor-column">
-                    <div class="editor-label">
-                        <span>Input JSON</span>
-                        <span class="file-size" id="input-size">0 KB</span>
+                
+                <div class="editor-box">
+                    <div class="box-header">
+                        <span><i class="fa-brands fa-js"></i> Raw JSON Input</span>
+                        <span class="stats" id="input-size">0 Bytes</span>
                     </div>
-                    <textarea id="json-input" placeholder="Paste your JSON here..."></textarea>
+                    <textarea id="json-input" placeholder='Paste your raw or minified JSON here...
+e.g., {"name":"John", "age":30}'></textarea>
                 </div>
 
-                <div class="editor-column">
-                    <div class="editor-label">
-                        <span>Result</span>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <span class="file-size" id="output-size">0 KB</span>
-                            <button class="btn btn-secondary" id="copy-btn" style="padding: 0.2rem 0.6rem; font-size: 0.8rem;">
-                                <i class="fa-regular fa-copy"></i> Copy
-                            </button>
-                        </div>
+                <div class="editor-box">
+                    <div class="box-header">
+                        <span><i class="fa-solid fa-file-code"></i> Result</span>
+                        <button class="btn-action" id="copy-btn" style="padding: 4px 10px; font-size: 0.85rem; border-color: var(--success-color); color: var(--success-color);">
+                            <i class="fa-regular fa-copy"></i> Copy Output
+                        </button>
                     </div>
-                    <textarea id="json-output" readonly placeholder="Result will appear here..."></textarea>
+                    <textarea id="json-output" placeholder="Formatted or minified output will appear here..." readonly></textarea>
                 </div>
+
             </div>
-
-            <!-- Status/Error Message -->
-            <div id="status-box" class="status-msg"></div>
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
-        <div class="bottom-nav">
-            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/tools/file-tools.html" class="nav-btn btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the JSON Formatter & Validator</h2>
+            <p>The JSON Formatter and Validator is a universally essential digital tool engineered for software developers, API architects, and data analysts who work heavily with JavaScript Object Notation (JSON). JSON has become the undisputed global standard for transmitting data across the internet, serving as the backbone for REST APIs, complex server configurations, and modern NoSQL databases. However, because machines read data most efficiently when it is condensed, JSON payloads are frequently transmitted as "minified" strings—a single, massive, uninterrupted block of text completely devoid of spaces or line breaks. While perfect for computer processing, minified JSON is essentially impossible for a human developer to read, analyze, or debug.</p>
+            <p>Our intuitive editing suite elegantly solves this problem. By pasting a raw or minified JSON string into the input panel and clicking the "Format" button, the application instantly parses the data and reconstructs it. The tool automatically applies standard structural indentation, separating nested arrays and deep object trees into clean, highly readable, visually distinct lines. This "Pretty Print" functionality is absolutely vital for developers trying to track down a rogue missing comma or an unclosed bracket that is breaking their application. Conversely, if you have finished editing a formatted JSON file and want to prepare it for production server deployment, clicking the "Minify" button instantly strips out all extraneous whitespace, dramatically reducing the overall file size to ensure maximum API transmission speed.</p>
+            <p>Beyond formatting, this application acts as a strict structural validator. If you accidentally paste malformed JSON—such as an array missing a closing bracket or an object key lacking proper quotation marks—the tool's integrated error-catching protocol will instantly flag the issue, providing a clear error message detailing exactly why the parsing failed. Crucially, we built this developer utility prioritizing your structural data privacy. The entire parsing algorithm executes leveraging native JavaScript APIs directly inside your device's local web browser. Your private API tokens, sensitive user data arrays, and proprietary corporate configurations are never uploaded to the cloud or transmitted to an external server. This localized architecture guarantees total data confidentiality while providing you with lightning-fast, zero-latency validation. Thank you for utilizing our platform.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
         </div>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
+            });
+
             const inputArea = document.getElementById('json-input');
             const outputArea = document.getElementById('json-output');
-            const statusBox = document.getElementById('status-box');
-            const inputSizeEl = document.getElementById('input-size');
-            const outputSizeEl = document.getElementById('output-size');
-
-            // Buttons
             const formatBtn = document.getElementById('format-btn');
             const minifyBtn = document.getElementById('minify-btn');
             const clearBtn = document.getElementById('clear-btn');
-            const sampleBtn = document.getElementById('load-sample-btn');
+            const sampleBtn = document.getElementById('sample-btn');
             const copyBtn = document.getElementById('copy-btn');
+            const statusBox = document.getElementById('status-box');
+            const inputSize = document.getElementById('input-size');
 
-            // Helper: Format File Size
-            const formatBytes = (bytes) => {
+            function getBytes(str) {
+                return new Blob([str]).size;
+            }
+
+            function formatBytes(bytes) {
                 if (bytes === 0) return '0 Bytes';
                 const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const sizes = ['Bytes', 'KB', 'MB'];
                 const i = Math.floor(Math.log(bytes) / Math.log(k));
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            };
+            }
 
-            // Helper: Update Sizes
-            const updateSizes = () => {
-                const inLen = new TextEncoder().encode(inputArea.value).length;
-                const outLen = new TextEncoder().encode(outputArea.value).length;
-                inputSizeEl.textContent = formatBytes(inLen);
-                outputSizeEl.textContent = formatBytes(outLen);
-            };
+            function updateSizes() {
+                inputSize.textContent = formatBytes(getBytes(inputArea.value));
+            }
 
             inputArea.addEventListener('input', updateSizes);
 
-            // Helper: Show Messages
-            const showMessage = (msg, type) => {
-                statusBox.textContent = msg;
-                statusBox.className = `status-msg status-${type}`;
+            function showMessage(msg, type) {
+                statusBox.innerHTML = type === 'error' ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-circle-check"></i> ${msg}`;
+                statusBox.className = `status-box status-${type}`;
                 statusBox.style.display = 'block';
-            };
-            const clearMessage = () => {
+            }
+
+            function clearMessage() {
                 statusBox.style.display = 'none';
-            };
+            }
 
-            // Core: Process JSON
-            const processJSON = (action) => {
-                clearMessage();
-                const rawInput = inputArea.value.trim();
-
-                if (!rawInput) {
-                    showMessage("Please enter JSON to process.", "error");
+            function processJSON(mode) {
+                const rawData = inputArea.value.trim();
+                
+                if (!rawData) {
+                    showMessage("Please paste some JSON data first.", "error");
+                    outputArea.value = "";
                     return;
                 }
 
                 try {
-                    const jsonObj = JSON.parse(rawInput);
-                    let result = "";
-
-                    if (action === 'format') {
-                        // 4 spaces indentation
-                        result = JSON.stringify(jsonObj, null, 4);
-                    } else {
-                        // No indentation
-                        result = JSON.stringify(jsonObj);
+                    const parsedData = JSON.parse(rawData);
+                    
+                    if (mode === 'format') {
+                        outputArea.value = JSON.stringify(parsedData, null, 4);
+                        showMessage("JSON Successfully Formatted & Validated.", "success");
+                    } else if (mode === 'minify') {
+                        outputArea.value = JSON.stringify(parsedData);
+                        showMessage("JSON Successfully Minified.", "success");
                     }
-
-                    outputArea.value = result;
-                    showMessage("Valid JSON processed successfully.", "success");
-                    updateSizes();
-                } catch (e) {
+                } catch (error) {
                     outputArea.value = "";
-                    // Detailed error message
-                    showMessage(`Invalid JSON: ${e.message}`, "error");
+                    showMessage(`Invalid JSON: ${error.message}`, "error");
                 }
-            };
+            }
 
-            // Event Listeners
             formatBtn.addEventListener('click', () => processJSON('format'));
             minifyBtn.addEventListener('click', () => processJSON('minify'));
 

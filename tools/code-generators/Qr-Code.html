@@ -4,7 +4,7 @@
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <title>Free QR Code Generator - Dynamic & Custom Designs</title>
-    <meta name="description" content="Create custom QR codes with logos and brand colors. Secure, high-resolution, and print-ready. Perfect for menus, Wi-Fi, and marketing in 2026."/>
+    <meta name="description" content="Create custom QR codes with logos and brand colors. Secure, high-resolution, and print-ready. Perfect for menus, Wi-Fi, and marketing."/>
     <meta name="author" content="JKM Edit"/>
     <meta name="keywords" content="JKM Edit, JKM, QR code generator, create QR code, custom QR code, dynamic QR, QR code with logo, ">
 
@@ -17,274 +17,287 @@
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="Free QR Code Generator - Dynamic & Custom Designs">
-    <meta property="og:description" content="Create custom QR codes with logos and brand colors. Secure, high-resolution, and print-ready. Perfect for menus, Wi-Fi, and marketing in 2026.">
+    <meta property="og:description" content="Create custom QR codes with logos and brand colors. Secure, high-resolution, and print-ready. Perfect for menus, Wi-Fi, and marketing.">
     <meta property="og:url" content="https://jkmedit.in/tools/code-generators/Qr-Code.html">
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Free QR Code Generator - Dynamic & Custom Designs">
-    <meta name="twitter:description" content="Create custom QR codes with logos and brand colors. Secure, high-resolution, and print-ready. Perfect for menus, Wi-Fi, and marketing in 2026.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/code-generators/Qr-Code.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/code-generators/Qr-Code.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
-    <!-- LIBRARY -->
-    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 
     <style>
+        /* --- Corporate Blue Theme Variables --- */
         :root { 
             font-family: 'Poppins', sans-serif; 
             --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
             --bg-color: #f4f5f7; 
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --success-color: #28a745;
         }
-        
-        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
-        *, *::before, *::after { box-sizing: border-box; }
 
-        /* HEADER */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
+        *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* --- Header Section --- */
         .branding-bar {
-            display: flex; align-items: center; padding: 1rem 2rem;
-            background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-bottom: 3px solid var(--primary-color);
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 1rem 2rem; background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color);
         }
         .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
         .logo-image { height: 50px; width: auto; object-fit: contain; }
         .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
-        /* LAYOUT */
-        .tool-container { padding: 2rem 1rem; max-width: 1100px; margin: 0 auto; width: 100%; flex: 1; }
-        .ad-placeholder { 
-            max-width: 728px; width: 100%; height: 90px; 
-            background-color: #e0e0e0; border: 1px dashed #999; 
-            margin: 0 auto 2rem auto; 
-            display: flex; align-items: center; justify-content: center; 
-            color: #555; font-size: 0.9rem; border-radius: 8px; 
-        }
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h1 { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
-        .tool-header p { color: #666; }
-
-        /* WORKSPACE */
-        .workspace { display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-start; justify-content: center; }
-
-        .controls-panel {
-            flex: 1; min-width: 300px; max-width: 500px; background: var(--surface-color);
-            padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        }
-
-        .preview-panel {
-            flex: 1; min-width: 300px; max-width: 400px; display: flex; flex-direction: column;
-            align-items: center; background: #eef2f7; padding: 30px; border-radius: 12px;
-        }
-
-        /* QR Container */
-        #qr-layer {
-            width: 300px; height: 300px;
-            background: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        /* INPUTS */
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; font-weight: 600; margin-bottom: 8px; }
-        input[type="text"], input[type="url"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; background: #f9f9f9; font-size: 1rem;}
-        input[type="color"] { width: 100%; height: 40px; border: none; cursor: pointer; padding: 0; background: none;}
+        /* --- Main Tool Container --- */
+        .dashboard-container { padding: 2rem 1.5rem; max-width: 1100px; margin: auto; display: flex; flex-direction: column; align-items: center;}
         
-        /* Tabs */
-        .mode-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn {
-            flex: 1; padding: 10px; border: 1px solid #ddd; background: white;
-            cursor: pointer; font-weight: 600; border-radius: 6px; transition: 0.3s;
+        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%;}
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+
+        .tool-content-wrapper { 
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%;
         }
+
+        /* --- Layout Grid --- */
+        .generator-grid {
+            display: grid; grid-template-columns: 1fr 350px; gap: 40px; align-items: start;
+        }
+        @media (max-width: 900px) {
+            .generator-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Mode Tabs */
+        .mode-tabs {
+            display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px;
+        }
+        .tab-btn {
+            padding: 10px 20px; background: transparent; border: 2px solid transparent; border-radius: 8px;
+            font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 1rem; color: #555;
+            font-family: 'Poppins', sans-serif;
+        }
+        .tab-btn:hover { background: #f0f7ff; color: var(--primary-color); }
         .tab-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-        /* Buttons */
-        .btn {
-            width: 100%; padding: 12px; border: none; border-radius: 6px;
-            font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-            font-size: 1rem;
-        }
-        .btn-primary { background: var(--gradient); color: white; }
-        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        /* Input Groups */
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--secondary-color); font-size: 0.95rem; }
         
-        .nav-btns { margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; }
-        .nav-btn { padding: 10px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; background: #e9ecef; color: #333; }
-        .nav-dash { background: var(--primary-color); color: white; }
-
-        .about-section { 
-            margin: 40px 0 50px 0; padding: 40px; 
-            background: white; border-radius: 18px; 
-            border: 1px solid #d2d2d7; box-sizing: border-box;
+        input[type="text"], input[type="url"] {
+            width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px;
+            font-family: 'Poppins', sans-serif; font-size: 1rem; background: #f9fafc; transition: 0.3s;
         }
-        .about-section h2 { color: var(--corp-Red); margin-top: 0; }
+        input[type="text"]:focus, input[type="url"]:focus { outline: none; border-color: var(--primary-color); background: white;}
+
+        .color-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        input[type="color"] { width: 50px; height: 40px; border: none; cursor: pointer; border-radius: 4px; padding: 0;}
+
+        /* QR Display Area */
+        .qr-display-panel {
+            background: #f9fafc; padding: 25px; border-radius: 12px; border: 1px solid #eee;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        #canvas-container {
+            background: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 25px; display: flex; justify-content: center; align-items: center;
+        }
+
+        .btn-download {
+            width: 100%; padding: 15px; background: var(--gradient); color: white; border: none;
+            border-radius: 8px; font-weight: 700; font-size: 1.1rem; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn-download:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+
+        /* --- Navigation & Ads --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.15); }
+
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
+
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1200px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
         .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-        .footer-offerings {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-            max-width: 1000px;
-            border: 1px solid #d2d2d7; box-sizing: border-box;
-            background: white; border-radius: 18px; }
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1200px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
 
     </style>
 </head>
 <body>
 
     <header class="branding-bar">
-        <a href="index.html" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
             <h2>JKM Edit</h2>
         </a>
     </header>
 
-    <main class="tool-container">
+    <main class="dashboard-container">
         
         <div class="tool-header">
-            <h1>QR Code Generator</h1>
-            <p>Generate instant QR codes for Websites, Text, or UPI Payments.</p>
+            <h1>Free QR Code Generator</h1>
+            <p>Generate high-resolution QR codes for URLs and UPI payments instantly.</p>
         </div>
 
-        <div class="workspace">
+        <div class="tool-content-wrapper">
             
-            <!-- CONTROLS -->
-            <div class="controls-panel">
-                <div class="mode-tabs">
-                    <button class="tab-btn active" onclick="setMode('url')" id="tab-url">URL / Text</button>
-                    <button class="tab-btn" onclick="setMode('upi')" id="tab-upi">UPI Payment</button>
-                </div>
-
-                <!-- URL Input -->
-                <div id="input-url-group" class="input-group">
-                    <label>Content</label>
-                    <input type="text" id="qr-data" placeholder="https://jkmedit.com" value="https://jkmedit.com" oninput="updateQR()">
-                </div>
-
-                <!-- UPI Inputs -->
-                <div id="input-upi-group" class="input-group" style="display:none;">
-                    <label>UPI ID (e.g., name@bank)</label>
-                    <input type="text" id="upi-id" placeholder="john@upi" oninput="updateQR()">
-                    
-                    <label style="margin-top:15px;">Payee Name</label>
-                    <input type="text" id="upi-name" placeholder="John Doe" oninput="updateQR()">
-                </div>
-
-                <!-- Styling -->
-                <div class="input-group">
-                    <label>QR Color</label>
-                    <input type="color" id="qr-color" value="#000000" onchange="updateQR()">
-                </div>
-            </div>
-
-            <!-- PREVIEW -->
-            <div class="preview-panel">
-                <h3 style="margin-bottom:15px; color:#555;">Live Preview</h3>
+            <div class="generator-grid">
                 
-                <div id="qr-layer"></div>
+                <div class="controls-panel">
+                    
+                    <div class="mode-tabs">
+                        <button class="tab-btn active" id="tab-url" onclick="setMode('url')">
+                            <i class="fa-solid fa-link"></i> Website URL
+                        </button>
+                        <button class="tab-btn" id="tab-upi" onclick="setMode('upi')">
+                            <i class="fa-brands fa-google-pay"></i> UPI Payment
+                        </button>
+                    </div>
 
-                <button class="btn btn-primary" onclick="downloadQR()" style="max-width: 300px;">
-                    <i class="fa-solid fa-download"></i> Download PNG
-                </button>
-            </div>
-        </div>
+                    <div id="input-url-group">
+                        <div class="input-group">
+                            <label>Enter Website URL</label>
+                            <input type="url" id="qr-data" placeholder="https://jkmedit.in" value="https://jkmedit.in" oninput="updateQR()">
+                        </div>
+                    </div>
 
-        <div class="nav-btns">
-            <a href="javascript:history.back()" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
-            <a href="index.html" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
-        </div>
-<br>
-<div class="ad-placeholder"> Advertisement place (728*90)</div>
-<div class="about-section">
-    <h2>About the QR Code Generators</h2>
-    <p>The QR Code Generator is a digital marketing tool that converts text, URLs, or contact information into a scannable 2D barcode. It creates a physical bridge between offline environments and digital content, allowing users to access websites instantly with a smartphone camera.</p>
-    <p>It works by encoding the input data into a grid of black and white squares using a standardized matrix format. The generator adds "error correction" bits to the code, ensuring it can still be scanned even if the printed code is slightly damaged or partially obscured.</p>
-    <p>You require this tool to share links, WiFi passwords, or business cards quickly and touch-free. It is an essential part of modern branding, making it easy for customers to engage with your digital presence directly from a flyer, product label, or storefront.</p>
-    <h2>Thank you </h2>
-</div>
+                    <div id="input-upi-group" style="display: none;">
+                        <div class="input-group">
+                            <label>UPI ID (VPA)</label>
+                            <input type="text" id="upi-id" placeholder="e.g. yourname@upi" oninput="updateQR()">
+                        </div>
+                        <div class="input-group">
+                            <label>Payee Name (Optional)</label>
+                            <input type="text" id="upi-name" placeholder="Business Name" oninput="updateQR()">
+                        </div>
+                    </div>
 
-<div class="footer-offerings">
-                    <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
-                    <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
-                    <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
-                    <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
-                    <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
-                    <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
-                    <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
-                    <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
-                    <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
-                    <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
-                    <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
-                    <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+                    <div class="input-group" style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                        <label><i class="fa-solid fa-palette"></i> Customization</label>
+                        <div class="color-row">
+                            <span style="font-size:0.9rem; font-weight:600; color:#555;">QR Code Color</span>
+                            <input type="color" id="qr-color" value="#0052cc" oninput="updateQR()">
+                        </div>
+                    </div>
+
                 </div>
 
+                <div class="qr-display-panel">
+                    <div id="canvas-container">
+                        </div>
+                    <button class="btn-download" onclick="downloadQR()">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> Download PNG
+                    </button>
+                </div>
 
+            </div>
+
+        </div>
+
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="nav-btn btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the QR Code Generator</h2>
+            <p>The Online QR Code Generator is an incredibly powerful, versatile digital utility designed to effortlessly bridge the gap between offline physical media and interactive online digital environments. In today's fast-paced, mobile-centric world, forcing customers to manually type out long, complicated website addresses or complex banking IDs on their smartphone keyboards introduces massive friction that severely damages engagement rates. By converting complex alphanumeric data into a highly scannable, two-dimensional graphical matrix, QR codes allow end-users to instantly access your digital assets with a simple point of their smartphone camera. Whether you are a restaurant owner generating a scannable tabletop menu, a marketing professional creating tracking codes for a billboard campaign, or a small business owner facilitating contactless payments, this tool is an absolute necessity.</p>
+            <p>We engineered this web application with a highly intuitive, dual-mode interface to maximize its utility for modern business owners. In standard "Website URL" mode, you can paste any link into the input field, and the engine will instantly render a scannable grid that seamlessly redirects users to your landing page. However, we also integrated a specialized "UPI Payment" mode specifically designed for Indian merchants and freelancers. By simply inputting your verified Virtual Payment Address (VPA) and your payee name, the tool mathematically constructs a valid UPI deep-link QR code. When scanned by a customer utilizing Google Pay, PhonePe, or Paytm, it will immediately open their payment application with your banking credentials perfectly pre-filled, eliminating accidental payment transfers entirely.</p>
+            <p>Beyond its robust data-encoding capabilities, this generator offers granular aesthetic control, allowing you to alter the primary color of the QR grid to perfectly align with your specific corporate branding identity. Most importantly, this tool prioritizes data security and processing efficiency. The entire cryptographic rendering engine executes via native client-side JavaScript APIs inside your web browser. The URLs and highly sensitive banking IDs you input are never uploaded to a cloud database or transmitted to an external server. This localized architecture guarantees total digital privacy and ensures that the final QR graphic renders with zero network latency, allowing you to instantly download a crisp, ultra-high-resolution PNG file that is completely safe for professional printing. Thank you for utilizing our platform to optimize your digital marketing.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
     </main>
 
     <script>
-        // Variables
-        let currentMode = 'url';
-        let qrCode = null;
-
-        // Initialize
-        window.onload = () => {
-            qrCode = new QRCodeStyling({
-                width: 260,
-                height: 260,
-                type: "svg",
-                data: "https://jkmedit.com",
-                dotsOptions: { color: "#000000", type: "rounded" },
-                backgroundOptions: { color: "#ffffff" },
-                imageOptions: { crossOrigin: "anonymous", margin: 10 }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
             });
-            qrCode.append(document.getElementById("qr-layer"));
-        };
+        });
+
+        let currentMode = 'url';
+
+        // Initialize QR Code Styling Object
+        const qrCode = new QRCodeStyling({
+            width: 300,
+            height: 300,
+            type: "canvas",
+            data: "https://jkmedit.in",
+            dotsOptions: {
+                color: "#0052cc",
+                type: "rounded"
+            },
+            backgroundOptions: {
+                color: "#ffffff",
+            },
+            imageOptions: {
+                crossOrigin: "anonymous",
+                margin: 5
+            }
+        });
+
+        // Append to DOM
+        qrCode.append(document.getElementById("canvas-container"));
 
         // Switch Mode
-        function setMode(mode) {
+        window.setMode = function(mode) {
             currentMode = mode;
             document.getElementById('tab-url').classList.toggle('active', mode === 'url');
             document.getElementById('tab-upi').classList.toggle('active', mode === 'upi');
@@ -296,10 +309,10 @@
         }
 
         // Update Logic
-        function updateQR() {
+        window.updateQR = function() {
             let data = "";
             if (currentMode === 'url') {
-                data = document.getElementById('qr-data').value || "https://jkmedit.com";
+                data = document.getElementById('qr-data').value || "https://jkmedit.in";
             } else {
                 const upi = document.getElementById('upi-id').value || "";
                 const name = document.getElementById('upi-name').value || "";
@@ -316,9 +329,12 @@
         }
 
         // Download Logic
-        function downloadQR() {
+        window.downloadQR = function() {
             qrCode.download({ name: "jkm-qr-code", extension: "png" });
         }
+
+        // Initial render
+        updateQR();
     </script>
 </body>
 </html>
