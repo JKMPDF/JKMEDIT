@@ -89,7 +89,7 @@
         .scan-controls { display: flex; flex-direction: column; gap: 15px; }
         .input-group { display: flex; flex-direction: column; text-align: left; }
         .input-group label { font-weight: 600; font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 5px; }
-        .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 1rem; }
+        .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 1rem; width: 100%; box-sizing: border-box;}
         .input-group input:focus { outline: none; border-color: var(--primary-color); }
 
         .action-row { display: flex; gap: 10px; margin-top: 10px;}
@@ -114,7 +114,7 @@
         tr:hover { background: #f9fafc; }
         .del-btn { color: var(--danger-color); cursor: pointer; background: none; border: none; font-size: 1rem; }
 
-        .data-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .data-actions { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;}
 
         /* Flash Message */
         #flash-msg { position: fixed; top: 20px; right: 20px; background: var(--success-color); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; display: none; animation: slideIn 0.3s ease-out;}
@@ -125,21 +125,28 @@
         .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
         .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
         .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.15); }
 
         .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
         /* --- Extra Sections --- */
         .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1200px;}
-        .about-section h2 { color: var(--text-color); margin-top: 0; }
-        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+        .about-section h2 { color: var(--text-color); margin-top: 0; font-size: 1.8rem;}
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; font-size: 1.05rem;}
 
         .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1200px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
-        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: 0.2s;}
         .offering-link:hover { text-decoration: underline; }
 
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
-        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+
+        @media (max-width: 600px) {
+            .branding-bar { padding: 1rem; justify-content: center; }
+            .tool-content-wrapper { padding: 1.5rem; }
+            .data-actions { flex-direction: column; }
+            .data-actions .btn { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -230,8 +237,8 @@
         <div class="about-section">
             <h2>About the QR Scan to Excel Tool</h2>
             <p>The QR Scan to Excel tool is an incredibly robust, high-performance data aggregation utility designed specifically for warehouse managers, event coordinators, retail inventory clerks, and logistics professionals. Historically, conducting a comprehensive physical inventory check required employees to walk around with clipboards, manually writing down complex serial numbers or alphanumeric SKUs, and then returning to a desk to painstakingly re-type hundreds of lines of data into Microsoft Excel. This archaic process is not only immensely time-consuming, but it is also highly susceptible to costly human data-entry errors. Our advanced web application completely modernizes this workflow by turning your laptop, tablet, or smartphone webcam into a professional-grade barcode and QR scanner.</p>
-            <p>The user interface is designed for rapid, frictionless data capture. By clicking the "Start Camera" button, the application instantly interfaces with your device’s native camera lens. As you hold a QR code or standard barcode up to the viewfinder, the optical recognition engine automatically decodes the payload in milliseconds, triggering a satisfying visual flash notification. Before scanning, you can configure the "Category" and "Item Name" input fields; the tool intelligently groups your subsequent scans under these tags, which is perfect for organizing data by specific warehouse aisles or specific product models. As you scan, the data is automatically appended to a clean, easy-to-read graphical table on the right side of the screen, complete with a highly precise, timestamped audit trail.</p>
-            <p>The true power of this application lies in its localized architecture and seamless export capabilities. Once your inventory cycle or event check-in session is complete, a single click of the "Export to CSV" button instantly compiles your aggregated data and downloads a perfectly formatted, comma-separated values file directly to your hard drive, ready to be opened in Excel or Google Sheets. Crucially, we built this tool prioritizing your digital security. The entire optical scanning and data aggregation process runs using client-side JavaScript. This means your proprietary corporate inventory codes, event attendee IDs, and tracking hashes are never uploaded to the cloud or transmitted to an external server. Your data remains strictly confined to your local browser’s storage, ensuring absolute confidentiality. Thank you for relying on our platform to optimize your physical inventory operations.</p>
+            <p>The user interface is designed for rapid, frictionless data capture. By clicking the "Start Camera" button, the application instantly interfaces with your device’s native HTML5 camera lens. As you hold a QR code or standard barcode up to the viewfinder, the optical recognition engine automatically decodes the payload in milliseconds, triggering a satisfying visual flash notification. Before scanning, you can configure the "Category" and "Item Name" input fields; the tool intelligently groups your subsequent scans under these exact tags. This functionality is absolutely perfect for organizing massive datasets by specific warehouse aisles, storage bins, or specific product models. As you scan, the data is automatically appended to a clean, easy-to-read graphical table on the right side of the screen, complete with a highly precise, timestamped audit trail.</p>
+            <p>The true power of this application lies in its localized architecture and seamless export capabilities. Once your inventory cycle or event check-in session is complete, a single click of the "Export to CSV" button instantly compiles your aggregated data and downloads a perfectly formatted, comma-separated values file directly to your hard drive, ready to be opened natively in Microsoft Excel or Google Sheets. Crucially, we built this tool prioritizing your digital security. The entire optical scanning and data aggregation process runs using client-side JavaScript. This means your proprietary corporate inventory codes, event attendee IDs, and tracking hashes are never uploaded to the cloud or transmitted to an external server. Your data remains strictly confined to your local browser’s cache, ensuring absolute confidentiality. Thank you for relying on our platform to optimize your physical inventory operations.</p>
             <h2>Thank you</h2>
         </div>
 
@@ -252,6 +259,7 @@
     </main>
 
     <script>
+        // Smooth transitions
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('a').forEach(link => {
                 const linkUrl = link.getAttribute('href');
@@ -296,7 +304,7 @@
                 startBtn.style.display = 'none';
                 stopBtn.style.display = 'inline-flex';
             })
-            .catch(err => alert("Camera error: " + err));
+            .catch(err => alert("Camera permission denied or camera error: " + err));
         });
 
         stopBtn.addEventListener('click', () => {
@@ -304,7 +312,7 @@
                 html5QrcodeScanner.stop().then(() => {
                     startBtn.style.display = 'inline-flex';
                     stopBtn.style.display = 'none';
-                });
+                }).catch(err => console.log(err));
             }
         });
 
@@ -366,7 +374,7 @@
             badge.innerText = savedEntries.length;
 
             if (savedEntries.length === 0) {
-                container.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">No scans yet.</div>';
+                container.innerHTML = '<div style="padding:30px; text-align:center; color:#888; font-weight:600;">No scans recorded yet.</div>';
                 return;
             }
 
@@ -381,11 +389,11 @@
             
             Object.keys(grouped).forEach(cat => {
                 const catHeader = document.createElement('div');
-                catHeader.style.padding = '8px 10px';
+                catHeader.style.padding = '10px 15px';
                 catHeader.style.backgroundColor = 'var(--primary-color)';
                 catHeader.style.color = 'white';
                 catHeader.style.fontWeight = 'bold';
-                catHeader.style.fontSize = '0.9rem';
+                catHeader.style.fontSize = '0.95rem';
                 catHeader.innerText = cat;
                 container.appendChild(catHeader);
 
@@ -393,10 +401,10 @@
                 table.innerHTML = `
                     <thead>
                         <tr>
-                            <th>Item</th>
-                            <th>Time</th>
-                            <th>QR Content</th>
-                            <th>Del</th>
+                            <th style="width: 30%;">Item</th>
+                            <th style="width: 20%;">Time</th>
+                            <th style="width: 40%;">Content</th>
+                            <th style="width: 10%; text-align:center;">Del</th>
                         </tr>
                     </thead>
                 `;
@@ -404,9 +412,9 @@
                 const rows = grouped[cat].map(e => `
                     <tr>
                         <td style="font-weight:600;">${e.item}</td>
-                        <td style="color:#666;">${e.time}</td>
-                        <td style="word-break: break-all; font-family:monospace;">${e.qr}</td>
-                        <td>
+                        <td style="color:#666; font-size:0.85rem;">${e.time}</td>
+                        <td style="word-break: break-all; font-family:monospace; font-size:0.85rem;">${e.qr}</td>
+                        <td style="text-align:center;">
                             <button class="del-btn" onclick="deleteEntry(${e.id})"><i class="fa-solid fa-trash-can"></i></button>
                         </td>
                     </tr>
@@ -420,13 +428,16 @@
         window.downloadExcel = function() {
             if (savedEntries.length === 0) return alert("No data to export.");
 
+            // Sort alphabetically by item name
             const sorted = savedEntries.slice().sort((a, b) => a.item.localeCompare(b.item));
-            let csv = "data:text/csv;charset=utf-8,Category,Date Time,QR Content\n";
+            let csv = "data:text/csv;charset=utf-8,Category,Item Name,Date & Time,Scanned Content\n";
             
             sorted.forEach(e => {
-                const safeQr = e.qr.replace(/"/g, '""');
+                // Escape quotes for CSV format
+                const safeCat = e.category.replace(/"/g, '""');
                 const safeItem = e.item.replace(/"/g, '""');
-                csv += `"${e.category}","${safeItem}","${e.fullTime}","${safeQr}"\n`;
+                const safeQr = e.qr.replace(/"/g, '""');
+                csv += `"${safeCat}","${safeItem}","${e.fullTime}","${safeQr}"\n`;
             });
 
             const link = document.createElement("a");
@@ -438,7 +449,7 @@
         };
 
         window.clearAllData = function() {
-            if (confirm("Delete ALL history and categories? This cannot be undone.")) {
+            if (confirm("Are you sure you want to delete all history and saved categories? This cannot be undone.")) {
                 localStorage.removeItem(KEY_ENTRIES);
                 localStorage.removeItem(KEY_ITEMS);
                 localStorage.removeItem(KEY_CATS);

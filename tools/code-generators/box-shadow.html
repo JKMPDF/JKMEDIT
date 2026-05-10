@@ -1,31 +1,29 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="corporate-blue">
+<html lang='en' data-theme='corporate-blue'>
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>QR Scan to Excel - Fast Data Entry & Inventory</title>
-    <meta name="description" content="Scan multiple QR codes and export the data directly to an Excel sheet. Streamline your inventory and check-ins with JKM Edit."/>
+    <title>CSS Box Shadow Generator - Interactive Shadow Tool</title>
+    <meta name="description" content="Design beautiful, soft shadows visually. Get clean CSS code for spread, blur, and inset shadows with real-time browser preview."/>
     <meta name="author" content="JKM Edit"/>
-    <meta name="keywords" content="JKM Edit, JKM, QR scan to excel, QR to spreadsheet, scan QR to CSV, bulk QR scanning, QR inventory tool, ">
+    <meta name="keywords" content="JKM Edit, JKM, CSS box shadow, shadow generator, box shadow tool, CSS shadow code, UI shadow design, ">
 
     <meta name="robots" content="index, follow"/>
-    <link rel="canonical" href="https://jkmedit.in/tools/code-generators/qr-excel.html"/>
+    <link rel="canonical" href="https://jkmedit.in/tools/code-generators/box-shadow.html"/>
     <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="QR Scan to Excel - Fast Data Entry & Inventory">
-    <meta property="og:description" content="Scan multiple QR codes and export the data directly to an Excel sheet. Streamline your inventory and check-ins with JKM Edit.">
-    <meta property="og:url" content="https://jkmedit.in/tools/code-generators/qr-excel.html">
+    <meta property="og:title" content="CSS Box Shadow Generator - Interactive Shadow Tool">
+    <meta property="og:description" content="Design beautiful, soft shadows visually. Get clean CSS code for spread, blur, and inset shadows with real-time browser preview.">
+    <meta property="og:url" content="https://jkmedit.in/tools/code-generators/box-shadow.html">
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
-    
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
         /* --- Corporate Blue Theme Variables --- */
@@ -40,7 +38,6 @@
             --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
             --success-color: #28a745;
-            --danger-color: #dc3545;
         }
 
         html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
@@ -69,77 +66,103 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%;
         }
 
-        /* --- Layout Grid --- */
-        .workspace-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;
+        /* --- Editor Grid --- */
+        .generator-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
         }
         @media (max-width: 900px) {
-            .workspace-grid { grid-template-columns: 1fr; }
+            .generator-grid { grid-template-columns: 1fr; }
         }
 
-        /* Scan Section */
-        .scan-panel { background: #f9fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;}
-        .camera-box {
-            width: 100%; max-width: 400px; margin: 0 auto 20px auto; overflow: hidden; border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid var(--primary-color); background: #000;
-            min-height: 250px; display: flex; align-items: center; justify-content: center;
-        }
-        #reader { width: 100%; }
-
-        .scan-controls { display: flex; flex-direction: column; gap: 15px; }
-        .input-group { display: flex; flex-direction: column; text-align: left; }
-        .input-group label { font-weight: 600; font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 5px; }
-        .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 1rem; }
-        .input-group input:focus { outline: none; border-color: var(--primary-color); }
-
-        .action-row { display: flex; gap: 10px; margin-top: 10px;}
-        .btn {
-            flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s;
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem;
-        }
-        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
-        .btn-danger { background: #fff0f0; color: var(--danger-color); border: 1px solid #ffcdd2; }
-        .btn-danger:hover { background: var(--danger-color); color: white; }
-
-        /* Data Section */
-        .data-panel { background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); height: 100%; display: flex; flex-direction: column;}
-        .data-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;}
-        .data-header h3 { margin: 0; color: var(--text-color); font-size: 1.2rem;}
+        /* Settings Panel */
+        .settings-panel { display: flex; flex-direction: column; gap: 20px; }
         
-        .table-container { flex: 1; overflow-y: auto; max-height: 400px; border: 1px solid #eee; border-radius: 6px;}
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem;}
-        th { background: #f4f5f7; position: sticky; top: 0; color: var(--primary-color); font-weight: 600;}
-        tr:hover { background: #f9fafc; }
-        .del-btn { color: var(--danger-color); cursor: pointer; background: none; border: none; font-size: 1rem; }
+        .control-group {
+            background: #f9fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);
+        }
+        .control-header {
+            display: flex; justify-content: space-between; font-weight: 600; color: var(--secondary-color); margin-bottom: 10px; font-size: 0.95rem;
+        }
 
-        .data-actions { display: flex; gap: 10px; margin-top: 15px; }
+        input[type="range"] {
+            -webkit-appearance: none; width: 100%; height: 6px; background: #dfe1e6;
+            border-radius: 5px; outline: none; cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px; background: var(--primary-color);
+            border-radius: 50%; cursor: pointer; transition: 0.2s; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
 
-        /* Flash Message */
-        #flash-msg { position: fixed; top: 20px; right: 20px; background: var(--success-color); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; display: none; animation: slideIn 0.3s ease-out;}
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .color-group { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;}
+        .color-group label { font-weight: 600; font-size: 0.95rem; color: var(--text-color); display: flex; flex-direction: column; gap: 5px; align-items: center;}
+        input[type="color"] { width: 50px; height: 40px; border: none; cursor: pointer; border-radius: 4px; padding: 0;}
+
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-top: 15px; cursor: pointer; }
+        .checkbox-group input { width: 18px; height: 18px; accent-color: var(--primary-color); cursor: pointer;}
+        .checkbox-group label { font-weight: 600; font-size: 0.95rem; cursor: pointer;}
+
+        /* Preview Panel */
+        .preview-panel { display: flex; flex-direction: column; gap: 20px; }
+
+        .preview-container {
+            width: 100%; height: 350px; background-color: #ffffff; border-radius: 12px;
+            display: flex; justify-content: center; align-items: center; border: 1px solid #eee;
+            background-image: linear-gradient(45deg, #f9f9f9 25%, transparent 25%), linear-gradient(-45deg, #f9f9f9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f9f9f9 75%), linear-gradient(-45deg, transparent 75%, #f9f9f9 75%);
+            background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        .preview-box {
+            width: 200px; height: 200px; background-color: var(--primary-color);
+            border-radius: 12px; transition: box-shadow 0.1s;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #282c34; color: #abb2bf; padding: 20px; border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace; font-size: 0.95rem; position: relative; overflow-x: auto;
+        }
+        .code-block pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+        .css-prop { color: #c678dd; }
+        .css-val { color: #98c379; }
+
+        .btn-copy {
+            width: 100%; padding: 15px; background: var(--gradient); color: white; border: none;
+            border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-copy:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
         /* --- Navigation & Ads --- */
         .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
         .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
         .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
         .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.15); }
 
         .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
         /* --- Extra Sections --- */
         .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1200px;}
-        .about-section h2 { color: var(--text-color); margin-top: 0; }
-        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+        .about-section h2 { color: var(--text-color); margin-top: 0; font-size: 1.8rem;}
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; font-size: 1.05rem;}
 
         .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1200px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
-        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: 0.2s;}
         .offering-link:hover { text-decoration: underline; }
 
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
-        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+        
+        @media (max-width: 600px) {
+            .branding-bar { padding: 1rem; justify-content: center; }
+            .tool-content-wrapper { padding: 1.5rem; }
+            .color-group { justify-content: space-around; }
+            .navigation-buttons { flex-direction: column; }
+            .nav-btn { width: 100%; justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -151,65 +174,93 @@
         </a>
     </header>
 
-    <div id="flash-msg"><i class="fa-solid fa-check-circle"></i> Successfully Scanned!</div>
-
     <main class="dashboard-container">
         
         <div class="tool-header">
-            <h1>QR Scan to Excel</h1>
-            <p>Scan barcodes or QR codes with your webcam and export directly to CSV.</p>
+            <h1>CSS Box Shadow Generator</h1>
+            <p>Design beautiful, soft box shadows visually and instantly copy the CSS code.</p>
         </div>
 
         <div class="tool-content-wrapper">
-            <div class="workspace-grid">
+            
+            <div class="generator-grid">
                 
-                <div class="scan-panel">
-                    <div class="camera-box">
-                        <div id="reader"></div>
-                    </div>
+                <div class="settings-panel">
                     
-                    <div class="scan-controls">
-                        <div class="input-group">
-                            <label>Category (Optional)</label>
-                            <input type="text" id="category-input" placeholder="e.g., Warehouse A" list="cat-list">
-                            <datalist id="cat-list"></datalist>
+                    <div class="control-group">
+                        <div class="control-header">
+                            <label>Horizontal Offset</label>
+                            <span id="h-val">0px</span>
                         </div>
-                        <div class="input-group">
-                            <label>Item Name (Optional)</label>
-                            <input type="text" id="item-input" placeholder="e.g., Monitor X200" list="item-list">
-                            <datalist id="item-list"></datalist>
+                        <input type="range" id="h-offset" min="-100" max="100" value="10">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-header">
+                            <label>Vertical Offset</label>
+                            <span id="v-val">0px</span>
                         </div>
-                        
-                        <div class="action-row">
-                            <button id="scan-btn" class="btn btn-primary">
-                                <i class="fa-solid fa-camera"></i> Start Camera
-                            </button>
-                            <button id="stop-btn" class="btn btn-danger" style="display: none;">
-                                <i class="fa-solid fa-stop"></i> Stop
-                            </button>
+                        <input type="range" id="v-offset" min="-100" max="100" value="15">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-header">
+                            <label>Blur Radius</label>
+                            <span id="b-val">0px</span>
+                        </div>
+                        <input type="range" id="blur" min="0" max="100" value="30">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-header">
+                            <label>Spread Radius</label>
+                            <span id="s-val">0px</span>
+                        </div>
+                        <input type="range" id="spread" min="-50" max="50" value="-5">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-header">
+                            <label>Shadow Opacity</label>
+                            <span id="o-val">0.2</span>
+                        </div>
+                        <input type="range" id="shadow-opacity" min="0" max="1" step="0.05" value="0.2">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="color-group">
+                            <label for="shadow-color">Shadow <input type="color" id="shadow-color" value="#000000"></label>
+                            <label for="box-color">Box <input type="color" id="box-color" value="#0052cc"></label>
+                            <label for="bg-color">Background <input type="color" id="bg-color" value="#ffffff"></label>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="inset">
+                            <label for="inset">Inset Shadow (Inner Shadow)</label>
                         </div>
                     </div>
+
                 </div>
 
-                <div class="data-panel">
-                    <div class="data-header">
-                        <h3>Scanned Data (<span id="count-badge">0</span>)</h3>
+                <div class="preview-panel">
+                    
+                    <div class="preview-container" id="preview-container">
+                        <div class="preview-box" id="preview-box"></div>
                     </div>
 
-                    <div class="table-container" id="history-table">
-                        </div>
-
-                    <div class="data-actions">
-                        <button id="clear-btn" class="btn btn-danger" onclick="clearAllData()">
-                            <i class="fa-solid fa-trash"></i> Clear All
-                        </button>
-                        <button id="export-btn" class="btn btn-primary" style="background:#28a745;" onclick="downloadExcel()">
-                            <i class="fa-solid fa-file-csv"></i> Export to CSV
-                        </button>
+                    <div class="code-block">
+                        <pre><span class="css-prop">box-shadow:</span> <span class="css-val" id="code-val"></span></pre>
+                        <pre><span class="css-prop">-webkit-box-shadow:</span> <span class="css-val" id="code-val-webkit"></span></pre>
                     </div>
+
+                    <button class="btn-copy" id="copy-btn">
+                        <i class="fa-regular fa-copy"></i> Copy CSS Code
+                    </button>
+
                 </div>
 
             </div>
+
         </div>
 
         <div class="navigation-buttons">
@@ -228,10 +279,10 @@
         </div>
 
         <div class="about-section">
-            <h2>About the QR Scan to Excel Tool</h2>
-            <p>The QR Scan to Excel tool is an incredibly robust, high-performance data aggregation utility designed specifically for warehouse managers, event coordinators, retail inventory clerks, and logistics professionals. Historically, conducting a comprehensive physical inventory check required employees to walk around with clipboards, manually writing down complex serial numbers or alphanumeric SKUs, and then returning to a desk to painstakingly re-type hundreds of lines of data into Microsoft Excel. This archaic process is not only immensely time-consuming, but it is also highly susceptible to costly human data-entry errors. Our advanced web application completely modernizes this workflow by turning your laptop, tablet, or smartphone webcam into a professional-grade barcode and QR scanner.</p>
-            <p>The user interface is designed for rapid, frictionless data capture. By clicking the "Start Camera" button, the application instantly interfaces with your device’s native camera lens. As you hold a QR code or standard barcode up to the viewfinder, the optical recognition engine automatically decodes the payload in milliseconds, triggering a satisfying visual flash notification. Before scanning, you can configure the "Category" and "Item Name" input fields; the tool intelligently groups your subsequent scans under these tags, which is perfect for organizing data by specific warehouse aisles or specific product models. As you scan, the data is automatically appended to a clean, easy-to-read graphical table on the right side of the screen, complete with a highly precise, timestamped audit trail.</p>
-            <p>The true power of this application lies in its localized architecture and seamless export capabilities. Once your inventory cycle or event check-in session is complete, a single click of the "Export to CSV" button instantly compiles your aggregated data and downloads a perfectly formatted, comma-separated values file directly to your hard drive, ready to be opened in Excel or Google Sheets. Crucially, we built this tool prioritizing your digital security. The entire optical scanning and data aggregation process runs using client-side JavaScript. This means your proprietary corporate inventory codes, event attendee IDs, and tracking hashes are never uploaded to the cloud or transmitted to an external server. Your data remains strictly confined to your local browser’s storage, ensuring absolute confidentiality. Thank you for relying on our platform to optimize your physical inventory operations.</p>
+            <h2>About the CSS Box Shadow Generator</h2>
+            <p>The CSS Box Shadow Generator is an incredibly powerful, highly interactive visual design utility built specifically for frontend developers, UI/UX designers, and web enthusiasts. In modern web design, adding soft, realistic shadows to elements like buttons, layout cards, and navigation bars is an absolute necessity to create visual depth, hierarchy, and a premium "clickable" aesthetic. However, attempting to manually write out the complex, multi-variable CSS syntax required to render these shadows flawlessly across different browsers requires endless trial, error, and page refreshing. Our tool completely eliminates this tedious coding process by providing a real-time, highly tactile visual editor.</p>
+            <p>Our intuitive editing suite grants you absolute granular control over every single parametric variable of the CSS3 `box-shadow` property. Using the ultra-responsive sliders situated on the left-hand configuration panel, you can precisely dictate the Horizontal and Vertical offset to control the exact angle of the perceived light source. The Blur Radius slider dictates how soft and diffused the shadow appears, while the Spread Radius allows you to physically expand or contract the base footprint of the shadow. For advanced styling, the tool supports an "Inset" toggle, which instantly flips the shadow to render inside the element rather than outside of it—a highly sought-after effect for creating indented forms or "pressed" button states. Furthermore, full hexadecimal color support and a dedicated opacity slider ensure your shadow perfectly matches your brand's color palette.</p>
+            <p>As you actively adjust these variables, the central preview canvas updates instantaneously, providing a flawlessly accurate representation of how the element will render in a live production environment. The underlying JavaScript engine simultaneously compiles the exact CSS code—including essential `-webkit` vendor prefixes to guarantee cross-browser compatibility on older iOS devices and Safari browsers. Once you have crafted the perfect drop-shadow, a single click of the robust "Copy CSS Code" button securely ports the formatted syntax directly to your system clipboard, ready to be immediately pasted into your project's stylesheet. Thank you for utilizing our platform to accelerate your web development workflow.</p>
             <h2>Thank you</h2>
         </div>
 
@@ -253,6 +304,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Smooth Transitions
             document.querySelectorAll('a').forEach(link => {
                 const linkUrl = link.getAttribute('href');
                 if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
@@ -265,188 +317,93 @@
                     }
                 }
             });
-        });
 
-        // --- SCANNER LOGIC ---
-        const KEY_ENTRIES = 'jkm_qr_entries';
-        const KEY_CATS = 'jkm_qr_categories';
-        const KEY_ITEMS = 'jkm_qr_items';
-
-        let html5QrcodeScanner;
-        let savedEntries = JSON.parse(localStorage.getItem(KEY_ENTRIES)) || [];
-        let savedCategories = JSON.parse(localStorage.getItem(KEY_CATS)) || [];
-        let savedItems = JSON.parse(localStorage.getItem(KEY_ITEMS)) || [];
-
-        const startBtn = document.getElementById('scan-btn');
-        const stopBtn = document.getElementById('stop-btn');
-        const categoryInput = document.getElementById('category-input');
-        const itemInput = document.getElementById('item-input');
-        const flashMsg = document.getElementById('flash-msg');
-        
-        initDataLists();
-        renderTable();
-
-        startBtn.addEventListener('click', () => {
-            html5QrcodeScanner = new Html5Qrcode("reader");
-            
-            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-
-            html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess)
-            .then(() => {
-                startBtn.style.display = 'none';
-                stopBtn.style.display = 'inline-flex';
-            })
-            .catch(err => alert("Camera error: " + err));
-        });
-
-        stopBtn.addEventListener('click', () => {
-            if (html5QrcodeScanner) {
-                html5QrcodeScanner.stop().then(() => {
-                    startBtn.style.display = 'inline-flex';
-                    stopBtn.style.display = 'none';
-                });
-            }
-        });
-
-        function onScanSuccess(decodedText) {
-            const cat = categoryInput.value.trim() || 'Uncategorized';
-            const itm = itemInput.value.trim() || 'Unknown Item';
-            
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString();
-            const fullStr = now.toLocaleString();
-
-            const newEntry = {
-                id: Date.now(),
-                category: cat,
-                item: itm,
-                qr: decodedText,
-                time: timeStr,
-                fullTime: fullStr
+            // UI Elements
+            const inputs = {
+                hOffset: document.getElementById('h-offset'),
+                vOffset: document.getElementById('v-offset'),
+                blur: document.getElementById('blur'),
+                spread: document.getElementById('spread'),
+                shadowColor: document.getElementById('shadow-color'),
+                shadowOpacity: document.getElementById('shadow-opacity'),
+                inset: document.getElementById('inset'),
+                boxColor: document.getElementById('box-color'),
+                bgColor: document.getElementById('bg-color')
             };
 
-            savedEntries.unshift(newEntry); 
-            
-            if (cat !== 'Uncategorized' && !savedCategories.includes(cat)) savedCategories.push(cat);
-            if (itm !== 'Unknown Item' && !savedItems.includes(itm)) savedItems.push(itm);
+            const labels = {
+                hVal: document.getElementById('h-val'),
+                vVal: document.getElementById('v-val'),
+                bVal: document.getElementById('b-val'),
+                sVal: document.getElementById('s-val'),
+                oVal: document.getElementById('o-val')
+            };
 
-            saveToLocal();
-            initDataLists();
-            renderTable();
+            const previewContainer = document.getElementById('preview-container');
+            const previewBox = document.getElementById('preview-box');
+            const codeVal = document.getElementById('code-val');
+            const codeValWebkit = document.getElementById('code-val-webkit');
+            const copyBtn = document.getElementById('copy-btn');
 
-            // Flash effect
-            flashMsg.style.display = 'block';
-            setTimeout(() => { flashMsg.style.display = 'none'; }, 1500);
-        }
-
-        function saveToLocal() {
-            localStorage.setItem(KEY_ENTRIES, JSON.stringify(savedEntries));
-            localStorage.setItem(KEY_CATS, JSON.stringify(savedCategories));
-            localStorage.setItem(KEY_ITEMS, JSON.stringify(savedItems));
-        }
-
-        function initDataLists() {
-            const catList = document.getElementById('cat-list');
-            const itmList = document.getElementById('item-list');
-            
-            catList.innerHTML = savedCategories.map(c => `<option value="${c}">`).join('');
-            itmList.innerHTML = savedItems.map(i => `<option value="${i}">`).join('');
-        }
-
-        window.deleteEntry = function(id) {
-            savedEntries = savedEntries.filter(e => e.id !== id);
-            saveToLocal();
-            renderTable();
-        };
-
-        function renderTable() {
-            const container = document.getElementById('history-table');
-            const badge = document.getElementById('count-badge');
-            
-            badge.innerText = savedEntries.length;
-
-            if (savedEntries.length === 0) {
-                container.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">No scans yet.</div>';
-                return;
+            // Helper: Convert HEX to RGBA
+            function hexToRgba(hex, opacity) {
+                let r = 0, g = 0, b = 0;
+                if (hex.length === 7) {
+                    r = parseInt(hex.slice(1, 3), 16);
+                    g = parseInt(hex.slice(3, 5), 16);
+                    b = parseInt(hex.slice(5, 7), 16);
+                }
+                return `rgba(${r}, ${g}, ${b}, ${opacity})`;
             }
 
-            // Group by category
-            const grouped = savedEntries.reduce((acc, curr) => {
-                if (!acc[curr.category]) acc[curr.category] = [];
-                acc[curr.category].push(curr);
-                return acc;
-            }, {});
+            function updateShadow() {
+                // Update Numeric Labels
+                labels.hVal.textContent = inputs.hOffset.value + 'px';
+                labels.vVal.textContent = inputs.vOffset.value + 'px';
+                labels.bVal.textContent = inputs.blur.value + 'px';
+                labels.sVal.textContent = inputs.spread.value + 'px';
+                labels.oVal.textContent = inputs.shadowOpacity.value;
 
-            container.innerHTML = '';
-            
-            Object.keys(grouped).forEach(cat => {
-                const catHeader = document.createElement('div');
-                catHeader.style.padding = '8px 10px';
-                catHeader.style.backgroundColor = 'var(--primary-color)';
-                catHeader.style.color = 'white';
-                catHeader.style.fontWeight = 'bold';
-                catHeader.style.fontSize = '0.9rem';
-                catHeader.innerText = cat;
-                container.appendChild(catHeader);
+                // Build CSS String
+                const isInset = inputs.inset.checked ? 'inset ' : '';
+                const rgbaColor = hexToRgba(inputs.shadowColor.value, inputs.shadowOpacity.value);
+                const shadowString = `${isInset}${inputs.hOffset.value}px ${inputs.vOffset.value}px ${inputs.blur.value}px ${inputs.spread.value}px ${rgbaColor}`;
 
-                const table = document.createElement('table');
-                table.innerHTML = `
-                    <thead>
-                        <tr>
-                            <th>Item</th>
-                            <th>Time</th>
-                            <th>QR Content</th>
-                            <th>Del</th>
-                        </tr>
-                    </thead>
-                `;
-                
-                const rows = grouped[cat].map(e => `
-                    <tr>
-                        <td style="font-weight:600;">${e.item}</td>
-                        <td style="color:#666;">${e.time}</td>
-                        <td style="word-break: break-all; font-family:monospace;">${e.qr}</td>
-                        <td>
-                            <button class="del-btn" onclick="deleteEntry(${e.id})"><i class="fa-solid fa-trash-can"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
-                
-                table.innerHTML += `<tbody>${rows}</tbody>`;
-                container.appendChild(table);
-            });
-        }
+                // Apply Styles
+                previewBox.style.boxShadow = shadowString;
+                previewBox.style.backgroundColor = inputs.boxColor.value;
+                previewContainer.style.backgroundColor = inputs.bgColor.value;
 
-        window.downloadExcel = function() {
-            if (savedEntries.length === 0) return alert("No data to export.");
-
-            const sorted = savedEntries.slice().sort((a, b) => a.item.localeCompare(b.item));
-            let csv = "data:text/csv;charset=utf-8,Category,Date Time,QR Content\n";
-            
-            sorted.forEach(e => {
-                const safeQr = e.qr.replace(/"/g, '""');
-                const safeItem = e.item.replace(/"/g, '""');
-                csv += `"${e.category}","${safeItem}","${e.fullTime}","${safeQr}"\n`;
-            });
-
-            const link = document.createElement("a");
-            link.href = encodeURI(csv);
-            link.download = "jkm_inventory_scan.csv";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        };
-
-        window.clearAllData = function() {
-            if (confirm("Delete ALL history and categories? This cannot be undone.")) {
-                localStorage.removeItem(KEY_ENTRIES);
-                localStorage.removeItem(KEY_ITEMS);
-                localStorage.removeItem(KEY_CATS);
-                savedEntries = []; savedCategories = []; savedItems = [];
-                initDataLists();
-                renderTable();
+                // Update Code display
+                codeVal.textContent = shadowString + ';';
+                codeValWebkit.textContent = shadowString + ';';
             }
-        };
+
+            // Attach Event Listeners
+            Object.values(inputs).forEach(input => {
+                input.addEventListener('input', updateShadow);
+            });
+
+            // Copy to Clipboard
+            copyBtn.addEventListener('click', () => {
+                const cssCode = `box-shadow: ${codeVal.textContent}\n-webkit-box-shadow: ${codeValWebkit.textContent}`;
+                navigator.clipboard.writeText(cssCode).then(() => {
+                    const originalHTML = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied successfully!';
+                    copyBtn.style.background = 'var(--success-color)';
+                    copyBtn.style.boxShadow = 'none';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalHTML;
+                        copyBtn.style.background = '';
+                        copyBtn.style.boxShadow = '';
+                    }, 1500);
+                });
+            });
+
+            // Run once to initialize
+            updateShadow();
+        });
     </script>
 </body>
 </html>
