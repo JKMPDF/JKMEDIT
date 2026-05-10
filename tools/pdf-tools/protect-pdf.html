@@ -1,203 +1,163 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en' data-theme='corporate-blue'>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feature Coming Soon | JKM Edit</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Protect PDF - Add Password Security | JKM Edit</title>
+    <meta name="description" content="Secure your PDF files with strong passwords and encryption. Prevent unauthorized printing, copying, and editing. Coming Soon."/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="keywords" content="JKM Edit, JKM, Protect PDF, encrypt PDF, add password to PDF, secure PDF file, ">
+    
+    <link rel="canonical" href="https://jkmedit.in/tools/pdf-tools/protect-pdf.html"/>
+    <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
     <style>
-        :root {
-            --corp-blue: #0056b3;
-            --dark-navy: #002e5d;
-            --bg-gray: #f8f9fa;
-            --text-muted: #6c757d;
-            --border-color: #e2e8f0;
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --transition-speed: 0.3s; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --accent-color: #ffab00; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
         }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-gray);
-            color: var(--dark-navy);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section --- */
+        .branding-bar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color); justify-content: flex-start;
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { padding: 2rem 1.5rem; max-width: 900px; margin: auto; display: flex; flex-direction: column; align-items: center;}
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); padding: 4rem 2rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; width: 100%;
         }
 
-        /* Updated Header */
-        header {
-            background: #ffffff;
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: flex-start; /* Aligns logo and name to the left */
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            height: 35px;
-            width: auto;
-            display: block;
-        }
-
-        .brand-name {
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: var(--dark-navy);
-            letter-spacing: -0.5px;
-        }
-
-        .brand-name span {
-            color: var(--corp-blue);
-        }
-
-        /* Main Content Area */
-        main {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-        }
-
-        .content-card {
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .icon-box {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--dark-navy);
-        }
-
-        p {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
+        .icon-box { font-size: 4.5rem; color: var(--primary-color); margin-bottom: 1.5rem; }
+        .tool-content-wrapper h1 { font-size: 2.5rem; margin-bottom: 1rem; color: var(--text-color); }
+        .tool-content-wrapper p { font-size: 1.15rem; color: #6c757d; line-height: 1.6; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto;}
 
         /* Animated Progress Bar */
-        .loader-bar {
-            width: 100%;
-            height: 6px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 3rem;
-        }
+        .loader-bar { width: 100%; max-width: 400px; height: 8px; background: #e9ecef; border-radius: 10px; overflow: hidden; margin: 0 auto 3rem auto; }
+        .loader-progress { width: 40%; height: 100%; background: var(--gradient); animation: slide 2s infinite ease-in-out; border-radius: 10px;}
+        @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
 
-        .loader-progress {
-            width: 60%;
-            height: 100%;
-            background: var(--corp-blue);
-            animation: slide 2s infinite ease-in-out;
-        }
+        /* Navigation Buttons */
+        .navigation-buttons { display: flex; justify-content: center; gap: 1.5rem; margin-top: 3rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: 2px solid var(--primary-color); border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
-        @keyframes slide {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(200%); }
-        }
+        /* --- Advertisement Box --- */
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        /* Bottom Action Buttons */
-        .action-group {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-        .btn-action {
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            padding: 12px 24px;
-            border-radius: 6px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
 
-        .btn-outline {
-            color: var(--corp-blue);
-            border: 1px solid var(--corp-blue);
-        }
-
-        .btn-outline:hover {
-            background: #f0f7ff;
-        }
-
-        .btn-solid {
-            background: var(--corp-blue);
-            color: white;
-            border: 1px solid var(--corp-blue);
-        }
-
-        .btn-solid:hover {
-            background: var(--dark-navy);
-            border-color: var(--dark-navy);
-        }
-
-        footer {
-            padding: 2rem;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border-color);
-        }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="https://jkmedit.in/" class="brand-container">
-            <img src="assets/jkm-edit-logo.png" alt="Logo" class="logo-img">
-            <div class="brand-name">JKM <span>Edit</span></div>
+    <header class="branding-bar">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="Logo" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
-    <main>
-        <div class="content-card">
-            <div class="icon-box">🚀</div>
-            <h1>Coming Soon</h1>
-            <p>We are currently building this feature to enhance your workspace. It will be available in the next scheduled update.</p>
+    <main class="dashboard-container">
+        
+        <div class="tool-content-wrapper">
+            <div class="icon-box"><i class="fa-solid fa-shield-halved"></i></div>
+            <h1>Protect PDF Tool - Coming Soon</h1>
+            <p>We are currently building this advanced encryption feature to enhance your digital workspace. Soon, you will be able to lock your PDFs with military-grade security directly in your browser.</p>
             
             <div class="loader-bar">
                 <div class="loader-progress"></div>
             </div>
+        </div>
 
-            <div class="action-group">
-                <a href="javascript:history.back()" class="btn-action btn-outline">
-                    ← Go Back
-                </a>
-                <a href="https://jkmedit.in/tools/pdf-tools.html" class="btn-action btn-solid">
-                    Dashboard
-                </a>
-            </div>
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="https://jkmedit.in/" class="nav-btn btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Protect PDF Tool</h2>
+            <p>The Protect PDF tool is an upcoming, highly advanced document security utility designed to give professionals, legal experts, and everyday users total control over their digital privacy. In our modern, highly connected world, sensitive information—such as financial bank statements, confidential corporate contracts, proprietary source code, and private medical records—is frequently shared across email and unsecured messaging platforms. Sending these files as standard, unprotected PDFs leaves your sensitive data vulnerable to unauthorized access, accidental forwarding, and malicious data scraping. Our upcoming encryption tool is engineered to completely eliminate these vulnerabilities by wrapping your files in impenetrable digital armor.</p>
+            <p>Once this feature launches, it will utilize cutting-edge 256-bit AES (Advanced Encryption Standard) technology to securely lock your documents. Users will be able to upload a PDF and easily set a robust user password that will be absolutely required simply to open and view the document's contents. But the security features will not stop at basic viewing restrictions. The tool will also offer granular permissions control, allowing document owners to selectively disable specific actions. For example, you will be able to allow a client to read a contract but strictly prevent them from printing the file, copying the text to their clipboard, or modifying the document in any way without a secondary master "owner" password.</p>
+            <p>As with all our digital utilities, this forthcoming PDF protection software is being built with a "privacy-first" architectural philosophy. The complex cryptographic hashing and encryption algorithms will run entirely locally within your web browser via advanced client-side scripting. Because your highly sensitive, unencrypted source files will never be uploaded to an external server or processed in the cloud, you can rest assured that your intellectual property remains 100% confidential. This local processing ensures maximum security while simultaneously providing lightning-fast encryption speeds. We are incredibly excited to bring you this premium feature completely free of charge in our next scheduled platform update.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
         </div>
     </main>
 
-    <footer>
-        &copy; 2026 JKM Edit. All rights reserved.
-    </footer>
-
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

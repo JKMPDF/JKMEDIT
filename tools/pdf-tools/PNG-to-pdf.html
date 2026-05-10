@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang='en' data-theme='corporate-blue'>
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>JPG to PDF Converter - Images to PDF Online</title>
+    <title>JPG/PNG to PDF Converter - Images to PDF Online</title>
     <meta name="description" content="Convert JPG, PNG, or TIFF images into professional PDFs. Drag and drop to reorder images and create a single PDF document."/>
     <meta name="author" content="JKM Edit"/>
     <meta name="keywords" content="JKM Edit, JKM, JPG to PDF, convert image to PDF, photo to PDF, PNG to PDF, make PDF from images, ">
@@ -15,58 +15,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="JPG to PDF Converter - Images to PDF Online">
-    <meta property="og:description" content="Convert JPG, PNG, or TIFF images into professional PDFs. Drag and drop to reorder images and create a single PDF document.">
-    <meta property="og:url" content="https://jkmedit.in/tools/pdf-tools/PNG-to-pdf.html">
-    <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-    <meta property="og:site_name" content="JKM Edit">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="JPG to PDF Converter - Images to PDF Online">
-    <meta name="twitter:description" content="Convert JPG, PNG, or TIFF images into professional PDFs. Drag and drop to reorder images and create a single PDF document.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/pdf-tools/PNG-to-pdf.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/pdf-tools/PNG-to-pdf.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
-    <!-- jsPDF Library (For creating PDFs) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
-        /* --- Corporate Blue Theme Variables --- */
         :root { 
             font-family: 'Poppins', sans-serif; 
             --primary-color: #0052cc; 
@@ -74,217 +28,121 @@
             --bg-color: #f4f5f7; 
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
-            --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
             --transition-speed: 0.3s; 
         }
 
-        /* --- Basic Reset & Layout --- */
-        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
+        .hidden { display: none !important; }
 
-        /* --- Header Section (Left Aligned) --- */
-        .main-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 1rem 2rem;
-            background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid var(--primary-color);
+        /* --- Header Section --- */
+        .branding-bar {
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 1rem 2rem; background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color);
             margin-bottom: 2rem;
         }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            width: 50px; 
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .brand-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--text-color);
-        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-img { width: 50px; height: 50px; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- Main Tool Container --- */
-        .dashboard-container { 
-            padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 1000px; 
-            margin: auto; 
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .dashboard-container { padding: 0 1.5rem 3rem 1.5rem; max-width: 1000px; margin: auto; display: flex; flex-direction: column; }
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; margin-top: 1rem; }
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         
         .tool-content-wrapper { 
-            background: var(--surface-color); 
-            padding: 2.5rem; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
-            text-align: center; 
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; 
         }
 
         /* --- Upload Area --- */
         .upload-area { 
-            border: 3px dashed var(--primary-color); 
-            border-radius: 10px; 
-            padding: 3rem 1.5rem; 
-            margin-bottom: 2rem; 
-            cursor: pointer; 
-            transition: background-color var(--transition-speed); 
+            border: 3px dashed var(--primary-color); border-radius: 12px; padding: 3rem 1.5rem; 
+            margin-bottom: 2rem; cursor: pointer; transition: background-color var(--transition-speed); 
             background-color: #f9fafc;
         }
-        .upload-area:hover, .upload-area.drag-over { 
-            background-color: rgba(0, 82, 204, 0.05); 
-        }
+        .upload-area:hover, .upload-area.drag-over { background-color: rgba(0, 82, 204, 0.05); }
         .upload-icon { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
         .upload-text { font-size: 1.1rem; font-weight: 600; }
         .upload-text p { margin: 0.5rem 0; }
         #image-upload { display: none; }
 
         /* --- Image Preview Grid --- */
-        .preview-container {
-            margin-bottom: 2rem;
-            display: none; /* Hidden until files selected */
-        }
-        
-        .preview-title {
-            text-align: left;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--text-color);
-        }
+        .preview-container { margin-bottom: 2rem; display: none; }
+        .preview-title { text-align: left; font-weight: 600; margin-bottom: 10px; color: var(--text-color); }
 
         .image-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 10px;
-            background: #f4f5f7;
-            border-radius: 8px;
-            border: 1px solid #ddd;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px; max-height: 400px; overflow-y: auto; padding: 15px;
+            background: #f4f5f7; border-radius: 8px; border: 1px solid #ddd;
         }
 
         .preview-item {
-            position: relative;
-            border-radius: 6px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            aspect-ratio: 1;
+            position: relative; border-radius: 6px; overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); aspect-ratio: 1; background: white;
+            display: flex; align-items: center; justify-content: center;
         }
-
-        .preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
+        .preview-item img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+        
+        .remove-img-btn {
+            position: absolute; top: 5px; right: 5px; background: rgba(220, 53, 69, 0.9);
+            color: white; border: none; border-radius: 50%; width: 24px; height: 24px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; transition: background 0.2s;
         }
+        .remove-img-btn:hover { background: #c82333; }
 
-        /* --- Buttons --- */
+        /* --- Action Buttons --- */
         .convert-btn { 
-            display: inline-block; 
-            padding: 0.85rem 3rem; 
-            background: var(--gradient); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: 700; 
-            font-size: 1.2rem; 
-            transition: transform 0.2s ease, box-shadow 0.2s ease; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            cursor: pointer; 
+            display: inline-block; padding: 1rem 3rem; background: var(--gradient); color: white; 
+            border: none; border-radius: 8px; font-weight: 700; font-size: 1.2rem; 
+            transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer; 
         }
-        .convert-btn:disabled { background: #aaa; cursor: not-allowed; box-shadow: none; transform: none; }
+        .convert-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; transform: none; }
         .convert-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
         
         #status-message { margin-top: 1.5rem; font-weight: 600; color: var(--secondary-color); min-height: 1.5em; }
 
         /* --- Download Section --- */
-        .download-section {
-            display: none;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
-        }
-
+        .download-section { display: none; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee; }
         .download-main-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 2rem;
-            background-color: #28a745; /* Green for download */
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: background-color 0.3s;
-            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem;
+            background-color: #28a745; color: white; text-decoration: none; border-radius: 8px;
+            font-weight: 600; font-size: 1.1rem; transition: background-color 0.3s; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+            width: 100%; max-width: 400px; margin: auto;
         }
-        .download-main-btn:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
-        }
+        .download-main-btn:hover { background-color: #218838; transform: translateY(-2px); }
 
-        /* --- Bottom Navigation Buttons --- */
-        .bottom-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: auto; 
-            padding-top: 2rem;
-            flex-wrap: wrap;
-        }
+        /* --- Navigation Buttons --- */
+        .bottom-nav { display: flex; justify-content: center; gap: 1.5rem; margin-top: 3rem; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
-        .nav-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 2rem;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
+        /* --- Advertisement Box --- */
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        .btn-outline {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
-        .btn-outline:hover {
-            background: rgba(0, 82, 204, 0.05);
-        }
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-        .btn-fill {
-            background: var(--primary-color);
-            color: white;
-            border: 2px solid var(--primary-color);
-        }
-        .btn-fill:hover {
-            background: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
 
-        /* --- Responsive --- */
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+
         @media (max-width: 600px) {
-            .main-header { padding: 1rem; }
+            .branding-bar { padding: 1rem; }
             .dashboard-container { padding: 0 1rem 2rem 1rem; }
             .tool-content-wrapper { padding: 1.5rem; }
             .bottom-nav { flex-direction: column; align-items: center; gap: 1rem; }
@@ -294,54 +152,50 @@
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
-    <header class="main-header">
-        <div class="logo-container">
-            <!-- Logo Image from Assets -->
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
-        </div>
+    <header class="branding-bar">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
+        </a>
     </header>
 
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
+        
         <div class="tool-header">
-            <h2>JPG/PNG to PDF</h2>
-            <p>Convert your images into a single, high-quality PDF document.</p>
+            <h1>JPG/PNG to PDF Converter</h1>
+            <p>Compile multiple images into a single, high-quality PDF document.</p>
         </div>
 
         <div class="tool-content-wrapper">
-            <!-- Upload Area -->
+            
             <div class="upload-area" id="upload-area">
                 <input type="file" id="image-upload" accept="image/png, image/jpeg, image/jpg" multiple>
                 <div class="upload-icon"><i class="fa-solid fa-images"></i></div>
                 <div class="upload-text">
                     <p><strong>Drag & Drop images here</strong></p>
-                    <p>or click to select (Multiple allowed)</p>
+                    <p style="font-weight: 400; font-size: 0.95rem; color:#666;">or click to select multiple files</p>
                 </div>
             </div>
 
-            <!-- Preview Area -->
             <div class="preview-container" id="preview-container">
-                <p class="preview-title">Selected Images:</p>
+                <p class="preview-title">Selected Images <span style="font-weight:normal; color:#666;">(Files will be added in order of upload)</span>:</p>
                 <div class="image-grid" id="image-grid">
-                    <!-- Thumbnails will go here -->
-                </div>
+                    </div>
             </div>
 
-            <!-- Action Button -->
-            <button class="convert-btn" id="convert-btn" disabled>Convert to PDF</button>
+            <button class="convert-btn" id="convert-btn" disabled>
+                <i class="fa-solid fa-file-pdf"></i> Generate PDF
+            </button>
             <p id="status-message"></p>
 
-            <!-- Download Result -->
             <div class="download-section" id="download-section">
                 <a href="#" id="download-link" class="download-main-btn">
-                    <i class="fa-solid fa-file-pdf"></i> Download PDF
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Download Compiled PDF
                 </a>
             </div>
+            
         </div>
 
-        <!-- Bottom Navigation Buttons -->
         <div class="bottom-nav">
             <a href="javascript:history.back()" class="nav-btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
@@ -350,10 +204,53 @@
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the JPG/PNG to PDF Converter</h2>
+            <p>The JPG/PNG to PDF Converter is an essential digital compilation tool designed to effortlessly combine scattered image files into a single, cohesive, professionally formatted PDF document. In both personal and professional environments, you are frequently tasked with sharing visual data—such as scanned physical receipts for an expense report, architectural site photos for a client presentation, or an array of digital design mockups. Sending a dozen loose image files as individual email attachments is incredibly cumbersome, highly unprofessional, and prone to downloading errors. This tool solves that structural problem instantly by fusing your visual files into the globally recognized standard for secure document sharing.</p>
+            <p>Using the interface is exceptionally intuitive. You can seamlessly drag and drop multiple image files simultaneously directly into the designated upload zone. Our robust system natively supports all standard web image formats, including high-resolution JPEGs and transparent PNGs. Once uploaded, the application generates a clear visual grid of thumbnails representing your selected images. This preview area allows you to easily verify that you have grabbed the correct files before initiating the conversion. If an accidental image was added, you can quickly remove it directly from the grid. When you click "Generate PDF," our dynamic rendering engine algorithmically calculates the optimal aspect ratio for each image, centering them perfectly onto individual, standard-sized PDF pages with clean formatting margins.</p>
+            <p>A fundamental advantage of this specific image compilation tool is its strict reliance on local, client-side browser processing. By utilizing advanced JavaScript libraries (specifically jsPDF), the entire process of reading your images and generating the final PDF structure happens directly inside your own computer's memory. Your private financial receipts, confidential personal photographs, and proprietary design portfolios are never uploaded across the internet to an external server. This localized architecture guarantees complete data privacy and ensures that the conversion happens instantaneously, completely bypassing the frustrating upload and download wait times associated with cloud-based alternatives. Thank you for relying on our platform to optimize your document creation workflow.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
+            });
+
             const { jsPDF } = window.jspdf;
             
             const uploadArea = document.getElementById('upload-area');
@@ -365,9 +262,8 @@
             const downloadSection = document.getElementById('download-section');
             const downloadLink = document.getElementById('download-link');
             
-            let selectedFiles = [];
+            let selectedFiles = []; // Array of file objects
 
-            // --- Drag & Drop and Input Events ---
             uploadArea.addEventListener('click', () => imageUpload.click());
             
             uploadArea.addEventListener('dragover', (e) => {
@@ -389,73 +285,95 @@
                 handleFiles(files);
             });
 
-            // --- Handle File Selection ---
             function handleFiles(files) {
-                // Filter for images
                 const validFiles = files.filter(file => file.type.startsWith('image/'));
                 
                 if (validFiles.length === 0) {
-                    statusMessage.textContent = "Please select valid image files (JPG or PNG).";
-                    statusMessage.style.color = "red";
+                    statusMessage.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please select valid image files (JPG or PNG).';
+                    statusMessage.style.color = "#dc3545";
                     return;
                 }
 
-                selectedFiles = validFiles;
+                // Append newly selected files to array
+                selectedFiles = selectedFiles.concat(validFiles);
                 updatePreview();
                 
-                statusMessage.textContent = `${selectedFiles.length} image(s) selected. Ready to convert.`;
+                statusMessage.innerHTML = `<i class="fa-solid fa-check"></i> ${selectedFiles.length} image(s) loaded. Ready to convert.`;
                 statusMessage.style.color = "var(--text-color)";
                 convertBtn.disabled = false;
                 downloadSection.style.display = 'none';
+                uploadArea.style.borderColor = "var(--primary-color)";
+                uploadArea.style.backgroundColor = "#f0f7ff";
             }
 
-            // --- Update Preview Grid ---
             function updatePreview() {
                 imageGrid.innerHTML = '';
                 if (selectedFiles.length > 0) {
                     previewContainer.style.display = 'block';
-                    selectedFiles.forEach(file => {
+                    selectedFiles.forEach((file, index) => {
                         const reader = new FileReader();
                         reader.onload = (e) => {
                             const div = document.createElement('div');
                             div.className = 'preview-item';
+                            
                             const img = document.createElement('img');
                             img.src = e.target.result;
+                            
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'remove-img-btn';
+                            removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                            removeBtn.title = "Remove Image";
+                            removeBtn.onclick = (event) => {
+                                event.stopPropagation();
+                                removeImage(index);
+                            };
+
                             div.appendChild(img);
+                            div.appendChild(removeBtn);
                             imageGrid.appendChild(div);
                         };
                         reader.readAsDataURL(file);
                     });
                 } else {
                     previewContainer.style.display = 'none';
+                    convertBtn.disabled = true;
+                    statusMessage.textContent = "";
+                    uploadArea.style.borderColor = "#ccc";
+                    uploadArea.style.backgroundColor = "#f9fafc";
                 }
             }
 
-            // --- Conversion Logic (Image to PDF) ---
+            function removeImage(index) {
+                selectedFiles.splice(index, 1);
+                updatePreview();
+                if(selectedFiles.length > 0) {
+                    statusMessage.innerHTML = `<i class="fa-solid fa-check"></i> ${selectedFiles.length} image(s) loaded. Ready to convert.`;
+                }
+            }
+
             convertBtn.addEventListener('click', async () => {
                 if (selectedFiles.length === 0) return;
 
+                const originalBtnText = convertBtn.innerHTML;
                 convertBtn.disabled = true;
-                statusMessage.textContent = 'Generating PDF...';
+                convertBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generating PDF...`;
+                statusMessage.textContent = 'Generating PDF Layout...';
                 statusMessage.style.color = 'var(--secondary-color)';
 
                 try {
                     const doc = new jsPDF();
                     const pageWidth = doc.internal.pageSize.getWidth();
                     const pageHeight = doc.internal.pageSize.getHeight();
-                    const margin = 10; // 10mm margin
+                    const margin = 10; 
 
-                    // Loop through files sequentially
                     for (let i = 0; i < selectedFiles.length; i++) {
                         const file = selectedFiles[i];
                         const imageData = await readFileAsDataURL(file);
                         
-                        // Load image properties to get dimensions
                         const imgProps = doc.getImageProperties(imageData);
                         const imgWidth = imgProps.width;
                         const imgHeight = imgProps.height;
 
-                        // Calculate aspect ratio to fit on page
                         const availableWidth = pageWidth - (margin * 2);
                         const availableHeight = pageHeight - (margin * 2);
                         const ratio = Math.min(availableWidth / imgWidth, availableHeight / imgHeight);
@@ -463,11 +381,9 @@
                         const finalWidth = imgWidth * ratio;
                         const finalHeight = imgHeight * ratio;
                         
-                        // Center image
                         const x = (pageWidth - finalWidth) / 2;
                         const y = (pageHeight - finalHeight) / 2;
 
-                        // Add new page if it's not the first image
                         if (i > 0) {
                             doc.addPage();
                         }
@@ -476,27 +392,26 @@
                         statusMessage.textContent = `Processing image ${i + 1} of ${selectedFiles.length}...`;
                     }
 
-                    // Save and create download link
                     const pdfBlob = doc.output('blob');
                     const pdfUrl = URL.createObjectURL(pdfBlob);
                     
                     downloadLink.href = pdfUrl;
-                    downloadLink.download = 'jkm-converted-images.pdf';
+                    downloadLink.download = 'JKM_Compiled_Images.pdf';
                     
-                    statusMessage.textContent = 'Success! Your PDF is ready.';
+                    statusMessage.innerHTML = '<i class="fa-solid fa-circle-check"></i> Success! Your PDF is ready below.';
                     statusMessage.style.color = '#28a745';
                     downloadSection.style.display = 'block';
 
                 } catch (error) {
                     console.error(error);
-                    statusMessage.textContent = 'An error occurred during conversion.';
-                    statusMessage.style.color = 'red';
+                    statusMessage.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> An error occurred during conversion.';
+                    statusMessage.style.color = '#dc3545';
                 } finally {
                     convertBtn.disabled = false;
+                    convertBtn.innerHTML = originalBtnText;
                 }
             });
 
-            // Helper to read file as Data URL (Promise wrapper)
             function readFileAsDataURL(file) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
