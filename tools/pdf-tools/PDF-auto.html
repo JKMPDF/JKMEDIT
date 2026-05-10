@@ -27,52 +27,20 @@
     <meta name="twitter:description" content="Read PDFs without scrolling manually. Adjust scroll speed for a smooth, hands-free reading experience on any device.">
     <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/pdf-tools/PDF-auto.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/pdf-tools/PDF-auto.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- FONTS & ICONS -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
-    <!-- PDF LIBRARY -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
     <style>
         :root { 
             font-family: 'Poppins', sans-serif; 
             --primary-color: #0052cc; 
+            --secondary-color: #0747a6;
             --bg-color: #f4f5f7; 
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
+            --accent-color: #ffab00;
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
         }
         
@@ -93,17 +61,13 @@
         .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- Main Layout --- */
-        .tool-container { padding: 2rem 1rem; max-width: 1100px; margin: auto; width: 100%; flex: 1; }
+        .tool-container { padding: 2rem 1.5rem; max-width: 1100px; margin: auto; width: 100%; flex: 1; }
         
-        .ad-placeholder { 
-            max-width: 728px; width: 100%; height: 90px; 
-            background-color: #e0e0e0; border: 1px dashed #999; 
-            margin: 1rem auto 2rem auto; 
-            display: flex; align-items: center; justify-content: center; 
-            color: #555; font-size: 0.9rem; border-radius: 8px; 
-        }
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; color: var(--text-color); }
+        .tool-header p { text-align: center; margin-bottom: 2rem; color: #666; font-size: 1.1rem;}
 
         /* --- Upload Zone --- */
+        #upload-stage { max-width: 900px; margin: 0 auto; }
         #dropzone { 
             border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
             text-align: center; cursor: pointer; background-color: var(--surface-color); 
@@ -111,15 +75,23 @@
         }
         #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
         #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
-        .tool-header h1 { font-size: 2rem; margin-bottom: 0.5rem; text-align: center; color: var(--primary-color); }
-        .tool-header p { text-align: center; margin-bottom: 2rem; color: #666; }
+        #dropzone p { margin: 0; font-size: 1.1rem; font-weight: 600; }
 
         /* --- Navigation Buttons --- */
-        .navigation-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 3rem; }
-        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .nav-back { background: #e9ecef; color: #333; }
-        .nav-dash { background: var(--primary-color); color: white; }
-        .nav-dash:hover { opacity: 0.9; }
+        .navigation-buttons { display: flex; justify-content: center; gap: 1.5rem; margin-top: 3rem; flex-wrap: wrap; }
+        .nav-btn { padding: 0.8rem 2.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; transition: all 0.2s;}
+        .nav-back { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .nav-back:hover { background: rgba(0, 82, 204, 0.05); }
+        .nav-dash { background: var(--gradient); color: white; border: 2px solid var(--primary-color); }
+        .nav-dash:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        /* --- Advertisement Box --- */
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #f0f0f0; border: 1px dashed #ccc; 
+            margin: 2rem auto; display: flex; align-items: center; 
+            justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; 
+        }
 
         /* --- Viewer Stage (The Scroll Area) --- */
         #viewer-stage { position: relative; }
@@ -170,7 +142,6 @@
 
         .control-group { display: flex; align-items: center; gap: 10px; }
         
-        /* Buttons in Control Bar */
         .c-btn {
             background: none; border: none; cursor: pointer; font-size: 1.2rem;
             color: #555; transition: 0.2s; width: 40px; height: 40px; border-radius: 50%;
@@ -180,19 +151,18 @@
         .c-btn.active { background: var(--primary-color); color: white; }
         
         .play-btn {
-            background: var(--primary-color); color: white; font-size: 1.5rem;
+            background: var(--gradient); color: white; font-size: 1.5rem;
             width: 60px; height: 60px; box-shadow: 0 4px 10px rgba(0, 82, 204, 0.3);
         }
-        .play-btn:hover { background: #003d82; transform: scale(1.05); }
+        .play-btn:hover { transform: scale(1.05); }
 
-        /* Sliders */
-        input[type=range] { width: 100px; cursor: pointer; }
+        input[type=range] { width: 100px; cursor: pointer; accent-color: var(--primary-color); }
         .label-text { font-size: 0.8rem; font-weight: 600; color: #666; }
         
         /* Marker Line (Guide) */
         #guide-line {
             position: fixed; top: 30%; left: 0; width: 100%; height: 2px;
-            background: rgba(255, 0, 0, 0.3); pointer-events: none; z-index: 50;
+            background: rgba(255, 0, 0, 0.5); pointer-events: none; z-index: 50;
             display: none;
         }
 
@@ -202,127 +172,130 @@
             background: rgba(255,255,255,0.9); z-index: 200;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-    
+
+        /* --- Extra Sections --- */
         .about-section { 
-            margin: 40px 0 50px 0; padding: 40px; 
+            margin: 40px auto 50px auto; padding: 40px; max-width: 1000px;
             background: white; border-radius: 18px; 
-            border: 1px solid #d2d2d7; box-sizing: border-box;
+            border: 1px solid var(--border-color); box-sizing: border-box;
         }
-        .about-section h2 { color: var(--corp-Red); margin-top: 0; }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
         .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-       .footer-offerings {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-            max-width: 1000px;
-            border: 1px solid #d2d2d7; box-sizing: border-box;
+        .footer-offerings {
+            display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
+            margin: 1rem auto; padding: 1.5rem; border-top: 1px solid var(--border-color);
+            max-width: 1000px; border: 1px solid var(--border-color); box-sizing: border-box;
             background: white; border-radius: 18px;           
         }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
 
+        @media (max-width: 768px) {
+            .control-bar { padding: 10px; gap: 10px; }
+            input[type=range] { width: 70px; }
+            .label-text { display: none; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- HEADER (Link updated to index.html) -->
     <header class="branding-bar" id="main-header">
         <a href="https://jkmedit.in/" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
             <h2>JKM Edit</h2>
         </a>
     </header>
 
     <main class='tool-container' id="upload-container">
 
-        <!-- UPLOAD STAGE -->
         <div id="upload-stage">
             <div class='tool-header'>
-                <h1>Advance Scroll Mode (Teleprompter)</h2>
-                <p>Auto-scroll your PDF for presentations, music, or reading.</p>
+                <h1>PDF Auto Scroll (Teleprompter)</h1>
+                <p>Read PDFs seamlessly with customizable, hands-free auto-scrolling.</p>
             </div>
+            
             <input type="file" id="file-input" class="hidden" accept="application/pdf"/>
             <div id="dropzone">
                 <i class="fa-solid fa-scroll"></i>
-                <p><strong>Click to Upload PDF</strong></p>
+                <p><strong>Click to Upload PDF</strong><br>or drag and drop your file here</p>
+            </div>
+            
+            <div style="text-align:center; margin-top:20px; color:#666;">
+                <p><i class="fa-solid fa-lightbulb" style="color:var(--accent-color);"></i> <strong>Pro Tip:</strong> Press the Spacebar to instantly play or pause the scrolling.</p>
             </div>
         </div>
 
-        <!-- NAVIGATION BUTTONS (Added Below) -->
-        <div class="navigation-buttons">
+        <div class="navigation-buttons" id="nav-section">
             <a href="javascript:history.back()" class="nav-btn nav-back">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="https://jkmedit.in/tools/pdf-tools.html" class="nav-btn nav-dash">
+            <a href="https://jkmedit.in/" class="nav-btn nav-dash">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
- <div class="ad-placeholder">Advertisement Space (728x90)</div>
-<div class="about-section">
-    <h2>About the PDF auto scroll</h2>
-    <p>The PDF auto scroll function is an accessibility and productivity feature that automatically moves the document downward at a steady pace. It allows for a hands-free reading experience, which is perfect for speeches, long-form reading, or following instructions while working.</p>
-    <p>It works by utilizing a timer-based script that moves the scroll position of the document viewer by a set number of pixels per second. Users can typically adjust the speed of the scroll to match their reading pace, and they can pause or resume the movement with a simple click.</p>
-    <p>This is required when you are using a PDF as a teleprompter or when you are multitasking and cannot manually scroll the page. It creates a smooth, cinematic reading experience that helps you maintain focus without the constant interruption of manual navigation.</p>
-    <h2>Thank you </h2>
-</div>
+        
+        <div class="ad-placeholder" id="ad-section">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
 
+        <div class="about-section" id="about-section">
+            <h2>About the PDF Auto Scroll Tool</h2>
+            <p>The PDF Auto Scroll tool is an advanced accessibility and productivity feature expertly designed to automatically move your digital documents downward at a steady, customizable pace. In various professional, academic, and creative environments, the physical act of manually swiping a touchscreen or rolling a mouse wheel to scroll through a multi-page PDF can severely disrupt your workflow and break your concentration. This tool provides a flawlessly smooth, hands-free reading experience that is absolutely essential for a wide variety of use cases.</p>
+            <p>Whether you are a public speaker utilizing a PDF document as a digital teleprompter during a keynote address, a musician sight-reading complex sheet music while both hands are occupied on an instrument, or simply a student who wants to consume long-form reading assignments while taking handwritten notes, this automatic scroller serves as the ultimate digital assistant. The tool operates utilizing a highly optimized, timer-based JavaScript engine that smoothly shifts the vertical scroll position of the document viewport by a calculated number of pixels per second. Users have total granular control over this mechanism; an intuitive bottom-docked speed slider allows you to perfectly match the document's movement to your specific reading pace.</p>
+            <p>To further enhance usability, we have embedded several powerful auxiliary features directly into the floating control bar. A dedicated "Mirror Mode" instantly flips the entire PDF horizontally, ensuring the text renders perfectly when reflected onto professional teleprompter glass. The "Night Mode" toggle effortlessly inverts stark white backgrounds into deep, comfortable dark grays to drastically reduce eye strain during late-night reading sessions. Additionally, a togglable "Reading Guide Line" acts as a visual anchor to prevent you from losing your place in dense paragraphs. Just like all our utilities, the rendering process occurs entirely within your local browser, ensuring maximum privacy for your sensitive scripts and zero network buffering issues. Thank you for utilizing our platform to optimize your digital reading experience.</p>
+            <h2>Thank you</h2>
+        </div>
 
-<div class="footer-offerings">
-                    <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
-                    <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
-                    <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
-                    <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
-                    <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
-                    <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
-                    <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
-                    <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
-                    <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
-                    <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
-                    <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
-                    <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
-                </div>
+        <div class="footer-offerings" id="footer-section">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
 
     </main>
 
-    <!-- VIEWER STAGE (Full Width - Hidden Initially) -->
     <div id="viewer-stage" class="hidden">
         <div id="guide-line"></div>
         <div id="viewer-container"></div>
         
-        <!-- Floating Controls -->
         <div class="control-bar">
-            <!-- Play/Pause -->
-            <button class="c-btn play-btn" id="toggle-scroll" onclick="toggleScroll()">
+            <button class="c-btn play-btn" id="toggle-scroll" onclick="toggleScroll()" title="Play/Pause (Space)">
                 <i class="fa-solid fa-play"></i>
             </button>
 
-            <!-- Speed -->
             <div class="control-group">
                 <i class="fa-solid fa-gauge-high" style="color:#aaa"></i>
                 <div style="display:flex; flex-direction:column;">
                     <span class="label-text">Speed</span>
-                    <input type="range" id="speed-slider" min="1" max="100" value="20">
+                    <input type="range" id="speed-slider" min="1" max="100" value="20" title="Adjust Scroll Speed">
                 </div>
             </div>
 
             <div style="width:1px; height:30px; background:#ddd; margin:0 10px;"></div>
 
-            <!-- Zoom -->
             <div class="control-group">
                 <i class="fa-solid fa-magnifying-glass" style="color:#aaa"></i>
                 <div style="display:flex; flex-direction:column;">
                     <span class="label-text">Size</span>
-                    <input type="range" id="zoom-slider" min="50" max="150" value="100">
+                    <input type="range" id="zoom-slider" min="50" max="150" value="100" title="Adjust Zoom">
                 </div>
             </div>
 
             <div style="width:1px; height:30px; background:#ddd; margin:0 10px;"></div>
 
-            <!-- Toggles -->
-            <button class="c-btn" onclick="toggleFlip()" title="Mirror Mode (for Teleprompter Glass)">
+            <button class="c-btn" onclick="toggleFlip()" title="Mirror Mode (for Teleprompters)">
                 <i class="fa-solid fa-right-left"></i>
             </button>
             <button class="c-btn" onclick="toggleDarkMode()" title="Night Mode">
@@ -332,47 +305,49 @@
                 <i class="fa-solid fa-ruler-horizontal"></i>
             </button>
             
-            <!-- Exit (Reloads page to return to upload) -->
             <button class="c-btn" style="color: #de350b;" onclick="location.reload()" title="Exit Viewer">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
     <div id="loading-overlay" class="hidden">
         <i class="fa-solid fa-spinner fa-spin" style="font-size:3rem; color:var(--primary-color); margin-bottom:1rem;"></i>
         <h3 id="loading-text">Processing PDF...</h3>
     </div>
 
     <script>
-        // 1. SETUP
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('file-input');
         const uploadContainer = document.getElementById('upload-container');
+        
+        // Hide these when viewing PDF
+        const navSection = document.getElementById('nav-section');
+        const adSection = document.getElementById('ad-section');
+        const aboutSection = document.getElementById('about-section');
+        const footerSection = document.getElementById('footer-section');
+
         const viewerStage = document.getElementById('viewer-stage');
         const viewerContainer = document.getElementById('viewer-container');
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingText = document.getElementById('loading-text');
 
-        // Scroll State
         let isScrolling = false;
         let animationFrameId;
         
-        // 2. UPLOAD LOGIC
         dropzone.onclick = () => fileInput.click();
-        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
-        dropzone.ondrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; dropzone.style.borderColor = 'var(--primary-color)'; };
+        dropzone.ondragleave = () => { dropzone.style.backgroundColor = 'var(--surface-color)'; dropzone.style.borderColor = '#ccc'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); dropzone.style.backgroundColor = 'var(--surface-color)'; handleFiles(e.dataTransfer.files); };
         fileInput.onchange = (e) => handleFiles(e.target.files);
 
         function handleFiles(files) {
-            if (!files[0] || files[0].type !== 'application/pdf') return alert("Invalid PDF");
+            if (!files[0] || files[0].type !== 'application/pdf') return alert("Please select a valid PDF.");
             
             const reader = new FileReader();
             reader.onload = (e) => {
-                // Hide Upload Stage
                 uploadContainer.style.display = 'none';
                 loadingOverlay.classList.remove('hidden');
                 renderPages(e.target.result);
@@ -380,7 +355,6 @@
             reader.readAsArrayBuffer(files[0]);
         }
 
-        // 3. RENDER LOGIC
         async function renderPages(buffer) {
             try {
                 const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
@@ -396,8 +370,6 @@
                     canvas.className = 'pdf-page-canvas';
                     canvas.width = viewport.width;
                     canvas.height = viewport.height;
-                    
-                    // Initial width set to 100% of container
                     canvas.style.width = '100%';
                     
                     const ctx = canvas.getContext('2d');
@@ -415,7 +387,6 @@
             }
         }
 
-        // 4. SCROLL ENGINE
         function toggleScroll() {
             isScrolling = !isScrolling;
             const btn = document.getElementById('toggle-scroll');
@@ -423,36 +394,29 @@
             if (isScrolling) {
                 btn.innerHTML = '<i class="fa-solid fa-pause"></i>';
                 btn.classList.add('active');
-                autoScroll();
-                
-                // Dim Header for immersion
                 document.getElementById('main-header').style.opacity = '0.1';
+                autoScroll();
             } else {
                 btn.innerHTML = '<i class="fa-solid fa-play"></i>';
                 btn.classList.remove('active');
-                cancelAnimationFrame(animationFrameId);
-
                 document.getElementById('main-header').style.opacity = '1';
+                cancelAnimationFrame(animationFrameId);
             }
         }
 
         function autoScroll() {
             if (!isScrolling) return;
-            
             const rawVal = document.getElementById('speed-slider').value;
             const speed = rawVal * 0.05; 
-
             window.scrollBy(0, speed);
             
-            // Infinite Loop until end of page
             if ((window.innerHeight + window.scrollY) < document.body.offsetHeight) {
                 animationFrameId = requestAnimationFrame(autoScroll);
             } else {
-                toggleScroll(); // Stop at bottom
+                toggleScroll(); 
             }
         }
 
-        // 5. TOOLS
         const zoomSlider = document.getElementById('zoom-slider');
         zoomSlider.addEventListener('input', (e) => {
             const val = e.target.value;
@@ -467,7 +431,7 @@
         }
 
         document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
+            if (e.code === 'Space' && !viewerStage.classList.contains('hidden')) {
                 e.preventDefault();
                 toggleScroll();
             }

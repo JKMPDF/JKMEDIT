@@ -58,20 +58,17 @@
 }
 </script>
 
-    <!-- FONTS & ICONS -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
-    <!-- PDF Processing Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
     <style>
-        /* --- Basic Setup & Variables (LOCKED TO CORPORATE BLUE) --- */
+        /* --- Basic Setup & Variables --- */
         :root { 
             font-family: 'Poppins', sans-serif; 
             --transition-speed: 0.3s; 
-            /* Corporate Blue Theme Definitions */
             --primary-color: #0052cc; 
             --secondary-color: #0747a6; 
             --bg-color: #f4f5f7; 
@@ -95,7 +92,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             border-bottom: 3px solid var(--primary-color);
             margin-bottom: 1rem;
-            justify-content: flex-start; /* Aligns content to the left */
+            justify-content: flex-start;
         }
         
         .logo-container { 
@@ -105,54 +102,17 @@
             text-decoration: none; 
         }
         
-        .logo-image {
-            height: 50px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .branding-bar h2 { 
-            font-size: 1.75rem; 
-            font-weight: 700; 
-            margin: 0; 
-            color: var(--text-color); 
-        }
-.about-section { 
-            margin: 40px 0 50px 0; padding: 40px; 
-            background: white; border-radius: 18px; 
-            border: 1px solid #d2d2d7; box-sizing: border-box;
-        }
-        .about-section h2 { color: var(--corp-Red); margin-top: 0; }
-        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
-.footer-offerings {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-            max-width: 1000px;
-            border: 1px solid #d2d2d7; box-sizing: border-box;
-            background: white; border-radius: 18px;           
-        }
-
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- Tool Specific Styles --- */
         .tool-container { padding: 2rem 4rem; max-width: 900px; margin: auto; }
-        .ad-placeholder { 
-            max-width: 728px; width: 100%; height: 90px; 
-            background-color: #e0e0e0; border: 1px dashed #999; 
-            margin: 1rem auto 2rem auto; 
-            display: flex; align-items: center; justify-content: center; 
-            color: #555; font-size: 0.9rem; border-radius: 8px; 
-        }
         
         .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; }
         .tool-header p { font-size: 1.1rem; color: #6c757d; text-align: center; margin-bottom: 2rem; }
         
         #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); transition: background-color var(--transition-speed), border-color var(--transition-speed); }
-        #dropzone:hover { border-color: var(--primary-color); }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
         #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
         
         #processing-panel { margin-top: 2rem; padding: 2rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1.5rem; align-items: center; }
@@ -162,9 +122,11 @@
         #compression-slider { flex-grow: 1; }
         #compression-input { width: 70px; padding: 0.5rem; text-align: center; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; }
         #compression-level-text { font-weight: 600; color: var(--primary-color); }
+        
         .action-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; max-width: 500px; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
         .action-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
         #result-display { width: 100%; border-top: 2px solid #eee; margin-top: 1.5rem; padding-top: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
         .size-comparison { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.5rem 1rem; font-size: 1.1rem; }
         .size-info { font-weight: 600; color: var(--primary-color); }
@@ -172,12 +134,41 @@
         .download-button { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 0.8rem 1.5rem; font-size: 1.1rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; }
         .secondary-button { background: transparent; color: var(--primary-color) !important; border: 2px solid var(--primary-color); cursor: pointer; }
         
-        .navigation-buttons { display: flex; justify-content: center; align-items: center; gap: 1rem; text-align: center; margin-top: 3rem; }
+        /* Navigation Buttons */
+        .navigation-buttons { display: flex; justify-content: center; align-items: center; gap: 1rem; text-align: center; margin-top: 3rem; flex-wrap: wrap; }
         .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
-        .primary-nav-btn { background: var(--gradient); color: white !important; }
+        .primary-nav-btn { background: var(--primary-color); color: white !important; border: 2px solid var(--primary-color); }
+        .primary-nav-btn:hover { background: var(--secondary-color); border-color: var(--secondary-color); }
         .back-secondary-btn { background: transparent; color: var(--primary-color) !important; border: 2px solid var(--primary-color); }
-        
-        /* --- Page Transition Animations --- */
+        .back-secondary-btn:hover { background: rgba(0, 82, 204, 0.05); }
+
+        /* Ad Unit */
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #f0f0f0; border: 1px dashed #ccc; 
+            margin: 2rem auto; display: flex; align-items: center; 
+            justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
+            margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color);
+            max-width: 1000px; border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;           
+        }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
+
+        /* --- Animations --- */
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
@@ -186,10 +177,9 @@
 </head>
 <body>
     
-    <!-- BRANDING SECTION (Left Aligned with Image Logo) -->
     <header class="branding-bar">
         <a href='https://jkmedit.in/' class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image">
             <h2>JKM Edit</h2>
         </a>
     </header>
@@ -209,48 +199,45 @@
         </div>
 
         <div id="processing-panel" class="hidden">
-             <!-- Content generated by JavaScript -->
-        </div>
+             </div>
         
         <div class="navigation-buttons">
             <a href="javascript:history.back()" class="nav-btn back-secondary-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
-            <a href="https://jkmedit.in/tools/pdf-tools.html" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="https://jkmedit.in/" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
         </div>
-        <!-- Ad Unit -->
+
         <div class="ad-placeholder">
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
-            <!-- jkm new -->
             <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="5632465279"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
 
-<div class="about-section">
-    <h2>About the Compress PDF</h2>
-    <p>Compress PDF is an optimization utility that reduces the overall file size of a PDF document while attempting to maintain its visual integrity. It targets high-resolution images, embedded fonts, and redundant metadata within the file to make the document "lighter" for web use or email transmission.</p>
-    <p>The tool functions by applying various compression algorithms, such as downsampling images and removing unnecessary XML data that isn't required for viewing. It balances quality and size, often offering different levels of compression—from "Low" (highest quality) to "Extreme" (smallest size)—depending on the user's needs.</p>
-    <p>You require this tool when dealing with strict file size limits on government portals, job applications, or email servers. It ensures that your documents are portable and quick to load, preventing the frustration of failed uploads or slow download speeds for your recipients.</p>
-    <h2>Thank you </h2>
-</div>
+        <div class="about-section">
+            <h2>About the Compress PDF Tool</h2>
+            <p>The Compress PDF tool is a highly advanced, exceptionally powerful optimization utility specifically engineered to drastically reduce the overall file size of your PDF documents while simultaneously maintaining their structural and visual integrity. In today’s fast-paced digital ecosystem, excessively large PDF files can be a massive hindrance. Whether you are trying to attach a heavy portfolio to an email that has strict size limits, uploading a scanned legal document to a government portal, or simply trying to free up valuable storage space on your hard drive, having access to a reliable compression tool is an absolute necessity for smooth digital communication.</p>
+            <p>This intelligent application functions by deeply analyzing the internal structure of your uploaded PDF and applying sophisticated compression algorithms. It meticulously downsamples excessively large, high-resolution embedded images, strips out redundant XML metadata, and optimizes font embedding without compromising the overall readability of the document text. A standout feature of our tool is the granular control it gives you over the compression process. Through a highly intuitive slider interface, you can precisely adjust the compression level from 0 to 99%. This allows you to perfectly balance your need for a smaller file size against the visual quality required for your specific use case—from a visually flawless lossless copy all the way down to extreme compression for strict upload limits.</p>
+            <p>Perhaps most importantly, this PDF compressor prioritizes your digital security and privacy above all else. Unlike traditional online converters that force you to upload your sensitive financial or personal documents to a remote server, our tool performs the entire compression process locally within your own web browser utilizing cutting-edge client-side technology. Your files never leave your device, ensuring total confidentiality. Furthermore, this local processing means you experience zero upload or download wait times, resulting in a lightning-fast, seamless optimization experience. Thank you for relying on our platform to optimize your digital workflow.</p>
+            <h2>Thank you</h2>
+        </div>
 
-<div class="footer-offerings">
-                    <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
-                    <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
-                    <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
-                    <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
-                    <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
-                    <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
-                    <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
-                    <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
-                    <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
-                    <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
-                    <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
-                    <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
-                </div>
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
 
     </main>
     
     <script>
-        // Handle Page Transitions
         window.addEventListener('pageshow', function (event) {
             if (event.persisted) {
                 document.body.classList.remove('fade-out');
@@ -258,7 +245,6 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Page Transition ---
             document.querySelectorAll('a').forEach(link => {
                 const linkUrl = link.getAttribute('href');
                 if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {

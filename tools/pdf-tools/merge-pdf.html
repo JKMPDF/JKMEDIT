@@ -27,52 +27,16 @@
     <meta name="twitter:description" content="Combine multiple PDFs into one document in seconds. No registration, 100% secure, and privacy-first. Best free tool to merge PDF files.">
     <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/pdf-tools/merge-pdf.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/pdf-tools/merge-pdf.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- FONTS & ICONS -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
-    <!-- PDF LIBRARIES -->
     <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
     <style>
-        /* --- Basic Setup & Variables (LOCKED TO CORPORATE BLUE) --- */
         :root { 
             font-family: 'Poppins', sans-serif; 
             --transition-speed: 0.3s; 
-            /* Corporate Blue Theme Definitions */
             --primary-color: #0052cc; 
             --secondary-color: #0747a6; 
             --bg-color: #f4f5f7; 
@@ -80,99 +44,58 @@
             --text-color: #172b4d; 
             --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --success-color: #28a745;
         }
         
         html, body { margin: 0; min-height: 100vh; }
-        body { color: var(--text-color); background-color: var(--bg-color); }
+        body { color: var(--text-color); background-color: var(--bg-color); animation: fadeInPage 0.5s ease-in-out; }
         *, *::before, *::after { box-sizing: border-box; }
         .hidden { display: none !important; }
 
         /* --- Branding Bar (Header) --- */
         .branding-bar {
-            display: flex;
-            align-items: center;
-            padding: 1rem 2rem; /* Padding for spacing */
-            background: var(--surface-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-bottom: 3px solid var(--primary-color);
-            margin-bottom: 1rem;
-            justify-content: flex-start; /* Aligns content to the left */
+            display: flex; align-items: center; padding: 1rem 2rem; 
+            background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color); margin-bottom: 1rem;
+            justify-content: flex-start; 
         }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
         
-        .logo-container { 
-            display: flex; 
-            align-items: center; 
-            gap: 1rem; 
-            text-decoration: none; 
-        }
-        
-        .logo-image {
-            height: 50px; /* Adjust height as needed */
-            width: auto;
-            object-fit: contain;
-        }
-
-        .branding-bar h2 { 
-            font-size: 1.75rem; 
-            font-weight: 700; 
-            margin: 0; 
-            color: var(--text-color); 
-        }
-        
-        .about-section { 
-            margin: 40px 0 50px 0; padding: 40px; 
-            background: white; border-radius: 18px; 
-            border: 1px solid #d2d2d7; box-sizing: border-box;
-        }
-        .about-section h2 { color: var(--corp-Red); margin-top: 0; }
-        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
-
-.footer-offerings {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-            max-width: 1000px;
-        }
-        .offering-link {
-            font-size: 0.85rem;
-            color: var(--text-secondary-color);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .offering-link:hover {
-            color: var(--primary-color);
-        }
-
-
-
         /* --- Tool Specific Styles --- */
-        .tool-container { padding: 2rem 4rem; max-width: 1200px; margin: auto; }
-        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 0 auto 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
-        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; }
-        .tool-header p { font-size: 1.1rem; color: #6c757d; text-align: center; }
+        .tool-container { padding: 2rem 1.5rem; max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center; }
         
+        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%; }
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        #upload-stage { width: 100%; max-width: 900px; }
         #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); margin-top: 1rem; transition: border-color 0.3s; }
         #dropzone:hover, #dropzone.drag-over { border-color: var(--primary-color); background-color: #f0f7ff; }
         #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
         
+        #edit-stage { width: 100%; }
         #page-preview-container { margin-top: 2rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .page-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem; }
         .page-preview-grid.locked { pointer-events: none; opacity: 0.6; }
-        .page-item { position: relative; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; cursor: grab; }
-        .page-item.dragging { opacity: 0.4; } .page-item canvas { display: block; width: 100%; height: auto; } .page-item.deselected { border-color: #aaa; filter: grayscale(80%); } .page-item.deselected .page-tick-icon { display: none; } .page-tick-icon { position: absolute; top: 8px; right: 8px; font-size: 1.5rem; color: white; background-color: var(--primary-color); border-radius: 50%; padding: 0.25rem; } .page-info { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); color: white; font-size: 0.8rem; text-align: center; padding: 4px 0; }
+        .page-item { position: relative; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; cursor: grab; background: white; }
+        .page-item.dragging { opacity: 0.4; } 
+        .page-item canvas { display: block; width: 100%; height: auto; } 
+        .page-item.deselected { border-color: #aaa; filter: grayscale(80%); } 
+        .page-item.deselected .page-tick-icon { display: none; } 
+        .page-tick-icon { position: absolute; top: 8px; right: 8px; font-size: 1.5rem; color: white; background-color: var(--primary-color); border-radius: 50%; padding: 0.25rem; } 
+        .page-info { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); color: white; font-size: 0.8rem; text-align: center; padding: 4px 0; }
         
         .actions-panel { margin-top: 1.5rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;}
-        .button-group { display: flex; gap: 1rem; justify-content: center; width: 100%; }
-        .action-button { display: block; width: 100%; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; }
+        .button-group { display: flex; gap: 1rem; justify-content: center; width: 100%; flex-wrap: wrap; }
+        .action-button { display: block; width: 100%; max-width: 400px; padding: 1rem; font-size: 1.25rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s; }
         .action-button:disabled { background: #ccc; cursor: not-allowed; }
+        .action-button:hover:not(:disabled) { transform: translateY(-2px); }
         .secondary-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        
         .size-info { font-weight: 600; color: var(--primary-color); }
         .size-comparison { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.5rem 1rem; font-size: 1.1rem; width: 100%; }
-        #size-preview { width: 100%; text-align: center; }
         #result-panel .size-comparison { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; }
         
         .compression-settings { width: 100%; max-width: 500px; text-align: center; }
@@ -180,32 +103,41 @@
         .download-button { display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 3rem; font-size: 1.2rem; font-weight: 600; color: white !important; text-decoration: none; background: var(--gradient); border-radius: 8px; cursor: pointer; }
         .stepper-btn { background: #e9ecef; border: 1px solid #ccc; color: #333; font-weight: bold; cursor: pointer; border-radius: 50%; width: 30px; height: 30px; flex-shrink: 0; }
         
-        .navigation-buttons { text-align: center; margin-top: 3rem; }
-        .nav-btn { display: inline-block; padding: 0.8rem 2.5rem 1.0rem 1.0rem; margin: 0 0.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; }
+        /* Navigation & Ads */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s; }
         .primary-nav-btn { background: var(--gradient); color: white !important; }
-        
-        /* --- Page Transition Animations --- */
-        body { animation: fadeInPage 0.5s ease-in-out; }
-        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        .primary-nav-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .secondary-nav-btn { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .secondary-nav-btn:hover { background: rgba(0, 82, 204, 0.05); }
+
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
+
+        /* Extra Sections */
+        .about-section { width: 100%; max-width: 1000px; margin: 40px auto 20px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid #d2d2d7; box-sizing: border-box; }
+        .about-section h2 { color: var(--text-color); margin-top: 0; font-size: 1.8rem; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1000px; border: 1px solid #d2d2d7; box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { font-size: 0.95rem; color: var(--primary-color); text-decoration: none; transition: color 0.2s; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
+
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
-
-        /* --- Responsive Design --- */
-        @media (max-width: 1024px) { .tool-container { padding: 2rem 1.5rem; } }
     </style>
 </head>
 <body>
     
-    <!-- BRANDING SECTION (Left Aligned with Image Logo) -->
     <header class="branding-bar">
         <a href='https://jkmedit.in/' class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image">
             <h2>JKM Edit</h2>
         </a>
     </header>
 
     <main class='tool-container'>
 
+        <div id="upload-stage">
             <div class='tool-header'>
                 <h1>Organize, Merge & Compress PDF</h1>
                 <p>Rearrange, remove, and merge pages, then compress the final PDF.</p>
@@ -221,9 +153,10 @@
             <div id="page-preview-container">
                  <div class="page-preview-grid"></div>
             </div>
+            
             <div id="config-panel" class="actions-panel">
                 <p style="text-align:center; color:#6c757d; margin:0;">Click pages to select/deselect. Drag to reorder.</p>
-                <div id="size-preview" class="hidden">
+                <div id="size-preview" class="hidden" style="width: 100%; text-align: center;">
                      <span>Original Size (Estimated): <strong id="original-size-display" class="size-info">...</strong></span>
                 </div>
                 <div class="button-group">
@@ -231,67 +164,53 @@
                     <button id="process-btn" class="action-button" disabled>Merge PDF</button>
                 </div>
             </div>
+            
             <div id="result-panel" class="actions-panel hidden">
             </div>
         </div>
         
         <div class="navigation-buttons">
-            <a href="javascript:history.back()" class="nav-btn secondary-button"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
-            <a href="https://jkmedit.in/tools/pdf-tools.html" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="javascript:history.back()" class="nav-btn secondary-nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="https://jkmedit.in/" class="nav-btn primary-nav-btn"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
         </div>
 
-<div id="upload-stage">
-            <!-- Ad Unit -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676"
-     crossorigin="anonymous"></script>
-<ins class="adsbygoogle"
-     style="display:inline-block;width:728px;height:90px"
-     data-ad-client="ca-pub-7398521559513676"
-     data-ad-slot="9222008225"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-                <!-- JKMEDIT -->
-                <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="2299724922"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="2299724922"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
 
-      <div class="about-section">
-    <h2>About the Merge PDF</h2>
-    <p>The Merge PDF function is a specialized tool designed to combine multiple independent PDF documents into a single, cohesive file. It acts as a digital binder, allowing users to consolidate various reports, invoices, or chapters into one continuous document without losing the original formatting or quality.</p>
-    <p>This tool works by scanning the internal structure of each uploaded PDF file and appending them sequentially based on the user's preferred order. Once the files are uploaded, the system re-indexes the pages and generates a new table of contents if necessary, creating a seamless transition between the merged files before providing a single download link.</p>
-    <p>This feature is essential for professionals and students who need to organize scattered documents for easier sharing and archiving. It eliminates the clutter of sending multiple attachments in an email and ensures that the recipient receives all necessary information in the correct reading order.</p>
-    <h2>Thank you </h2>
-</div>
+        <div class="about-section">
+            <h2>About the Merge PDF Tool</h2>
+            <p>The Merge PDF function is a specialized, highly efficient tool designed to combine multiple independent PDF documents into a single, cohesive file. It acts as a sophisticated digital binder, allowing users to consolidate various reports, invoices, textbook chapters, or legal exhibits into one continuous document without ever losing the original high-quality formatting, embedded fonts, or vector graphics. In today's digital workflow, sending multiple attachments via email is not only cumbersome but highly unprofessional. This tool resolves that issue instantly by providing a unified, clean document ready for distribution or archiving.</p>
+            <p>This powerful application works by physically parsing the internal binary structure of each uploaded PDF file. Once the files are securely loaded into the browser, the system automatically renders visual thumbnail previews of every single page. This interactive workspace gives you absolute control over your final document. You can easily click to deselect individual pages you wish to exclude (such as blank pages or redundant cover sheets) and seamlessly drag and drop the thumbnails to physically reorder how the pages will appear in the final merged file. If you realize you missed a document, the system easily allows you to append additional PDFs to the queue without starting over.</p>
+            <p>Additionally, our tool features an advanced post-merge compression engine. Once your document is stitched together, you can apply variable compression levels to drastically reduce the final file size, making it perfect for strict email attachment limits or web uploads. Most importantly, all of these complex rendering, merging, and compression algorithms are executed entirely via client-side JavaScript. Because your highly sensitive financial documents and private records are processed locally inside your web browser, they are never uploaded, stored, or transmitted to any external cloud servers. This ensures 100% data privacy and guarantees rapid processing speeds with zero network latency. Thank you for relying on our utilities for your document management.</p>
+            <h2>Thank you</h2>
+        </div>
 
- <div class="footer-offerings">
-                    <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
-                    <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
-                    <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
-                    <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
-                    <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
-                    <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
-                    <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
-                    <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
-                    <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
-                    <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
-                    <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
-                    <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
-                </div>
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
 
     </main>
 
-    <!-- JavaScript -->
     <script>
-    // Handle Page Transitions
     window.addEventListener('pageshow', function (event) {
-        if (event.persisted) {
-            document.body.classList.remove('fade-out');
-        }
+        if (event.persisted) document.body.classList.remove('fade-out');
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-        // --- Page Transition ---
         document.querySelectorAll('a').forEach(link => {
             const linkUrl = link.getAttribute('href');
             if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
@@ -306,11 +225,15 @@
         });
 
         // --- PDF Logic ---
-        const fileInput=document.getElementById('file-input'),dropzone=document.getElementById('dropzone');
-        const addMoreFilesBtn=document.getElementById('add-more-files-btn'),processBtn=document.getElementById('process-btn');
-        const uploadStage=document.getElementById('upload-stage'),editStage=document.getElementById('edit-stage');
-        const configPanel=document.getElementById('config-panel'),resultPanel=document.getElementById('result-panel');
-        const pagePreviewGrid=editStage.querySelector('.page-preview-grid');
+        const fileInput = document.getElementById('file-input');
+        const dropzone = document.getElementById('dropzone');
+        const addMoreFilesBtn = document.getElementById('add-more-files-btn');
+        const processBtn = document.getElementById('process-btn');
+        const uploadStage = document.getElementById('upload-stage');
+        const editStage = document.getElementById('edit-stage');
+        const configPanel = document.getElementById('config-panel');
+        const resultPanel = document.getElementById('result-panel');
+        const pagePreviewGrid = editStage.querySelector('.page-preview-grid');
         const sizePreview = document.getElementById('size-preview');
         const originalSizeDisplay = document.getElementById('original-size-display');
         
@@ -321,12 +244,12 @@
         let mergedOnlyBytes = null;
         let mergedOnlyBlobUrl = null;
 
-        if (dropzone) dropzone.addEventListener('click',()=>fileInput.click());
-        if (addMoreFilesBtn) addMoreFilesBtn.addEventListener('click',()=>fileInput.click());
-        if (fileInput) fileInput.addEventListener('change',t=>handleFiles(t.target.files));
-        if (dropzone) dropzone.addEventListener('dragover',t=>{t.preventDefault();dropzone.classList.add('drag-over')});
-        if (dropzone) dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drag-over'));
-        if (dropzone) dropzone.addEventListener('drop',t=>{t.preventDefault();dropzone.classList.remove('drag-over');handleFiles(t.dataTransfer.files)});
+        if (dropzone) dropzone.addEventListener('click', () => fileInput.click());
+        if (addMoreFilesBtn) addMoreFilesBtn.addEventListener('click', () => fileInput.click());
+        if (fileInput) fileInput.addEventListener('change', t => handleFiles(t.target.files));
+        if (dropzone) dropzone.addEventListener('dragover', t => { t.preventDefault(); dropzone.classList.add('drag-over') });
+        if (dropzone) dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+        if (dropzone) dropzone.addEventListener('drop', t => { t.preventDefault(); dropzone.classList.remove('drag-over'); handleFiles(t.dataTransfer.files) });
         if (processBtn) processBtn.addEventListener('click', () => handleProcessing(0));
 
         async function handleFiles(files){
@@ -339,7 +262,7 @@
                 const numPagesInFile = pdfJsDoc.numPages;
                 fileDataStore[fileId] = { buffer: arrayBuffer, size: file.size, pageCount: numPagesInFile };
                 for (let i = 1; i <= numPagesInFile; i++){
-                    allPages.push({id: `${fileId}-${i}`, fileId: fileId, originalPageIndex: i - 1, pageLabel: `F${fileId},P${i}`, isSelected: true, pdfDoc: pdfJsDoc});
+                    allPages.push({id: `${fileId}-${i}`, fileId: fileId, originalPageIndex: i - 1, pageLabel: `F${fileId}, P${i}`, isSelected: true, pdfDoc: pdfJsDoc});
                 }
             }
             if (allPages.length > 0) {
@@ -350,22 +273,26 @@
             }
         }
 
-        function formatBytes(b,d=2){if(!+b)return'0 Bytes';const k=1024,i=Math.floor(Math.log(b)/Math.log(k));return`${parseFloat((b/Math.pow(k,i)).toFixed(d<0?0:d))} ${['Bytes','KB','MB','GB'][i]}`}
+        function formatBytes(b, d=2){ if(!+b) return '0 Bytes'; const k=1024, i=Math.floor(Math.log(b)/Math.log(k)); return `${parseFloat((b/Math.pow(k,i)).toFixed(d<0?0:d))} ${['Bytes','KB','MB','GB'][i]}` }
         
         async function renderPagePreviews(){
             if (!pagePreviewGrid) return;
-            pagePreviewGrid.innerHTML='';
+            pagePreviewGrid.innerHTML = '';
             for(const pageObj of allPages){
-                const pageItem=document.createElement('div');
-                pageItem.className='page-item';
-                if(!pageObj.isSelected)pageItem.classList.add('deselected');
-                pageItem.dataset.id=pageObj.id;
-                pageItem.draggable=true;
-                pageItem.innerHTML=`<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;
+                const pageItem = document.createElement('div');
+                pageItem.className = 'page-item';
+                if(!pageObj.isSelected) pageItem.classList.add('deselected');
+                pageItem.dataset.id = pageObj.id;
+                pageItem.draggable = true;
+                pageItem.innerHTML = `<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;
                 pagePreviewGrid.appendChild(pageItem);
-                const canvas=pageItem.querySelector('canvas'),page=await pageObj.pdfDoc.getPage(pageObj.originalPageIndex+1),viewport=page.getViewport({scale:0.4});
-                canvas.height=viewport.height;canvas.width=viewport.width;
-                await page.render({canvasContext:canvas.getContext('2d'),viewport:viewport}).promise;
+                
+                const canvas = pageItem.querySelector('canvas');
+                const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex+1);
+                const viewport = page.getViewport({scale:0.4});
+                canvas.height = viewport.height; 
+                canvas.width = viewport.width;
+                await page.render({canvasContext: canvas.getContext('2d'), viewport: viewport}).promise;
             }
         }
         
@@ -388,34 +315,34 @@
         
         if (pagePreviewGrid) {
             pagePreviewGrid.addEventListener('click', (t) => {
-                const e=t.target.closest('.page-item');
+                const e = t.target.closest('.page-item');
                 if(!e || pagePreviewGrid.classList.contains('locked')) return;
-                const o=allPages.find(t=>t.id===e.dataset.id);
-                if(o){ o.isSelected=!o.isSelected; e.classList.toggle('deselected'); updateInterface(); }
+                const o = allPages.find(t => t.id === e.dataset.id);
+                if(o){ o.isSelected = !o.isSelected; e.classList.toggle('deselected'); updateInterface(); }
             });
             
-            let draggedItem=null;
-            pagePreviewGrid.addEventListener('dragstart',t=>{if(t.target.classList.contains('page-item')){draggedItem=t.target;setTimeout(()=>t.target.classList.add('dragging'),0)}});
-            pagePreviewGrid.addEventListener('dragend', ()=>{
+            let draggedItem = null;
+            pagePreviewGrid.addEventListener('dragstart', t => { if(t.target.classList.contains('page-item')) { draggedItem = t.target; setTimeout(()=>t.target.classList.add('dragging'),0) }});
+            pagePreviewGrid.addEventListener('dragend', () => {
                 if(draggedItem){
-                    draggedItem.classList.remove('dragging'); draggedItem=null;
-                    allPages=[...document.querySelectorAll('.page-item')].map(t=>allPages.find(e=>e.id===t.dataset.id));
-                    updateInterface()
+                    draggedItem.classList.remove('dragging'); draggedItem = null;
+                    allPages = [...document.querySelectorAll('.page-item')].map(t => allPages.find(e => e.id === t.dataset.id));
+                    updateInterface();
                 }
             });
-            pagePreviewGrid.addEventListener('dragover',t=>{
-                t.preventDefault(); if(!draggedItem)return;
-                const e=getDragAfterElement(pagePreviewGrid,t.clientY);
-                if(e==null){pagePreviewGrid.appendChild(draggedItem)}else{pagePreviewGrid.insertBefore(draggedItem,e)}
+            pagePreviewGrid.addEventListener('dragover', t => {
+                t.preventDefault(); if(!draggedItem) return;
+                const e = getDragAfterElement(pagePreviewGrid, t.clientY);
+                if(e == null) { pagePreviewGrid.appendChild(draggedItem) } else { pagePreviewGrid.insertBefore(draggedItem, e) }
             });
             function getDragAfterElement(c,y){
-                const d=[...c.querySelectorAll('.page-item:not(.dragging)')];
-                return d.reduce((t,e)=>{const o=e.getBoundingClientRect(),n=y-o.top-o.height/2;return n<0&&n>t.offset?{offset:n,element:e}:t},{offset:Number.NEGATIVE_INFINITY}).element
+                const d = [...c.querySelectorAll('.page-item:not(.dragging)')];
+                return d.reduce((t,e) => { const o=e.getBoundingClientRect(), n=y-o.top-o.height/2; return n<0 && n>t.offset ? {offset:n, element:e} : t }, {offset: Number.NEGATIVE_INFINITY}).element
             }
         }
         
         function resetApp() {
-            allPages = [], fileCounter = 0, fileDataStore = {};
+            allPages = []; fileCounter = 0; fileDataStore = {};
             if (mergedOnlyBlobUrl) URL.revokeObjectURL(mergedOnlyBlobUrl);
             mergedOnlyBytes = null; mergedOnlyBlobUrl = null;
             if (fileInput) fileInput.value = ''; 
@@ -515,24 +442,22 @@
                         <span><strong id="final-size-label">Merged Size</strong>: <strong id="final-size-result" class="size-info">${formatBytes(finalSize)}</strong></span>
                     </div>
                     <div class="compression-settings">
-                         <p style="margin:0 0 0.5rem 0;"><strong>Compression Level</strong></p>
+                         <p style="margin:0 0 0.5rem 0;"><strong>Need it smaller? Apply Compression:</strong></p>
                          <div class="slider-container">
                             <button id="slider-decrement" class="stepper-btn">-</button>
                             <input type="range" id="compression-slider-result" min="0" max="99" value="0" step="1" style="width:100%;">
                             <button id="slider-increment" class="stepper-btn">+</button>
                          </div>
-                         <strong id="compression-level-text-result">No Compression</strong>
+                         <strong id="compression-level-text-result" style="color:var(--primary-color);">No Compression</strong>
                     </div>
-                    <button id="apply-compression-btn" class="action-button" style="max-width: 500px;">Apply Compression</button>
-                    <div id="result-buttons-container" class="button-group" style="flex-wrap: wrap; max-width: 500px;"></div>
+                    <button id="apply-compression-btn" class="action-button" style="max-width: 400px;">Apply Compression</button>
+                    <div id="result-buttons-container" class="button-group" style="flex-wrap: wrap; max-width: 400px; margin-top: 1.5rem;"></div>
                 `;
             }
 
             const sliderResult = resultPanel.querySelector('#compression-slider-result');
             const levelTextResult = resultPanel.querySelector('#compression-level-text-result');
             const buttonsContainer = resultPanel.querySelector('#result-buttons-container');
-            const finalSizeResultDisplay = resultPanel.querySelector('#final-size-result');
-            const finalSizeLabel = resultPanel.querySelector('#final-size-label');
             const applyBtn = resultPanel.querySelector('#apply-compression-btn');
             const decrementBtn = resultPanel.querySelector('#slider-decrement');
             const incrementBtn = resultPanel.querySelector('#slider-increment');
@@ -541,12 +466,12 @@
             downloadBtn.id = 'download-btn';
             downloadBtn.className = 'download-button';
             downloadBtn.style.flex = '1';
-            downloadBtn.download = 'jkm-edit-final.pdf';
+            downloadBtn.download = 'JKM-Merged-Document.pdf';
             downloadBtn.innerHTML = `<i class="fa-solid fa-download"></i> Download PDF`;
             downloadBtn.href = mergedOnlyBlobUrl;
 
             const startOverBtn = document.createElement('button');
-            startOverBtn.className = 'download-button secondary-button'; 
+            startOverBtn.className = 'action-button secondary-button'; 
             startOverBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Start Over`;
             startOverBtn.style.flex = '1'; 
             startOverBtn.addEventListener('click', resetApp);
@@ -567,10 +492,13 @@
                     const level = parseInt(sliderResult.value);
                     if (level === 0) {
                         if (mergedOnlyBytes && mergedOnlyBlobUrl) {
+                            const finalSizeLabel = document.getElementById('final-size-label');
+                            const finalSizeResultDisplay = document.getElementById('final-size-result');
+                            const dlBtn = document.getElementById('download-btn');
                             if (finalSizeLabel) finalSizeLabel.textContent = 'Merged Size';
                             if (finalSizeResultDisplay) finalSizeResultDisplay.textContent = formatBytes(mergedOnlyBytes.length);
-                            if (downloadBtn && downloadBtn.href && downloadBtn.href !== mergedOnlyBlobUrl) URL.revokeObjectURL(downloadBtn.href);
-                            if (downloadBtn) downloadBtn.href = mergedOnlyBlobUrl;
+                            if (dlBtn && dlBtn.href && dlBtn.href !== mergedOnlyBlobUrl) URL.revokeObjectURL(dlBtn.href);
+                            if (dlBtn) dlBtn.href = mergedOnlyBlobUrl;
                         }
                     } else {
                         handleProcessing(level, true);
