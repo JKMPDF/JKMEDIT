@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
@@ -58,268 +58,424 @@
 }
 </script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Fonts & Icons -->
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+
     <style>
-        :root {
-            --primary: #2563eb;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --accent-color: #ffab00; 
+            --success-color: #28a745;
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s; 
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+        /* --- Basic Reset & Layout --- */
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* --- Header Section (Left Aligned) --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-title h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* --- Advertisement Box (728x90) --- */
+        .ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 0 1rem;
+        }
+
+        .ad-slot {
+            width: 728px;
+            height: 90px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        /* --- Main Tool Container --- */
+        .dashboard-container { 
+            padding: 0 1.5rem 3rem 1.5rem; 
+            max-width: 1000px; 
+            margin: auto; 
+            min-height: 80vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+        }
+        
+        .tool-header { text-align: center; margin-top: 2rem; margin-bottom: 2rem; }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+        
+        .tool-content-wrapper { 
+            background: var(--surface-color); 
+            padding: 2rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+        }
+
+        /* --- Input & Output Areas --- */
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group label { 
+            display: flex; 
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px 0;
+            font-weight: 600; 
+            margin-bottom: 0.5rem; 
+            color: var(--text-color); 
         }
-
-        /* JKM Edit Header Styling */
-        .brand-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            margin-bottom: 20px;
-            transition: opacity 0.2s;
-        }
-        .brand-header:hover { opacity: 0.8; }
-        .brand-logo { width: 40px; height: 40px; object-fit: contain; }
-        .brand-name { font-weight: 700; font-size: 20px; color: #0f172a; }
-
-        .container {
-            width: 90%;
-            max-width: 650px;
-            background: var(--card);
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border);
-        }
-
-        h2 { margin: 0 0 10px 0; font-size: 28px; text-align: center; color: var(--primary); letter-spacing: -0.5px; }
-        p.subtitle { text-align: center; color: #64748b; font-size: 15px; margin-bottom: 30px; }
-
-        .box-label {
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #94a3b8;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        textarea {
+        
+        .text-input {
             width: 100%;
-            height: 140px;
-            padding: 18px;
-            border-radius: 12px;
-            border: 2px solid var(--border);
-            font-size: 17px;
-            resize: none;
-            box-sizing: border-box;
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
-            line-height: 1.5;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            background: #fff;
+            resize: vertical;
+            min-height: 150px;
+            line-height: 1.6;
         }
-
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-        }
+        .text-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1); }
 
         .output-wrapper {
             position: relative;
-            background: #f1f5f9;
-            border-radius: 12px;
-            min-height: 100px;
-            padding: 24px;
-            border: 1px solid var(--border);
-            margin-bottom: 30px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            min-height: 150px;
+            padding: 1rem;
         }
 
         #hinglishOutput {
-            font-size: 20px;
-            font-weight: 600;
+            font-size: 1.2rem;
+            font-weight: 500;
             line-height: 1.6;
-            color: #0f172a;
+            color: var(--text-color);
             word-wrap: break-word;
-            padding-right: 70px;
+            padding-right: 80px; /* Room for button */
             white-space: pre-wrap;
         }
+
+        /* --- Buttons & Flashes --- */
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
         .copy-btn {
             position: absolute;
             top: 15px;
             right: 15px;
-            padding: 10px 16px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
             background: white;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .copy-btn:hover {
+            background: var(--primary-color);
+            color: white;
         }
 
-        .copy-btn:hover { 
-            background: var(--primary); 
-            color: white;
-            transform: translateY(-1px);
-        }
-        
         .success-flash {
-            color: #10b981;
-            font-size: 12px;
+            color: var(--success-color);
+            font-size: 0.9rem;
             display: none;
             font-weight: 600;
+            margin-left: 10px;
         }
 
-        /* Navigation Buttons */
-        .nav-footer {
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            border-top: 1px solid var(--border);
-            padding-top: 25px;
+            gap: 1.5rem;
+            margin-top: 2rem; 
+            padding-top: 2rem;
+            flex-wrap: wrap;
         }
 
         .nav-btn {
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
         }
 
-        .btn-back {
-            background: #f1f5f9;
-            color: #475569;
+        .nav-btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
         }
+        .nav-btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
 
-        .btn-dashboard {
-            background: #0f172a;
+        .nav-btn-fill {
+            background: var(--primary-color);
             color: white;
+            border: 2px solid var(--primary-color);
+        }
+        .nav-btn-fill:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
         }
 
-        .nav-btn:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 1000px;
+            border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;            
+        }
+        .offering-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .offering-link:hover { text-decoration: underline; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+            .dashboard-container { padding: 0 1rem 2rem 1rem; }
+            .tool-content-wrapper { padding: 1.5rem; }
         }
     </style>
 </head>
 <body>
 
-<a href="https://jkmedit.in/" class="brand-header">
-    <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="brand-logo">
-    <span class="brand-name">JKM Edit</span>
-</a>
+    <!-- Header Section (Left Aligned) -->
+    <header class="main-header">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h2 class="brand-title">JKM Edit</h2>
+        </a>
+    </header>
 
-<div class="container">
-    <h2>HinglishPro</h2>
-    <p class="subtitle">Professional Hindi to Roman Transliteration</p>
-    
-    <div class="box-label">Hindi Text</div>
-    <textarea id="hindiInput" placeholder="Type here... (e.g., हर अनुभव कुछ सिखाती है।)"></textarea>
+    <!-- Main Tool Content -->
+    <main class="dashboard-container">
+        
+        <div class="tool-header">
+            <h1>HinglishPro Converter</h1>
+            <p>Convert Hindi text to Hinglish instantly. Perfect for social media and casual communication.</p>
+        </div>
 
-    <div class="box-label">
-        Converted Hinglish 
-        <span id="copyStatus" class="success-flash">✓ Copied</span>
-    </div>
-    <div class="output-wrapper">
-        <div id="hinglishOutput"></div>
-        <button class="copy-btn" id="copyBtn">Copy</button>
-    </div>
+        <div class="tool-content-wrapper">
+            
+            <div class="input-group">
+                <label for="hindiInput">Hindi Text (Input)</label>
+                <textarea id="hindiInput" class="text-input" placeholder="Type here... (e.g., हर अनुभव कुछ सिखाती है।)"></textarea>
+            </div>
 
-    <div class="nav-footer">
-        <a href="javascript:history.back()" class="nav-btn btn-back">← Go Back</a>
-        <a href="https://jkmedit.in/" class="nav-btn btn-dashboard">Dashboard</a>
-    </div>
-</div>
+            <div class="input-group">
+                <label>
+                    Converted Hinglish 
+                    <span id="copyStatus" class="success-flash"><i class="fa-solid fa-check"></i> Copied!</span>
+                </label>
+                <div class="output-wrapper">
+                    <div id="hinglishOutput"></div>
+                    <button class="btn copy-btn" id="copyBtn">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
 
-<script>
-    const charMap = {
-        'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri', 'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au',
-        'क': 'k', 'ख': 'kh', 'ग': 'g', 'घ': 'gh', 'ङ': 'n',
-        'च': 'ch', 'छ': 'chh', 'ज': 'j', 'झ': 'jh', 'ञ': 'n',
-        'ट': 't', 'ठ': 'th', 'ड': 'd', 'ढ': 'dh', 'ण': 'n',
-        'त': 't', 'थ': 'th', 'द': 'd', 'ध': 'dh', 'न': 'n',
-        'प': 'p', 'फ': 'ph', 'ब': 'b', 'भ': 'bh', 'म': 'm',
-        'य': 'y', 'र': 'r', 'ल': 'l', 'व': 'v', 'श': 'sh', 'ष': 'sh', 'स': 's', 'ह': 'h',
-        'ा': 'a', 'ि': 'i', 'ी': 'ee', 'ु': 'u', 'ू': 'oo', 'ृ': 'ri', 'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au', 'ं': 'n', 'ः': 'ah'
-    };
+        </div>
 
-    const input = document.getElementById('hindiInput');
-    const output = document.getElementById('hinglishOutput');
-    const copyBtn = document.getElementById('copyBtn');
-    const status = document.getElementById('copyStatus');
+        <!-- Bottom Navigation Buttons -->
+        <div class="bottom-nav">
+            <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
 
-    function convert(text) {
-        let result = "";
-        const isSymbolOrSpace = /[\s,.\/#!$%\^&\*;:{}=\-_`~()।?!]/;
+        <!-- Advertisement Box (728x90) -->
+        <div class="ad-container">
+            <div class="ad-slot">
+                <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
+                Advertisement (728 x 90)
+            </div>
+        </div>
+        
+        <!-- About Section -->
+        <div class="about-section">
+            <h2>About the Hindi to Hinglish Converter</h2>
+            <p>The Hindi to Hinglish converter is an advanced transliteration tool thoughtfully designed to instantly and accurately transform Hindi script, specifically Devanagari, into Roman English letters. This unique formatting, widely recognized and commonly referred to as "Hinglish," has rapidly become the dominant and standard mode of casual text-based communication across various digital platforms, social media networks, and messaging applications, not just within India, but also among the global Indian diaspora.</p>
+            <p>At its core, our sophisticated software tool meticulously analyzes every single Hindi character entered and accurately maps it to its closest phonetic English equivalent. It is engineered to handle the intricate nuances of the language, ensuring that varying vowel lengths, complex matras, difficult half-consonants, and specific linguistic markers are translated seamlessly without losing their original contextual meaning or flow. This high level of precision guarantees that the resulting Hinglish text reads completely naturally and effortlessly retains the authentic tone, emotion, and context of your original Hindi input.</p>
+            <p>One of the absolute standout features of this web-based converter is its incredible speed combined with an uncompromising commitment to your digital privacy. The entire transliteration process runs locally right within your computer or mobile device's web browser. This means that your text is never uploaded to any external servers, it is not processed in the cloud, nor is it stored in any remote database. Your personal conversations, creative drafts, and sensitive written data remain completely private and perfectly secure on your own device, offering you total peace of mind alongside unparalleled user convenience.</p>
+            <p>Whether you are a social media influencer drafting an engaging and quick update for your followers, a digital marketer writing catchy captions for an upcoming advertising campaign, or simply a content creator aiming to produce highly localized and relatable media, this converter acts as an indispensable utility. It effectively saves you from the tedious and highly time-consuming hassle of manually sounding out and individually typing long Hindi sentences into English characters. By effortlessly bridging the gap between traditional cultural scripts and modern digital typing habits, our tool empowers you to communicate flawlessly and efficiently in today's fast-paced digital age.</p>
+            <h2>Thank you</h2>
+        </div>
 
-        for (let i = 0; i < text.length; i++) {
-            let char = text[i];
-            let nextChar = text[i + 1];
+        <!-- Footer Offerings -->
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
 
-            if (char === '्') continue; 
+    </main>
 
-            if (charMap[char]) {
-                let mappedValue = charMap[char];
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const charMap = {
+                'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri', 'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au',
+                'क': 'k', 'ख': 'kh', 'ग': 'g', 'घ': 'gh', 'ङ': 'n',
+                'च': 'ch', 'छ': 'chh', 'ज': 'j', 'झ': 'jh', 'ञ': 'n',
+                'ट': 't', 'ठ': 'th', 'ड': 'd', 'ढ': 'dh', 'ण': 'n',
+                'त': 't', 'थ': 'th', 'द': 'd', 'ध': 'dh', 'न': 'n',
+                'प': 'p', 'फ': 'ph', 'ब': 'b', 'भ': 'bh', 'म': 'm',
+                'य': 'y', 'र': 'r', 'ल': 'l', 'व': 'v', 'श': 'sh', 'ष': 'sh', 'स': 's', 'ह': 'h',
+                'ा': 'a', 'ि': 'i', 'ी': 'ee', 'ु': 'u', 'ू': 'oo', 'ृ': 'ri', 'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au', 'ं': 'n', 'ः': 'ah'
+            };
 
-                if (char === 'ी' || char === 'ई') {
-                    const isEndOfWord = !nextChar || isSymbolOrSpace.test(nextChar);
-                    mappedValue = isEndOfWord ? 'i' : 'ee';
+            const input = document.getElementById('hindiInput');
+            const output = document.getElementById('hinglishOutput');
+            const copyBtn = document.getElementById('copyBtn');
+            const status = document.getElementById('copyStatus');
+
+            function convert(text) {
+                let result = "";
+                const isSymbolOrSpace = /[\s,.\/#!$%\^&\*;:{}=\-_`~()।?!]/;
+
+                for (let i = 0; i < text.length; i++) {
+                    let char = text[i];
+                    let nextChar = text[i + 1];
+
+                    if (char === '्') continue; 
+
+                    if (charMap[char]) {
+                        let mappedValue = charMap[char];
+
+                        if (char === 'ी' || char === 'ई') {
+                            const isEndOfWord = !nextChar || isSymbolOrSpace.test(nextChar);
+                            mappedValue = isEndOfWord ? 'i' : 'ee';
+                        }
+
+                        result += mappedValue;
+                        
+                        const isConsonant = /[\u0915-\u0939]/.test(char);
+                        const isNextMatra = /[\u093E-\u094D]/.test(nextChar); 
+                        const isNextNonHindi = !nextChar || isSymbolOrSpace.test(nextChar) || /[a-zA-Z0-9]/.test(nextChar);
+
+                        if (isConsonant && !isNextMatra && !isNextNonHindi) {
+                            result += "a";
+                        }
+                    } else {
+                        result += char;
+                    }
                 }
 
-                result += mappedValue;
-                
-                const isConsonant = /[\u0915-\u0939]/.test(char);
-                const isNextMatra = /[\u093E-\u094D]/.test(nextChar); 
-                const isNextNonHindi = !nextChar || isSymbolOrSpace.test(nextChar) || /[a-zA-Z0-9]/.test(nextChar);
-
-                if (isConsonant && !isNextMatra && !isNextNonHindi) {
-                    result += "a";
-                }
-            } else {
-                result += char;
+                return result
+                    .replace(/aa/g, 'a') 
+                    .replace(/Shree/g, 'Shri')
+                    .replace(/^a/g, 'A') 
+                    .replace(/\s[a-z]/g, (m) => m.toUpperCase());
             }
-        }
 
-        return result
-            .replace(/aa/g, 'a') 
-            .replace(/Shree/g, 'Shri')
-            .replace(/^a/g, 'A') 
-            .replace(/\s[a-z]/g, (m) => m.toUpperCase());
-    }
+            // Real-time translation event
+            input.addEventListener('input', () => {
+                output.innerText = convert(input.value);
+            });
 
-    input.addEventListener('input', () => {
-        output.innerText = convert(input.value);
-    });
-
-    copyBtn.addEventListener('click', () => {
-        if (output.innerText) {
-            navigator.clipboard.writeText(output.innerText);
-            status.style.display = "inline";
-            setTimeout(() => { status.style.display = "none"; }, 2000);
-        }
-    });
-</script>
-
+            // Copy to clipboard event
+            copyBtn.addEventListener('click', () => {
+                if (output.innerText) {
+                    navigator.clipboard.writeText(output.innerText);
+                    status.style.display = "inline";
+                    setTimeout(() => { status.style.display = "none"; }, 2000);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

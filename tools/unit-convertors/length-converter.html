@@ -58,8 +58,6 @@
 }
 </script>
 
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -149,7 +147,7 @@
         }
         
         .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         
         .tool-content-wrapper { 
@@ -213,7 +211,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding-top: 30px; /* Align with inputs roughly */
+            padding-top: 30px; 
         }
 
         .btn-swap {
@@ -289,7 +287,34 @@
             border-color: var(--secondary-color);
         }
 
-        /* Responsive Ad */
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 1000px;
+            border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;            
+        }
+        .offering-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .offering-link:hover { text-decoration: underline; }
+
         @media (max-width: 768px) {
             .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
         }
@@ -297,26 +322,16 @@
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
     <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h2 class="brand-title">JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
         <div class="tool-header">
-            <h2>Length Converter</h2>
+            <h1>Length Converter</h1>
             <p>Instantly convert between Metric and Imperial units of length.</p>
         </div>
 
@@ -324,7 +339,6 @@
             
             <div class="converter-wrapper">
                 
-                <!-- From Side -->
                 <div class="input-group">
                     <span class="input-label">From</span>
                     <input type="number" id="input-val" placeholder="Enter value" value="1">
@@ -347,14 +361,12 @@
                     </select>
                 </div>
 
-                <!-- Swap Button -->
                 <div class="swap-btn-container">
                     <button class="btn-swap" id="swap-btn" title="Swap Units">
                         <i class="fa-solid fa-right-left"></i>
                     </button>
                 </div>
 
-                <!-- To Side -->
                 <div class="input-group">
                     <span class="input-label">To</span>
                     <input type="number" id="output-val" readonly>
@@ -379,7 +391,6 @@
 
             </div>
 
-            <!-- Formula Display -->
             <div class="formula-box">
                 <span class="formula-title">Conversion Logic</span>
                 <span id="formula-text">1 Meter = 0.001 Kilometer</span>
@@ -387,15 +398,45 @@
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
         <div class="bottom-nav">
             <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
+
+        <div class="ad-container">
+            <div class="ad-slot">
+                Advertisement (728 x 90)
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Length Converter</h2>
+            <p>The Length Converter is a sophisticated, highly reliable digital utility designed specifically to bridge the mathematical gap between various global measurement systems. In fields ranging from international logistics and mechanical engineering to basic home renovations and academic research, the ability to seamlessly convert between metric and imperial units is an absolute daily necessity. Whether you are an architect converting blueprints from meters to feet, an athlete calculating race distances from kilometers to miles, or an engineer dealing with micro-measurements like micrometers and nanometers, this tool ensures absolute mathematical precision.</p>
+            <p>Our powerful conversion engine is equipped to handle a comprehensive range of length and distance units. On the metric side, the tool supports calculations in meters, kilometers, centimeters, millimeters, micrometers, and nanometers. For imperial and specialized measurements, users can effortlessly translate values into miles, yards, feet, inches, and even nautical miles. You simply enter your target value, select your origin unit, and choose the destination unit. The intuitive interface instantly processes the data and outputs the exact conversion alongside the specific mathematical logic ratio used, providing total transparency in how the calculation was performed.</p>
+            <p>Security, speed, and privacy are foundational to this tool's underlying architecture. All mathematical operations are executed entirely through client-side JavaScript, which means that the conversion happens locally right inside your own device's web browser. Because the data never leaves your computer or mobile device to be processed on an external web server, your proprietary project measurements and sensitive technical figures remain 100% private. This local execution also guarantees instantaneous results with zero latency, making the tool incredibly fast even on unreliable internet connections.</p>
+            <p>Designed with a modern, corporate aesthetic and built to be fully responsive, this Length Converter adapts flawlessly to any screen size, providing a seamless user experience whether you are stationed at an office desktop or working in the field from your smartphone. Thank you for utilizing our platform to optimize your measurement and calculation workflows.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+
     </main>
 
     <script>
@@ -407,7 +448,6 @@
             const swapBtn = document.getElementById('swap-btn');
             const formulaText = document.getElementById('formula-text');
 
-            // Conversion factors to Meter (base unit)
             const factors = {
                 m: 1,
                 km: 1000,
@@ -439,18 +479,15 @@
                 const from = unitFrom.value;
                 const to = unitTo.value;
 
-                // Convert input to meters, then meters to output
                 const valueInMeters = value * factors[from];
                 const result = valueInMeters / factors[to];
 
-                // Handle formatting (avoid extremely long decimals or tiny floating point errors)
                 if (result % 1 !== 0) {
-                    outputVal.value = parseFloat(result.toPrecision(7)) / 1; // strip trailing zeros
+                    outputVal.value = parseFloat(result.toPrecision(7)) / 1; 
                 } else {
                     outputVal.value = result;
                 }
 
-                // Update Formula Text
                 const ratio = factors[from] / factors[to];
                 formulaText.textContent = `1 ${unitNames[from]} = ${parseFloat(ratio.toPrecision(7)) / 1} ${unitNames[to]}`;
             }
@@ -460,22 +497,17 @@
                 unitFrom.value = unitTo.value;
                 unitTo.value = tempUnit;
                 
-                // Also swap visual values roughly to keep context (optional, but good UX)
-                // or just recalculate based on input
                 convert();
                 
-                // Visual feedback animation
                 swapBtn.style.transform = "rotate(180deg)";
                 setTimeout(() => swapBtn.style.transform = "rotate(0deg)", 300);
             }
 
-            // Event Listeners
             inputVal.addEventListener('input', convert);
             unitFrom.addEventListener('change', convert);
             unitTo.addEventListener('change', convert);
             swapBtn.addEventListener('click', swap);
 
-            // Initial Run
             convert();
         });
     </script>

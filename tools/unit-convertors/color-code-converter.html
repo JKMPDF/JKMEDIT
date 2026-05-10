@@ -58,8 +58,6 @@
 }
 </script>
 
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -74,6 +72,7 @@
             --text-color: #172b4d; 
             --border-color: #dfe1e6;
             --accent-color: #ffab00; 
+            --success-color: #28a745;
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
             --transition-speed: 0.3s; 
         }
@@ -149,7 +148,7 @@
         }
         
         .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         
         .tool-content-wrapper { 
@@ -296,6 +295,34 @@
             border-color: var(--secondary-color);
         }
 
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 1000px;
+            border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;            
+        }
+        .offering-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .offering-link:hover { text-decoration: underline; }
+
         @media (max-width: 768px) {
             .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
         }
@@ -303,26 +330,16 @@
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
     <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h2 class="brand-title">JKM Edit</h2>
         </a>
     </header>
-
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
+     
     <main class="dashboard-container">
         <div class="tool-header">
-            <h2>Hex-RGB-HSL Converter</h2>
+            <h1>Hex-RGB-HSL Converter</h1>
             <p>Translate colors between formats instantly. Preview colors live.</p>
         </div>
 
@@ -330,7 +347,6 @@
             
             <div class="converter-grid">
                 
-                <!-- Left: Visual Preview -->
                 <div class="preview-section">
                     <div id="color-preview" class="color-preview-box"></div>
                     
@@ -340,24 +356,20 @@
                     </div>
                 </div>
 
-                <!-- Right: Inputs -->
                 <div class="inputs-section">
                     
-                    <!-- Hex -->
                     <div class="input-group">
                         <label class="input-label">HEX Code</label>
                         <input type="text" id="hex-input" class="color-input" value="#0052cc" maxlength="7">
                         <i class="fa-regular fa-copy copy-icon" onclick="copyToClipboard('hex-input')"></i>
                     </div>
 
-                    <!-- RGB -->
                     <div class="input-group">
                         <label class="input-label">RGB (Red, Green, Blue)</label>
                         <input type="text" id="rgb-input" class="color-input" value="rgb(0, 82, 204)">
                         <i class="fa-regular fa-copy copy-icon" onclick="copyToClipboard('rgb-input')"></i>
                     </div>
 
-                    <!-- HSL -->
                     <div class="input-group">
                         <label class="input-label">HSL (Hue, Saturation, Lightness)</label>
                         <input type="text" id="hsl-input" class="color-input" value="hsl(216, 100%, 40%)">
@@ -370,15 +382,44 @@
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
         <div class="bottom-nav">
             <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
+<div class="ad-container">
+        <div class="ad-slot">
+            Advertisement (728 x 90)
+        </div>
+    </div>
+
+        <div class="about-section">
+            <h2>About the Color Code Converter</h2>
+            <p>The HEX to RGB & HSL Color Code Converter is a highly sophisticated, real-time utility built specifically for web developers, UI/UX designers, graphic artists, and digital marketers. In modern web and application design, ensuring exact color consistency across different visual platforms, design software (like Figma or Adobe Photoshop), and frontend CSS stylesheets is absolutely critical for maintaining strong brand identity. This tool acts as an indispensable digital bridge, allowing creative professionals to seamlessly translate their visual ideas into actionable programmatic code.</p>
+            <p>At its core, this converter facilitates the immediate, bi-directional translation of the internet's three most prominent color formats: HEX (Hexadecimal), RGB (Red, Green, Blue), and HSL (Hue, Saturation, Lightness). When a user inputs a six-character HEX code, the algorithm mathematically unpacks the value and instantly renders the exact corresponding RGB and HSL coordinates. Conversely, pasting an RGB string immediately generates a valid, web-safe HEX code. Furthermore, the application features an integrated, interactive visual color picker and a large preview box, providing users with instant visual confirmation of the color they are coding, which vastly drastically reduces styling errors during frontend development.</p>
+            <p>Speed, efficiency, and data privacy are the foundational pillars of this tool's architecture. Every single mathematical color conversion is executed purely via client-side JavaScript. This means the calculations happen directly inside your browser window without ever requiring a server request or page reload. As a result, there is zero network latency, ensuring the interface feels lightning-fast and highly responsive. More importantly, this local processing guarantees that your proprietary color palettes and client design systems remain entirely private and are never tracked or logged by external servers.</p>
+            <p>Whether you are rapidly prototyping a new website theme, adjusting the precise lightness value of a button hover state using HSL, or standardizing a corporate brand guideline document, this Color Code Converter dramatically streamlines your creative workflow. Thank you for making our tool a part of your daily digital design process.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+
     </main>
 
     <script>
@@ -390,9 +431,7 @@
             const preview = document.getElementById('color-preview');
 
             // --- Helper Functions ---
-
             function hexToRgb(hex) {
-                // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
                 const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
                 hex = hex.replace(shorthandRegex, function(m, r, g, b) {
                     return r + r + g + g + b + b;
@@ -416,7 +455,7 @@
                 let h, s, l = (max + min) / 2;
 
                 if (max == min) {
-                    h = s = 0; // achromatic
+                    h = s = 0; 
                 } else {
                     const d = max - min;
                     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -434,7 +473,6 @@
                 };
             }
 
-            // Simple parsing for "rgb(r, g, b)" string
             function parseRgbString(str) {
                 const matches = str.match(/\d+/g);
                 if (matches && matches.length >= 3) {
@@ -448,7 +486,6 @@
             }
 
             // --- Update Logic ---
-
             function updateFromHex() {
                 let hex = hexInput.value;
                 if (!hex.startsWith('#')) hex = '#' + hex;
@@ -457,12 +494,10 @@
                     const rgb = hexToRgb(hex);
                     const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
                     
-                    // Update UI (avoid overwriting self to keep cursor pos, but Hex is simple enough)
                     rgbInput.value = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
                     hslInput.value = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
                     
-                    // Update visual
-                    const fullHex = rgbToHex(rgb.r, rgb.g, rgb.b); // standardized
+                    const fullHex = rgbToHex(rgb.r, rgb.g, rgb.b); 
                     picker.value = fullHex;
                     preview.style.backgroundColor = fullHex;
                 }
@@ -485,16 +520,12 @@
             function updateFromPicker() {
                 const hex = picker.value;
                 hexInput.value = hex.toUpperCase();
-                updateFromHex(); // Reuse Hex logic
+                updateFromHex(); 
             }
 
             // --- Event Listeners ---
             hexInput.addEventListener('input', updateFromHex);
             rgbInput.addEventListener('input', updateFromRgb);
-            // For HSL, parsing is complex, usually read-only or strictly formatted. 
-            // We'll stick to Hex/RGB driving HSL for simplicity, 
-            // though full bidirectional is possible with regex.
-            
             picker.addEventListener('input', updateFromPicker);
 
             // --- Copy Function ---

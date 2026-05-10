@@ -58,8 +58,6 @@
 }
 </script>
 
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -117,7 +115,7 @@
             color: var(--text-color);
         }
 
-        /* --- Advertisement Box (728x90) --- */
+        /* --- Advertisement Box --- */
         .ad-container {
             width: 100%;
             display: flex;
@@ -153,23 +151,22 @@
         }
         
         .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         
         /* --- Calculator Layout --- */
         .calc-wrapper {
             display: grid;
-            grid-template-columns: 2fr 1fr; /* Calc | History */
+            grid-template-columns: 2fr 1fr; 
             gap: 2rem;
             align-items: start;
         }
 
         @media (max-width: 900px) {
             .calc-wrapper { grid-template-columns: 1fr; }
-            .history-panel { display: none; } /* Hide history on small screens for simplicity */
+            .history-panel { display: none; } 
         }
 
-        /* Calculator Body */
         .calculator {
             background: var(--surface-color);
             border-radius: 16px;
@@ -178,7 +175,6 @@
             border: 1px solid var(--border-color);
         }
 
-        /* Screen */
         .calc-screen {
             width: 100%;
             background: #f4f5f7;
@@ -211,7 +207,6 @@
             outline: none;
         }
 
-        /* Controls Bar (DEG/RAD) */
         .calc-controls {
             display: flex;
             justify-content: space-between;
@@ -238,7 +233,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Keypad */
         .keypad {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -264,7 +258,6 @@
         .key:active { transform: translateY(3px); box-shadow: none; }
         .key:hover { background-color: var(--key-hover); }
 
-        /* Key Colors */
         .key-op { background-color: var(--op-bg); color: var(--op-color); box-shadow: 0 3px 0px #cce0ff; }
         .key-op:hover { background-color: #cce0ff; }
         
@@ -281,7 +274,6 @@
         }
         .key-equals:hover { opacity: 0.9; }
 
-        /* History Panel */
         .history-panel {
             background: var(--surface-color);
             border-radius: 16px;
@@ -331,7 +323,7 @@
             display: flex;
             justify-content: center;
             gap: 1.5rem;
-            margin-top: auto; 
+            margin-top: 2rem; 
             padding-top: 2rem;
             flex-wrap: wrap;
         }
@@ -365,6 +357,34 @@
             border-color: var(--secondary-color);
         }
 
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 1000px;
+            border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;            
+        }
+        .offering-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .offering-link:hover { text-decoration: underline; }
+
         @media (max-width: 768px) {
             .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
             .keypad { gap: 8px; }
@@ -374,32 +394,21 @@
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
     <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h2 class="brand-title">JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
         <div class="tool-header">
-            <h2>Scientific Calculator</h2>
+            <h1>Scientific Calculator</h1>
             <p>Perform complex mathematical calculations directly in your browser.</p>
         </div>
 
         <div class="calc-wrapper">
             
-            <!-- Calculator -->
             <div class="calculator">
                 <div class="calc-screen">
                     <div class="screen-equation" id="display-eq"></div>
@@ -414,50 +423,43 @@
                 </div>
 
                 <div class="keypad">
-                    <!-- Row 1 -->
                     <button class="key key-func" onclick="handleFunc('sin')">sin</button>
                     <button class="key key-func" onclick="handleFunc('cos')">cos</button>
                     <button class="key key-func" onclick="handleFunc('tan')">tan</button>
                     <button class="key key-clear" onclick="handleClear()">AC</button>
                     <button class="key key-clear" onclick="handleDelete()"><i class="fa-solid fa-delete-left"></i></button>
 
-                    <!-- Row 2 -->
                     <button class="key key-func" onclick="handleFunc('asin')">sin⁻¹</button>
                     <button class="key key-func" onclick="handleFunc('acos')">cos⁻¹</button>
                     <button class="key key-func" onclick="handleFunc('atan')">tan⁻¹</button>
                     <button class="key key-func" onclick="handleOp('%')">%</button>
                     <button class="key key-op" onclick="handleOp('/')">÷</button>
 
-                    <!-- Row 3 -->
                     <button class="key key-func" onclick="handleFunc('pi')">π</button>
                     <button class="key" onclick="handleNum('7')">7</button>
                     <button class="key" onclick="handleNum('8')">8</button>
                     <button class="key" onclick="handleNum('9')">9</button>
                     <button class="key key-op" onclick="handleOp('*')">×</button>
 
-                    <!-- Row 4 -->
                     <button class="key key-func" onclick="handleFunc('e')">e</button>
                     <button class="key" onclick="handleNum('4')">4</button>
                     <button class="key" onclick="handleNum('5')">5</button>
                     <button class="key" onclick="handleNum('6')">6</button>
                     <button class="key key-op" onclick="handleOp('-')">−</button>
 
-                    <!-- Row 5 -->
                     <button class="key key-func" onclick="handleFunc('sqrt')">√</button>
                     <button class="key" onclick="handleNum('1')">1</button>
                     <button class="key" onclick="handleNum('2')">2</button>
                     <button class="key" onclick="handleNum('3')">3</button>
                     <button class="key key-op" onclick="handleOp('+')">+</button>
 
-                    <!-- Row 6 -->
                     <button class="key key-func" onclick="handleFunc('pow')">xʸ</button>
                     <button class="key key-func" onclick="handleNum('(')">(</button>
                     <button class="key" onclick="handleNum('0')">0</button>
                     <button class="key key-func" onclick="handleNum(')')">)</button>
                     <button class="key key-equals" onclick="handleCalc()">=</button>
                     
-                    <!-- Extra Row for Log -->
-                     <button class="key key-func" onclick="handleFunc('log')">log</button>
+                    <button class="key key-func" onclick="handleFunc('log')">log</button>
                      <button class="key key-func" onclick="handleFunc('ln')">ln</button>
                      <button class="key" onclick="handleNum('.')">.</button>
                      <button class="key key-func" onclick="handleFunc('abs')">|x|</button>
@@ -465,7 +467,6 @@
                 </div>
             </div>
 
-            <!-- History -->
             <div class="history-panel">
                 <div class="history-header">
                     <span>History</span>
@@ -478,22 +479,52 @@
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
         <div class="bottom-nav">
             <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
+
+        <div class="ad-container">
+            <div class="ad-slot">
+                Advertisement (728 x 90)
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Scientific Calculator</h2>
+            <p>The Online Scientific Calculator is an incredibly robust, full-featured mathematical utility carefully engineered for students, educators, engineers, and financial analysts who require immediate access to complex computational power. Standard calculators are perfectly fine for basic addition and subtraction, but when dealing with high-level academic coursework, engineering schematics, or sophisticated algorithmic formulas, a dedicated scientific tool becomes absolutely essential. This powerful web-based calculator brings all the advanced features of a physical scientific calculator directly to your digital workspace, accessible instantly from any device without requiring app installations or software downloads.</p>
+            <p>Our intuitive digital keypad provides immediate access to a wide array of advanced mathematical functions. Users can effortlessly perform trigonometric calculations (sine, cosine, tangent) and their inverse counterparts, with a highly convenient toggle allowing you to switch dynamically between Degrees (DEG) and Radians (RAD) depending on your specific requirements. The tool also natively supports logarithmic equations (both base-10 logs and natural logs), exponential functions, absolute values, square roots, and exponentiation. Furthermore, mathematical constants such as Pi (π) and Euler's Number (e) are integrated directly into the keypad to dramatically speed up complex geometry and calculus operations.</p>
+            <p>One of the most valuable features of this calculator is the integrated, persistent "History Panel." As you perform a series of calculations, the tool automatically logs your equations and their corresponding results on the right side of the screen. This allows you to easily review previous steps in a multi-part physics or math problem, and clicking on any past result instantly loads it back into the main screen for further manipulation. And because all processing happens entirely through secure client-side JavaScript, your calculations are performed locally, guaranteeing lightning-fast processing speeds and complete privacy for your sensitive financial or academic data.</p>
+            <p>Whether you are balancing a complex chemical equation, calculating the precise load-bearing capacity of a structural beam, or simply checking your advanced calculus homework, this Scientific Calculator provides a flawless, highly responsive, and reliable mathematical experience. Thank you for integrating our tools into your academic and professional endeavors.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+
     </main>
 
     <script>
         let currentInput = "0";
         let equationDisplay = "";
         let isResultDisplayed = false;
-        let angleMode = "DEG"; // DEG or RAD
+        let angleMode = "DEG"; 
 
         const displayRes = document.getElementById('display-res');
         const displayEq = document.getElementById('display-eq');
@@ -501,13 +532,11 @@
         const modeToggle = document.getElementById('mode-toggle');
         const modeOpts = document.querySelectorAll('.mode-opt');
 
-        // --- Update Screen ---
         function updateDisplay() {
             displayRes.value = currentInput;
             displayEq.textContent = equationDisplay;
         }
 
-        // --- Input Handlers ---
         window.handleNum = function(num) {
             if (isResultDisplayed) {
                 currentInput = num;
@@ -526,8 +555,6 @@
             if (isResultDisplayed) {
                 isResultDisplayed = false;
             }
-            
-            // Prevent double operators
             const lastChar = currentInput.slice(-1);
             if (['+', '-', '*', '/', '%'].includes(lastChar)) {
                 currentInput = currentInput.slice(0, -1) + op;
@@ -582,30 +609,25 @@
             updateDisplay();
         };
 
-        // --- Calculation Engine ---
         window.handleCalc = function() {
             try {
                 const expression = currentInput;
                 let parsed = expression;
 
-                // Replace User-Friendly Symbols with JS Math
                 parsed = parsed.replace(/×/g, '*').replace(/÷/g, '/');
                 parsed = parsed.replace(/\^/g, '**');
                 parsed = parsed.replace(/π/g, 'Math.PI');
                 parsed = parsed.replace(/e/g, 'Math.E');
                 
-                // Handle Functions
                 parsed = parsed.replace(/sqrt\(/g, 'Math.sqrt(');
-                parsed = parsed.replace(/log\(/g, 'Math.log10('); // Standard log is base 10
+                parsed = parsed.replace(/log\(/g, 'Math.log10('); 
                 parsed = parsed.replace(/ln\(/g, 'Math.log(');
                 parsed = parsed.replace(/abs\(/g, 'Math.abs(');
                 parsed = parsed.replace(/exp\(/g, 'Math.exp(');
 
-                // Handle Trig (with DEG/RAD)
                 const trigFuncs = ['sin', 'cos', 'tan'];
                 const invTrigFuncs = ['asin', 'acos', 'atan'];
 
-                // Standard Trig
                 trigFuncs.forEach(fn => {
                     const regex = new RegExp(`${fn}\\(([^)]+)\\)`, 'g');
                     parsed = parsed.replace(regex, (match, arg) => {
@@ -617,7 +639,6 @@
                     });
                 });
 
-                // Inverse Trig
                 invTrigFuncs.forEach(fn => {
                     const regex = new RegExp(`${fn}\\(([^)]+)\\)`, 'g');
                     parsed = parsed.replace(regex, (match, arg) => {
@@ -629,18 +650,12 @@
                     });
                 });
 
-                // Evaluate
-                // Note: Using Function constructor is slightly safer than eval(), but for a calc, eval is standard
-                // provided input is from buttons.
                 let result = eval(parsed);
                 
-                // Formatting
                 if (!isFinite(result)) {
                     result = "Error";
                 } else {
-                    // limit decimals
                     result = parseFloat(result.toPrecision(12)); 
-                    // remove trailing zeros
                     result = String(result);
                 }
 
@@ -657,7 +672,6 @@
             }
         };
 
-        // --- Toggle Mode ---
         modeToggle.addEventListener('click', () => {
             angleMode = angleMode === 'DEG' ? 'RAD' : 'DEG';
             modeOpts.forEach(opt => {
@@ -665,11 +679,9 @@
             });
         });
 
-        // --- History ---
         function addToHistory(eq, res) {
             if (res === "Error") return;
             
-            // Remove placeholder
             if (historyList.children.length === 1 && historyList.children[0].textContent === "No calculations yet") {
                 historyList.innerHTML = "";
             }

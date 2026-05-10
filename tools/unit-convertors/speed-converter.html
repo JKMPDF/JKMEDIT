@@ -58,8 +58,6 @@
 }
 </script>
 
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -113,7 +111,7 @@
             color: var(--text-color);
         }
 
-        /* --- Advertisement Box (728x90) --- */
+        /* --- Advertisement Box --- */
         .ad-container {
             width: 100%;
             display: flex;
@@ -149,7 +147,7 @@
         }
         
         .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         
         .tool-content-wrapper { 
@@ -250,12 +248,12 @@
         }
         .formula-title { font-weight: 700; color: var(--text-color); margin-bottom: 0.5rem; display: block; }
 
-        /* --- Bottom Navigation Buttons --- */
+        /* --- Bottom Navigation --- */
         .bottom-nav {
             display: flex;
             justify-content: center;
             gap: 1.5rem;
-            margin-top: auto; 
+            margin-top: 2rem; 
             padding-top: 2rem;
             flex-wrap: wrap;
         }
@@ -289,7 +287,34 @@
             border-color: var(--secondary-color);
         }
 
-        /* Responsive Ad */
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 1000px;
+            border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;            
+        }
+        .offering-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .offering-link:hover { text-decoration: underline; }
+
         @media (max-width: 768px) {
             .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
         }
@@ -297,26 +322,16 @@
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
     <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h2 class="brand-title">JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
         <div class="tool-header">
-            <h2>Speed Converter</h2>
+            <h1>Speed Converter</h1>
             <p>Convert speed measurements between MPH, KPH, Knots, and Mach instantly.</p>
         </div>
 
@@ -324,7 +339,6 @@
             
             <div class="converter-wrapper">
                 
-                <!-- From Side -->
                 <div class="input-group">
                     <span class="input-label">From</span>
                     <input type="number" id="input-val" placeholder="Enter value" value="1">
@@ -338,14 +352,12 @@
                     </select>
                 </div>
 
-                <!-- Swap Button -->
                 <div class="swap-btn-container">
                     <button class="btn-swap" id="swap-btn" title="Swap Units">
                         <i class="fa-solid fa-right-left"></i>
                     </button>
                 </div>
 
-                <!-- To Side -->
                 <div class="input-group">
                     <span class="input-label">To</span>
                     <input type="number" id="output-val" readonly>
@@ -361,7 +373,6 @@
 
             </div>
 
-            <!-- Formula Display -->
             <div class="formula-box">
                 <span class="formula-title">Conversion Logic</span>
                 <span id="formula-text">1 Mile per Hour = 1.60934 Kilometers per Hour</span>
@@ -369,15 +380,45 @@
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
         <div class="bottom-nav">
             <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
+
+        <div class="ad-container">
+            <div class="ad-slot">
+                Advertisement (728 x 90)
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Speed Converter</h2>
+            <p>The Speed Converter is a highly precise and advanced online utility engineered to effortlessly calculate and translate velocity metrics across a wide spectrum of standardized global measurement systems. Navigating the differences between how speed is measured around the world can be incredibly confusing, particularly when you factor in different industries and modes of transportation. Whether you are an automotive enthusiast comparing car statistics in miles per hour (MPH) versus kilometers per hour (KPH), a maritime navigator calculating sea travel utilizing nautical knots, or an aerospace student studying Mach velocities and the speed of sound, having instantaneous access to accurate conversions is absolutely vital.</p>
+            <p>Our intuitive tool simplifies this complex mathematical process by providing a clean, user-friendly interface that supports all major speed units, including Miles per Hour, Kilometers per Hour, Meters per Second, Feet per Second, Knots, and even Mach. All you need to do is input your numerical value and select your starting and ending measurement units. The underlying conversion engine dynamically recalculates the exact figure in real-time, displaying the results instantly while avoiding long, confusing decimals by cleanly formatting the output. To aid in educational understanding, the tool also clearly displays the specific mathematical logic and conversion ratio being applied under the hood.</p>
+            <p>A key advantage of utilizing our specific Speed Converter is its strict adherence to user privacy and processing speed. The complete application runs locally via your web browser's client-side JavaScript. Because of this architectural design, no entered values or navigational data are ever uploaded to, or stored on, any external servers. This not only guarantees the complete privacy of your personal data and calculations but also ensures that the tool operates with zero lag or network latency. You get instant, real-time results even if your internet connection drops entirely during use.</p>
+            <p>Designed with a professional aesthetic that prioritizes clarity and ease of use, this Speed Converter works flawlessly across all devices, ensuring a seamless user experience on both desktop computers and mobile phones. Thank you for choosing our platform to streamline your daily calculations.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+
     </main>
 
     <script>
@@ -389,14 +430,13 @@
             const swapBtn = document.getElementById('swap-btn');
             const formulaText = document.getElementById('formula-text');
 
-            // Conversion factors to Meters per Second (m/s) - base unit
             const factors = {
                 mps: 1,
                 kph: 0.277778,
                 mph: 0.44704,
                 knots: 0.514444,
                 fps: 0.3048,
-                mach: 343 // Approx speed of sound in air at 20°C
+                mach: 343 
             };
 
             const unitNames = {
@@ -419,14 +459,11 @@
                 const from = unitFrom.value;
                 const to = unitTo.value;
 
-                // Convert input to meters/second, then to output unit
                 const valueInMps = value * factors[from];
                 const result = valueInMps / factors[to];
 
-                // Handle formatting
                 outputVal.value = parseFloat(result.toPrecision(6)) / 1; 
 
-                // Update Formula Text
                 const ratio = factors[from] / factors[to];
                 formulaText.textContent = `1 ${unitNames[from]} ≈ ${parseFloat(ratio.toPrecision(6)) / 1} ${unitNames[to]}`;
             }
@@ -438,18 +475,15 @@
                 
                 convert();
                 
-                // Visual feedback animation
                 swapBtn.style.transform = "rotate(180deg)";
                 setTimeout(() => swapBtn.style.transform = "rotate(0deg)", 300);
             }
 
-            // Event Listeners
             inputVal.addEventListener('input', convert);
             unitFrom.addEventListener('change', convert);
             unitTo.addEventListener('change', convert);
             swapBtn.addEventListener('click', swap);
 
-            // Initial Run
             convert();
         });
     </script>
