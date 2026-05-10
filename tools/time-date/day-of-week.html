@@ -59,7 +59,6 @@
 </script>
 
 
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -76,7 +75,6 @@
             --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
             --transition-speed: 0.3s; 
-            --weekend-color: #ffab00;
         }
 
         /* --- Basic Reset & Layout --- */
@@ -114,7 +112,7 @@
             color: var(--text-color);
         }
 
-        /* --- Advertisement Box (728x90) --- */
+        /* --- Advertisement Box --- */
         .ad-container {
             width: 100%;
             display: flex;
@@ -149,8 +147,8 @@
             flex-direction: column;
         }
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; margin-top: 2rem; }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         
         .tool-content-wrapper { 
@@ -160,135 +158,114 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
         }
 
-        /* --- Input Section --- */
-        .input-container {
+        /* --- Input Area --- */
+        .input-area {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+            gap: 1rem;
+            max-width: 400px;
+            margin: 0 auto 2.5rem auto;
         }
 
-        .input-group {
-            width: 100%;
-            max-width: 350px;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .input-group label { font-weight: 600; color: var(--secondary-color); display: flex; justify-content: space-between; }
-
-        .btn-today {
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            font-size: 0.8rem;
-            cursor: pointer;
-            text-decoration: underline;
+        .input-area label {
+            font-weight: 600;
+            color: var(--secondary-color);
+            text-align: center;
         }
 
         input[type="date"] {
             width: 100%;
-            padding: 0.8rem;
+            padding: 1rem;
             border: 2px solid var(--border-color);
             border-radius: 8px;
             font-family: 'Poppins', sans-serif;
-            font-size: 1.1rem;
-            background: #f9fafc;
+            font-size: 1.2rem;
+            text-align: center;
             transition: border-color 0.3s;
         }
-        input[type="date"]:focus { outline: none; border-color: var(--primary-color); background: #fff; }
+        input[type="date"]:focus { outline: none; border-color: var(--primary-color); }
 
-        /* --- Results Section --- */
-        .result-area {
-            display: none; /* Hidden by default */
-            animation: slideUp 0.4s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Calendar Card Style */
-        .calendar-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow: hidden;
-            max-width: 400px;
-            margin: 0 auto;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-
-        .card-header {
+        .btn-calc {
+            padding: 1rem;
             background: var(--gradient);
             color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .btn-calc:hover { transform: translateY(-2px); }
+
+        /* --- Results Area --- */
+        .result-area {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .cal-card {
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 16px;
+            overflow: hidden;
+            max-width: 350px;
+            margin: 0 auto 2rem auto;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 82, 204, 0.1);
+        }
+
+        .cal-header {
+            background: var(--primary-color);
+            color: white;
             padding: 1rem;
-        }
-        .card-year { font-size: 1rem; opacity: 0.9; letter-spacing: 1px; }
-        .card-month { font-size: 1.5rem; font-weight: 700; text-transform: uppercase; }
-
-        .card-body {
-            padding: 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .card-day-num {
-            font-size: 5rem;
+        .cal-body { padding: 2rem 1rem; }
+        
+        .day-name {
+            font-size: 3rem;
             font-weight: 700;
             color: var(--text-color);
             line-height: 1;
             margin-bottom: 0.5rem;
         }
 
-        .card-weekday {
-            font-size: 2rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-        }
-
-        .card-footer {
-            background: #f9fafc;
-            padding: 1rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            border-top: 1px solid #eee;
-        }
-
-        .stat-item { text-align: center; }
-        .stat-label { display: block; font-size: 0.75rem; color: #888; text-transform: uppercase; }
-        .stat-value { display: block; font-size: 1.1rem; font-weight: 600; color: var(--text-color); }
-
-        /* Weekend Mod */
-        .calendar-card.weekend .card-weekday { color: var(--weekend-color); }
-        .calendar-card.weekend .card-header { background: linear-gradient(45deg, #ff9966, #ff5e62); }
-
-        /* Button */
-        .btn-calc {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 8px;
-            background: var(--gradient);
-            color: white;
+        .date-fmt {
             font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            max-width: 350px;
+            color: #666;
         }
-        .btn-calc:hover { transform: translateY(-2px); }
 
-        /* --- Bottom Navigation Buttons --- */
+        /* Weekend Highlight */
+        .weekend .cal-header { background: #ff6b6b; }
+        .weekend { border-color: #ff6b6b; box-shadow: 0 10px 30px rgba(255, 107, 107, 0.15); }
+
+        .extra-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            background: #f9fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .info-box { text-align: center; }
+        .info-label { font-size: 0.85rem; color: #888; text-transform: uppercase; font-weight: 600; margin-bottom: 5px; }
+        .info-val { font-size: 1.3rem; font-weight: 700; color: var(--text-color); }
+
+        /* --- Bottom Navigation --- */
         .bottom-nav {
             display: flex;
             justify-content: center;
             gap: 1.5rem;
-            margin-top: auto; 
+            margin-top: 2rem; 
             padding-top: 2rem;
             flex-wrap: wrap;
         }
@@ -322,140 +299,163 @@
             border-color: var(--secondary-color);
         }
 
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 800px;
+            border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;            
+        }
+        .offering-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .offering-link:hover { text-decoration: underline; }
+
         @media (max-width: 768px) {
             .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+            .day-name { font-size: 2.2rem; }
+            .extra-info { flex-direction: column; gap: 1rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
     <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h2 class="brand-title">JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
         <div class="tool-header">
-            <h2>Day of the Week Calculator</h2>
-            <p>Enter a date to find out the day, week number, and more.</p>
+            <h1>Day of the Week Calculator</h1>
+            <p>Find out exactly what day of the week any historical or future date falls on.</p>
         </div>
 
         <div class="tool-content-wrapper">
             
-            <div class="input-container">
-                <div class="input-group">
-                    <label>Select Date <button class="btn-today" id="today-btn">Set Today</button></label>
-                    <input type="date" id="date-input">
-                </div>
-                <button class="btn-calc" id="calc-btn">Calculate Day</button>
+            <div class="input-area">
+                <label for="date-input">Select a Date</label>
+                <input type="date" id="date-input">
+                <button class="btn-calc" id="calc-btn">Reveal Day</button>
             </div>
 
-            <!-- Result Display -->
             <div class="result-area" id="result-area">
-                <div class="calendar-card" id="cal-card">
-                    <div class="card-header">
-                        <div class="card-year" id="out-year">2023</div>
-                        <div class="card-month" id="out-month">October</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-day-num" id="out-day-num">25</div>
-                        <div class="card-weekday" id="out-weekday">Wednesday</div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="stat-item">
-                            <span class="stat-label">Day of Year</span>
-                            <span class="stat-value" id="out-doy">298</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Week Number</span>
-                            <span class="stat-value" id="out-week">43</span>
-                        </div>
+                
+                <div class="cal-card" id="cal-card">
+                    <div class="cal-header">The Day Is</div>
+                    <div class="cal-body">
+                        <div class="day-name" id="out-day-name">--</div>
+                        <div class="date-fmt" id="out-date-fmt">--</div>
                     </div>
                 </div>
+
+                <div class="extra-info">
+                    <div class="info-box">
+                        <div class="info-label">Day of the Year</div>
+                        <div class="info-val" id="out-doy">--</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">Week Number</div>
+                        <div class="info-val" id="out-week">--</div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
         <div class="bottom-nav">
             <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
+
+        <div class="ad-container">
+            <div class="ad-slot">
+                Advertisement (728 x 90)
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Day of the Week Calculator</h2>
+            <p>The Day of the Week Calculator is a fascinating and highly precise digital tool built to instantly uncover the specific weekday associated with any given historical, current, or future date. Human memory and standard physical calendars are fundamentally limited; while it is easy to glance at the wall and see what day of the week the 15th of next month falls on, it requires highly complex algorithmic math—such as Zeller's congruence—to determine what day of the week you were born on thirty years ago, or what day a historic battle occurred centuries in the past. Our robust web application handles this heavy mathematical lifting for you instantaneously.</p>
+            <p>Using the tool is incredibly straightforward. You simply select your desired date from the native calendar dropdown or type it directly into the input field. The moment you hit the "Reveal Day" button, the algorithm cross-references your input against standard Gregorian and Julian calendar rules. It then visually populates a beautiful, high-contrast digital calendar card that prominently displays the exact day of the week—whether it's a bustling Monday or a relaxing Saturday. As a helpful visual cue, the tool dynamically alters its styling to explicitly highlight dates that land on weekends, providing an immediate visual distinction.</p>
+            <p>Beyond simply providing the name of the weekday, this calculator goes a step further by generating advanced chronometric data that is extremely useful for developers and project managers. The tool automatically calculates the absolute "Day of the Year" (ranging from 1 to 366) and the specific ISO "Week Number" corresponding to your selected date. Because the entire calculation engine relies on optimized client-side JavaScript, all computations are executed securely and instantly within your web browser. Absolutely no data is sent to a remote server, ensuring that your personal date inquiries remain strictly private, while guaranteeing a lightning-fast, zero-latency user experience.</p>
+            <p>Designed meticulously with a clean, responsive, and mobile-friendly corporate aesthetic, this utility provides flawless performance whether you are navigating from a large office desktop monitor or checking dates quickly on your mobile phone on the go. Thank you for utilizing our digital hub for your daily time-tracking needs.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const dateInput = document.getElementById('date-input');
             const calcBtn = document.getElementById('calc-btn');
-            const todayBtn = document.getElementById('today-btn');
-            const resultArea = document.getElementById('result-area');
-            const calCard = document.getElementById('cal-card');
-
-            // Outputs
-            const outYear = document.getElementById('out-year');
-            const outMonth = document.getElementById('out-month');
-            const outDayNum = document.getElementById('out-day-num');
-            const outWeekday = document.getElementById('out-weekday');
+            
+            const outDayName = document.getElementById('out-day-name');
+            const outDateFmt = document.getElementById('out-date-fmt');
             const outDoy = document.getElementById('out-doy');
             const outWeek = document.getElementById('out-week');
+            
+            const calCard = document.getElementById('cal-card');
+            const resultArea = document.getElementById('result-area');
 
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-            // Set Today Function
-            todayBtn.addEventListener('click', () => {
-                const now = new Date();
-                dateInput.value = now.toISOString().split('T')[0];
-                calculateDate();
-            });
-
-            // Calculate Logic
-            calcBtn.addEventListener('click', calculateDate);
-
-            // Allow Enter Key
-            dateInput.addEventListener('keypress', (e) => {
-                if(e.key === 'Enter') calculateDate();
-            });
-
-            function calculateDate() {
+            const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            
+            calcBtn.addEventListener('click', () => {
                 const val = dateInput.value;
                 if (!val) {
                     alert("Please select a date first.");
                     return;
                 }
 
-                // Append time to ensure local parsing prevents timezone shift on some browsers
-                // or parse explicitly Y-M-D
+                // Parse manually to avoid timezone shifting
                 const parts = val.split('-');
-                const year = parseInt(parts[0]);
-                const month = parseInt(parts[1]) - 1; // 0-indexed
-                const day = parseInt(parts[2]);
+                const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
 
-                const dateObj = new Date(year, month, day);
+                // Basic Formatting
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                outDateFmt.textContent = dateObj.toLocaleDateString('en-US', options);
 
-                // Basic Info
-                outYear.textContent = year;
-                outMonth.textContent = months[month];
-                outDayNum.textContent = day;
-                
+                // Get Day
                 const dayIndex = dateObj.getDay();
-                outWeekday.textContent = days[dayIndex];
+                outDayName.textContent = daysOfWeek[dayIndex];
 
                 // Weekend Styling
                 if (dayIndex === 0 || dayIndex === 6) {
@@ -479,7 +479,7 @@
                 setTimeout(() => {
                     resultArea.style.display = 'block';
                 }, 10);
-            }
+            });
 
             // Helper: ISO Week Number
             function getISOWeek(d) {

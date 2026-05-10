@@ -58,8 +58,6 @@
 }
 </script>
 
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -143,15 +141,15 @@
         /* --- Main Tool Container --- */
         .dashboard-container { 
             padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 800px; /* Narrower focus for simple tool */
+            max-width: 800px; 
             margin: auto; 
             min-height: 80vh;
             display: flex;
             flex-direction: column;
         }
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; margin-top: 2rem; }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         
         .tool-content-wrapper { 
@@ -229,7 +227,7 @@
             margin-top: 2.5rem;
             padding: 2rem;
             border-radius: 12px;
-            display: none; /* Hidden by default */
+            display: none; 
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -260,7 +258,7 @@
             display: flex;
             justify-content: center;
             gap: 1.5rem;
-            margin-top: auto; 
+            margin-top: 2rem; 
             padding-top: 2rem;
             flex-wrap: wrap;
         }
@@ -294,6 +292,34 @@
             border-color: var(--secondary-color);
         }
 
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 800px;
+            border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;            
+        }
+        .offering-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .offering-link:hover { text-decoration: underline; }
+
         @media (max-width: 768px) {
             .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
         }
@@ -301,26 +327,16 @@
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
     <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h2 class="brand-title">JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
         <div class="tool-header">
-            <h2>Leap Year Checker</h2>
+            <h1>Leap Year Checker</h1>
             <p>Find out if a year has 365 or 366 days instantly.</p>
         </div>
 
@@ -342,7 +358,6 @@
                 </button>
             </div>
 
-            <!-- Result Display -->
             <div id="result-display" class="result-box">
                 <div id="res-icon" class="result-icon"></div>
                 <div id="res-title" class="result-year"></div>
@@ -352,22 +367,51 @@
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
         <div class="bottom-nav">
             <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
+
+        <div class="ad-container">
+            <div class="ad-slot">
+                Advertisement (728 x 90)
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Leap Year Checker</h2>
+            <p>The Leap Year Checker is a straightforward, highly optimized digital utility designed to definitively determine whether any given historical or future year qualifies as a leap year according to the rules of the Gregorian calendar. The concept of a leap year—adding an extra day, February 29th, to the calendar every four years—was instituted to keep our modern calendar year synchronized with the astronomical year (the actual time it takes the Earth to make one complete orbit around the Sun). Without this vital temporal correction, our seasons would eventually drift completely out of alignment with our calendar months, severely disrupting global agricultural cycles and seasonal planning.</p>
+            <p>While the basic rule is that leap years occur every four years, the actual mathematical algorithm is significantly more complex due to century exceptions. A year is a leap year if it is evenly divisible by 4, but there is a major caveat: if the year can be evenly divided by 100, it is NOT a leap year, unless it is also evenly divisible by 400. Trying to calculate this manually for years like 1900 or 2100 can easily lead to scheduling errors for software developers mapping out long-term databases or historians tracing exact timelines. Our tool completely automates this logic. Simply type any year into the input box or use the quick-select buttons, and the application instantly processes the math to give you a definitive visual answer.</p>
+            <p>Built with efficiency and security in mind, this tool requires absolutely no server interaction. The entire mathematical validation runs securely inside your device's web browser using native client-side JavaScript. This ensures that the results load instantaneously with zero network latency, and no data is ever transmitted or logged remotely. Whether you are a programmer writing date-parsing algorithms, a financial analyst projecting quarterly earnings across a leap year, or a student researching calendar systems, this tool provides immediate, mathematically flawless verification.</p>
+            <p>Thank you for using our collection of digital tools. We are dedicated to providing fast, reliable, and completely free web utilities to streamline your daily workflow.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+
     </main>
 
     <script>
-        // Helper for Quick Buttons
         function setYear(val) {
             document.getElementById('year-input').value = val;
-            document.getElementById('result-display').style.display = 'none'; // Reset view
+            document.getElementById('result-display').style.display = 'none'; 
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -382,7 +426,6 @@
 
             btn.addEventListener('click', checkLeapYear);
 
-            // Allow Enter key to submit
             input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') checkLeapYear();
             });
@@ -395,16 +438,11 @@
                     return;
                 }
 
-                // Leap Year Logic:
-                // 1. Divisible by 4
-                // 2. Not divisible by 100 UNLESS divisible by 400
                 const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
 
-                // Reset Classes
                 resultBox.classList.remove('leap', 'common');
                 resultBox.style.display = 'none';
                 
-                // Trigger Reflow for animation restart
                 void resultBox.offsetWidth;
 
                 if (isLeap) {

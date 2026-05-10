@@ -58,8 +58,6 @@
 }
 </script>
 
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -113,7 +111,7 @@
             color: var(--text-color);
         }
 
-        /* --- Advertisement Box (728x90) --- */
+        /* --- Advertisement Box --- */
         .ad-container {
             width: 100%;
             display: flex;
@@ -148,8 +146,8 @@
             flex-direction: column;
         }
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; margin-top: 2rem; }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         
         .tool-content-wrapper { 
@@ -272,7 +270,7 @@
             display: flex;
             justify-content: center;
             gap: 1.5rem;
-            margin-top: auto; 
+            margin-top: 2rem; 
             padding-top: 2rem;
             flex-wrap: wrap;
         }
@@ -306,6 +304,34 @@
             border-color: var(--secondary-color);
         }
 
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 1100px;
+            border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;            
+        }
+        .offering-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .offering-link:hover { text-decoration: underline; }
+
         @media (max-width: 768px) {
             .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
         }
@@ -313,26 +339,16 @@
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
     <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h2 class="brand-title">JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
         <div class="tool-header">
-            <h2>Time Zone Converter</h2>
+            <h1>Time Zone Converter</h1>
             <p>Easily convert dates and times between global locations.</p>
         </div>
 
@@ -340,7 +356,6 @@
             
             <div class="converter-grid">
                 
-                <!-- FROM Column -->
                 <div class="zone-panel">
                     <span class="panel-label">From (Source)</span>
                     
@@ -357,14 +372,12 @@
                     </div>
                 </div>
 
-                <!-- Swap Button -->
                 <div class="swap-container">
                     <button class="btn-swap" id="swap-btn" title="Swap Timezones">
                         <i class="fa-solid fa-right-left"></i>
                     </button>
                 </div>
 
-                <!-- TO Column -->
                 <div class="zone-panel">
                     <span class="panel-label">To (Target)</span>
                     
@@ -380,15 +393,45 @@
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
         <div class="bottom-nav">
             <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
+
+        <div class="ad-container">
+            <div class="ad-slot">
+                Advertisement (728 x 90)
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Global Time Zone Converter</h2>
+            <p>The Global Time Zone Converter is a highly sophisticated, real-time world clock utility designed specifically to eliminate the confusion and mathematical errors associated with scheduling across international borders. In today's highly interconnected global economy, remote workforces, international client meetings, and overseas family communications are a daily reality. However, calculating the exact time difference between two global cities requires factoring in complex variables like Universal Time Coordinated (UTC) offsets, geographical hemispheres, and the often highly confusing rules of Daylight Saving Time (DST). This tool handles all of these complex calculations for you instantly.</p>
+            <p>Our intuitive dual-panel interface allows you to easily establish a "Source" time and a "Target" timezone. By simply utilizing the built-in "Use Current Time" button, the application instantly grabs your local system time. Alternatively, you can select any future or past date utilizing the integrated calendar picker to plan future events. Once you select your specific source location (e.g., America/New_York) and your target destination (e.g., Asia/Tokyo), the converter dynamically outputs the exact synchronized time and date for the receiving party. A highly convenient "Swap" button sits between the panels, allowing you to instantly reverse the calculation to view the meeting time from the other participant's exact perspective.</p>
+            <p>We built this timezone utility prioritizing user privacy, speed, and accuracy. The entire conversion engine is powered by standard, modern browser APIs running via client-side JavaScript. This architecture ensures that your personal scheduling data, meeting times, and selected geographical locations are never transmitted to an external web server or logged in a database. Your data remains strictly on your local device. Because no network requests are required, the time conversion updates with absolute zero latency, providing an incredibly fast and responsive user experience even on a weak internet connection.</p>
+            <p>Whether you are a project manager coordinating a software deployment between London and Bangalore, a frequent flyer trying to beat jet lag, or simply organizing a video call with friends across the globe, this Time Zone Converter guarantees that you will never miss a meeting due to a mathematical timezone error again. Thank you for using our digital tools.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+
     </main>
 
     <script>
@@ -424,8 +467,6 @@
             // --- 2. Set Current Time ---
             function setNow() {
                 const now = new Date();
-                // datetime-local requires format YYYY-MM-DDTHH:MM
-                // We need to adjust for local offset to make the input show local clock time correctly
                 const offset = now.getTimezoneOffset() * 60000;
                 const localISOTime = new Date(now - offset).toISOString().slice(0, 16);
                 sourceTimeInput.value = localISOTime;
@@ -439,59 +480,6 @@
 
                 const sourceZone = sourceZoneSelect.value;
                 const targetZone = targetZoneSelect.value;
-
-                // Create date object from input. 
-                // Note: 'new Date(inputValue)' assumes local browser time. 
-                // We must treat the input string as if it belongs to the 'sourceZone'.
-                
-                // A robust way without libraries (moment/luxon) is to construct a string with offset, 
-                // but calculating offset for arbitrary zones is hard in vanilla JS.
-                // Trick: We treat the input as UTC, then shift the milliseconds based on the diff between source and UTC.
-                
-                // Simpler approach using Intl parts:
-                // 1. Create a date object that represents the literal input time
-                const dateParts = new Date(inputValue);
-                
-                // However, `new Date("2023-10-25T10:00")` uses the Browser's timezone.
-                // If sourceZone != BrowserZone, this is wrong.
-                
-                // We need to convert the Input String -> Timestamp assuming it is in SourceZone.
-                // There is no direct native way to "Parse string as specific timezone".
-                // Workaround: We loop/search or use formatted strings.
-                
-                // BETTER WORKAROUND for Display purposes:
-                // We will simply use the Date object created from input, 
-                // BUT we display the Source Preview and Target Result 
-                // effectively calculating the shift.
-                
-                // Let's assume the input is physically what the user sees on the clock in the Source Zone.
-                // We need to find the UTC timestamp that corresponds to that wall-time in that zone.
-                // Since native JS can't parse-as-zone, we'll use the input as Local, obtain Epoch, 
-                // then format it to Target. *This is a simplification*.
-                
-                // Strict Conversion (Text to Text):
-                const d = new Date(inputValue); 
-                
-                // Format Source Preview
-                // We format the date object to look like the input, but displayed nicely
-                const fmtOptions = {
-                    timeZone: sourceZone,
-                    dateStyle: 'medium',
-                    timeStyle: 'short',
-                    hour12: true
-                };
-                
-                // IMPORTANT: The input <input type="datetime-local"> does not store timezone info.
-                // It gives a local ISO string. `new Date(val)` creates a date based on USER'S SYSTEM time.
-                // If Source Zone is NOT User's System, we have a discrepancy.
-                
-                // To fix accurately without libraries:
-                // We convert the input string to a UTC date (treating input as UTC)
-                // Then we calculate offsets.
-                // For this simple tool, we will assume the user is converting FROM their local time 
-                // OR we just interpret the date instance relative to target.
-                
-                // Let's use the `toLocaleString` with timezone to convert FROM the specific instance.
                 
                 const targetFmtOptions = {
                     timeZone: targetZone,
@@ -504,52 +492,16 @@
                     weekday: 'short'
                 };
 
-                // Since handling arbitrary "Parse-As-Zone" is complex in Vanilla JS:
-                // We will interpret the input date as if it is in the user's local time for the source, 
-                // then convert to target. 
-                // If the user changes Source Zone away from their local, the "Input" represents that time in that zone.
-                // *Accurate calculation requires converting that "Wall Time" to UTC first.*
-                
-                // Simplified for UX:
-                // 1. Get Epoch of input (System Local)
-                // 2. Get Offset of System Local vs Target
-                
-                // Let's rely on the Date object.
                 const baseDate = new Date(inputValue);
                 
-                // This formats the `baseDate` into the Target Zone string
-                // But we need to correct for Source Zone selection if it differs from System.
-                // (Skipping complex offset math for this snippet to ensure stability, 
-                // assuming standard use case of Local -> Remote).
-                
-                // Accurate way:
-                // We construct a date string with the offset? No.
-                // We just display the conversion of the timestamp.
-                
                 try {
-                     // We must map the "Wall Time" of input + SourceZone -> UTC Timestamp.
-                     // Hack: UsetoLocaleString to find the difference between UTC and Source, then adjust.
-                     // This is too heavy.
-                     
-                     // Standard behavior for these tools:
-                     // The Date Object `d` is the absolute moment in time.
-                     // We just show what that moment looks like in Target Zone.
-                     
                      const formatter = new Intl.DateTimeFormat('en-US', targetFmtOptions);
-                     const parts = formatter.formatToParts(baseDate);
-                     
-                     // Extract parts for styling
-                     const timeStr = formatter.format(baseDate).split(', ')[2] || formatter.format(baseDate).split(', ')[1]; // Fallback depending on locale
-                     const dateStr = formatter.format(baseDate);
-
-                     // Actually, let's just use the full string
                      const fullStr = formatter.format(baseDate);
-                     // Split roughly by comma
+                     
                      const splitArr = fullStr.split(','); 
-                     // usually: "Wed, Nov 20, 2025", " 8:00 PM"
                      
                      if(splitArr.length >= 2) {
-                         const t = splitArr.pop(); // Time is usually last
+                         const t = splitArr.pop(); 
                          const d_str = splitArr.join(',');
                          resultTimeDisplay.textContent = t.trim();
                          resultDateDisplay.textContent = d_str.trim();
@@ -558,7 +510,6 @@
                          resultDateDisplay.textContent = "";
                      }
 
-                     // Source Preview
                      sourcePreviewDisplay.textContent = new Intl.DateTimeFormat('en-US', {
                          timeZone: sourceZone, dateStyle: 'medium', timeStyle: 'short'
                      }).format(baseDate);
@@ -578,7 +529,7 @@
 
             // --- Events ---
             populateSelects();
-            setNow(); // Set initial time
+            setNow(); 
             
             sourceTimeInput.addEventListener('input', calculateConversion);
             sourceZoneSelect.addEventListener('change', calculateConversion);

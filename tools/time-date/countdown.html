@@ -58,8 +58,6 @@
 }
 </script>
 
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -76,8 +74,6 @@
             --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
             --transition-speed: 0.3s; 
-            --success-color: #28a745;
-            --danger-color: #dc3545;
         }
 
         /* --- Basic Reset & Layout --- */
@@ -115,7 +111,7 @@
             color: var(--text-color);
         }
 
-        /* --- Advertisement Box (728x90) --- */
+        /* --- Advertisement Box --- */
         .ad-container {
             width: 100%;
             display: flex;
@@ -143,15 +139,15 @@
         /* --- Main Tool Container --- */
         .dashboard-container { 
             padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 1000px; 
+            max-width: 900px; 
             margin: auto; 
             min-height: 80vh;
             display: flex;
             flex-direction: column;
         }
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; margin-top: 2rem; }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         
         .tool-content-wrapper { 
@@ -159,120 +155,99 @@
             padding: 2.5rem; 
             border-radius: 10px; 
             box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         /* --- Input Section --- */
         .input-section {
             display: flex;
-            gap: 1rem;
-            align-items: flex-end;
             flex-wrap: wrap;
+            gap: 1rem;
             justify-content: center;
-            margin-bottom: 2.5rem;
-            width: 100%;
+            align-items: flex-end;
+            margin-bottom: 3rem;
+            background: #f9fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
         }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            flex: 1;
-            min-width: 250px;
-            max-width: 350px;
-        }
-
-        .input-group label { font-weight: 600; color: var(--secondary-color); }
+        .input-group { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-width: 200px; }
+        .input-group label { font-weight: 600; color: var(--secondary-color); font-size: 0.95rem; }
 
         input[type="datetime-local"] {
+            width: 100%;
             padding: 0.8rem;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            width: 100%;
+            font-size: 1.1rem;
+            background: #fff;
+            transition: border-color 0.3s;
         }
         input:focus { outline: none; border-color: var(--primary-color); }
 
+        .btn-action {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            height: 48px;
+        }
+        .btn-start { background: var(--gradient); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn-start:hover { transform: translateY(-2px); }
+        .btn-reset { background: #e2e6ea; color: var(--text-color); border: 1px solid #ced4da; }
+        .btn-reset:hover { background: #dbe0e5; }
+
         /* --- Timer Display --- */
-        .timer-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+        .timer-display {
+            display: flex;
+            justify-content: center;
             gap: 1.5rem;
-            width: 100%;
-            max-width: 800px;
-            margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
 
         .time-box {
-            background: #f9fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 1.5rem 0.5rem;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
+            background: var(--surface-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 82, 204, 0.1);
         }
-        .time-box:hover { transform: translateY(-5px); border-color: var(--primary-color); }
 
-        .time-number {
-            font-size: 3.5rem;
+        .time-val {
+            font-size: 3rem;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--text-color);
             line-height: 1;
-            display: block;
-            font-variant-numeric: tabular-nums;
+            margin-bottom: 5px;
+            font-family: 'Courier New', Courier, monospace;
         }
 
         .time-label {
-            display: block;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
             color: #666;
-        }
-
-        /* --- Controls --- */
-        .controls {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.8rem 2.5rem;
-            border: none;
-            border-radius: 6px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 1.1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
+            letter-spacing: 1px;
         }
 
-        .btn-start { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
-
-        .btn-reset { background-color: #e2e6ea; color: var(--text-color); border: 1px solid #ced4da; }
-        .btn-reset:hover { background-color: #dbe0e5; }
-
-        /* --- Completion Message --- */
         .status-message {
-            margin-top: 1.5rem;
+            text-align: center;
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--success-color);
-            min-height: 2rem;
-            text-align: center;
-            animation: pulse 1s infinite;
+            color: #28a745;
+            margin-top: 2rem;
             display: none;
+            animation: pulse 1.5s infinite;
         }
-
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -284,7 +259,7 @@
             display: flex;
             justify-content: center;
             gap: 1.5rem;
-            margin-top: auto; 
+            margin-top: 2rem; 
             padding-top: 2rem;
             flex-wrap: wrap;
         }
@@ -318,92 +293,133 @@
             border-color: var(--secondary-color);
         }
 
-        /* Responsive */
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 900px;
+            border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;            
+        }
+        .offering-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .offering-link:hover { text-decoration: underline; }
+
         @media (max-width: 768px) {
             .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
-            .timer-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
-            .time-number { font-size: 2.5rem; }
+            .time-box { width: 80px; height: 80px; }
+            .time-val { font-size: 1.8rem; }
+            .time-label { font-size: 0.7rem; }
+            .btn-action { width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
     <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h2 class="brand-title">JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
         <div class="tool-header">
-            <h2>Countdown Timer</h2>
-            <p>Set a specific date and time to count down to.</p>
+            <h1>Countdown Timer</h1>
+            <p>Set a target date and time to track down to the exact second.</p>
         </div>
 
         <div class="tool-content-wrapper">
             
-            <!-- Input -->
             <div class="input-section">
                 <div class="input-group">
-                    <label for="target-date">Target Date & Time:</label>
+                    <label for="target-date">Target Date & Time</label>
                     <input type="datetime-local" id="target-date">
                 </div>
+                <button class="btn-action btn-start" id="start-btn">Start Timer</button>
+                <button class="btn-action btn-reset" id="reset-btn">Reset</button>
             </div>
 
-            <!-- Timer Display -->
-            <div class="timer-grid">
+            <div class="timer-display">
                 <div class="time-box">
-                    <span class="time-number" id="days">00</span>
-                    <span class="time-label">Days</span>
+                    <div class="time-val" id="days">00</div>
+                    <div class="time-label">Days</div>
                 </div>
                 <div class="time-box">
-                    <span class="time-number" id="hours">00</span>
-                    <span class="time-label">Hours</span>
+                    <div class="time-val" id="hours">00</div>
+                    <div class="time-label">Hours</div>
                 </div>
                 <div class="time-box">
-                    <span class="time-number" id="minutes">00</span>
-                    <span class="time-label">Minutes</span>
+                    <div class="time-val" id="minutes">00</div>
+                    <div class="time-label">Minutes</div>
                 </div>
                 <div class="time-box">
-                    <span class="time-number" id="seconds">00</span>
-                    <span class="time-label">Seconds</span>
+                    <div class="time-val" id="seconds">00</div>
+                    <div class="time-label">Seconds</div>
                 </div>
             </div>
 
-            <!-- Controls -->
-            <div class="controls">
-                <button class="btn btn-reset" id="reset-btn">Reset</button>
-                <button class="btn btn-start" id="start-btn">Start Timer</button>
+            <div class="status-message" id="status-msg">
+                <i class="fa-regular fa-bell"></i> Time's Up!
             </div>
-
-            <!-- Status -->
-            <div class="status-message" id="status-msg">Time's Up!</div>
-
-            <!-- Hidden Audio for Alarm (Optional) -->
-            <audio id="alarm-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
         <div class="bottom-nav">
             <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
+
+        <div class="ad-container">
+            <div class="ad-slot">
+                Advertisement (728 x 90)
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Online Countdown Timer</h2>
+            <p>The Online Countdown Timer is a sophisticated, highly reliable digital utility built to help professionals, students, event planners, and individuals meticulously track the precise amount of time remaining until a significant future event. Time management is one of the most critical aspects of modern productivity, and having a visual, constantly updating reminder of an impending deadline can drastically reduce procrastination and increase focus. Whether you are eagerly awaiting a long-planned family vacation, tracking the final hours until a major corporate product launch, counting down the days to a final university exam, or eagerly anticipating a New Year's celebration, this timer ensures you never miss a vital second.</p>
+            <p>Our completely browser-based tool allows users to set a highly specific "Target Date & Time" utilizing a highly intuitive, built-in calendar and clock interface. Once the target parameters are locked in, clicking "Start Timer" initializes a real-time, highly visible digital clock display that breaks down the remaining time into exactly how many Days, Hours, Minutes, and Seconds are left. The countdown operates using your system's precise internal clock to ensure absolute frame-by-frame accuracy. When the targeted moment finally arrives, the tool gracefully ceases its countdown and triggers a clear "Time's Up!" notification, accompanied by a brief audio alert to ensure you are notified even if you have switched browser tabs.</p>
+            <p>One of the core design philosophies of this timer is uncompromising data security and privacy. The countdown runs entirely via optimized client-side JavaScript, meaning the logic executes directly within the confines of your own personal device. Absolutely none of your scheduled dates, personal events, or deadlines are ever logged, tracked, or transmitted to any external servers. This local processing architecture also ensures that the timer performs with absolute zero latency and requires minimal system resources to run smoothly in the background while you work.</p>
+            <p>Designed with a sleek, modern corporate aesthetic featuring large, highly legible monospace digits, this tool is fully responsive and adjusts flawlessly across desktop monitors, tablet devices, and mobile phone screens. Thank you for relying on our platform to help organize your most important future moments.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+
     </main>
 
     <script>
@@ -411,55 +427,58 @@
             const dateInput = document.getElementById('target-date');
             const startBtn = document.getElementById('start-btn');
             const resetBtn = document.getElementById('reset-btn');
-            const statusMsg = document.getElementById('status-msg');
-            const alarmSound = document.getElementById('alarm-sound');
-
+            
             const elDays = document.getElementById('days');
             const elHours = document.getElementById('hours');
             const elMinutes = document.getElementById('minutes');
             const elSeconds = document.getElementById('seconds');
+            const statusMsg = document.getElementById('status-msg');
 
-            let countdownInterval = null;
+            let countdownInterval;
+            
+            // Basic Beep Sound (Base64) to avoid external asset dependency
+            const alarmSound = new Audio('data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
 
-            // Set default value to tomorrow same time
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            tomorrow.setMinutes(tomorrow.getMinutes() - tomorrow.getTimezoneOffset());
-            dateInput.value = tomorrow.toISOString().slice(0,16);
-
-            function updateDisplay(d, h, m, s) {
-                elDays.textContent = d < 10 ? '0' + d : d;
-                elHours.textContent = h < 10 ? '0' + h : h;
-                elMinutes.textContent = m < 10 ? '0' + m : m;
-                elSeconds.textContent = s < 10 ? '0' + s : s;
+            function pad(num) {
+                return num.toString().padStart(2, '0');
             }
 
+            function updateDisplay(d, h, m, s) {
+                elDays.textContent = pad(d);
+                elHours.textContent = pad(h);
+                elMinutes.textContent = pad(m);
+                elSeconds.textContent = pad(s);
+            }
+
+            // Default to tomorrow
+            const tmrw = new Date();
+            tmrw.setDate(tmrw.getDate() + 1);
+            tmrw.setMinutes(tmrw.getMinutes() - tmrw.getTimezoneOffset());
+            dateInput.value = tmrw.toISOString().slice(0,16);
+
             function startTimer() {
-                const targetVal = dateInput.value;
-                if (!targetVal) return;
-
-                const targetDate = new Date(targetVal).getTime();
-                const now = new Date().getTime();
-
-                if (targetDate <= now) {
-                    alert("Please select a date in the future.");
+                const targetTime = new Date(dateInput.value).getTime();
+                if (isNaN(targetTime)) {
+                    alert("Please select a valid date and time.");
                     return;
                 }
 
-                // Clear existing timer if any
+                if (targetTime <= new Date().getTime()) {
+                    alert("Please select a date and time in the future.");
+                    return;
+                }
+
                 if (countdownInterval) clearInterval(countdownInterval);
-                statusMsg.style.display = 'none';
                 
-                // Disable input and start button while running
+                statusMsg.style.display = 'none';
                 dateInput.disabled = true;
                 startBtn.disabled = true;
                 startBtn.textContent = "Running...";
 
                 countdownInterval = setInterval(() => {
-                    const currentTime = new Date().getTime();
-                    const distance = targetDate - currentTime;
+                    const now = new Date().getTime();
+                    const distance = targetTime - now;
 
-                    // Calculations
                     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));

@@ -58,8 +58,6 @@
 }
 </script>
 
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -150,7 +148,7 @@
         }
         
         .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         
         /* --- Current Time Banner --- */
@@ -286,6 +284,34 @@
             border-color: var(--secondary-color);
         }
 
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 1100px;
+            border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;            
+        }
+        .offering-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .offering-link:hover { text-decoration: underline; }
+
         @media (max-width: 768px) {
             .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
         }
@@ -293,39 +319,27 @@
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
     <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h2 class="brand-title">JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
         
-        <!-- Top Banner: Current Time -->
         <div class="current-time-banner">
             <span class="current-label">Current Unix Timestamp</span>
             <div class="current-epoch" id="live-timestamp">loading...</div>
         </div>
 
         <div class="tool-header">
-            <h2>Timestamp Converter</h2>
+            <h1>Timestamp Converter</h1>
             <p>Convert Unix Epoch time to readable dates and vice-versa.</p>
         </div>
 
         <div class="converter-grid">
             
-            <!-- Section 1: Epoch to Date -->
             <div class="converter-panel">
                 <div class="panel-title"><i class="fa-solid fa-clock-rotate-left"></i> Timestamp to Date</div>
                 
@@ -354,7 +368,6 @@
                 </div>
             </div>
 
-            <!-- Section 2: Date to Epoch -->
             <div class="converter-panel">
                 <div class="panel-title"><i class="fa-solid fa-calendar-days"></i> Date to Timestamp</div>
                 
@@ -385,29 +398,57 @@
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
         <div class="bottom-nav">
             <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
+
+        <div class="ad-container">
+            <div class="ad-slot">
+                Advertisement (728 x 90)
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Unix Timestamp Converter</h2>
+            <p>The Unix Timestamp Converter, frequently referred to as an Epoch Time Tool, is a vital, highly specialized diagnostic utility utilized daily by software engineers, database administrators, and backend developers worldwide. In the realm of computer science, standard human-readable dates (like "October 10, 2026") are rarely used for internal data storage or server-side calculations because they are highly susceptible to localization errors and daylight saving time shifts. Instead, computer systems universally track time using the "Unix Epoch"—a single, constantly incrementing integer that represents the exact number of seconds (or milliseconds) that have elapsed since midnight on January 1, 1970, strictly in Coordinated Universal Time (UTC).</p>
+            <p>While highly efficient for computer logic and server databases, an integer like "1678886400" is completely illegible to a human developer attempting to debug an application. This dual-panel converter gracefully bridges that exact gap. In the first panel, "Timestamp to Date," you can paste any raw integer log from your server or database API. The application uses smart heuristics to determine if your input represents seconds or milliseconds, then instantly parses it into human-readable GMT time, your local system time, and a highly convenient "Relative Time" format (e.g., "5 hours ago"). Conversely, the "Date to Timestamp" panel allows you to visually select any future or past date using a calendar interface and instantly generate the exact corresponding Unix integer in both 10-digit (seconds) and 13-digit (milliseconds) formats, complete with one-click copy buttons.</p>
+            <p>We engineered this utility to be as fast, secure, and developer-friendly as possible. The entire mathematical parsing engine operates solely via client-side JavaScript execution within your web browser. This means that none of your proprietary database logs, sensitive user creation timestamps, or secure server data are ever transmitted to an external internet endpoint. Your technical data remains 100% private, and the tool functions with absolute zero network latency—even updating a live ticker of the current global Epoch timestamp right at the top of your screen.</p>
+            <p>Built with a clean, professional corporate aesthetic, this tool guarantees rapid performance whether you are frantically debugging an API endpoint on a secondary desktop monitor or verifying a server crash log on your mobile device. Thank you for utilizing our developer utilities.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const liveTimestamp = document.getElementById('live-timestamp');
             
-            // --- Live Ticker ---
             function updateTicker() {
                 liveTimestamp.textContent = Math.floor(Date.now() / 1000);
             }
             setInterval(updateTicker, 1000);
             updateTicker();
 
-            // --- Epoch to Date Logic ---
             const inputEpoch = document.getElementById('input-epoch');
             const btnConvertEpoch = document.getElementById('btn-convert-epoch');
             const epochResults = document.getElementById('epoch-results');
@@ -421,9 +462,6 @@
 
                 let timestamp = parseInt(val);
                 
-                // Heuristic: If timestamp is less than 12 digits, assume seconds. If 13+, assume ms.
-                // Unix timestamp for 2001 is 10 digits. 
-                // JS uses milliseconds (13 digits for current dates).
                 let isSeconds = val.length <= 10;
                 
                 let dateObj = new Date(isSeconds ? timestamp * 1000 : timestamp);
@@ -436,7 +474,6 @@
                 resGmt.textContent = dateObj.toUTCString();
                 resLocal.textContent = dateObj.toString();
                 
-                // Calculate Relative
                 const diff = Math.floor((Date.now() - dateObj.getTime()) / 1000);
                 let relativeText = "";
                 if (diff < 60) relativeText = "Just now";
@@ -449,14 +486,12 @@
                 epochResults.style.display = 'block';
             });
 
-            // --- Date to Epoch Logic ---
             const inputDate = document.getElementById('input-date');
             const btnConvertDate = document.getElementById('btn-convert-date');
             const dateResults = document.getElementById('date-results');
             const resEpochSec = document.getElementById('res-epoch-sec');
             const resEpochMs = document.getElementById('res-epoch-ms');
 
-            // Set inputDate default to now
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             inputDate.value = now.toISOString().slice(0,16);
@@ -474,13 +509,11 @@
                 dateResults.style.display = 'block';
             });
 
-            // --- Copy Helper ---
             window.copyToClipboard = function(elementId) {
                 const el = document.getElementById(elementId);
                 el.select();
                 document.execCommand('copy');
                 
-                // Visual feedback could be added here
                 const icon = el.nextElementSibling;
                 icon.classList.remove('fa-copy');
                 icon.classList.add('fa-check');

@@ -58,8 +58,6 @@
 }
 </script>
 
-
-    <!-- Fonts & Icons -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -113,7 +111,7 @@
             color: var(--text-color);
         }
 
-        /* --- Advertisement Box (728x90) --- */
+        /* --- Advertisement Box --- */
         .ad-container {
             width: 100%;
             display: flex;
@@ -141,25 +139,25 @@
         /* --- Main Tool Container --- */
         .dashboard-container { 
             padding: 0 1.5rem 3rem 1.5rem; 
-            max-width: 1000px; 
+            max-width: 900px; 
             margin: auto; 
             min-height: 80vh;
             display: flex;
             flex-direction: column;
         }
         
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+        .tool-header { text-align: center; margin-bottom: 2rem; margin-top: 2rem; }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
         
         .tool-content-wrapper { 
             background: var(--surface-color); 
-            padding: 2rem; 
+            padding: 2.5rem; 
             border-radius: 10px; 
             box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
         }
 
-        /* --- Input Grid --- */
+        /* --- Input Section --- */
         .input-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -171,66 +169,29 @@
             .input-grid { grid-template-columns: 1fr; }
         }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .input-label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .input-label-row label { font-weight: 600; color: var(--secondary-color); }
-
-        .today-btn {
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        .today-btn:hover { color: var(--secondary-color); }
+        .input-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .input-group label { font-weight: 600; color: var(--secondary-color); font-size: 0.95rem; }
 
         input[type="date"] {
+            width: 100%;
             padding: 0.8rem;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            width: 100%;
+            font-size: 1.1rem;
             background: #f9fafc;
+            transition: border-color 0.3s;
         }
-        input:focus { outline: none; border-color: var(--primary-color); background: white; }
+        input[type="date"]:focus { outline: none; border-color: var(--primary-color); background: #fff; }
 
-        /* Options */
-        .options-row {
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: center;
-        }
-        .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            user-select: none;
-            font-weight: 500;
-        }
-        .checkbox-wrapper input { width: 18px; height: 18px; accent-color: var(--primary-color); cursor: pointer; }
-
-        /* Action Button */
-        .btn-calculate {
+        .btn-calc {
             width: 100%;
             padding: 1rem;
             border: none;
             border-radius: 8px;
             background: var(--gradient);
             color: white;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -238,53 +199,56 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 0.5rem;
+            gap: 10px;
         }
-        .btn-calculate:hover { transform: translateY(-2px); }
+        .btn-calc:hover { transform: translateY(-2px); }
 
-        /* --- Results Area --- */
-        .results-container {
-            margin-top: 2rem;
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
+        /* --- Results Section --- */
+        .result-section {
+            margin-top: 3rem;
+            display: none; 
+            animation: fadeIn 0.4s ease-out;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .primary-result {
-            background: #e3f2fd;
-            border: 1px solid #bbdefb;
+        /* Main Difference Card */
+        .main-result-card {
+            background: #eef2f9;
+            border-left: 5px solid var(--primary-color);
             border-radius: 8px;
-            padding: 1.5rem;
+            padding: 2rem;
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
-        
-        .primary-result h3 { margin: 0 0 0.5rem 0; color: var(--primary-color); font-size: 1.1rem; }
-        .primary-result .result-value { font-size: 1.5rem; font-weight: 700; color: var(--text-color); }
+        .diff-title { font-size: 1.1rem; color: #666; margin-bottom: 0.5rem; }
+        .diff-value { font-size: 2rem; font-weight: 700; color: var(--primary-color); }
 
-        .breakdown-grid {
+        /* Stats Grid */
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
         }
-
-        .stat-card {
+        
+        .stat-box {
             background: white;
             border: 1px solid var(--border-color);
+            padding: 1.5rem 1rem;
             border-radius: 8px;
-            padding: 1rem;
             text-align: center;
+            transition: box-shadow 0.2s;
         }
-        .stat-label { font-size: 0.85rem; color: #666; margin-bottom: 0.3rem; }
-        .stat-value { font-size: 1.2rem; font-weight: 600; color: var(--text-color); }
+        .stat-box:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .stat-label { display: block; font-size: 0.85rem; color: #888; text-transform: uppercase; margin-bottom: 8px; font-weight: 600;}
+        .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--text-color); }
 
         /* --- Bottom Navigation --- */
         .bottom-nav {
             display: flex;
             justify-content: center;
             gap: 1.5rem;
-            margin-top: auto; 
+            margin-top: 2rem; 
             padding-top: 2rem;
             flex-wrap: wrap;
         }
@@ -318,158 +282,192 @@
             border-color: var(--secondary-color);
         }
 
+        /* --- Extra Sections --- */
+        .about-section { 
+            margin: 40px 0 50px 0; padding: 40px; 
+            background: white; border-radius: 18px; 
+            border: 1px solid var(--border-color); box-sizing: border-box;
+        }
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 900px;
+            border: 1px solid var(--border-color); box-sizing: border-box;
+            background: white; border-radius: 18px;            
+        }
+        .offering-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .offering-link:hover { text-decoration: underline; }
+
         @media (max-width: 768px) {
             .ad-slot { width: 100%; height: auto; padding: 1rem; text-align: center; }
+            .diff-value { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Section (Left Aligned) -->
     <header class="main-header">
-        <a href="../../" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
-            <h1 class="brand-title">JKM Edit</h1>
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-img">
+            <h2 class="brand-title">JKM Edit</h2>
         </a>
     </header>
 
-    <!-- Advertisement Box (728x90) -->
-    <div class="ad-container">
-        <div class="ad-slot">
-            <!-- REPLACE THIS TEXT WITH YOUR ACTUAL AD CODE -->
-            Advertisement (728 x 90)
-        </div>
-    </div>
-
-    <!-- Main Tool Content -->
     <main class="dashboard-container">
         <div class="tool-header">
-            <h2>Date Difference Calculator</h2>
-            <p>Calculate the duration between two dates in years, months, weeks, and days.</p>
+            <h1>Date Difference Calculator</h1>
+            <p>Calculate exactly how much time lies between two specific dates.</p>
         </div>
 
         <div class="tool-content-wrapper">
             
-            <!-- Inputs -->
             <div class="input-grid">
                 <div class="input-group">
-                    <div class="input-label-row">
-                        <label>Start Date</label>
-                        <button class="today-btn" onclick="setToday('start-date')">Today</button>
-                    </div>
+                    <label for="start-date">Start Date</label>
                     <input type="date" id="start-date">
                 </div>
                 <div class="input-group">
-                    <div class="input-label-row">
-                        <label>End Date</label>
-                        <button class="today-btn" onclick="setToday('end-date')">Today</button>
-                    </div>
+                    <label for="end-date">End Date</label>
                     <input type="date" id="end-date">
                 </div>
             </div>
 
-            <div class="options-row">
-                <label class="checkbox-wrapper">
-                    <input type="checkbox" id="include-end-date"> Include End Date (add 1 day)
-                </label>
-            </div>
-
-            <button class="btn-calculate" id="calc-btn">
-                <i class="fa-solid fa-calculator"></i> Calculate Difference
+            <button class="btn-calc" id="calc-btn">
+                <i class="fa-regular fa-calendar-days"></i> Calculate Difference
             </button>
 
-            <!-- Results -->
-            <div class="results-container" id="results-container">
-                <div class="primary-result">
-                    <h3>Duration</h3>
-                    <div class="result-value" id="res-duration">--</div>
+            <div class="result-section" id="results-container">
+                
+                <div class="main-result-card">
+                    <div class="diff-title">Exact Duration</div>
+                    <div class="diff-value" id="res-duration">--</div>
                 </div>
 
-                <h4 style="margin-bottom: 1rem; color: var(--text-color);">Alternative Units</h4>
-                <div class="breakdown-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Total Days</div>
-                        <div class="stat-value" id="res-days">0</div>
+                <h4 style="margin-bottom:1rem; color:var(--text-color);">Alternative Formats</h4>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-label">Total Days</span>
+                        <span class="stat-num" id="res-days">0</span>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Total Weeks</div>
-                        <div class="stat-value" id="res-weeks">0</div>
+                    <div class="stat-box">
+                        <span class="stat-label">Approx. Weeks</span>
+                        <span class="stat-num" id="res-weeks">0</span>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Total Hours</div>
-                        <div class="stat-value" id="res-hours">0</div>
+                    <div class="stat-box">
+                        <span class="stat-label">Total Hours</span>
+                        <span class="stat-num" id="res-hours">0</span>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Total Minutes</div>
-                        <div class="stat-value" id="res-minutes">0</div>
+                    <div class="stat-box">
+                        <span class="stat-label">Total Minutes</span>
+                        <span class="stat-num" id="res-minutes">0</span>
                     </div>
                 </div>
+
             </div>
 
         </div>
 
-        <!-- Bottom Navigation Buttons -->
         <div class="bottom-nav">
             <a href="javascript:history.back()" class="nav-btn nav-btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Go Back
             </a>
-            <a href="../../" class="nav-btn nav-btn-fill">
+            <a href="https://jkmedit.in/" class="nav-btn nav-btn-fill">
                 <i class="fa-solid fa-table-columns"></i> Dashboard
             </a>
         </div>
+
+        <div class="ad-container">
+            <div class="ad-slot">
+                Advertisement (728 x 90)
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Date Difference Calculator</h2>
+            <p>The Date Difference Calculator is an incredibly robust, highly accurate digital utility designed explicitly to determine the exact span of time that exists between two distinct calendar dates. While determining the duration between two days in the same week is simple mental math, calculating the distance between dates spread across different months, irregular leap years, and varying end-of-month days can become a logistical nightmare that frequently results in accounting or scheduling errors. This tool instantly takes the tedious mathematical guesswork out of long-term planning.</p>
+            <p>To operate this tool, simply input your initial "Start Date" and your concluding "End Date" utilizing the deeply integrated, highly intuitive visual calendar pickers. Once you click the Calculate button, the application's underlying algorithm performs instantaneous date subtraction. It immediately displays a cleanly formatted "Exact Duration" explicitly detailing the precise span formatted in total Years, Months, and Days. However, the functionality extends much further than simple duration tracking. Recognizing that different industries require different metrics, the application also populates an "Alternative Formats" dashboard. This section mathematically converts the entire timeline into total cumulative days, approximate weeks, raw hours, and total minutes.</p>
+            <p>This level of detailed temporal analysis is indispensable across a vast array of personal and professional scenarios. Project managers use it constantly to calculate accurate timelines for sprint deliverables; financial planners rely on it to figure out exact interest accrual periods for corporate bonds; and engaged couples or expecting parents use it to track milestones leading up to significant life events. Crucially, the entire mathematical process is executed securely within your local browser environment. Because your date inputs are never sent to a remote web server, your personal scheduling information remains completely private and the calculations occur with zero network latency.</p>
+            <p>Built upon a modern, highly responsive design framework, the Date Difference Calculator is fully optimized to provide an excellent user experience on desktop monitors, tablet devices, and mobile smartphones alike. Thank you for making our tools a trusted part of your daily planning workflow.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+
     </main>
 
     <script>
-        // Set Today Helper
-        function setToday(id) {
-            const date = new Date();
-            // Format YYYY-MM-DD
-            const val = date.toISOString().split('T')[0];
-            document.getElementById(id).value = val;
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             const startDateInput = document.getElementById('start-date');
             const endDateInput = document.getElementById('end-date');
-            const includeEndInput = document.getElementById('include-end-date');
             const calcBtn = document.getElementById('calc-btn');
+            
             const resultsContainer = document.getElementById('results-container');
-
-            // Output Elements
             const resDuration = document.getElementById('res-duration');
             const resDays = document.getElementById('res-days');
             const resWeeks = document.getElementById('res-weeks');
             const resHours = document.getElementById('res-hours');
             const resMinutes = document.getElementById('res-minutes');
 
+            // Default values
+            const today = new Date();
+            const nextWeek = new Date(today);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+
+            startDateInput.value = today.toISOString().split('T')[0];
+            endDateInput.value = nextWeek.toISOString().split('T')[0];
+
             calcBtn.addEventListener('click', () => {
-                if(!startDateInput.value || !endDateInput.value) {
+                if (!startDateInput.value || !endDateInput.value) {
                     alert("Please select both a Start Date and an End Date.");
                     return;
                 }
 
-                const d1 = new Date(startDateInput.value);
-                const d2 = new Date(endDateInput.value);
+                const startParts = startDateInput.value.split('-');
+                const endParts = endDateInput.value.split('-');
 
-                // Swap if d1 > d2 to ensure positive difference logic
-                let start = d1 < d2 ? d1 : d2;
-                let end = d1 < d2 ? d2 : d1;
-                
-                // Handle inclusive date
-                if (includeEndInput.checked) {
-                    end.setDate(end.getDate() + 1);
+                let start = new Date(startParts[0], startParts[1] - 1, startParts[2]);
+                let end = new Date(endParts[0], endParts[1] - 1, endParts[2]);
+
+                // Ensure start is before end
+                if (start > end) {
+                    const temp = start;
+                    start = end;
+                    end = temp;
                 }
 
-                // 1. Calculate Total Milliseconds Difference
+                // Total calculations
                 const diffTime = Math.abs(end - start);
-                
-                // 2. Total Units
-                const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const totalDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
                 const totalWeeks = (totalDays / 7).toFixed(1);
                 const totalHours = totalDays * 24;
                 const totalMinutes = totalHours * 60;
 
-                // 3. Calculate Calendar Duration (Y/M/D)
+                // Duration breakdown
                 let years = end.getFullYear() - start.getFullYear();
                 let months = end.getMonth() - start.getMonth();
                 let days = end.getDate() - start.getDate();
@@ -477,7 +475,6 @@
                 // Adjust for negative days
                 if (days < 0) {
                     months--;
-                    // Get days in previous month
                     const prevMonth = new Date(end.getFullYear(), end.getMonth(), 0);
                     days += prevMonth.getDate();
                 }
