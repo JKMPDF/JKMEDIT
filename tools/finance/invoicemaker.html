@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang='en' data-theme='corporate-blue'>
 <head>
-<meta charset='UTF-8'/>
+    <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <title>Professional Online Invoice Maker - GST-Compliant</title>
     <meta name="description" content="Generate professional, GST-ready invoices in seconds. Choose templates, add your logo, and export to PDF instantly. Fast, free, and secure."/>
@@ -22,261 +22,345 @@
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Professional Online Invoice Maker - GST-Compliant">
-    <meta name="twitter:description" content="Generate professional, GST-ready invoices in seconds. Choose templates, add your logo, and export to PDF instantly. Fast, free, and secure.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/finance/invoicemaker.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/finance/invoicemaker.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-    
-
-    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
     <style>
-        :root { --primary: #0052cc; --dark: #172b4d; --border: #c1c7d0; --light-bg: #f4f5f7; }
-        body { font-family: 'Inter', sans-serif; background: var(--light-bg); margin: 0; color: var(--dark); }
+        /* --- Corporate Blue Theme Variables --- */
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
         
-        /* Toolbar */
-        .no-print { 
-            background: #fff; padding: 12px 20px; border-bottom: 2px solid var(--primary); 
-            display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000;
-        }
+        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); }
+        *, *::before, *::after { box-sizing: border-box; }
 
-        /* Invoice Canvas */
+        /* --- Header Section (No Print) --- */
+        .branding-bar {
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 1rem 2rem; background: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color);
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-image { height: 50px; width: auto; object-fit: contain; }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+
+        /* --- Main Layout --- */
+        .dashboard-container { padding: 2rem 1rem; max-width: 1100px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; align-items: center;}
+        
+        .tool-header { text-align: center; margin-bottom: 1rem; width: 100%;}
+        .tool-header h1 { font-size: 2.2rem; color: var(--text-color); margin-bottom: 0.5rem; }
+        .tool-header p { color: #666; font-size: 1.1rem;}
+
+        /* Invoice Toolbar */
+        .invoice-toolbar { 
+            background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 210mm;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 15px; border: 1px solid var(--border-color);
+        }
+        .toolbar-group { display: flex; gap: 10px; flex-wrap: wrap;}
+        .invoice-toolbar select, .invoice-toolbar button { padding: 8px 12px; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 0.9rem;}
+        .invoice-toolbar select { border: 1px solid #ccc; outline: none;}
+
+        .btn-action { border: none; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s;}
+        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15);}
+        .btn-sec { background: #e9ecef; color: #333; }
+        .btn-sec:hover { background: #dde2e6; }
+
+        /* --- INVOICE CANVAS (A4 Ratio) --- */
         .invoice-canvas {
-            background: #fff; width: 210mm; min-height: 297mm; margin: 20px auto;
-            padding: 40px; box-shadow: 0 0 15px rgba(0,0,0,0.1); position: relative; box-sizing: border-box;
+            background: #fff; width: 100%; max-width: 210mm; min-height: 297mm;
+            padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; box-sizing: border-box;
+            color: #000; font-family: Arial, sans-serif;
         }
 
-        .header-section { display: flex; justify-content: space-between; border-bottom: 2px solid var(--dark); padding-bottom: 15px; margin-bottom: 20px; }
+        .header-section { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px; }
         .logo-area img { max-height: 70px; max-width: 200px; display: block; margin-bottom: 5px; }
         
         .title-area { text-align: right; }
-        .title-area h1 { margin: 0; font-size: 22pt; text-transform: uppercase; color: #000; }
+        .title-area h1 { margin: 0; font-size: 24pt; text-transform: uppercase; color: #000; font-family: Arial, sans-serif; font-weight: bold;}
         .export-subtitle { font-size: 8pt; font-weight: 700; color: #d32f2f; margin-top: 2px; display: none; }
 
         .info-strip { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid #000; margin-bottom: 20px; }
         .info-item { border-right: 1px solid #000; padding: 8px; }
         .info-item:last-child { border-right: none; }
         .info-item label { display: block; font-size: 7pt; font-weight: 700; text-transform: uppercase; }
-        .info-item input { border: none; font-size: 9pt; width: 100%; font-weight: 600; outline: none; }
+        .info-item input { border: none; font-size: 9pt; width: 100%; font-weight: 600; outline: none; background: transparent; font-family: Arial, sans-serif;}
 
         .client-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #000; margin-bottom: 20px; }
         .client-col { padding: 12px; border-right: 1px solid #000; }
         .client-col:last-child { border-right: none; }
-        .client-col h3 { font-size: 9pt; margin: 0 0 8px 0; background: #eee; padding: 4px; border-bottom: 1px solid #000; display: flex; justify-content: space-between; }
-        .client-col input, .client-col textarea { width: 100%; border: none; font-size: 9pt; font-family: inherit; resize: none; outline: none; }
+        .client-col h3 { font-size: 9pt; margin: 0 0 8px 0; background: #eee; padding: 4px; border-bottom: 1px solid #000; display: flex; justify-content: space-between; font-family: Arial, sans-serif;}
+        .client-col input, .client-col textarea { width: 100%; border: none; font-size: 9pt; font-family: Arial, sans-serif; resize: none; outline: none; background: transparent;}
 
         /* Table */
         .item-table { width: 100%; border-collapse: collapse; border: 1px solid #000; }
-        .item-table th { background: #eee; border: 1px solid #000; font-size: 8pt; padding: 8px; }
+        .item-table th { background: #eee; border: 1px solid #000; font-size: 8pt; padding: 8px; font-family: Arial, sans-serif;}
         .item-table td { border: 1px solid #000; padding: 5px; vertical-align: top; }
-        .item-table input { width: 100%; border: none; outline: none; font-size: 9pt; }
+        .item-table input, .item-table select { width: 100%; border: none; outline: none; font-size: 9pt; background: transparent; font-family: Arial, sans-serif;}
 
         .bottom-section { display: grid; grid-template-columns: 1.3fr 1fr; border: 1px solid #000; border-top: none; }
         .bottom-left { padding: 10px; border-right: 1px solid #000; }
         .bottom-right { padding: 0; }
 
         .totals-table { width: 100%; border-collapse: collapse; }
-        .totals-table td { padding: 6px 10px; border-bottom: 1px solid #eee; font-size: 9pt; text-align: right; }
-        .grand-total { background: #eee; font-weight: 700; font-size: 11pt !important; }
+        .totals-table td { padding: 6px 10px; border-bottom: 1px solid #eee; font-size: 9pt; text-align: right; font-family: Arial, sans-serif;}
+        .grand-total { background: #eee; font-weight: bold; font-size: 11pt !important; border-bottom: none !important;}
 
         .seal-area { text-align: center; padding: 20px 10px 10px 10px; }
         #display-seal { max-height: 80px; margin-bottom: 5px; }
 
         /* Modals */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); overflow-y: auto; }
-        .modal-content { background: #fff; margin: 2% auto; padding: 20px; width: 90%; max-width: 500px; border-radius: 4px; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 8pt; font-weight: 600; margin-bottom: 4px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--border); box-sizing: border-box; }
+        .modal-content { background: #fff; margin: 5% auto; padding: 30px; width: 90%; max-width: 500px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
+        .modal-content h3 { margin-top: 0; color: var(--primary-color); border-bottom: 2px solid #eee; padding-bottom: 10px;}
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 5px; color: var(--text-color);}
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Poppins', sans-serif;}
 
-        .btn { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; }
-        .btn-primary { background: var(--primary); color: #fff; }
-        .btn-sec { background: #dfe1e6; color: #172b4d; }
+        /* --- Navigation & Ads --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
+
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1100px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1100px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
+
+        /* --- PRINT STYLES --- */
         @media print {
-            .no-print, .btn-add, .client-select-btn { display: none !important; }
             body { background: #fff; }
-            .invoice-canvas { margin: 0; box-shadow: none; width: 100%; padding: 0; }
+            .no-print, .branding-bar, .tool-header, .invoice-toolbar, .btn-add, .client-select-btn, .navigation-buttons, .ad-placeholder, .about-section, .footer-offerings { display: none !important; }
+            .dashboard-container { padding: 0; max-width: 100%; }
+            .invoice-canvas { margin: 0; box-shadow: none; width: 100%; padding: 0; border: none; }
+        }
+
+        @media (max-width: 768px) {
+            .invoice-canvas { padding: 20px; overflow-x: auto;}
+            .info-strip { grid-template-columns: 1fr 1fr; }
+            .client-grid { grid-template-columns: 1fr; }
+            .client-col { border-right: none; border-bottom: 1px solid #000; }
+            .bottom-section { grid-template-columns: 1fr; }
+            .bottom-left { border-right: none; border-bottom: 1px solid #000; }
         }
     </style>
 </head>
 <body>
 
-    <div class="no-print">
-        <div style="font-weight: 700;">Enterprise Billing v3.5</div>
-        <div style="display: flex; gap: 8px;">
-            <select id="invoiceType" onchange="syncUI()">
-                <option value="regular">Regular GST Invoice</option>
-                <option value="export_lut">Export Under LUT</option>
-                <option value="export_tax">Export With Tax</option>
-            </select>
-            <select id="supplyLocation" onchange="calculateAll()">
-                <option value="intra">Intra-State (CGST+SGST)</option>
-                <option value="inter">Inter-State (IGST)</option>
-            </select>
-            <button class="btn btn-sec" onclick="openM('settingsModal')"><i class="fa fa-cog"></i> Settings</button>
-            <button class="btn btn-sec" onclick="openM('clientListModal')"><i class="fa fa-users"></i> Clients</button>
-            <button class="btn btn-primary" onclick="window.print()"><i class="fa fa-print"></i> Print</button>
-        </div>
-    </div>
+    <header class="branding-bar no-print">
+        <a href="https://jkmedit.in/" class="logo-container">
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
+        </a>
+    </header>
 
-    <div class="invoice-canvas">
-        <div class="header-section">
-            <div class="logo-area">
-                <img id="view-logo" src="" alt="" onerror="this.style.display='none'">
-                <div id="view-company-info" style="font-size: 9pt; line-height: 1.3;">
-                    <b style="font-size: 11pt;">YOUR COMPANY NAME</b><br>
-                    Add Business Address in Settings<br>
-                    GSTIN: 00XXXXX0000X0Z0
+    <main class="dashboard-container">
+        
+        <div class="tool-header no-print">
+            <h1>Professional Invoice Maker</h1>
+            <p>Generate precise, GST-compliant invoices and print or save them directly to PDF.</p>
+        </div>
+
+        <div class="invoice-toolbar no-print">
+            <div style="font-weight: 700; color:var(--primary-color);">Invoice Editor</div>
+            <div class="toolbar-group">
+                <select id="invoiceType" onchange="syncUI()">
+                    <option value="regular">Regular GST Invoice</option>
+                    <option value="export_lut">Export Under LUT</option>
+                    <option value="export_tax">Export With Tax</option>
+                </select>
+                <select id="supplyLocation" onchange="calculateAll()">
+                    <option value="intra">Intra-State (CGST+SGST)</option>
+                    <option value="inter">Inter-State (IGST)</option>
+                </select>
+                <button class="btn-action btn-sec" onclick="openM('settingsModal')"><i class="fa-solid fa-gear"></i> Settings</button>
+                <button class="btn-action btn-sec" onclick="openM('clientListModal')"><i class="fa-solid fa-users"></i> Clients</button>
+                <button class="btn-action btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / Save PDF</button>
+            </div>
+        </div>
+
+        <div class="invoice-canvas">
+            <div class="header-section">
+                <div class="logo-area">
+                    <img id="view-logo" src="" alt="" onerror="this.style.display='none'">
+                    <div id="view-company-info" style="font-size: 9pt; line-height: 1.3;">
+                        <b style="font-size: 11pt;">YOUR COMPANY NAME</b><br>
+                        Add Business Address in Settings<br>
+                        GSTIN: 00XXXXX0000X0Z0
+                    </div>
+                </div>
+                <div class="title-area">
+                    <h1 id="view-title">Tax Invoice</h1>
+                    <div id="view-lut-label" class="export-subtitle"></div>
                 </div>
             </div>
-            <div class="title-area">
-                <h1 id="view-title">Tax Invoice</h1>
-                <div id="view-lut-label" class="export-subtitle"></div>
+
+            <div class="info-strip">
+                <div class="info-item"><label>Invoice No.</label><input type="text" value="INV/25/001"></div>
+                <div class="info-item"><label>Date</label><input type="date" id="invDate"></div>
+                <div class="info-item"><label>Place of Supply</label><input type="text" placeholder="State Name"></div>
+                <div class="info-item"><label>Vehicle/Doc No.</label><input type="text" placeholder="NA"></div>
             </div>
-        </div>
 
-        <div class="info-strip">
-            <div class="info-item"><label>Invoice No.</label><input type="text" value="INV/25/001"></div>
-            <div class="info-item"><label>Date</label><input type="date" id="invDate"></div>
-            <div class="info-item"><label>Place of Supply</label><input type="text" placeholder="State Name"></div>
-            <div class="info-item"><label>Vehicle/Doc No.</label><input type="text" placeholder="NA"></div>
-        </div>
-
-        <div class="client-grid">
-            <div class="client-col">
-                <h3>Bill To <span class="no-print" style="cursor:pointer; color:blue;" onclick="openM('clientListModal')">Select</span></h3>
-                <input type="text" id="bill-name" placeholder="Customer Name" style="font-weight:700;">
-                <textarea id="bill-address" placeholder="Address" rows="3"></textarea>
-                <input type="text" id="bill-gst" placeholder="GSTIN">
-            </div>
-            <div class="client-col">
-                <h3>Ship To</h3>
-                <input type="text" placeholder="Consignee Name">
-                <textarea placeholder="Delivery Address" rows="3"></textarea>
-                <input type="text" placeholder="State Code">
-            </div>
-        </div>
-
-        <table class="item-table">
-            <thead>
-                <tr>
-                    <th width="5%">#</th>
-                    <th width="45%">Description of Goods/Services</th>
-                    <th width="10%">HSN</th>
-                    <th width="8%">Qty</th>
-                    <th width="10%">Rate</th>
-                    <th width="10%">GST</th>
-                    <th width="12%">Amount</th>
-                </tr>
-            </thead>
-            <tbody id="itemsBody">
-                <tr class="item-row">
-                    <td style="text-align:center;">1</td>
-                    <td><input type="text" placeholder="Product Name"></td>
-                    <td><input type="text" placeholder="HSN"></td>
-                    <td><input type="number" class="qty" value="1" oninput="calculateAll()"></td>
-                    <td><input type="number" class="rate" value="0" oninput="calculateAll()"></td>
-                    <td>
-                        <select class="tax-rate" onchange="calculateAll()" style="width:100%; border:none;">
-                            <option value="0">0%</option><option value="5">5%</option>
-                            <option value="12">12%</option><option value="18" selected>18%</option>
-                            <option value="28">28%</option>
-                        </select>
-                    </td>
-                    <td class="row-total" style="text-align:right; font-weight:600;">0.00</td>
-                </tr>
-            </tbody>
-        </table>
-        <button class="btn btn-sec btn-add no-print" style="margin-top: 10px;" onclick="addRow()">+ Add Line</button>
-
-        <div class="bottom-section">
-            <div class="bottom-left">
-                <div style="font-size: 8pt;"><b>Amount in Words:</b><br><span id="view-words">Zero Rupees Only</span></div>
-                <div style="display: flex; align-items: center; margin-top: 15px; border: 1px solid #eee; padding: 5px; width: fit-content;">
-                    <img id="view-qr" src="" style="width: 60px; height: 60px; margin-right: 10px;">
-                    <div style="font-size: 7pt;">Scan to Pay via UPI<br><b id="view-upi-text"></b></div>
+            <div class="client-grid">
+                <div class="client-col">
+                    <h3>Bill To <span class="no-print client-select-btn" style="cursor:pointer; color:var(--primary-color);" onclick="openM('clientListModal')">Select</span></h3>
+                    <input type="text" id="bill-name" placeholder="Customer Name" style="font-weight:700;">
+                    <textarea id="bill-address" placeholder="Address" rows="3"></textarea>
+                    <input type="text" id="bill-gst" placeholder="GSTIN">
                 </div>
-                <div style="font-size: 7pt; margin-top: 15px; color: #555;">
-                    <b>Terms & Conditions:</b><br>
-                    <span id="view-terms">1. Goods once sold not returned. 2. Interest @18% for delay.</span>
+                <div class="client-col">
+                    <h3>Ship To</h3>
+                    <input type="text" placeholder="Consignee Name">
+                    <textarea placeholder="Delivery Address" rows="3"></textarea>
+                    <input type="text" placeholder="State Code">
                 </div>
             </div>
-            <div class="bottom-right">
-                <table class="totals-table">
-                    <tr><td>Taxable Sub-Total</td><td id="res-sub">0.00</td></tr>
-                    <tr id="row-cgst"><td>CGST</td><td id="res-cgst">0.00</td></tr>
-                    <tr id="row-sgst"><td>SGST</td><td id="res-sgst">0.00</td></tr>
-                    <tr id="row-igst" style="display:none;"><td>IGST</td><td id="res-igst">0.00</td></tr>
-                    <tr class="grand-total"><td>Total Amount</td><td id="res-total">0.00</td></tr>
-                </table>
-                <div class="seal-area">
-                    <div style="font-size: 8pt; margin-bottom: 40px;">For <b id="view-sig-name">YOUR COMPANY</b></div>
-                    <img id="view-seal" src="" alt="" onerror="this.style.display='none'">
-                    <div style="font-size: 8pt; border-top: 1px solid #000; padding-top: 5px; width: 150px; margin: 0 auto;">Authorised Signatory</div>
+
+            <table class="item-table">
+                <thead>
+                    <tr>
+                        <th width="5%">#</th>
+                        <th width="45%">Description of Goods/Services</th>
+                        <th width="10%">HSN</th>
+                        <th width="8%">Qty</th>
+                        <th width="10%">Rate</th>
+                        <th width="10%">GST</th>
+                        <th width="12%">Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="itemsBody">
+                    <tr class="item-row">
+                        <td style="text-align:center;">1</td>
+                        <td><input type="text" placeholder="Product Name"></td>
+                        <td><input type="text" placeholder="HSN"></td>
+                        <td><input type="number" class="qty" value="1" oninput="calculateAll()"></td>
+                        <td><input type="number" class="rate" value="0" oninput="calculateAll()"></td>
+                        <td>
+                            <select class="tax-rate" onchange="calculateAll()">
+                                <option value="0">0%</option><option value="5">5%</option>
+                                <option value="12">12%</option><option value="18" selected>18%</option>
+                                <option value="28">28%</option>
+                            </select>
+                        </td>
+                        <td class="row-total" style="text-align:right; font-weight:600;">0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn-action btn-sec btn-add no-print" style="margin-top: 10px; padding: 5px 10px; font-size:0.85rem;" onclick="addRow()">+ Add Line Item</button>
+
+            <div class="bottom-section" style="margin-top: 20px;">
+                <div class="bottom-left">
+                    <div style="font-size: 8pt;"><b>Amount in Words:</b><br><span id="view-words">Zero Rupees Only</span></div>
+                    <div style="display: flex; align-items: center; margin-top: 15px; border: 1px solid #eee; padding: 5px; width: fit-content;">
+                        <img id="view-qr" src="" style="width: 60px; height: 60px; margin-right: 10px;" alt="UPI QR">
+                        <div style="font-size: 7pt;">Scan to Pay via UPI<br><b id="view-upi-text"></b></div>
+                    </div>
+                    <div style="font-size: 7pt; margin-top: 15px; color: #555;">
+                        <b>Terms & Conditions:</b><br>
+                        <span id="view-terms">1. Goods once sold not returned. 2. Interest @18% for delay.</span>
+                    </div>
+                </div>
+                <div class="bottom-right">
+                    <table class="totals-table">
+                        <tr><td>Taxable Sub-Total</td><td id="res-sub">0.00</td></tr>
+                        <tr id="row-cgst"><td>CGST</td><td id="res-cgst">0.00</td></tr>
+                        <tr id="row-sgst"><td>SGST</td><td id="res-sgst">0.00</td></tr>
+                        <tr id="row-igst" style="display:none;"><td>IGST</td><td id="res-igst">0.00</td></tr>
+                        <tr class="grand-total"><td>Total Amount</td><td id="res-total">0.00</td></tr>
+                    </table>
+                    <div class="seal-area">
+                        <div style="font-size: 8pt; margin-bottom: 40px;">For <b id="view-sig-name">YOUR COMPANY</b></div>
+                        <img id="view-seal" src="" alt="" onerror="this.style.display='none'">
+                        <div style="font-size: 8pt; border-top: 1px solid #000; padding-top: 5px; width: 150px; margin: 0 auto;">Authorised Signatory</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        <div class="navigation-buttons no-print">
+            <a href="javascript:history.back()" class="nav-btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="nav-btn btn-fill"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+
+        <div class="ad-placeholder no-print">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section no-print">
+            <h2>About the Professional Invoice Maker</h2>
+            <p>The Professional GST Invoice Maker is a highly sophisticated, rigorously compliant financial utility designed expressly to help freelancers, small business owners, contractors, and corporate billing departments seamlessly generate, manage, and print accurate legal tax invoices. In modern commerce, establishing a professional brand presence is intrinsically linked to how you handle your billing. Sending clients messy, unformatted Word documents or error-riddled Excel spreadsheets severely diminishes your corporate credibility and can lead to massive logistical delays in accounts receivable. This powerful application completely standardizes your billing process, ensuring that every invoice you issue is mathematically flawless, beautifully formatted, and strictly compliant with local tax regulations.</p>
+            <p>We designed the tool's workspace to function exactly like a digital piece of paper—what you see on the screen is exactly what prints to your PDF. The intuitive interface allows you to upload your company logo, set your business address, and input your proprietary GSTIN (Goods and Services Tax Identification Number) securely via the integrated Settings module. Once your business profile is established, adding line items is a breeze. As you input specific product quantities, unit rates, and unique HSN/SAC codes, the underlying JavaScript engine instantly computes the corresponding CGST, SGST, or IGST tax liabilities in real-time, depending on whether the sale is Intra-State or Inter-State. The tool even features a specialized logic toggle for handling complex zero-rated International Export invoices (both under LUT and with integrated tax payment), ensuring full legal compliance for international merchants.</p>
+            <p>Furthermore, to assist with immediate client payment, the application natively generates a scannable UPI QR code directly on the final invoice document, mapping directly to your personal UPI ID. Most crucially, this application prioritizes absolute data security. It operates utilizing your web browser's native `localStorage` API. This means that your sensitive client directory, proprietary pricing models, and private business banking details are stored entirely on your local hard drive. Your financial data is never uploaded to the cloud or transmitted to external web servers, guaranteeing complete digital privacy. Thank you for relying on our platform to optimize your professional accounting processes.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings no-print">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
+    </main>
 
     <div id="settingsModal" class="modal">
         <div class="modal-content">
-            <h3>Business Profile</h3>
+            <h3><i class="fa-solid fa-building"></i> Business Profile</h3>
             <div class="form-group"><label>Company Name</label><input type="text" id="set-name"></div>
-            <div class="form-group"><label>Address</label><textarea id="set-addr"></textarea></div>
+            <div class="form-group"><label>Address</label><textarea id="set-addr" rows="3"></textarea></div>
             <div class="form-group"><label>GSTIN</label><input type="text" id="set-gst"></div>
-            <div class="form-group"><label>UPI ID</label><input type="text" id="set-upi"></div>
+            <div class="form-group"><label>UPI ID</label><input type="text" id="set-upi" placeholder="e.g. name@bank"></div>
             <div class="form-group"><label>Logo (Local File)</label><input type="file" id="file-logo" accept="image/*" onchange="handleImg(this, 'logo')"></div>
             <div class="form-group"><label>Or Logo URL</label><input type="text" id="set-logo-url"></div>
-            <div class="form-group"><label>Seal/Sign (Local File)</label><input type="file" id="file-seal" accept="image/*" onchange="handleImg(this, 'seal')"></div>
-            <div class="form-group"><label>Terms</label><textarea id="set-terms-text"></textarea></div>
-            <button class="btn btn-primary" onclick="saveSet()">Save Settings</button>
-            <button class="btn btn-sec" onclick="closeM('settingsModal')">Close</button>
+            <div class="form-group"><label>Seal/Signature (Local File)</label><input type="file" id="file-seal" accept="image/*" onchange="handleImg(this, 'seal')"></div>
+            <div class="form-group"><label>Terms & Conditions</label><textarea id="set-terms-text" rows="3"></textarea></div>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn-action btn-primary" style="flex:1; padding:10px; justify-content:center;" onclick="saveSet()">Save Settings</button>
+                <button class="btn-action btn-sec" style="flex:1; padding:10px; justify-content:center;" onclick="closeM('settingsModal')">Close</button>
+            </div>
         </div>
     </div>
 
     <div id="clientListModal" class="modal">
         <div class="modal-content">
-            <h3>Client Directory</h3>
-            <div id="dir-list" style="border: 1px solid #eee; margin-bottom: 10px; max-height: 200px; overflow-y:auto;"></div>
-            <hr>
-            <h4>Add New Client</h4>
-            <div class="form-group"><input type="text" id="new-c-name" placeholder="Name"></div>
-            <div class="form-group"><textarea id="new-c-addr" placeholder="Address"></textarea></div>
-            <div class="form-group"><input type="text" id="new-c-gst" placeholder="GSTIN"></div>
-            <button class="btn btn-primary" onclick="addCli()">Save Client</button>
-            <button class="btn btn-sec" onclick="closeM('clientListModal')">Close</button>
+            <h3><i class="fa-solid fa-address-book"></i> Client Directory</h3>
+            <div id="dir-list" style="border: 1px solid #eee; margin-bottom: 20px; max-height: 200px; overflow-y:auto; border-radius:6px;"></div>
+            
+            <h4 style="margin-bottom:10px; color:var(--text-color);">Add New Client</h4>
+            <div class="form-group"><input type="text" id="new-c-name" placeholder="Client Name"></div>
+            <div class="form-group"><textarea id="new-c-addr" placeholder="Client Address" rows="2"></textarea></div>
+            <div class="form-group"><input type="text" id="new-c-gst" placeholder="Client GSTIN (Optional)"></div>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn-action btn-primary" style="flex:1; padding:10px; justify-content:center;" onclick="addCli()">Save Client</button>
+                <button class="btn-action btn-sec" style="flex:1; padding:10px; justify-content:center;" onclick="closeM('clientListModal')">Close</button>
+            </div>
         </div>
     </div>
 
@@ -319,13 +403,15 @@
         function applySet() {
             document.getElementById('view-logo').src = config.logo;
             document.getElementById('view-logo').style.display = config.logo ? 'block' : 'none';
-            document.getElementById('view-company-info').innerHTML = `<b>${config.name}</b><br>${config.addr.replace(/\n/g,'<br>')}<br>GSTIN: ${config.gst}`;
-            document.getElementById('view-sig-name').innerText = config.name;
-            document.getElementById('view-upi-text').innerText = config.upi;
-            document.getElementById('view-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=upi://pay?pa=${config.upi}&pn=${config.name}`;
+            document.getElementById('view-company-info').innerHTML = `<b>${config.name || 'YOUR COMPANY NAME'}</b><br>${(config.addr || 'Business Address').replace(/\n/g,'<br>')}<br>GSTIN: ${config.gst || 'N/A'}`;
+            document.getElementById('view-sig-name').innerText = config.name || 'YOUR COMPANY';
+            document.getElementById('view-upi-text').innerText = config.upi || 'UPI ID Here';
+            if(config.upi) {
+                document.getElementById('view-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=upi://pay?pa=${config.upi}&pn=${config.name}`;
+            }
             document.getElementById('view-seal').src = config.seal;
             document.getElementById('view-seal').style.display = config.seal ? 'block' : 'none';
-            document.getElementById('view-terms').innerText = config.terms;
+            document.getElementById('view-terms').innerText = config.terms || '1. Goods once sold not returned. 2. Subject to local jurisdiction.';
         }
 
         function addCli() {
@@ -335,7 +421,11 @@
         }
 
         function renderCli() {
-            document.getElementById('dir-list').innerHTML = clients.map((c, i) => `<div style="padding:5px; border-bottom:1px solid #eee;">${c.name} <button onclick="pickCli(${i})">Pick</button></div>`).join('');
+            document.getElementById('dir-list').innerHTML = clients.map((c, i) => `
+                <div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                    <div><strong>${c.name}</strong></div>
+                    <button class="btn-action btn-primary" style="padding:4px 10px; font-size:0.8rem;" onclick="pickCli(${i})">Select</button>
+                </div>`).join('');
         }
 
         function pickCli(i) {
@@ -368,7 +458,15 @@
             const tr = document.querySelector('.item-row').cloneNode(true);
             tr.querySelectorAll('input').forEach(i => i.value = i.className === 'qty' ? 1 : (i.className === 'rate' ? 0 : ''));
             tr.querySelector('.row-total').innerText = "0.00";
-            document.getElementById('itemsBody').appendChild(tr);
+            
+            // Fix index numbers
+            const tbody = document.getElementById('itemsBody');
+            tbody.appendChild(tr);
+            
+            const rows = tbody.querySelectorAll('.item-row');
+            rows.forEach((r, idx) => {
+                r.querySelector('td').innerText = idx + 1;
+            });
         }
 
         function calculateAll() {
@@ -414,7 +512,7 @@
             str += (num[3] != 0) ? (a[Number(num[3])] || b[num[3][0]] + ' ' + a[num[3][1]]) + 'Thousand ' : '';
             str += (num[4] != 0) ? (a[Number(num[4])] || b[num[4][0]] + ' ' + a[num[4][1]]) + 'Hundred ' : '';
             str += (num[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(num[5])] || b[num[5][0]] + ' ' + a[num[5][1]]) : '';
-            return str;
+            return str || 'Zero ';
         }
 
         applySet();

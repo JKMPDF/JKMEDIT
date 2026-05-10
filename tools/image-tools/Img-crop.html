@@ -6,7 +6,7 @@
     <title>Online Image Cropper - Crop Photos for Social Media</title>
     <meta name="description" content="Fast, free online image cropper. Precise circular and rectangular cropping for Instagram, LinkedIn, and YouTube. No quality loss."/>
     <meta name="author" content="JKM Edit"/>
-    <meta name="keywords" content="JKM Edit,">
+    <meta name="keywords" content="JKM Edit, Image cropper, crop photo online, cut image, square crop, resize photo, ">
 
     <meta name="robots" content="index, follow"/>
     <link rel="canonical" href="https://jkmedit.in/tools/image-tools/Img-crop.html"/>
@@ -22,53 +22,13 @@
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Online Image Cropper - Crop Photos for Social Media">
-    <meta name="twitter:description" content="Fast, free online image cropper. Precise circular and rectangular cropping for Instagram, LinkedIn, and YouTube. No quality loss.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/image-tools/Img-crop.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/image-tools/Img-crop.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- FONTS & ICONS -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
-    <!-- LIBRARY: Cropper.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <style>
-        /* --- VARIABLES --- */
         :root { 
             font-family: 'Poppins', sans-serif; 
             --primary-color: #0052cc; 
@@ -76,10 +36,11 @@
             --bg-color: #f4f5f7; 
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
+            --border-color: #dfe1e6;
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
         }
         
-        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
         .hidden { display: none !important; }
 
@@ -92,31 +53,23 @@
         }
         .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
         .logo-image { height: 50px; width: auto; object-fit: contain; }
-        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- MAIN LAYOUT --- */
         .tool-container { padding: 2rem 1rem; max-width: 1100px; margin: 0 auto; width: 100%; flex: 1; }
-        
-        .ad-placeholder { 
-            max-width: 728px; width: 100%; height: 90px; 
-            background-color: #e0e0e0; border: 1px dashed #999; 
-            margin: 0 auto 2rem auto; 
-            display: flex; align-items: center; justify-content: center; 
-            color: #555; font-size: 0.9rem; border-radius: 8px; 
-        }
 
         .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
-        .tool-header p { color: #666; }
+        .tool-header h1 { font-size: 2.5rem; color: var(--text-color); margin-bottom: 0.5rem; }
+        .tool-header p { color: #666; font-size: 1.1rem;}
 
         /* --- UPLOAD ZONE --- */
         #dropzone { 
             border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
             text-align: center; cursor: pointer; background-color: var(--surface-color); 
-            transition: 0.3s; margin-bottom: 20px;
+            transition: 0.3s; margin: 0 auto 20px auto; max-width: 900px;
         }
         #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
-        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+        #dropzone i { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
 
         /* --- CROPPER WORKSPACE --- */
         #editor-stage {
@@ -126,53 +79,69 @@
         /* Left: Image Container */
         .image-container {
             flex: 1; min-width: 300px; max-width: 700px;
-            background: #333; border-radius: 8px; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            height: 500px; /* Fixed height for cropper canvas */
+            background: #222; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            height: 500px; 
         }
-        
-        /* Limit image size to fit container */
         #image-to-crop { display: block; max-width: 100%; }
 
         /* Right: Controls */
         .controls-panel {
             flex: 0 0 300px;
-            background: var(--surface-color); padding: 20px;
+            background: var(--surface-color); padding: 25px; border: 1px solid var(--border-color);
             border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             display: flex; flex-direction: column; gap: 15px;
         }
 
-        .control-group label { font-weight: 600; font-size: 0.9rem; margin-bottom: 5px; display: block; }
+        .control-group label { font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; display: block; color: var(--text-color); }
         
         .ratio-btns { display: flex; flex-wrap: wrap; gap: 8px; }
         .ratio-btn {
-            padding: 8px 12px; border: 1px solid #ddd; background: #f9f9f9;
-            border-radius: 4px; cursor: pointer; font-size: 0.85rem; flex: 1; text-align: center;
+            padding: 10px; border: 1px solid #ddd; background: #f9f9f9;
+            border-radius: 6px; cursor: pointer; font-size: 0.85rem; flex: 1; text-align: center; font-family: 'Poppins', sans-serif; font-weight: 600; transition: 0.2s;
         }
+        .ratio-btn:hover { background: #eef2ff; border-color: var(--primary-color); color: var(--primary-color);}
         .ratio-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
         .action-row { display: flex; gap: 10px; }
         .icon-btn {
-            flex: 1; padding: 10px; border: 1px solid #ccc; background: white;
-            border-radius: 6px; cursor: pointer; font-size: 1rem; transition: 0.2s;
+            flex: 1; padding: 12px; border: 1px solid #ccc; background: white;
+            border-radius: 6px; cursor: pointer; font-size: 1.1rem; transition: 0.2s; color: #555;
         }
-        .icon-btn:hover { background: #eee; color: var(--primary-color); }
+        .icon-btn:hover { background: #f0f7ff; color: var(--primary-color); border-color: var(--primary-color);}
 
         /* Main Button */
         .btn-primary {
             width: 100%; padding: 12px; border: none; border-radius: 6px;
             font-weight: 600; cursor: pointer; background: var(--gradient); color: white;
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            font-size: 1rem; margin-top: auto;
+            font-size: 1rem; margin-top: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s;
         }
-        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15);}
 
-        /* --- NAVIGATION --- */
-        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; }
-        .nav-btn { padding: 10px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; background: #e9ecef; color: #333; display: inline-flex; align-items: center; gap: 5px;}
-        .nav-dash { background: var(--primary-color); color: white; }
+        /* --- NAVIGATION & ADS --- */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
-        /* Responsive */
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
+
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1100px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1100px; margin: 0 auto; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+
         @media (max-width: 768px) {
             .image-container { height: 400px; }
             .controls-panel { flex: 1; width: 100%; }
@@ -183,94 +152,132 @@
 
     <header class="branding-bar">
         <a href="https://jkmedit.in/" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
-            <h1>JKM Edit</h1>
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
     <main class="tool-container">
-        <div class="ad-placeholder">Advertisement Space (728x90)</div>
-
-        <!-- STAGE 1: UPLOAD -->
         <div id="upload-stage">
             <div class="tool-header">
-                <h2>Image Cropper</h2>
-                <p>Upload an image to crop, resize, or rotate instantly.</p>
+                <h1>Image Cropper</h1>
+                <p>Upload an image to crop, re-frame, or rotate instantly with precision.</p>
             </div>
             <input type="file" id="file-input" class="hidden" accept="image/*"/>
             <div id="dropzone">
                 <i class="fa-solid fa-crop-simple"></i>
-                <p><strong>Click to Upload Image</strong><br>or drag and drop here</p>
+                <p><strong>Click to Upload Image</strong><br><span style="font-weight:400; font-size:0.95rem; color:#666;">or drag and drop here</span></p>
             </div>
         </div>
 
-        <!-- STAGE 2: EDITOR -->
         <div id="editor-stage" class="hidden">
             
-            <!-- Editor Canvas -->
-            <div class="image-container">
-                <img id="image-to-crop" src="" alt="Image to crop">
-            </div>
-
-            <!-- Controls Sidebar -->
-            <div class="controls-panel">
-                <div class="control-group">
-                    <label>Aspect Ratio</label>
-                    <div class="ratio-btns">
-                        <button class="ratio-btn active" onclick="setRatio(NaN, this)">Free</button>
-                        <button class="ratio-btn" onclick="setRatio(1, this)">1:1 (Square)</button>
-                        <button class="ratio-btn" onclick="setRatio(16/9, this)">16:9</button>
-                        <button class="ratio-btn" onclick="setRatio(4/3, this)">4:3</button>
-                    </div>
+            <div id="editor-wrapper" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+                <div class="image-container">
+                    <img id="image-to-crop" src="" alt="Image to crop">
                 </div>
 
-                <div class="control-group">
-                    <label>Rotation</label>
-                    <div class="action-row">
-                        <button class="icon-btn" onclick="cropper.rotate(-90)" title="Rotate Left">
-                            <i class="fa-solid fa-rotate-left"></i>
-                        </button>
-                        <button class="icon-btn" onclick="cropper.rotate(90)" title="Rotate Right">
-                            <i class="fa-solid fa-rotate-right"></i>
-                        </button>
+                <div class="controls-panel">
+                    <div class="control-group">
+                        <label>Aspect Ratio</label>
+                        <div class="ratio-btns">
+                            <button class="ratio-btn active" onclick="setRatio(NaN, this)">Free</button>
+                            <button class="ratio-btn" onclick="setRatio(1, this)">1:1 (Square)</button>
+                            <button class="ratio-btn" onclick="setRatio(16/9, this)">16:9</button>
+                            <button class="ratio-btn" onclick="setRatio(4/3, this)">4:3</button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="control-group">
-                    <label>Flip</label>
-                    <div class="action-row">
-                        <button class="icon-btn" onclick="flip('x')" title="Flip Horizontal">
-                            <i class="fa-solid fa-arrows-left-right"></i>
-                        </button>
-                        <button class="icon-btn" onclick="flip('y')" title="Flip Vertical">
-                            <i class="fa-solid fa-arrows-up-down"></i>
-                        </button>
+                    <div class="control-group">
+                        <label>Rotation</label>
+                        <div class="action-row">
+                            <button class="icon-btn" onclick="cropper.rotate(-90)" title="Rotate Left">
+                                <i class="fa-solid fa-rotate-left"></i>
+                            </button>
+                            <button class="icon-btn" onclick="cropper.rotate(90)" title="Rotate Right">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="control-group">
-                    <label>Zoom</label>
-                    <div class="action-row">
-                        <button class="icon-btn" onclick="cropper.zoom(0.1)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-                        <button class="icon-btn" onclick="cropper.zoom(-0.1)"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                    <div class="control-group">
+                        <label>Flip</label>
+                        <div class="action-row">
+                            <button class="icon-btn" onclick="flip('x')" title="Flip Horizontal">
+                                <i class="fa-solid fa-arrows-left-right"></i>
+                            </button>
+                            <button class="icon-btn" onclick="flip('y')" title="Flip Vertical">
+                                <i class="fa-solid fa-arrows-up-down"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <button class="btn-primary" onclick="cropAndDownload()">
-                    <i class="fa-solid fa-download"></i> Download Cropped Image
-                </button>
-                
-                <button onclick="location.reload()" style="background:none; border:none; cursor:pointer; color:#666; text-align:center; margin-top:10px; text-decoration:underline;">Start Over</button>
+                    <div class="control-group">
+                        <label>Zoom</label>
+                        <div class="action-row">
+                            <button class="icon-btn" onclick="cropper.zoom(0.1)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                            <button class="icon-btn" onclick="cropper.zoom(-0.1)"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" onclick="cropAndDownload()">
+                        <i class="fa-solid fa-download"></i> Download Cropped Image
+                    </button>
+                    
+                    <button onclick="location.reload()" style="background:none; border:none; cursor:pointer; color:#666; text-align:center; margin-top:15px; text-decoration:underline; font-weight:600; width:100%;">Start Over</button>
+                </div>
             </div>
         </div>
 
         <div class="navigation-buttons">
-            <a href="javascript:history.back()" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
-            <a href="https://jkmedit.in/tools/image-tools.html" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="javascript:history.back()" class="nav-btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="nav-btn btn-fill"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Image Cropper Tool</h2>
+            <p>The Online Image Cropper is an essential, highly refined visual editing utility specifically engineered to help digital marketers, photographers, social media managers, and everyday users rapidly re-frame and extract the most vital portions of their photographs. In the modern visual landscape, unedited, poorly framed photography simply does not perform well. Whether you are attempting to completely remove a distracting photobomber from the background of an otherwise perfect vacation picture, isolate a specific product for a clean e-commerce listing, or perfectly frame a corporate headshot for a professional directory, the ability to effortlessly slice away unnecessary pixels is an absolute necessity. Our tool provides this exact surgical precision without requiring any heavy desktop editing software.</p>
+            <p>This dynamic editing suite is powered by the incredibly robust, industry-standard Cropper.js library. Once your image is securely loaded into the dark-themed workspace, you are presented with an interactive clipping mask. You can easily click and drag the edges of the box to freely crop the image to any custom dimension you desire. However, for maximum efficiency, we have integrated a suite of standardized "Aspect Ratio" lock buttons. With a single click, you can instantly lock the cropping box to a perfect 1:1 square (ideal for Instagram posts and LinkedIn profile pictures), a cinematic 16:9 widescreen ratio (perfect for YouTube thumbnails and modern display monitors), or a standard 4:3 photograph ratio. The tool also includes auxiliary quick-action buttons to rapidly rotate the image 90 degrees or flip it across the vertical and horizontal axes, saving you from needing a secondary editor.</p>
+            <p>We designed this cropping utility with a relentless commitment to your digital privacy and rendering quality. The entire graphical framing process is executed utilizing native HTML5 Canvas technology directly within your computer's web browser. Because the image manipulation occurs strictly in your local memory, your private family photographs, confidential ID documents, and proprietary corporate marketing assets are never uploaded to the cloud or transmitted to an external server. This localized execution completely guarantees your data confidentiality while ensuring that the final, cropped image is rendered and downloaded instantaneously in crisp, lossless, high-resolution JPEG format. Thank you for utilizing our platform to perfect your digital media.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
         </div>
     </main>
 
     <script>
+        document.querySelectorAll('a').forEach(link => {
+            const linkUrl = link.getAttribute('href');
+            if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                if (isInternalLink && !link.target) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault(); document.body.classList.add('fade-out');
+                        setTimeout(() => { window.location.href = this.href; }, 400);
+                    });
+                }
+            }
+        });
+
         // Elements
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('file-input');
@@ -282,10 +289,11 @@
         let scaleX = 1;
         let scaleY = 1;
 
-        // --- UPLOAD LOGIC ---
+        // Upload Logic
         dropzone.onclick = () => fileInput.click();
-        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
-        dropzone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; dropzone.style.borderColor = 'var(--primary-color)';};
+        dropzone.ondragleave = () => { dropzone.style.backgroundColor = 'var(--surface-color)'; dropzone.style.borderColor = '#ccc';};
+        dropzone.ondrop = (e) => { e.preventDefault(); dropzone.style.backgroundColor = 'var(--surface-color)'; handleFile(e.dataTransfer.files[0]); };
         fileInput.onchange = (e) => handleFile(e.target.files[0]);
 
         function handleFile(file) {
@@ -301,12 +309,12 @@
             reader.readAsDataURL(file);
         }
 
-        // --- CROPPER INITIALIZATION ---
+        // Initialize
         function initCropper() {
             if(cropper) cropper.destroy();
             
             cropper = new Cropper(imageEl, {
-                viewMode: 2, // Restrict crop box within image
+                viewMode: 2, 
                 dragMode: 'move',
                 autoCropArea: 0.8,
                 restore: false,
@@ -319,10 +327,9 @@
             });
         }
 
-        // --- CONTROLS ---
+        // Controls
         function setRatio(ratio, btn) {
             cropper.setAspectRatio(ratio);
-            // Update UI
             document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         }
@@ -337,18 +344,16 @@
             }
         }
 
-        // --- DOWNLOAD ---
+        // Download
         function cropAndDownload() {
             if(!cropper) return;
 
-            // Get cropped canvas
             const canvas = cropper.getCroppedCanvas({
-                fillColor: '#fff', // Fill transparent areas with white (optional, good for JPG)
+                fillColor: '#fff', 
                 imageSmoothingEnabled: true,
                 imageSmoothingQuality: 'high',
             });
 
-            // Convert to Blob and Download
             canvas.toBlob((blob) => {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -358,9 +363,8 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-            }, 'image/jpeg', 0.95); // 95% Quality JPG
+            }, 'image/jpeg', 0.95); 
         }
-
     </script>
 </body>
 </html>

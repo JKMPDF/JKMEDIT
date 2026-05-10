@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang='en' data-theme='corporate-blue'>
 <head>
-  <meta charset='UTF-8'/>
+    <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <title>AI Background Remover - Remove Image BG Instantly</title>
     <meta name="description" content="Remove backgrounds from images in one click using AI. High precision for hair and fine edges. Download transparent PNGs for free."/>
@@ -58,8 +58,7 @@
 }
 </script>
     
-
-<link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
     <style>
@@ -70,116 +69,139 @@
             --bg-color: #f4f5f7; 
             --surface-color: #ffffff; 
             --text-color: #172b4d; 
+            --border-color: #dfe1e6;
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
         }
         
-        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
         .hidden { display: none !important; }
 
+        /* HEADER */
         .branding-bar { display: flex; align-items: center; padding: 1rem 2rem; background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary-color); }
         .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
         .logo-image { height: 50px; width: auto; object-fit: contain; }
-        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
-        .tool-container { padding: 2rem 1rem; max-width: 1200px; margin: 0 auto; width: 100%; flex: 1; }
-        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #e0e0e0; border: 1px dashed #999; margin: 0 auto 2rem auto; display: flex; align-items: center; justify-content: center; color: #555; border-radius: 8px; }
-
+        /* MAIN CONTAINER */
+        .tool-container { padding: 2rem 1rem; max-width: 1300px; margin: 0 auto; width: 100%; flex: 1; }
+        
         .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
-        .tool-header p { color: #666; }
+        .tool-header h1 { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .tool-header p { color: #666; font-size: 1.1rem;}
 
-        #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); transition: 0.3s; margin-bottom: 20px; }
+        /* UPLOAD */
+        #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); transition: 0.3s; margin: 0 auto 20px auto; max-width: 900px;}
         #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
-        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+        #dropzone i { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+        #dropzone p { margin: 0; font-size: 1.1rem; font-weight: 600; }
 
+        /* WORKSPACE */
         .workspace { display: grid; grid-template-columns: 1fr 350px; gap: 20px; align-items: start; }
         .preview-area { background: var(--surface-color); padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; min-height: 500px; position: relative; overflow: hidden; }
         
-        /* Checkerboard background logic */
+        /* Transparent Checkerboard */
         .preview-bg-grid {
             background-image: linear-gradient(45deg, #e0e0e0 25%, transparent 25%), linear-gradient(-45deg, #e0e0e0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e0e0e0 75%), linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
-            background-size: 20px 20px;
-            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
         }
 
         canvas { max-width: 100%; max-height: 600px; object-fit: contain; z-index: 5; }
         
-        .controls-panel { background: var(--surface-color); padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .controls-panel { background: var(--surface-color); padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: sticky; top: 20px;}
         .panel-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
         .control-group { margin-bottom: 20px; }
         .bg-options { display: flex; gap: 10px; flex-wrap: wrap; }
-        .bg-btn { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #ddd; cursor: pointer; transition: transform 0.2s; }
-        .bg-btn:hover, .bg-btn.active { transform: scale(1.2); border-color: var(--primary-color); }
+        .bg-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #ddd; cursor: pointer; transition: transform 0.2s; }
+        .bg-btn:hover, .bg-btn.active { transform: scale(1.1); border-color: var(--primary-color); }
         .bg-transparent { background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%); background-size: 10px 10px; }
 
-        input[type="color"] { width: 100%; height: 40px; border: none; cursor: pointer; padding: 0; border-radius: 4px; }
+        input[type="color"] { width: 100%; height: 40px; border: none; cursor: pointer; padding: 0; border-radius: 4px; margin-top: 10px;}
+        
         .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; }
-        .btn-primary { background: var(--gradient); color: white; margin-top: 10px; }
-        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary { background: var(--gradient); color: white; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
+        /* Loader Overlay */
         .loader-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-        .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        .spinner { width: 60px; height: 60px; border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; }
-        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; background: #e9ecef; color: #333; display: inline-flex; align-items: center; gap: 5px; }
-        .nav-dash { background: var(--primary-color); color: white; }
+        /* Navigation & Ads */
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
-        @media (max-width: 900px) { .workspace { grid-template-columns: 1fr; } }
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
+
+        /* Extra Sections */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1300px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1300px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+
+        @media (max-width: 900px) { .workspace { grid-template-columns: 1fr; } .controls-panel { position: static; } }
     </style>
 </head>
 <body>
 
     <header class="branding-bar">
         <a href="https://jkmedit.in/" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
-            <h1>JKM Edit</h1>
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
     <main class="tool-container">
-        <div class="ad-placeholder">Advertisement Space (728x90)</div>
 
         <div id="upload-stage">
             <div class="tool-header">
-                <h2>Universal Background Remover</h2>
+                <h1>Universal Background Remover</h1>
                 <p>Free, unrestricted AI background removal directly in your browser.</p>
             </div>
             <input type="file" id="file-input" class="hidden" accept="image/*"/>
             <div id="dropzone">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <p><strong>Click to Upload Image</strong><br>or drag and drop here</p>
+                <p><strong>Click to Upload Image</strong><br><span style="font-weight:400; font-size:0.95rem; color:#666;">or drag and drop here</span></p>
             </div>
         </div>
 
         <div id="editor-stage" class="hidden">
             <div class="workspace">
-                <!-- Preview -->
+                
                 <div class="preview-area preview-bg-grid" id="preview-container">
                     <div id="loader" class="loader-overlay">
                         <div class="spinner"></div>
-                        <div id="status-text" style="font-weight:600; color:var(--primary-color);">Initializing AI...</div>
-                        <div style="font-size:0.85rem; color:#666; margin-top:5px;">First run takes a moment to download the model.</div>
+                        <div id="status-text" style="font-weight:700; font-size:1.2rem; color:var(--primary-color);">Initializing AI Engine...</div>
+                        <div style="font-size:0.95rem; color:#666; margin-top:10px;">The first run takes a moment to download the machine learning model to your browser.</div>
                     </div>
-                    <!-- Canvas for Result -->
                     <canvas id="result-canvas"></canvas>
                 </div>
 
-                <!-- Controls -->
                 <div class="controls-panel">
                     <div class="panel-title">Edit Background</div>
                     <div class="control-group">
-                        <label>Choose Color</label>
+                        <label style="font-weight:600; color:#555; display:block; margin-bottom:10px;">Choose Replacement Color</label>
                         <div class="bg-options">
-                            <div class="bg-btn bg-transparent active" onclick="updateBackground('transparent')"></div>
-                            <div class="bg-btn" style="background:#fff;" onclick="updateBackground('#ffffff')"></div>
-                            <div class="bg-btn" style="background:#000;" onclick="updateBackground('#000000')"></div>
-                            <div class="bg-btn" style="background:var(--primary-color);" onclick="updateBackground('#0052cc')"></div>
-                            <div class="bg-btn" style="background:#ff4d4d;" onclick="updateBackground('#ff4d4d')"></div>
+                            <div class="bg-btn bg-transparent active" onclick="updateBackground('transparent')" title="Transparent"></div>
+                            <div class="bg-btn" style="background:#ffffff;" onclick="updateBackground('#ffffff')" title="White"></div>
+                            <div class="bg-btn" style="background:#000000;" onclick="updateBackground('#000000')" title="Black"></div>
+                            <div class="bg-btn" style="background:var(--primary-color);" onclick="updateBackground('#0052cc')" title="Blue"></div>
+                            <div class="bg-btn" style="background:#ff4d4d;" onclick="updateBackground('#ff4d4d')" title="Red"></div>
                         </div>
-                        <div style="margin-top:10px;">
-                            <label style="font-size:0.8rem;">Custom</label>
+                        <div style="margin-top:15px;">
+                            <label style="font-size:0.85rem; color:#666; font-weight:600;">Custom Hex Color Picker</label>
                             <input type="color" oninput="updateBackground(this.value)">
                         </div>
                     </div>
@@ -187,22 +209,63 @@
                     <button class="btn btn-primary" onclick="downloadResult()">
                         <i class="fa-solid fa-download"></i> Download Image
                     </button>
-                    <button onclick="location.reload()" style="width:100%; margin-top:15px; background:none; border:none; color:#666; cursor:pointer; text-decoration:underline;">Start Over</button>
+                    <button onclick="location.reload()" style="width:100%; margin-top:15px; background:none; border:none; color:#666; cursor:pointer; text-decoration:underline; font-weight:600;">Start Over</button>
                 </div>
             </div>
         </div>
 
         <div class="navigation-buttons">
-            <a href="javascript:history.back()" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
-            <a href="https://jkmedit.in/tools/image-tools.html" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+            <a href="javascript:history.back()" class="nav-btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="nav-btn btn-fill"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the AI Background Remover</h2>
+            <p>The AI Background Remover is a cutting-edge, highly sophisticated image segmentation utility designed to automatically isolate the primary subject of a photograph and cleanly strip away the surrounding background elements. Historically, achieving a flawless, transparent cutout required expensive desktop software like Adobe Photoshop, combined with minutes or even hours of tedious manual tracing using tools like the magnetic lasso or the magic wand. For e-commerce business owners attempting to standardize product photography, graphic designers creating dynamic YouTube thumbnails, or social media marketers isolating portrait headshots for corporate profiles, this manual process was an enormous drain on time and resources. Our application completely automates this workflow using state-of-the-art artificial intelligence.</p>
+            <p>To use this powerful tool, simply drag and drop any standard image format into the primary upload zone. The application immediately initializes a pre-trained machine learning model (specifically designed for high-precision edge detection and subject isolation) and analyzes the structural pixels of your image. Within seconds, the AI intelligently maps the borders of your subject—effortlessly handling notoriously difficult elements like stray hairs, fur, and semi-transparent fabrics—and erases the background entirely. Once the initial removal is complete, our intuitive right-hand control panel gives you the flexibility to download the image as a pure, transparent PNG, or instantly drop a solid replacement color (such as stark white for e-commerce listings or corporate blue for professional ID badges) behind the isolated subject.</p>
+            <p>The most revolutionary aspect of this utility is its underlying processing architecture. By leveraging the advanced Transformers.js framework, the entire neural network and AI segmentation protocol runs locally within your computer's web browser environment. Your private personal photographs, unreleased product images, and highly confidential corporate assets are never uploaded, parsed, or stored on an external cloud server. This decentralized execution model guarantees 100% data security and absolute user privacy. Furthermore, this local processing ensures that you are never throttled by slow internet upload speeds or frustrating artificial file-size limits imposed by cloud-based competitors. Thank you for relying on our platform to optimize your digital design tasks.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
         </div>
     </main>
 
-    <!-- SCRIPT: Transformers.js -->
     <script type="module">
         import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.16.0';
 
-        // Configuration to fix loading issues
+        document.querySelectorAll('a').forEach(link => {
+            const linkUrl = link.getAttribute('href');
+            if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                if (isInternalLink && !link.target) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault(); document.body.classList.add('fade-out');
+                        setTimeout(() => { window.location.href = this.href; }, 400);
+                    });
+                }
+            }
+        });
+
+        // Config to fix loading
         env.allowLocalModels = false; 
         env.useBrowserCache = true;
 
@@ -216,18 +279,20 @@
         const statusText = document.getElementById('status-text');
 
         let originalImage = null;
+        let originalFileName = "image";
         let segmenter = null;
-        let cutoutBitmap = null; // The image without background
+        let cutoutBitmap = null; 
         let currentBg = 'transparent';
 
-        // --- UPLOAD ---
         dropzone.onclick = () => fileInput.click();
-        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
-        dropzone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; dropzone.style.borderColor = 'var(--primary-color)'; };
+        dropzone.ondragleave = () => { dropzone.style.backgroundColor = 'var(--surface-color)'; dropzone.style.borderColor = '#ccc'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); dropzone.style.backgroundColor = 'var(--surface-color)'; handleFile(e.dataTransfer.files[0]); };
         fileInput.onchange = (e) => handleFile(e.target.files[0]);
 
         function handleFile(file) {
-            if (!file || !file.type.startsWith('image/')) return alert("Invalid image.");
+            if (!file || !file.type.startsWith('image/')) return alert("Please upload a valid image.");
+            originalFileName = file.name.replace(/\.[^/.]+$/, "");
             uploadStage.classList.add('hidden');
             editorStage.classList.remove('hidden');
             loader.classList.remove('hidden');
@@ -246,101 +311,88 @@
             reader.readAsDataURL(file);
         }
 
-        // --- AI LOGIC ---
         async function runAI(url) {
             try {
                 statusText.innerText = "Loading AI Model...";
-                
-                // Using 'u2netp' (Small, Fast, Public) instead of the restricted RMBG-1.4
                 if (!segmenter) {
                     segmenter = await pipeline('image-segmentation', 'Xenova/u2netp');
                 }
-
-                statusText.innerText = "Removing Background...";
+                statusText.innerText = "Processing Image & Removing Background...";
                 
                 const output = await segmenter(url);
-                // u2netp returns a list of masks, usually the first one is the main object
                 const mask = output[0].mask; 
-                
                 processMask(mask);
             } catch (err) {
                 console.error(err);
-                alert("Error: " + err.message + "\nTry a different image or check connection.");
+                alert("Error: " + err.message + "\nTry a different image or check your internet connection.");
                 location.reload();
             }
         }
 
         async function processMask(mask) {
-            statusText.innerText = "Finalizing...";
+            statusText.innerText = "Rendering High Quality Edges...";
 
-            // 1. Create Mask Canvas
             const maskCanvas = document.createElement('canvas');
             maskCanvas.width = mask.width;
             maskCanvas.height = mask.height;
             const maskCtx = maskCanvas.getContext('2d');
-            // Convert raw data to ImageData
             const maskData = new ImageData(mask.data, mask.width, mask.height);
             maskCtx.putImageData(maskData, 0, 0);
 
-            // 2. Create Cutout on Offscreen Canvas
             const offCanvas = document.createElement('canvas');
             offCanvas.width = originalImage.width;
             offCanvas.height = originalImage.height;
             const offCtx = offCanvas.getContext('2d');
 
-            // Draw Original
             offCtx.drawImage(originalImage, 0, 0);
             
-            // Apply Mask using Composite Operation
+            // Apply Mask 
             offCtx.globalCompositeOperation = 'destination-in';
             offCtx.drawImage(maskCanvas, 0, 0, offCanvas.width, offCanvas.height);
             
-            // Store result for fast background switching
             cutoutBitmap = await createImageBitmap(offCanvas);
             
             drawFinal();
             loader.classList.add('hidden');
         }
 
-        // --- DRAWING & EXPORT ---
         window.updateBackground = function(color) {
             currentBg = color;
-            // Update Preview Container BG for visual feedback of transparency
             const container = document.getElementById('preview-container');
             if(color === 'transparent') {
                 container.classList.add('preview-bg-grid');
                 container.style.backgroundColor = '';
             } else {
                 container.classList.remove('preview-bg-grid');
-                container.style.background = color; // Only affects behind canvas
+                container.style.background = color;
             }
             
-            // Update Active Button
             document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('active'));
+            if(event && event.target && event.target.classList.contains('bg-btn')) {
+                event.target.classList.add('active');
+            }
             
             drawFinal();
         }
 
         function drawFinal() {
             if(!cutoutBitmap) return;
-            
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // 1. Draw Solid Color on Canvas (if not transparent)
             if (currentBg !== 'transparent') {
                 ctx.fillStyle = currentBg;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
-
-            // 2. Draw Cutout
             ctx.drawImage(cutoutBitmap, 0, 0);
         }
 
         window.downloadResult = function() {
             if(!cutoutBitmap) return;
             const link = document.createElement('a');
-            link.download = 'jkm-removed-bg.png';
-            link.href = canvas.toDataURL('image/png');
+            const ext = currentBg === 'transparent' ? 'png' : 'jpg';
+            const mime = currentBg === 'transparent' ? 'image/png' : 'image/jpeg';
+            link.download = `${originalFileName}_nobg.${ext}`;
+            link.href = canvas.toDataURL(mime, 1.0);
             link.click();
         }
     </script>

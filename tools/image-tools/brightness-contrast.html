@@ -15,51 +15,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Adjust Image Brightness - Online Photo Enhancer">
-    <meta property="og:description" content="Brighten dark photos or adjust exposure online. Simple, fast brightness and contrast control for clear, professional visuals.">
-    <meta property="og:url" content="https://jkmedit.in/tools/image-tools/brightness-contrast.html">
-    <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-    <meta property="og:site_name" content="JKM Edit">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Adjust Image Brightness - Online Photo Enhancer">
-    <meta name="twitter:description" content="Brighten dark photos or adjust exposure online. Simple, fast brightness and contrast control for clear, professional visuals.">
-    <meta name="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in/tools/image-tools/brightness-contrast.html",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://twitter.com/jkmedit",
-        "https://facebook.com/jkmedit"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://jkmedit.in/#website",
-      "url": "https://jkmedit.in/tools/image-tools/brightness-contrast.html",
-      "name": "JKM Edit Multi-Tool Hub",
-      "publisher": { "@id": "https://jkmedit.in/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jkmedit.in/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-}
-</script>
-
-
-    <!-- FONTS & ICONS -->
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
@@ -76,7 +31,7 @@
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
         }
         
-        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); }
+        html, body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
         *, *::before, *::after { box-sizing: border-box; }
         .hidden { display: none !important; }
 
@@ -89,28 +44,20 @@
         }
         .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
         .logo-image { height: 50px; width: auto; object-fit: contain; }
-        .branding-bar h1 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
+        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
         /* --- MAIN LAYOUT --- */
         .tool-container { padding: 2rem 1rem; max-width: 1200px; margin: 0 auto; width: 100%; flex: 1; }
         
-        .ad-placeholder { 
-            max-width: 728px; width: 100%; height: 90px; 
-            background-color: #e0e0e0; border: 1px dashed #999; 
-            margin: 0 auto 2rem auto; 
-            display: flex; align-items: center; justify-content: center; 
-            color: #555; font-size: 0.9rem; border-radius: 8px; 
-        }
-
         .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h2 { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
-        .tool-header p { color: #666; }
+        .tool-header h1 { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .tool-header p { color: #666; font-size: 1.1rem;}
 
         /* --- UPLOAD ZONE --- */
         #dropzone { 
             border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
             text-align: center; cursor: pointer; background-color: var(--surface-color); 
-            transition: 0.3s; margin-bottom: 20px;
+            transition: 0.3s; margin: 0 auto 20px auto; max-width: 900px;
         }
         #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
         #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
@@ -213,9 +160,26 @@
         .reset-btn:hover { background: #f9f9f9; color: var(--text-color); }
 
         /* Navigation */
-        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; }
-        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; background: #e9ecef; color: #333; display: inline-flex; align-items: center; gap: 5px; }
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;}
+        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; background: #e9ecef; color: #333; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s;}
         .nav-dash { background: var(--primary-color); color: white; }
+        .nav-dash:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* --- Advertisement Box --- */
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
+
+        /* --- Extra Sections --- */
+        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1200px;}
+        .about-section h2 { color: var(--text-color); margin-top: 0; }
+        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
+
+        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1200px; margin: 0 auto; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
+        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .offering-link:hover { text-decoration: underline; }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
 
         @media (max-width: 900px) {
             .editor-grid { grid-template-columns: 1fr; }
@@ -226,19 +190,17 @@
 
     <header class="branding-bar">
         <a href="https://jkmedit.in/" class="logo-container">
-            <img src="assets/jkm-edit-logo.png" alt="JKM" class="logo-image" onerror="this.style.display='none'">
-            <h1>JKM Edit</h1>
+            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit" class="logo-image" onerror="this.style.display='none'">
+            <h2>JKM Edit</h2>
         </a>
     </header>
 
     <main class="tool-container">
-        <div class="ad-placeholder">Advertisement Space (728x90)</div>
 
-        <!-- STAGE 1: UPLOAD -->
         <div id="upload-stage">
             <div class="tool-header">
-                <h2>Brightness & Contrast Adjuster</h2>
-                <p>Enhance your photos instantly with professional precision.</p>
+                <h1>Brightness & Contrast Adjuster</h1>
+                <p>Enhance your photos instantly with professional exposure precision.</p>
             </div>
             <input type="file" id="file-input" class="hidden" accept="image/*"/>
             <div id="dropzone">
@@ -247,11 +209,9 @@
             </div>
         </div>
 
-        <!-- STAGE 2: EDITOR -->
         <div id="editor-stage" class="hidden">
             <div class="editor-grid">
                 
-                <!-- Canvas Wrapper -->
                 <div class="canvas-wrapper">
                     <canvas id="editor-canvas"></canvas>
                     <button class="compare-btn" id="compare-btn" 
@@ -261,11 +221,9 @@
                     </button>
                 </div>
 
-                <!-- Controls -->
                 <div class="controls-panel">
                     <div class="panel-title">Adjustments</div>
 
-                    <!-- Brightness Slider -->
                     <div class="slider-group">
                         <div class="slider-header">
                             <label><i class="fa-regular fa-sun"></i> Brightness</label>
@@ -274,7 +232,6 @@
                         <input type="range" id="range-bright" min="-100" max="100" value="0">
                     </div>
 
-                    <!-- Contrast Slider -->
                     <div class="slider-group">
                         <div class="slider-header">
                             <label><i class="fa-solid fa-circle-half-stroke"></i> Contrast</label>
@@ -302,10 +259,51 @@
             <a href="javascript:history.back()" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
             <a href="https://jkmedit.in/tools/image-tools.html" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
         </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="about-section">
+            <h2>About the Brightness & Contrast Tool</h2>
+            <p>The Brightness and Contrast Adjuster is an incredibly powerful, user-friendly digital utility designed specifically to help photographers, social media managers, and casual users instantly rescue and enhance poorly lit photographs. In modern digital photography, capturing the perfect exposure is notoriously difficult. Whether you snapped a beautiful landscape shot that turned out entirely too dark due to harsh backlighting, or you took a vibrant portrait that feels slightly washed out and flat because of poor camera sensors, correcting these elemental visual errors is crucial before sharing your images online. This tool provides you with professional-grade exposure controls without the need to download heavy, complex desktop editing software like Adobe Lightroom.</p>
+            <p>Our intuitive editing interface is centered around two highly responsive, granular slider controls. The Brightness slider allows you to universally increase or decrease the overall light levels across all pixels within your image, pulling vital details out of dark shadows or toning down overexposed highlights. The Contrast slider works perfectly in tandem with the brightness control; by increasing contrast, you simultaneously make the dark pixels darker and the light pixels lighter. This critical adjustment instantly adds depth, richness, and dramatic visual "pop" to images that otherwise look muddy or faded. To ensure you do not over-edit your photograph, we have integrated a highly convenient "Hold to Compare" button directly over the image canvas. Pressing and holding this button temporarily removes your applied filters, allowing you to instantly compare your ongoing edits against the raw, original photograph.</p>
+            <p>Most importantly, we engineered this exposure tool with a strict, uncompromising focus on user privacy and rendering speed. The entire graphical filtering process operates utilizing the native HTML5 Canvas API directly within your computer's web browser. Because the heavy mathematical image processing occurs strictly on your local device, your private family photos and confidential corporate visual assets are never uploaded to the cloud or transmitted to external servers. This localized architecture guarantees absolute data security while ensuring that the editor functions with lightning-fast responsiveness and zero network latency. Thank you for relying on our platform to enhance your digital photography.</p>
+            <h2>Thank you</h2>
+        </div>
+
+        <div class="footer-offerings">
+            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
+            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
+            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
+            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
+            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
+            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
+            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
+            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
+            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
+            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
+            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
+            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+        </div>
     </main>
 
     <script>
-        // Elements
+        document.querySelectorAll('a').forEach(link => {
+            const linkUrl = link.getAttribute('href');
+            if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                if (isInternalLink && !link.target) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault(); document.body.classList.add('fade-out');
+                        setTimeout(() => { window.location.href = this.href; }, 400);
+                    });
+                }
+            }
+        });
+
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('file-input');
         const uploadStage = document.getElementById('upload-stage');
@@ -313,17 +311,14 @@
         const canvas = document.getElementById('editor-canvas');
         const ctx = canvas.getContext('2d');
         
-        // Inputs
         const rangeBright = document.getElementById('range-bright');
         const rangeContrast = document.getElementById('range-contrast');
         const valBright = document.getElementById('val-bright');
         const valContrast = document.getElementById('val-contrast');
 
-        // State
         let originalImg = new Image();
         let fileName = "image";
 
-        // --- UPLOAD LOGIC ---
         dropzone.onclick = () => fileInput.click();
         dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
         dropzone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
@@ -337,11 +332,9 @@
             reader.onload = (e) => {
                 originalImg.src = e.target.result;
                 originalImg.onload = () => {
-                    // Set canvas size to match image resolution
                     canvas.width = originalImg.width;
                     canvas.height = originalImg.height;
-                    
-                    render(); // Initial draw
+                    render(); 
                     uploadStage.classList.add('hidden');
                     editorStage.classList.remove('hidden');
                 };
@@ -349,62 +342,48 @@
             reader.readAsDataURL(file);
         }
 
-        // --- RENDER LOGIC ---
         function render() {
             const brightness = parseInt(rangeBright.value);
             const contrast = parseInt(rangeContrast.value);
 
-            // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Use Canvas Filter API (Fast & Hardware Accelerated)
-            // Brightness: 100% is normal. Range input is -100 to 100. So map to 0% - 200%.
-            // Contrast: 100% is normal. Range input is -100 to 100. So map to 0% - 200%.
             
             const bVal = 100 + brightness;
             const cVal = 100 + contrast;
 
             ctx.filter = `brightness(${bVal}%) contrast(${cVal}%)`;
-            
             ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
 
-            // Update labels
             valBright.innerText = (brightness > 0 ? "+" : "") + brightness;
             valContrast.innerText = (contrast > 0 ? "+" : "") + contrast;
         }
 
-        // --- EVENT LISTENERS ---
         rangeBright.addEventListener('input', render);
         rangeContrast.addEventListener('input', render);
 
-        // --- COMPARE FEATURE ---
-        // Temporarily removes filters to show original
         function showOriginal() {
             ctx.filter = "none";
             ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
         }
 
         function showEdited() {
-            render(); // Re-apply filters
+            render();
         }
 
-        // --- RESET ---
         function resetValues() {
             rangeBright.value = 0;
             rangeContrast.value = 0;
             render();
         }
 
-        // --- DOWNLOAD ---
         function downloadImage() {
             const link = document.createElement('a');
             link.download = fileName + '_adjusted.jpg';
-            link.href = canvas.toDataURL('image/jpeg', 0.95); // High quality JPG
+            link.href = canvas.toDataURL('image/jpeg', 0.95);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
-
     </script>
 </body>
 </html>
