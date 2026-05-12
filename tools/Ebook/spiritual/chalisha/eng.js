@@ -1,9 +1,0 @@
-var englishContent = `    
-
-
-
-
-
-
-
-`;
