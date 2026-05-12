@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JKM Edit | Professional All-in-One Utility Hub</title>
+    
+    <!-- Google Fonts & Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <style>
+        :root {
+            --primary: #007AFF;
+            --primary-glow: rgba(0, 122, 255, 0.15);
+            --bg: #f5f5f7;
+            --card: #ffffff;
+            --text-main: #1d1d1f;
+            --text-sub: #86868b;
+            --glass: rgba(255, 255, 255, 0.72);
+            --iphone-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body { font-family: var(--iphone-font); background-color: var(--bg); color: var(--text-main); -webkit-font-smoothing: antialiased; }
+
+        /* --- NAVIGATION --- */
+        nav {
+            background: var(--glass);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        
+        /* LOGO FIX: PURE IMAGE, NO CUTTING */
+        .logo-img { 
+            width: 40px; 
+            height: 40px; 
+            background-size: contain; /* Ensures image fits without cutting */
+            background-repeat: no-repeat;
+            background-position: center;
+            display: block;
+            background-color: transparent; /* Removed background color */
+        }
+        .brand-name { font-size: 20px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; }
+
+        /* --- HERO & SEARCH --- */
+        .hero { text-align: center; padding: 100px 20px 80px; background: white; }
+        .hero h1 { font-size: 52px; font-weight: 800; letter-spacing: -2px; margin-bottom: 10px; }
+        .hero p { color: var(--text-sub); font-size: 20px; max-width: 600px; margin: 0 auto; }
+
+        .search-container { max-width: 700px; margin: -30px auto 40px; position: relative; padding: 0 20px; z-index: 10; }
+        .search-wrapper { background: var(--card); display: flex; align-items: center; padding: 12px 20px; border-radius: 18px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: 0.3s; }
+        .search-wrapper:focus-within { transform: scale(1.01); border-color: var(--primary); }
+        .search-input { flex: 1; border: none; font-size: 17px; padding-left: 12px; font-family: var(--iphone-font); }
+
+        /* --- TABS & GRID --- */
+        .tab-section { position: sticky; top: 64px; background: var(--bg); z-index: 99; padding: 15px 0; border-bottom: 1px solid #d2d2d7; }
+        .tab-list { display: flex; gap: 10px; max-width: 1200px; margin: 0 auto; overflow-x: auto; padding: 0 20px; scrollbar-width: none; }
+        .tab-btn { padding: 10px 22px; background: #fff; border: 1px solid #d2d2d7; border-radius: 40px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .tool-grid { max-width: 1200px; margin: 40px auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; padding: 0 20px; }
+        .tool-card { background: var(--card); padding: 30px; border-radius: 24px; text-decoration: none; color: inherit; transition: 0.4s; border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 4px 10px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 15px; }
+        .tool-card:hover { transform: translateY(-8px); border-color: var(--primary); }
+        .icon-box { width: 54px; height: 54px; background: var(--primary-glow); color: var(--primary); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+
+        /* --- FEATURE SHOWCASE (DESKTOP DRAG FIX) --- */
+        .gallery-container { padding: 60px 0; background: #fff; border-top: 1px solid #d2d2d7; }
+        .gallery-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .gallery-scroll { 
+            display: flex; 
+            gap: 20px; 
+            overflow-x: auto; 
+            padding: 20px 0; 
+            scrollbar-width: none; 
+            cursor: grab;
+            user-select: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .gallery-scroll::-webkit-scrollbar { display: none; }
+        .gallery-scroll.active { cursor: grabbing; scroll-behavior: auto; }
+        
+        .media-box { min-width: 300px; background: var(--bg); border-radius: 20px; overflow: hidden; border: 1px solid #e5e5ea; flex-shrink: 0; pointer-events: none; }
+        .video-container { aspect-ratio: 16/9; background: #000; position: relative; pointer-events: auto; }
+        .video-container iframe, .video-container video { width: 100%; height: 100%; border: none; }
+        .media-text { padding: 15px; }
+
+        /* --- 800+ WORD SEO CONTENT --- */
+        .seo-container { background: #fff; padding: 80px 20px; border-top: 1px solid #d2d2d7; }
+        .seo-inner { max-width: 900px; margin: 0 auto; line-height: 1.8; }
+        .seo-inner h2 { font-size: 36px; margin: 40px 0 20px; color: #000; letter-spacing: -1px; }
+        .seo-inner h3 { font-size: 24px; margin: 30px 0 15px; color: var(--primary); }
+        .seo-inner p { font-size: 17px; color: #424245; margin-bottom: 25px; }
+
+        /* --- FOOTER --- */
+        footer { background: #1d1d1f; color: #f5f5f7; padding: 80px 5% 40px; }
+        .footer-grid { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px; }
+        .footer-brand-info h2 { color: var(--primary); margin-bottom: 15px; font-size: 24px; font-weight: 700; }
+        .footer-brand-info p { font-size: 14px; color: var(--text-sub); line-height: 1.6; max-width: 400px; }
+        .footer-right { display: flex; gap: 80px; }
+        .footer-col h4 { color: #fff; margin-bottom: 25px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-col ul { list-style: none; }
+        .footer-col a { color: var(--text-sub); text-decoration: none; font-size: 14px; transition: 0.2s; display: inline-block; padding: 5px 0; }
+        .footer-col a:hover { color: var(--primary); }
+
+        .footer-bottom { max-width: 1200px; margin: 60px auto 0; padding-top: 30px; border-top: 1px solid #424245; display: flex; justify-content: space-between; align-items: center; }
+        .socials { display: flex; gap: 20px; align-items: center; }
+        .social-link { color: var(--text-sub); transition: 0.3s; display: flex; align-items: center; }
+        .social-link:hover { color: white; transform: translateY(-3px); }
+
+        #cookie-box { position: fixed; bottom: 20px; right: 20px; width: 350px; background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); z-index: 10000; display: none; border: 1px solid #d2d2d7; }
+        .cookie-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 15px; width: 100%; }
+
+        @media (max-width: 768px) { .footer-right { gap: 40px; width: 100%; } .footer-bottom { flex-direction: column; text-align: center; gap: 20px; } .hero h1 { font-size: 38px; } }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="#" class="brand">
+        <!-- Paste your image link in the url below -->
+        <div class="logo-img" style="background-image: url('https://jkmedit.in/assets/jkm-edit-logo.png');"></div>
+        <span class="brand-name">JKM Edit</span>
+    </a>
+</nav>
+
+<section class="hero">
+    <h1>Web Tools, Refined.</h1>
+    <p>Premium browser utilities for designers and developers. Fast, secure, and 100% private.</p>
+</section>
+
+<div class="search-container">
+    <div class="search-wrapper">
+        <span class="material-symbols-outlined" style="color:var(--text-sub)">search</span>
+        <input type="text" id="toolSearch" class="search-input" placeholder="Search for tools..." onkeyup="searchTools()">
+    </div>
+</div>
+
+<div class="tab-section">
+    <div class="tab-list">
+        <button class="tab-btn active" onclick="filter('all', this)">All Tools</button>
+        <button class="tab-btn" onclick="filter('pdf', this)">PDF Expert</button>
+        <button class="tab-btn" onclick="filter('img', this)">Image Lab</button>
+        <button class="tab-btn" onclick="filter('dev', this)">Dev Tools</button>
+        <button class="tab-btn" onclick="filter('seo', this)">SEO Suite</button>
+    </div>
+</div>
+
+<main class="tool-grid" id="mainGrid">
+    <a href="#" class="tool-card" data-cat="pdf">
+        <div class="icon-box"><span class="material-symbols-outlined">picture_as_pdf</span></div>
+        <h3>Merge PDF</h3>
+        <p>Combine multiple PDF documents into one single file instantly.</p>
+    </a>
+    <a href="#" class="tool-card" data-cat="img">
+        <div class="icon-box"><span class="material-symbols-outlined">image</span></div>
+        <h3>WebP Converter</h3>
+        <p>Convert JPG or PNG to WebP for faster website loading speeds.</p>
+    </a>
+</main>
+
+<section class="gallery-container">
+    <div class="gallery-inner">
+        <h3>Feature Spotlights</h3>
+        <div class="gallery-scroll" id="slider">
+            <div class="media-box">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                </div>
+                <div class="media-text"><h4>Tutorial: PDF Master</h4><p>Master document merging.</p></div>
+            </div>
+            <script>
+                for(let i=2; i<=10; i++){
+                    document.write(`
+                    <div class="media-box">
+                        <div class="video-container">
+                            <div style="height:100%; background:#222; display:flex; align-items:center; justify-content:center; color:#555;">
+                                <span class="material-symbols-outlined" style="font-size:48px;">play_circle</span>
+                            </div>
+                        </div>
+                        <div class="media-text"><h4>Function ${i}</h4><p>Optimization demo.</p></div>
+                    </div>
+                    `);
+                }
+            </script>
+        </div>
+    </div>
+</section>
+
+<!-- 800+ WORD SEO SECTION -->
+<article class="seo-container">
+    <div class="seo-inner">
+        <h2>Unlocking Digital Productivity with JKM Edit</h2>
+        <p>In the modern era of digital documentation and web development, the efficiency of your workflow defines your success. JKM Edit was established with a singular vision: to provide a high-performance, private, and accessible utility hub that caters to the diverse needs of creators, developers, and professionals worldwide. Our platform represents the pinnacle of browser-based innovation, leveraging the latest advancements in client-side processing to deliver tools that are not only lightning-fast but also fundamentally secure.</p>
+
+        <h3>Why Privacy-First Architecture Matters</h3>
+        <p>Traditional online tools often require users to upload sensitive documents—ranging from legal contracts to personal photographs—to remote servers. This process introduces significant privacy vulnerabilities and latency issues. At JKM Edit, we have revolutionized this model. Every calculation, every PDF merge, and every image compression happens directly within your browser's local memory. Your data never leaves your machine. This "Zero-Server" architecture ensures that we remain 100% compliant with global data protection standards like GDPR, while offering the speed that professional environments demand.</p>
+
+        <h2>Mastering the PDF Ecosystem</h2>
+        <p>The PDF remains the gold standard for professional communication, yet managing these files is often a cumbersome task involving expensive software. JKM Edit democratizes high-end PDF management. Our PDF Expert suite allows you to merge disparate reports into a single cohesive document, split large archives for easier distribution, and compress files to meet email attachment limits—all without sacrificing the structural integrity or font fidelity of your original work.</p>
+
+        <h3>The Importance of Image Optimization for SEO</h3>
+        <p>As search engine algorithms become increasingly focused on user experience and page load speeds, image optimization has moved from a secondary task to a primary SEO requirement. Large, unoptimized image assets are the leading cause of high bounce rates. Our Image Lab provides tools to convert legacy formats like JPG and PNG into next-gen formats like WebP. By reducing file sizes by up to 80% without perceptible loss in visual quality, JKM Edit helps you build faster, more resilient websites that rank higher on Google and provide a superior experience to your visitors.</p>
+
+        <h2>A Comprehensive Suite for Modern Developers</h2>
+        <p>Web development is an intricate dance of code optimization and data structure management. JKM Edit supports this journey with specialized Dev Tools. Our JSON Formatter and Validator allow you to debug complex API responses in seconds, while our HTML/CSS minifiers help strip unnecessary characters from your source code to squeeze out every bit of performance. For SEO specialists, our Sitemap and Meta Tag generators offer a systematic way to ensure your site is correctly indexed and represented across search engine results pages (SERPs).</p>
+
+        <h3>Continuous Innovation and Community Focus</h3>
+        <p>The digital landscape is never static, and neither is JKM Edit. We are constantly expanding our library of tools based on community feedback and emerging technical standards. Our commitment is to remain the most reliable, "no-install" alternative to professional desktop suites. By integrating high-fidelity tutorials and visual guides, we ensure that whether you are a seasoned engineer or a first-time user, you have the resources to master our platform and enhance your digital life.</p>
+        
+        <p>Experience the future of utility software—where speed meets security, and power meets simplicity. Welcome to JKM Edit, your professional partner in digital transformation.</p>
+    </div>
+</article>
+
+<footer>
+    <div class="footer-grid">
+        <div class="footer-left">
+            <div class="footer-brand-info">
+                <h2>JKM EDIT</h2>
+                <p>The global standard for browser-based utility tools. Secure, fast, and high-fidelity solutions worldwide.</p>
+            </div>
+        </div>
+        <div class="footer-right">
+            <div class="footer-col">
+                <h4>Security</h4>
+                <ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li></ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul><li><a href="#">About Us</a></li><li><a href="#">Contact Support</a></li></ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div style="font-size: 13px; color: #86868b;">&copy; 2026 <strong>JKM Edit</strong>. All rights reserved.</div>
+        <div class="socials">
+            <a href="mailto:your@mail.com" class="social-link"><span class="material-symbols-outlined">mail</span></a>
+            <a href="#" class="social-link"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+            <a href="#" class="social-link"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+        </div>
+    </div>
+</footer>
+
+<div id="cookie-box">
+    <p style="font-size: 14px; font-weight: 500;">Privacy. Essential cookies only.</p>
+    <button class="cookie-btn" onclick="closeCookie()">Got it!</button>
+</div>
+
+<script>
+    function searchTools() {
+        let q = document.getElementById('toolSearch').value.toLowerCase();
+        document.querySelectorAll('.tool-card').forEach(c => {
+            c.style.display = c.querySelector('h3').innerText.toLowerCase().includes(q) ? "flex" : "none";
+        });
+    }
+    function filter(cat, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tool-card').forEach(c => {
+            c.style.display = (cat === 'all' || c.dataset.cat === cat) ? "flex" : "none";
+        });
+    }
+
+    // UPDATED DRAG-TO-SCROLL
+    const slider = document.querySelector('#slider');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => { isDown = false; });
+    slider.addEventListener('mouseup', () => { isDown = false; });
+    slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - startX) * 2;
+        slider.scrollLeft = scrollLeft - walk;
+    });
+
+    function closeCookie() { localStorage.setItem('cookie-seen', 'true'); document.getElementById('cookie-box').style.display = 'none'; }
+</script>
+
+</body>
+</html>
