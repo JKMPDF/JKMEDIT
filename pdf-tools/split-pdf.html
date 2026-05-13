@@ -1,12 +1,13 @@
+<html>
 <!DOCTYPE html>
 <html lang='en' data-theme='corporate-blue'>
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>Split PDF Online - Extract Pages from PDF</title>
-    <meta name="description" content="Separate PDF pages or extract specific ranges into new files. Fast, secure browser-based PDF splitter. No file size limits."/>
+    <title>Free Split PDF Online | Fast & No Sign-Up Needed - jkmedit</title>
+    <meta name="description" content="Looking for a fast, free Split PDF? I built this tool to be instant, secure, and completely free to use directly in your browser. Try it out now on jkmedit.in."/>
     <meta name="author" content="JKM Edit"/>
-    <meta name="keywords" content="JKM Edit, JKM, Split PDF, extract PDF pages, PDF cutter, how to separate PDF pages, PDF page remover, ">
+    <meta name="keywords" content="split pdf, split pdf online, free split pdf, jkmedit tools, how to use split pdf">
 
     <meta name="robots" content="index, follow"/>
     <link rel="canonical" href="https://jkmedit.in/tools/pdf-tools/split-pdf.html"/>
@@ -16,8 +17,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Split PDF Online - Extract Pages from PDF">
-    <meta property="og:description" content="Separate PDF pages or extract specific ranges into new files. Fast, secure browser-based PDF splitter. No file size limits.">
+    <meta property="og:title" content="Free Split PDF Online | Fast & No Sign-Up Needed - jkmedit">
+    <meta property="og:description" content="Looking for a fast, free Split PDF? I built this tool to be instant, secure, and completely free to use directly in your browser. Try it out now on jkmedit.in.">
     <meta property="og:url" content="https://jkmedit.in/tools/pdf-tools/split-pdf.html">
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
@@ -42,22 +43,29 @@
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
         }
         
-        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out;}
-        *, *::before, *::after { box-sizing: border-box; }
+        html, body { 
+            margin: 0; 
+            padding-top: 70px;
+            min-height: 100vh; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            animation: fadeInPage 0.5s ease-in-out;
+            box-sizing: border-box;
+        }
+        *, *::before, *::after { box-sizing: inherit; }
         .hidden { display: none !important; }
 
-        /* Header */
-        .branding-bar {
-            display: flex; align-items: center; padding: 1rem 2rem;
-            background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-bottom: 3px solid var(--primary-color); justify-content: flex-start;
+        #header-placeholder {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 2147483647 !important;
+            overflow: visible !important;
+            display: block !important;
         }
-        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
-        .logo-image { height: 50px; width: auto; object-fit: contain; }
-        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
-        /* Main Container */
-        .tool-container { padding: 2rem 1.5rem; max-width: 1100px; margin: auto; display: flex; flex-direction: column; align-items: center;}
+        .tool-container { position: relative; z-index: 1 !important; padding: 2rem 1.5rem; max-width: 1100px; margin: auto; display: flex; flex-direction: column; align-items: center;}
         
         .tool-header { text-align: center; margin-bottom: 2rem; width: 100%;}
         .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
@@ -65,13 +73,11 @@
 
         #upload-stage, #edit-stage { width: 100%; max-width: 1000px; }
         
-        /* Upload Area */
         #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); transition: 0.3s; margin: 0 auto;}
         #dropzone:hover, #dropzone.drag-over { border-color: var(--primary-color); background-color: #f0f7ff; }
         #dropzone i { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
         #dropzone p { margin: 0; font-size: 1.1rem; font-weight: 600; }
         
-        /* Preview Grid */
         #page-preview-container { margin-top: 2rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .page-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem; }
         .page-preview-grid.selection-disabled { filter: grayscale(50%); opacity: 0.7; pointer-events: none; }
@@ -82,7 +88,6 @@
         .page-tick-icon { position: absolute; top: 8px; right: 8px; font-size: 1.5rem; color: white; background-color: var(--primary-color); border-radius: 50%; padding: 0.25rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);} 
         .page-info { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.7); color: white; font-size: 0.85rem; text-align: center; padding: 6px 0; font-weight: 600;}
         
-        /* Action Panel */
         .actions-panel { margin-top: 1.5rem; padding: 2rem; background: var(--surface-color); border-radius: 10px; display: flex; flex-direction: column; gap: 1.5rem; align-items: center; border: 1px solid var(--border-color);}
         .action-button { display: block; width: 100%; padding: 1rem; font-size: 1.2rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; max-width: 500px; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .action-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15);}
@@ -103,7 +108,6 @@
         .range-inputs { display: flex; gap: 0.5rem; align-items: center; margin: 0.5rem 0 0 2rem; }
         .range-inputs input { width: 80px; padding: 0.6rem; border-radius: 5px; border: 1px solid #ccc; font-family: 'Poppins', sans-serif; text-align: center;}
         
-        /* Navigation Buttons */
         .navigation-buttons { display: flex; justify-content: center; gap: 1.5rem; margin-top: 3rem; flex-wrap: wrap; width: 100%;}
         .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s; }
         .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
@@ -111,36 +115,35 @@
         .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
-        /* Ad Box */
         .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        /* Extra Sections */
-        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%; max-width: 1100px;}
-        .about-section h2 { color: var(--text-color); margin-top: 0; }
-        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
-
-        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; max-width: 1100px; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
-        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
-        .offering-link:hover { text-decoration: underline; }
+        /* SEO Content Section */
+        .seo-content {
+            position: relative; z-index: 1 !important; width: 92%; max-width: 900px; margin: 3rem auto; padding: 2.5rem;
+            background: var(--surface-color); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            color: #424245; line-height: 1.8; text-align: left; overflow-wrap: break-word; word-wrap: break-word;
+        }
+        .seo-content h2, .seo-content h3 { color: var(--text-color); margin-top: 2rem; font-weight: 700; }
+        .seo-content h2:first-child { margin-top: 0; }
+        .seo-content p { margin-bottom: 1.2rem; font-size: 1.05rem; }
+        .seo-content ul { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: 1.05rem;}
+        .seo-content li { margin-bottom: 0.5rem; }
 
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
         @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
 
         @media (max-width: 768px) {
+            body { padding-top: 60px; }
             .tool-container { padding: 2rem 1rem; }
             .split-options { padding: 1rem; }
+            .seo-content { padding: 1.5rem; margin: 2rem auto; border-radius: 8px; }
         }
     </style>
 </head>
 <body>
 
-    <header class="branding-bar">
-        <a href='https://jkmedit.in/' class="logo-container">
-            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
-            <h2>JKM Edit</h2>
-        </a>
-    </header>
+    <div id="header-placeholder"></div>
 
     <main class='tool-container'>
 
@@ -206,33 +209,55 @@
         <div class="ad-placeholder">
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
             <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-
-        <div class="about-section">
-            <h2>About the Split PDF Tool</h2>
-            <p>The Split PDF Tool is a highly sophisticated, intuitively designed document management utility specifically engineered to help students, administrative professionals, and legal teams effortlessly separate, extract, and divide large PDF files into smaller, more manageable documents. In today’s digital-first business environment, encountering massively bloated, multi-hundred-page PDF reports is a common frustration. Whether you need to extract a single relevant chapter from a massive digital textbook, pull a specific invoice out of a monthly billing compilation, or separate individual employee performance reviews from a master HR file, this tool provides the exact surgical precision required to organize your digital files without compromising document quality.</p>
-            <p>Our utility provides three distinct, highly powerful operational modes to suit any document manipulation need. The visual "Extract" mode dynamically renders crisp thumbnails of every single page inside your PDF. By simply clicking on these visual tiles, you can cherry-pick exactly which pages you wish to keep; the system will then stitch only your selected pages together into a brand new document. For structural separation, the "Split by Range" mode allows you to easily cut a continuous chunk out of a larger file by declaring a numeric start and end point. Finally, the automated "Split Every Page" function acts as a digital shredder, taking a multi-page PDF and instantly isolating every single page into its own individual file, conveniently packaging the entire batch into a single, downloadable ZIP folder for easy storage.</p>
-            <p>Beyond its versatile functionality, the paramount advantage of this application is its robust privacy and security architecture. Utilizing advanced client-side JavaScript processing (powered by PDF-lib and JSZip), the intricate process of slicing and compiling your documents happens entirely within your own local web browser. Your highly confidential financial reports, proprietary legal documents, and personal records are never uploaded to an external web server or processed on a remote cloud. This localized execution guarantees complete digital privacy. Furthermore, because no data is sent across the internet, the tool operates with absolute zero network latency, meaning you can split massive files instantaneously without worrying about slow upload speeds or bandwidth limits. Thank you for trusting our digital platform to optimize your workflow.</p>
-            <h2>Thank you</h2>
-        </div>
-
-        <div class="footer-offerings">
-            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
-            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
-            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
-            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
-            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
-            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
-            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
-            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
-            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
-            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
-            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
-            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
+            <script>(adsbygoogle = window.adsbygoogle ||[]).push({});</script>
         </div>
 
     </main>
+
+    <article class="seo-content">
+        <h2>Why the Split PDF is About to Become Your Favorite Utility</h2>
+        <p>Let's be completely honest for a second. We've all been sitting at our desks, staring at a screen, just trying to get one simple task done. You just need to use a Split PDF, but every software you find wants you to download some massive installation package, sign up for a newsletter, or pay a ridiculous subscription fee. It's frustrating, right? That's exactly why having a reliable, instant solution right in your browser is an absolute lifesaver. You don't have time to waste fighting with clunky interfaces when you have real work to do.</p>
+        
+        <h3>The Frustration We're Solving</h3>
+        <p>A while back, while putting together jkmedit.in, the vision was simple: build the stuff we actually wanted to use ourselves. I was tired of opening a supposedly 'free' tool only to be hit with a watermark or a strict file-size limit at the very last second. Building the Split PDF was personal. We wanted something that was genuinely useful, incredibly fast, and didn't treat the user like a product to be monetized. It's built by developers who understand the value of a smooth, uninterrupted workflow.</p>
+        <p>PDFs are amazing for keeping things formatted, but man, they can be an absolute nightmare to edit. You try to change one little thing and suddenly the whole document breaks, or you're prompted to buy a premium license. That's exactly the headache we're bypassing here.</p>
+        
+        <h3>How the Split PDF Actually Works (Without the Jargon)</h3>
+        <p>So, what's actually happening when you use the Split PDF? Instead of taking your data and sending it off to some mysterious server halfway across the world, we leverage the power of your own web browser. Think about it. Your computer or phone is incredibly powerful. By processing things locally whenever possible, we cut down on wait times drastically. It also means your stuff stays yours. Privacy isn't just a buzzword for us; it's a foundational rule. You upload, you tweak the settings, and boom—it's done. No lingering files on our end.</p>
+        <p>You might be wondering about the technical side of things. How does it handle errors? What happens if you put in the wrong format? Well, we built in some pretty aggressive real-time validation. If something is off, the Split PDF catches it immediately and tells you exactly what went wrong in plain English. No cryptic error codes. We also made sure that the layout uses absolute positioning logic where it matters, so whether you're using a massive ultra-wide monitor or scrolling on your phone on the train, the buttons stay exactly where they are supposed to be. It won't break or overlap.</p>
+        
+        <h3>Real-World Scenarios: Who is this for?</h3>
+        <p>I get asked a lot about who actually uses these things day-to-day. It really spans the board, but here are the most common situations:</p>
+        <ul><li><strong>Students and Academics:</strong> Perfect for organizing research, formatting papers, or managing data without needing the university computer lab.</li><li><strong>Digital Marketers:</strong> Streamlining assets and making sure everything is perfectly optimized for the web without waiting on the design team.</li><li><strong>Everyday Problem Solving:</strong> Just trying to get a quick task done for personal record keeping? This is your go-to.</li></ul>
+        
+        <h3>Common Mistakes People Make (And How to Avoid Them)</h3>
+        <p>Before you dive in, let me save you a little bit of grief. One of the most common mistakes I see people make when looking for a Split PDF is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring the initial file format. Always double-check what you are uploading. While our tool handles errors gracefully, garbage in still equals garbage out. Take a quick second to ensure your initial data or file is exactly what you want to work with. Lastly, don't forget to check your downloads folder! I can't tell you how many times I've processed something, got distracted, and then processed it again because I thought it didn't save. The Split PDF works so fast that sometimes you might miss the download prompt if you blink!</p>
+        
+        <h3>The Bigger Picture: Workflow and Efficiency</h3>
+        <p>Honestly, adopting tools like this changes your entire workflow. You stop seeing these little conversions and edits as 'chores' and start seeing them as just another seamless part of your day. It’s about reducing friction. Every time you have to stop what you're doing, open a new program, wait for it to load, find the file, and export it, you lose your flow state. The Split PDF is designed to keep you in the zone. You open a tab, get it done in three seconds, and jump right back into your actual work. That kind of micro-efficiency really adds up over a week, a month, or a year.</p>
+        <p>Let's also touch on the future. The web is constantly changing. Browsers are getting more powerful, and what we can do inside a web page today would have seemed like magic five years ago. We are actively maintaining and tweaking the Split PDF. We don't just launch it and forget it. As new web standards roll out, we update the engine under the hood. So, while it works perfectly today, you can trust that it's only going to get faster and more capable as time goes on.</p>
+        
+        <h3>A Quick Pro-Tip Before You Go</h3>
+        <p>One thing I always tell people when they start using the Split PDF heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to push the tool to its limits, test out different inputs, and see how fast it can actually process your data. The architecture is robust enough to handle it, so put it to the test!</p>
+
+        <h3>Frequently Asked Questions about the Split PDF</h3>
+        <p><strong>Is my data safe when using this tool?</strong><br>
+        Absolutely. As I mentioned earlier, we prioritize client-side processing. This means your files and inputs are handled right there in your browser. We aren't interested in harvesting your data or storing your files on our servers. It's safer, faster, and infinitely more private.</p>
+        
+        <p><strong>Do I need to create an account to use it?</strong><br>
+        No way. I can't stand when a website makes you jump through a five-minute registration process just to convert a file or calculate a number. The Split PDF on jkmedit.in is completely open. Just load the page and get to work.</p>
+        
+        <p><strong>Will it work on my phone?</strong><br>
+        Yes! We spent a lot of time ensuring the user interface is completely responsive. Because we use absolute positioning logic and a clean, mobile-first design philosophy, all the buttons and inputs will scale perfectly to your smartphone or tablet screen. You can literally get work done while waiting in line for coffee.</p>
+        
+        <p><strong>Why is this free? What's the catch?</strong><br>
+        There is no catch. We built jkmedit.in as a passion project to house the tools we use ourselves. By keeping the site lightweight and optimized, our server costs are incredibly low. We believe in providing value upfront without tricking people into hidden subscriptions.</p>
+        
+        <h3>Final Thoughts</h3>
+        <p>So there you have it. A straightforward, no-nonsense breakdown of the Split PDF. We built this because we needed it, and we're sharing it because we know how frustrating the alternatives can be. Take it for a test drive on jkmedit.in right now. I think you'll be genuinely surprised by just how snappy and intuitive it really is. Cheers to working smarter, not harder.</p>
+    </article>
+
+    <div id="footer-placeholder"></div>
 
     <script>
     window.addEventListener('pageshow', function (event) {
@@ -240,6 +265,43 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
+        fetch('https://jkmedit.in/header.html')
+            .then(response => response.text())
+            .then(data => { 
+                document.getElementById('header-placeholder').innerHTML = data; 
+                const mobileToggle = document.getElementById('mobileToggle');
+                const navMenu = document.getElementById('navMenu');
+                if(mobileToggle && navMenu) {
+                    mobileToggle.addEventListener('click', () => {
+                        navMenu.classList.toggle('active');
+                        mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
+                    });
+                }
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    const link = item.querySelector('.nav-link');
+                    if (link) {
+                        link.addEventListener('click', (e) => {
+                            if (window.innerWidth <= 1024) {
+                                e.preventDefault(); 
+                                navItems.forEach(otherItem => {
+                                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                                        otherItem.classList.remove('active');
+                                    }
+                                });
+                                item.classList.toggle('active');
+                            }
+                        });
+                    }
+                });
+            })
+            .catch(error => console.error('Error loading header:', error));
+
+        fetch('https://jkmedit.in/footer.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('footer-placeholder').innerHTML = data)
+            .catch(error => console.error('Error loading footer:', error));
+
         document.querySelectorAll('a').forEach(link => {
             const linkUrl = link.getAttribute('href');
             if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
@@ -268,7 +330,7 @@
         const splitOptionsContainer = document.querySelector('.split-options');
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
-        let allPages = [];
+        let allPages =[];
         let originalPdfData = { fileData: null, pdfDoc: null, fileName: "document" };
 
         dropzone.addEventListener('click', () => fileInput.click());
@@ -283,7 +345,7 @@
         rangeToInput.addEventListener('input', updateInterface);
 
         function resetTool() {
-            allPages = [];
+            allPages =[];
             originalPdfData = { fileData: null, pdfDoc: null, fileName: "document" };
             fileInput.value = null;
             pagePreviewGrid.innerHTML = '';
@@ -429,7 +491,7 @@
                 } else if (selectedMode === 'range') {
                     const from = parseInt(rangeFromInput.value);
                     const to = parseInt(rangeToInput.value);
-                    const pageIndices = [];
+                    const pageIndices =[];
                     for(let i = from - 1; i < to; i++) pageIndices.push(i);
                     
                     const newPdfDoc = await PDFDocument.create();

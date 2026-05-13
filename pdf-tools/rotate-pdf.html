@@ -1,3 +1,4 @@
+<html>
 <!DOCTYPE html>
 <html lang='en' data-theme='corporate-blue'>
 <head>
@@ -43,57 +44,43 @@
         
         html, body { 
             margin: 0; 
+            padding-top: 70px;
             min-height: 100vh; 
             background-color: var(--bg-color); 
             color: var(--text-color); 
             animation: fadeInPage 0.5s ease-in-out; 
+            box-sizing: border-box;
         }
-        *, *::before, *::after { box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: inherit; }
         .hidden { display: none !important; }
 
-        /* --- HEADER CONTAINER FIX --- */
         #header-placeholder {
-            position: sticky;
-            top: 0;
-            z-index: 2147483647; /* Maximum possible z-index */
-            width: 100%;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 2147483647 !important;
+            overflow: visible !important;
+            display: block !important;
         }
 
-        /* Enforce lower priority on main content */
-        .tool-container { 
-            position: relative; 
-            z-index: 1 !important; 
-            padding: 2rem 1.5rem; 
-            max-width: 900px; 
-            margin: auto; 
-        }
+        .tool-container { position: relative; z-index: 1 !important; padding: 2rem 1.5rem; max-width: 900px; margin: auto; }
         
         .tool-content-wrapper { 
-            position: relative;
-            z-index: 1 !important;
-            background: var(--surface-color); 
-            padding: 2.5rem; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
-            text-align: center; 
+            position: relative; z-index: 1 !important; background: var(--surface-color); 
+            padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; 
         }
 
-        /* Tool Header */
         .tool-header { text-align: center; margin-bottom: 2rem; }
         .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
 
-        /* Upload Area */
-        .upload-area { 
-            border: 3px dashed #ccc; border-radius: 12px; padding: 3rem; text-align: center; 
-            background: #f9fafc; cursor: pointer; transition: all 0.3s; 
-        }
+        .upload-area { border: 3px dashed #ccc; border-radius: 12px; padding: 3rem; text-align: center; background: #f9fafc; cursor: pointer; transition: all 0.3s; }
         .upload-area:hover, .upload-area.drag-over { border-color: var(--primary-color); background-color: #f0f7ff; }
         .upload-icon { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
         .upload-area p { margin: 0; font-size: 1.1rem; font-weight: 600; }
         #pdf-upload { display: none; }
 
-        /* Options Panel */
         .options-panel { background: #f9fafc; padding: 2rem; border-radius: 8px; margin-top: 2rem; border: 1px solid var(--border-color); display: none; text-align: left;}
         .options-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start; }
         .option-group { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -119,7 +106,6 @@
         .download-btn { display: inline-flex; align-items: center; gap: 10px; padding: 1rem 2.5rem; background: var(--success-color); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.2rem; transition: transform 0.2s ease; box-shadow: 0 4px 10px rgba(40,167,69,0.2);}
         .download-btn:hover { transform: translateY(-3px); background: #218838; }
 
-        /* Navigation */
         .navigation-buttons { display: flex; justify-content: center; gap: 1.5rem; margin-top: 3rem; flex-wrap: wrap; }
         .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s; }
         .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
@@ -127,28 +113,15 @@
         .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
-        /* Ad Slot */
         .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        /* SEO Content Section (From CSV) */
+        /* SEO Content Section */
         .seo-content {
-            position: relative;
-            z-index: 1 !important;
-            max-width: 900px;
-            margin: 3rem auto;
-            padding: 2.5rem;
-            background: var(--surface-color);
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            color: #424245;
-            line-height: 1.8;
-            text-align: left;
+            position: relative; z-index: 1 !important; max-width: 900px; margin: 3rem auto; padding: 2.5rem;
+            background: var(--surface-color); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            color: #424245; line-height: 1.8; text-align: left;
         }
-        .seo-content h2, .seo-content h3 {
-            color: var(--text-color);
-            margin-top: 2rem;
-            font-weight: 700;
-        }
+        .seo-content h2, .seo-content h3 { color: var(--text-color); margin-top: 2rem; font-weight: 700; }
         .seo-content h2:first-child { margin-top: 0; }
         .seo-content p { margin-bottom: 1.2rem; font-size: 1.05rem; }
         .seo-content ul { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: 1.05rem;}
@@ -158,8 +131,8 @@
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
         @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
         
-        /* Mobile Viewport Fixes */
         @media (max-width: 768px) {
+            body { padding-top: 60px; }
             .tool-container { padding: 2rem 1.5rem; }
             .options-grid { grid-template-columns: 1fr; gap: 1rem; }
             .bottom-nav { flex-direction: column; align-items: center; }
@@ -237,7 +210,7 @@
         <div class="ad-placeholder">
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
             <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            <script>(adsbygoogle = window.adsbygoogle ||[]).push({});</script>
         </div>
     </main>
 
@@ -255,11 +228,7 @@
         
         <h3>Real-World Scenarios: Who is this for?</h3>
         <p>I get asked a lot about who actually uses these things day-to-day. It really spans the board, but here are the most common situations:</p>
-        <ul>
-            <li><strong>The Late-Night Freelancer:</strong> You're on a tight deadline, the client needs the file <em>now</em>, and you don't have time to open heavy software. Click, process, send.</li>
-            <li><strong>The Small Business Owner:</strong> You don't need a $500 software suite to do basic administrative tasks. This tool handles the daily grind for free.</li>
-            <li><strong>The Code Ninja:</strong> When you just need to format, convert, or clean up data quickly before pushing it to production.</li>
-        </ul>
+        <ul><li><strong>The Late-Night Freelancer:</strong> You're on a tight deadline, the client needs the file <em>now</em>, and you don't have time to open heavy software. Click, process, send.</li><li><strong>The Small Business Owner:</strong> You don't need a $500 software suite to do basic administrative tasks. This tool handles the daily grind for free.</li><li><strong>The Code Ninja:</strong> When you just need to format, convert, or clean up data quickly before pushing it to production.</li></ul>
         
         <h3>Common Mistakes People Make (And How to Avoid Them)</h3>
         <p>Before you dive in, let me save you a little bit of grief. One of the most common mistakes I see people make when looking for a Rotate PDF is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring the initial file format. Always double-check what you are uploading. While our tool handles errors gracefully, garbage in still equals garbage out. Take a quick second to ensure your initial data or file is exactly what you want to work with. Lastly, don't forget to check your downloads folder! I can't tell you how many times I've processed something, got distracted, and then processed it again because I thought it didn't save. The Rotate PDF works so fast that sometimes you might miss the download prompt if you blink!</p>
@@ -270,12 +239,19 @@
         
         <h3>A Quick Pro-Tip Before You Go</h3>
         <p>One thing I always tell people when they start using the Rotate PDF heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to push the tool to its limits, test out different inputs, and see how fast it can actually process your data. The architecture is robust enough to handle it, so put it to the test!</p>
-        
+
         <h3>Frequently Asked Questions about the Rotate PDF</h3>
-        <p><strong>Is my data safe when using this tool?</strong><br> Absolutely. As I mentioned earlier, we prioritize client-side processing. This means your files and inputs are handled right there in your browser. We aren't interested in harvesting your data or storing your files on our servers. It's safer, faster, and infinitely more private.</p>
-        <p><strong>Do I need to create an account to use it?</strong><br> No way. I can't stand when a website makes you jump through a five-minute registration process just to convert a file or calculate a number. The Rotate PDF on jkmedit.in is completely open. Just load the page and get to work.</p>
-        <p><strong>Will it work on my phone?</strong><br> Yes! We spent a lot of time ensuring the user interface is completely responsive. Because we use absolute positioning logic and a clean, mobile-first design philosophy, all the buttons and inputs will scale perfectly to your smartphone or tablet screen. You can literally get work done while waiting in line for coffee.</p>
-        <p><strong>Why is this free? What's the catch?</strong><br> There is no catch. We built jkmedit.in as a passion project to house the tools we use ourselves. By keeping the site lightweight and optimized, our server costs are incredibly low. We believe in providing value upfront without tricking people into hidden subscriptions.</p>
+        <p><strong>Is my data safe when using this tool?</strong><br>
+        Absolutely. As I mentioned earlier, we prioritize client-side processing. This means your files and inputs are handled right there in your browser. We aren't interested in harvesting your data or storing your files on our servers. It's safer, faster, and infinitely more private.</p>
+        
+        <p><strong>Do I need to create an account to use it?</strong><br>
+        No way. I can't stand when a website makes you jump through a five-minute registration process just to convert a file or calculate a number. The Rotate PDF on jkmedit.in is completely open. Just load the page and get to work.</p>
+        
+        <p><strong>Will it work on my phone?</strong><br>
+        Yes! We spent a lot of time ensuring the user interface is completely responsive. Because we use absolute positioning logic and a clean, mobile-first design philosophy, all the buttons and inputs will scale perfectly to your smartphone or tablet screen. You can literally get work done while waiting in line for coffee.</p>
+        
+        <p><strong>Why is this free? What's the catch?</strong><br>
+        There is no catch. We built jkmedit.in as a passion project to house the tools we use ourselves. By keeping the site lightweight and optimized, our server costs are incredibly low. We believe in providing value upfront without tricking people into hidden subscriptions.</p>
         
         <h3>Final Thoughts</h3>
         <p>So there you have it. A straightforward, no-nonsense breakdown of the Rotate PDF. We built this because we needed it, and we're sharing it because we know how frustrating the alternatives can be. Take it for a test drive on jkmedit.in right now. I think you'll be genuinely surprised by just how snappy and intuitive it really is. Cheers to working smarter, not harder.</p>
@@ -287,26 +263,18 @@
         const { PDFDocument, degrees } = PDFLib;
 
         document.addEventListener('DOMContentLoaded', () => {
-            
-            // -----------------------------------------
-            // Load Dynamic Header & Init Mobile Menu
-            // -----------------------------------------
             fetch('https://jkmedit.in/header.html')
                 .then(response => response.text())
                 .then(data => { 
                     document.getElementById('header-placeholder').innerHTML = data; 
-                    
-                    // Re-initialize the mobile menu scripts after injection
                     const mobileToggle = document.getElementById('mobileToggle');
                     const navMenu = document.getElementById('navMenu');
-
                     if(mobileToggle && navMenu) {
                         mobileToggle.addEventListener('click', () => {
                             navMenu.classList.toggle('active');
                             mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
                         });
                     }
-
                     const navItems = document.querySelectorAll('.nav-item');
                     navItems.forEach(item => {
                         const link = item.querySelector('.nav-link');
@@ -327,15 +295,11 @@
                 })
                 .catch(error => console.error('Error loading header:', error));
 
-            // -----------------------------------------
-            // Load Dynamic Footer
-            // -----------------------------------------
             fetch('https://jkmedit.in/footer.html')
                 .then(response => response.text())
                 .then(data => document.getElementById('footer-placeholder').innerHTML = data)
                 .catch(error => console.error('Error loading footer:', error));
 
-            // Link Transitions
             document.querySelectorAll('a').forEach(link => {
                 const linkUrl = link.getAttribute('href');
                 if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
@@ -349,9 +313,6 @@
                 }
             });
 
-            // -----------------------------------------
-            // PDF Rotation Logic
-            // -----------------------------------------
             const uploadArea = document.getElementById('upload-area');
             const pdfUpload = document.getElementById('pdf-upload');
             const fileInfo = document.getElementById('file-info');
