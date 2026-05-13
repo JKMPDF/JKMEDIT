@@ -26,29 +26,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { font-family: var(--iphone-font); background-color: var(--bg); color: var(--text-main); -webkit-font-smoothing: antialiased; line-height: 1.6; }
 
-        /* --- NAVIGATION --- */
-        nav {
-            background: var(--glass);
-            backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .logo-img { 
-            width: 40px; height: 40px; background-size: contain; 
-            background-repeat: no-repeat; background-position: center; display: block;
-            background-image: url('https://jkmedit.in/assets/jkm-edit-logo.png');
-        }
-        .brand-name { font-size: 20px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; }
-
         /* --- HERO HEADER --- */
         .hero-page { text-align: center; padding: 80px 20px 60px; background: white; border-bottom: 1px solid #d2d2d7; }
         .hero-page h1 { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 15px; color: #111; }
@@ -68,38 +45,23 @@
         .feature-box h3 { font-size: 18px; margin-bottom: 10px; }
         .feature-box p { font-size: 14px; color: var(--text-sub); }
 
-        /* --- FOOTER --- */
-        footer { background: #1d1d1f; color: #f5f5f7; padding: 80px 5% 40px; margin-top: 60px; }
-        .footer-grid { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px; }
-        .footer-brand-info h2 { color: var(--primary); margin-bottom: 15px; font-size: 24px; font-weight: 700; }
-        .footer-brand-info p { font-size: 14px; color: var(--text-sub); line-height: 1.6; max-width: 400px; }
-        .footer-right { display: flex; gap: 80px; }
-        .footer-col h4 { color: #fff; margin-bottom: 25px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-        .footer-col ul { list-style: none; }
-        .footer-col a { color: var(--text-sub); text-decoration: none; font-size: 14px; transition: 0.2s; display: inline-block; padding: 5px 0; }
-        .footer-col a:hover { color: var(--primary); }
-        .footer-bottom { max-width: 1200px; margin: 60px auto 0; padding-top: 30px; border-top: 1px solid #424245; display: flex; justify-content: space-between; align-items: center; }
-        .socials { display: flex; gap: 20px; align-items: center; }
-        .social-link { color: var(--text-sub); transition: 0.3s; display: flex; align-items: center; }
-        .social-link:hover { color: white; transform: translateY(-3px); }
-
         @media (max-width: 768px) { 
             .content-inner { padding: 30px 20px; }
             .hero-page h1 { font-size: 36px; }
-            .footer-right { gap: 40px; width: 100%; } 
-            .footer-bottom { flex-direction: column; text-align: center; gap: 20px; } 
+        }
+
+        /* --- HEADER CONTAINER FIX --- */
+        #header-container {
+            position: sticky;
+            top: 0;
+            z-index: 2147483647; /* Maximum possible z-index to guarantee it stays on top */
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-<nav>
-    <a href="https://jkmedit.in/" class="brand">
-        <div class="logo-img"></div>
-        <span class="brand-name">JKM Edit</span>
-    </a>
-    <a href="https://jkmedit.in/" style="text-decoration: none; color: var(--primary); font-weight: 600; font-size: 15px;">Back to Tools</a>
-</nav>
+<div id="header-container"></div>
 
 <section class="hero-page">
     <h1>About JKM Edit</h1>
@@ -138,67 +100,49 @@
     </div>
 </main>
 
-<footer>
-    <div class="footer-grid">
-        <div class="footer-left">
-            <div class="footer-brand-info">
-                <h2>JKM EDIT</h2>
-                <p>The global standard for browser-based utility tools. Secure, fast, and high-fidelity solutions worldwide.</p>
-            </div>
-        </div>
-        <div class="footer-right">
-            <div class="footer-col">
-                <h4>Security</h4>
-                <ul>
-                    <li><a href="https://jkmedit.in/privacy-policy/">Privacy Policy</a></li>
-                    <li><a href="https://jkmedit.in/cookie-policy/">Cookie Policy</a></li>
-                    <li><a href="https://jkmedit.in/terms-and-conditions/">Terms of Service</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Company</h4>
-                <ul>
-                    <li><a href="https://jkmedit.in/about-us/">About Us</a></li>
-                    <li><a href="https://jkmedit.in/contact-us/">Contact Support</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <div style="font-size: 13px; color: #86868b;">&copy; 2026 <strong>JKM Edit</strong>. All rights reserved.</div>
-        <div class="socials">
-            <a href="mailto:contact.jkmedit@gmail.com" class="social-link"><span class="material-symbols-outlined">mail</span></a>
-            <a href="https://instagram.com/jkmedit" class="social-link"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-            <a href="https://youtube.com/@jkmedit" class="social-link"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
-        </div>
-    </div>
-</footer>
+<div id="footer-container"></div>
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jkmedit.in/#organization",
-      "name": "JKM Edit",
-      "url": "https://jkmedit.in",
-      "logo": "https://jkmedit.in/assets/jkm-edit-logo.png",
-      "sameAs": [
-        "https://instagram.com/jkmedit",
-        "https://youtube.com/@jkmedit"
-      ]
-    },
-    {
-      "@type": "AboutPage",
-      "@id": "https://jkmedit.in/about-us/#webpage",
-      "url": "https://jkmedit.in/about-us/",
-      "name": "About Us | JKM Edit",
-      "description": "Learn about JKM Edit's mission to provide secure, lightning-fast utility tools with 100% privacy.",
-      "isPartOf": { "@id": "https://jkmedit.in/#website" }
-    }
-  ]
-}
+<script>
+    // Fetch Header
+    fetch('https://jkmedit.in/header.html')
+        .then(response => response.text())
+        .then(data => { 
+            document.getElementById('header-container').innerHTML = data; 
+            
+            // Re-initialize the mobile menu scripts after injection
+            const mobileToggle = document.getElementById('mobileToggle');
+            const navMenu = document.getElementById('navMenu');
+
+            if(mobileToggle && navMenu) {
+                mobileToggle.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                    mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
+                });
+            }
+
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                const link = item.querySelector('.nav-link');
+                link.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 1024) {
+                        e.preventDefault(); 
+                        navItems.forEach(otherItem => {
+                            if (otherItem !== item && otherItem.classList.contains('active')) {
+                                otherItem.classList.remove('active');
+                            }
+                        });
+                        item.classList.toggle('active');
+                    }
+                });
+            });
+        })
+        .catch(error => console.error('Error loading header:', error));
+
+    // Fetch Footer
+    fetch('https://jkmedit.in/footer.html')
+        .then(response => response.text())
+        .then(data => { document.getElementById('footer-container').innerHTML = data; })
+        .catch(error => console.error('Error loading footer:', error));
 </script>
 
 </body>
