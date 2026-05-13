@@ -159,15 +159,6 @@
         .about-section h2 { color: var(--text-color); margin-top: 0; }
         .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
 
-        .footer-offerings {
-            display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
-            margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color);
-            max-width: 1000px; border: 1px solid var(--border-color); box-sizing: border-box;
-            background: white; border-radius: 18px;           
-        }
-        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
-        .offering-link:hover { text-decoration: underline; }
-
         /* --- Animations --- */
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -214,28 +205,21 @@
 
         <div class="about-section">
             <h2>About the Compress PDF Tool</h2>
-            <p>The Compress PDF tool is a highly advanced, exceptionally powerful optimization utility specifically engineered to drastically reduce the overall file size of your PDF documents while simultaneously maintaining their structural and visual integrity. In today’s fast-paced digital ecosystem, excessively large PDF files can be a massive hindrance. Whether you are trying to attach a heavy portfolio to an email that has strict size limits, uploading a scanned legal document to a government portal, or simply trying to free up valuable storage space on your hard drive, having access to a reliable compression tool is an absolute necessity for smooth digital communication.</p>
-            <p>This intelligent application functions by deeply analyzing the internal structure of your uploaded PDF and applying sophisticated compression algorithms. It meticulously downsamples excessively large, high-resolution embedded images, strips out redundant XML metadata, and optimizes font embedding without compromising the overall readability of the document text. A standout feature of our tool is the granular control it gives you over the compression process. Through a highly intuitive slider interface, you can precisely adjust the compression level from 0 to 99%. This allows you to perfectly balance your need for a smaller file size against the visual quality required for your specific use case—from a visually flawless lossless copy all the way down to extreme compression for strict upload limits.</p>
-            <p>Perhaps most importantly, this PDF compressor prioritizes your digital security and privacy above all else. Unlike traditional online converters that force you to upload your sensitive financial or personal documents to a remote server, our tool performs the entire compression process locally within your own web browser utilizing cutting-edge client-side technology. Your files never leave your device, ensuring total confidentiality. Furthermore, this local processing means you experience zero upload or download wait times, resulting in a lightning-fast, seamless optimization experience. Thank you for relying on our platform to optimize your digital workflow.</p>
+            <p>The Compress PDF tool is a highly advanced utility engineered to reduce file size while maintaining visual integrity. It functions locally in your browser to ensure privacy and speed.</p>
             <h2>Thank you</h2>
         </div>
 
-        <div class="footer-offerings">
-            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
-            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
-            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
-            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
-            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
-            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
-            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
-            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
-            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
-            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
-            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
-            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
-        </div>
-
     </main>
+
+    <div id="footer-placeholder"></div>
+    <script>
+        fetch('https://jkmedit.in/footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-placeholder').innerHTML = data;
+            })
+            .catch(err => console.error('Error loading footer:', err));
+    </script>
     
     <script>
         window.addEventListener('pageshow', function (event) {
