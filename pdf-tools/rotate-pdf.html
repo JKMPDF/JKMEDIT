@@ -3,25 +3,24 @@
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>Rotate PDF Online - Fix Page Orientation</title>
-    <meta name="description" content="Permanently rotate PDF pages or entire documents. Fix upside-down scans and save your files in the correct orientation instantly."/>
+    
+    <title>Free Rotate PDF Online | Fast & No Sign-Up Needed - jkmedit</title>
+    <meta name="description" content="Looking for a fast, free Rotate PDF? I built this tool to be instant, secure, and completely free to use directly in your browser. Try it out now on jkmedit.in."/>
     <meta name="author" content="JKM Edit"/>
-    <meta name="keywords" content="JKM Edit, JKM, Rotate PDF, flip PDF pages, fix PDF orientation, change PDF layout, rotate PDF 90 degrees, ">
-
+    <meta name="keywords" content="rotate pdf, rotate pdf online, free rotate pdf, jkmedit tools, how to use rotate pdf, permanently rotate pdf, change pdf orientation, rotate pdf 90 degrees, flip pdf pages, fast pdf rotator">
     <meta name="robots" content="index, follow"/>
     <link rel="canonical" href="https://jkmedit.in/tools/pdf-tools/rotate-pdf.html"/>
     <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Rotate PDF Online - Fix Page Orientation">
-    <meta property="og:description" content="Permanently rotate PDF pages or entire documents. Fix upside-down scans and save your files in the correct orientation instantly.">
+    <meta property="og:title" content="Free Rotate PDF Online | Fast & No Sign-Up Needed - jkmedit">
+    <meta property="og:description" content="Looking for a fast, free Rotate PDF? I built this tool to be instant, secure, and completely free to use directly in your browser. Try it out now on jkmedit.in.">
     <meta property="og:url" content="https://jkmedit.in/tools/pdf-tools/rotate-pdf.html">
     <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta property="og:site_name" content="JKM Edit">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
@@ -38,33 +37,51 @@
             --text-color: #172b4d; 
             --accent-color: #ffab00; 
             --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --border-color: #e1e4e8;
+            --success-color: #28a745;
         }
         
-        html, body { margin: 0; min-height: 100vh; background-color: var(--bg-color); color: var(--text-color); animation: fadeInPage 0.5s ease-in-out; }
+        html, body { 
+            margin: 0; 
+            min-height: 100vh; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            animation: fadeInPage 0.5s ease-in-out; 
+        }
         *, *::before, *::after { box-sizing: border-box; }
         .hidden { display: none !important; }
 
-        /* Header */
-        .branding-bar {
-            display: flex; align-items: center; padding: 1rem 2rem;
-            background: var(--surface-color); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-bottom: 3px solid var(--primary-color); justify-content: flex-start;
+        /* --- HEADER CONTAINER FIX --- */
+        #header-placeholder {
+            position: sticky;
+            top: 0;
+            z-index: 2147483647; /* Maximum possible z-index */
+            width: 100%;
         }
-        .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
-        .logo-image { height: 50px; width: auto; object-fit: contain; }
-        .branding-bar h2 { font-size: 1.75rem; font-weight: 700; margin: 0; color: var(--text-color); }
 
-        /* Main Container */
-        .tool-container { padding: 2rem 1.5rem; max-width: 900px; margin: auto; }
+        /* Enforce lower priority on main content */
+        .tool-container { 
+            position: relative; 
+            z-index: 1 !important; 
+            padding: 2rem 1.5rem; 
+            max-width: 900px; 
+            margin: auto; 
+        }
         
+        .tool-content-wrapper { 
+            position: relative;
+            z-index: 1 !important;
+            background: var(--surface-color); 
+            padding: 2.5rem; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            text-align: center; 
+        }
+
+        /* Tool Header */
         .tool-header { text-align: center; margin-bottom: 2rem; }
         .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
         .tool-header p { font-size: 1.1rem; color: #6c757d; }
-
-        .tool-content-wrapper { 
-            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; 
-        }
 
         /* Upload Area */
         .upload-area { 
@@ -76,6 +93,7 @@
         .upload-area p { margin: 0; font-size: 1.1rem; font-weight: 600; }
         #pdf-upload { display: none; }
 
+        /* Options Panel */
         .options-panel { background: #f9fafc; padding: 2rem; border-radius: 8px; margin-top: 2rem; border: 1px solid var(--border-color); display: none; text-align: left;}
         .options-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start; }
         .option-group { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -98,7 +116,7 @@
         .status-message { margin-top: 1.5rem; text-align: center; font-weight: 600; display: none; color: var(--secondary-color); font-size: 1.1rem;}
 
         .download-section { text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee; display: none; }
-        .download-btn { display: inline-flex; align-items: center; gap: 10px; padding: 1rem 2.5rem; background: #28a745; color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.2rem; transition: transform 0.2s ease; box-shadow: 0 4px 10px rgba(40,167,69,0.2);}
+        .download-btn { display: inline-flex; align-items: center; gap: 10px; padding: 1rem 2.5rem; background: var(--success-color); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.2rem; transition: transform 0.2s ease; box-shadow: 0 4px 10px rgba(40,167,69,0.2);}
         .download-btn:hover { transform: translateY(-3px); background: #218838; }
 
         /* Navigation */
@@ -112,38 +130,49 @@
         /* Ad Slot */
         .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        /* Extra Sections */
-        .about-section { margin: 40px auto; padding: 40px; background: white; border-radius: 18px; border: 1px solid var(--border-color); box-sizing: border-box; width: 100%;}
-        .about-section h2 { color: var(--text-color); margin-top: 0; }
-        .about-section p { line-height: 1.8; color: #424245; margin-bottom: 20px; }
-
-        .footer-offerings { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color); width: 100%; border: 1px solid var(--border-color); box-sizing: border-box; background: white; border-radius: 18px; }
-        .offering-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
-        .offering-link:hover { text-decoration: underline; }
+        /* SEO Content Section (From CSV) */
+        .seo-content {
+            position: relative;
+            z-index: 1 !important;
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background: var(--surface-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            color: #424245;
+            line-height: 1.8;
+            text-align: left;
+        }
+        .seo-content h2, .seo-content h3 {
+            color: var(--text-color);
+            margin-top: 2rem;
+            font-weight: 700;
+        }
+        .seo-content h2:first-child { margin-top: 0; }
+        .seo-content p { margin-bottom: 1.2rem; font-size: 1.05rem; }
+        .seo-content ul { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: 1.05rem;}
+        .seo-content li { margin-bottom: 0.5rem; }
 
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
         @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
         
+        /* Mobile Viewport Fixes */
         @media (max-width: 768px) {
             .tool-container { padding: 2rem 1.5rem; }
             .options-grid { grid-template-columns: 1fr; gap: 1rem; }
             .bottom-nav { flex-direction: column; align-items: center; }
             .nav-btn { width: 100%; justify-content: center; }
+            .seo-content { padding: 1.5rem; margin: 2rem 1rem; border-radius: 8px; }
         }
     </style>
 </head>
 <body>
 
-    <header class="branding-bar">
-        <a href='https://jkmedit.in/' class="logo-container">
-            <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM Edit Logo" class="logo-image" onerror="this.style.display='none'">
-            <h2>JKM Edit</h2>
-        </a>
-    </header>
+    <div id="header-placeholder"></div>
 
     <main class='tool-container'>
-
         <div class='tool-header'>
             <h1>Rotate PDF Documents</h1>
             <p>Permanently fix the orientation of scanned PDF pages with a single click.</p>
@@ -210,35 +239,103 @@
             <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
-
-        <div class="about-section">
-            <h2>About the Rotate PDF Tool</h2>
-            <p>The Rotate PDF tool is an incredibly practical, highly efficient digital utility specifically engineered to solve one of the most common and annoying problems in document management: improperly oriented pages. When scanning large batches of physical documents—such as multi-page legal contracts, mixed-orientation tax receipts, or double-sided university handouts—it is exceptionally common for pages to feed through the scanner upside down or completely sideways. Opening a PDF to find half the pages oriented incorrectly makes the document functionally unreadable and highly unprofessional. This application allows you to permanently fix those layout errors with just a few simple clicks.</p>
-            <p>We designed the configuration panel of this tool to provide both broad, sweeping fixes and granular, highly specific adjustments. If your entire document was scanned upside down, you can utilize the bulk "All Pages" selector and apply a flat 180-degree rotation across the board. However, if your document suffers from a more complex collation error—where only the back sides of pages scanned incorrectly—you can utilize the intelligent "Even Pages Only" or "Odd Pages Only" filters to isolate and rotate the specific problem pages. For ultimate precision, the "Custom Range" input allows you to manually declare exactly which page indices to target (e.g., rotating only pages 1 through 3, and page 5), leaving the rest of the document completely untouched.</p>
-            <p>Like all premium utilities in our digital suite, the Rotate PDF tool places maximum priority on data security and processing efficiency. The entire PDF rotation mechanism is powered by advanced client-side JavaScript, meaning the physical manipulation of the document pages occurs strictly within your local computer's memory. Your highly sensitive medical records, private financial portfolios, and confidential corporate communications are never transmitted across the internet or uploaded to a remote server. This decentralized processing model guarantees 100% total data privacy and ensures lightning-fast rendering times without network latency. Thank you for relying on our platform to optimize your digital workspace.</p>
-            <h2>Thank you</h2>
-        </div>
-
-        <div class="footer-offerings">
-            <a href="https://jkmedit.in/tools/pdf-tools.html" class="offering-link">PDF Tools</a>
-            <a href="https://jkmedit.in/tools/image-tools.html" class="offering-link">Image Tools</a>
-            <a href="https://jkmedit.in/tools/finance.html" class="offering-link">Finance & Accounting</a>
-            <a href="https://jkmedit.in/tools/file-tools.html" class="offering-link">File Tools</a>
-            <a href="https://jkmedit.in/tools/code-generators.html" class="offering-link">Code Generators</a>
-            <a href="https://jkmedit.in/tools/time-date.html" class="offering-link">Time & Date</a>
-            <a href="https://jkmedit.in/tools/unit-converters.html" class="offering-link">Unit Convertors</a>
-            <a href="https://jkmedit.in/tools/web-tools.html" class="offering-link">Web & UI Tools</a>
-            <a href="https://jkmedit.in/tools/utilities.html" class="offering-link">Utilities</a>
-            <a href="https://jkmedit.in/tools/Ebook/index.html" class="offering-link">E-books</a>
-            <a href="https://jkmedit.in/tools/games.html" class="offering-link">Games</a>
-            <a href="https://jkmedit.in/tools/other.html" class="offering-link">Other Tools</a>
-        </div>
     </main>
+
+    <article class="seo-content">
+        <h2>Why the Rotate PDF is About to Become Your Favorite Utility</h2>
+        <p>Let's be completely honest for a second. We've all been sitting at our desks, staring at a screen, just trying to get one simple task done. You just need to use a Rotate PDF, but every software you find wants you to download some massive installation package, sign up for a newsletter, or pay a ridiculous subscription fee. It's frustrating, right? That's exactly why having a reliable, instant solution right in your browser is an absolute lifesaver. You don't have time to waste fighting with clunky interfaces when you have real work to do.</p>
+        
+        <h3>The Frustration We're Solving</h3>
+        <p>A while back, while putting together jkmedit.in, the vision was simple: build the stuff we actually wanted to use ourselves. I was tired of opening a supposedly 'free' tool only to be hit with a watermark or a strict file-size limit at the very last second. Building the Rotate PDF was personal. We wanted something that was genuinely useful, incredibly fast, and didn't treat the user like a product to be monetized. It's built by developers who understand the value of a smooth, uninterrupted workflow.</p>
+        <p>PDFs are amazing for keeping things formatted, but man, they can be an absolute nightmare to edit. You try to change one little thing and suddenly the whole document breaks, or you're prompted to buy a premium license. That's exactly the headache we're bypassing here.</p>
+        
+        <h3>How the Rotate PDF Actually Works (Without the Jargon)</h3>
+        <p>Let's peek under the hood a bit. The beauty of this Rotate PDF lies in how lightweight it is. We stripped away all the unnecessary bloat that usually slows these web apps down. By relying on clean, native web languages like Vanilla JavaScript and solid HTML structure, the tool responds instantly to your clicks. It feels less like a webpage and more like a native app installed directly on your machine. You shouldn't have to wait for a loading spinner every time you adjust a slider or change an input field.</p>
+        <p>Speed is everything. To make the Rotate PDF as fast as humanly possible, we got rid of unnecessary database calls. Everything is streamlined. When you hit that execute button, the scripts go to work instantly. We also implemented strict output rules. For instance, if you're dealing with developer or SEO tools, we ensure things like trailing slashes are handled correctly, and duplicates are merged or removed flawlessly. It's these tiny, granular details that separate a cheap script from a professional-grade utility.</p>
+        
+        <h3>Real-World Scenarios: Who is this for?</h3>
+        <p>I get asked a lot about who actually uses these things day-to-day. It really spans the board, but here are the most common situations:</p>
+        <ul>
+            <li><strong>The Late-Night Freelancer:</strong> You're on a tight deadline, the client needs the file <em>now</em>, and you don't have time to open heavy software. Click, process, send.</li>
+            <li><strong>The Small Business Owner:</strong> You don't need a $500 software suite to do basic administrative tasks. This tool handles the daily grind for free.</li>
+            <li><strong>The Code Ninja:</strong> When you just need to format, convert, or clean up data quickly before pushing it to production.</li>
+        </ul>
+        
+        <h3>Common Mistakes People Make (And How to Avoid Them)</h3>
+        <p>Before you dive in, let me save you a little bit of grief. One of the most common mistakes I see people make when looking for a Rotate PDF is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring the initial file format. Always double-check what you are uploading. While our tool handles errors gracefully, garbage in still equals garbage out. Take a quick second to ensure your initial data or file is exactly what you want to work with. Lastly, don't forget to check your downloads folder! I can't tell you how many times I've processed something, got distracted, and then processed it again because I thought it didn't save. The Rotate PDF works so fast that sometimes you might miss the download prompt if you blink!</p>
+        
+        <h3>The Bigger Picture: Workflow and Efficiency</h3>
+        <p>Another thing we really need to talk about is accessibility. Not everyone has a top-of-the-line MacBook Pro. Sometimes you're working on an older laptop or a budget tablet. Heavy web apps that rely on massive memory chunks will freeze those devices up. Because the Rotate PDF is optimized at the code level, it runs incredibly smooth on virtually any device with a modern browser. We believe that professional-grade digital tools should be accessible to everyone, regardless of their hardware specs. It's a level playing field.</p>
+        <p>Honestly, adopting tools like this changes your entire workflow. You stop seeing these little conversions and edits as 'chores' and start seeing them as just another seamless part of your day. It’s about reducing friction. Every time you have to stop what you're doing, open a new program, wait for it to load, find the file, and export it, you lose your flow state. The Rotate PDF is designed to keep you in the zone. You open a tab, get it done in three seconds, and jump right back into your actual work. That kind of micro-efficiency really adds up over a week, a month, or a year.</p>
+        
+        <h3>A Quick Pro-Tip Before You Go</h3>
+        <p>One thing I always tell people when they start using the Rotate PDF heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to push the tool to its limits, test out different inputs, and see how fast it can actually process your data. The architecture is robust enough to handle it, so put it to the test!</p>
+        
+        <h3>Frequently Asked Questions about the Rotate PDF</h3>
+        <p><strong>Is my data safe when using this tool?</strong><br> Absolutely. As I mentioned earlier, we prioritize client-side processing. This means your files and inputs are handled right there in your browser. We aren't interested in harvesting your data or storing your files on our servers. It's safer, faster, and infinitely more private.</p>
+        <p><strong>Do I need to create an account to use it?</strong><br> No way. I can't stand when a website makes you jump through a five-minute registration process just to convert a file or calculate a number. The Rotate PDF on jkmedit.in is completely open. Just load the page and get to work.</p>
+        <p><strong>Will it work on my phone?</strong><br> Yes! We spent a lot of time ensuring the user interface is completely responsive. Because we use absolute positioning logic and a clean, mobile-first design philosophy, all the buttons and inputs will scale perfectly to your smartphone or tablet screen. You can literally get work done while waiting in line for coffee.</p>
+        <p><strong>Why is this free? What's the catch?</strong><br> There is no catch. We built jkmedit.in as a passion project to house the tools we use ourselves. By keeping the site lightweight and optimized, our server costs are incredibly low. We believe in providing value upfront without tricking people into hidden subscriptions.</p>
+        
+        <h3>Final Thoughts</h3>
+        <p>So there you have it. A straightforward, no-nonsense breakdown of the Rotate PDF. We built this because we needed it, and we're sharing it because we know how frustrating the alternatives can be. Take it for a test drive on jkmedit.in right now. I think you'll be genuinely surprised by just how snappy and intuitive it really is. Cheers to working smarter, not harder.</p>
+    </article>
+
+    <div id="footer-placeholder"></div>
 
     <script>
         const { PDFDocument, degrees } = PDFLib;
 
         document.addEventListener('DOMContentLoaded', () => {
+            
+            // -----------------------------------------
+            // Load Dynamic Header & Init Mobile Menu
+            // -----------------------------------------
+            fetch('https://jkmedit.in/header.html')
+                .then(response => response.text())
+                .then(data => { 
+                    document.getElementById('header-placeholder').innerHTML = data; 
+                    
+                    // Re-initialize the mobile menu scripts after injection
+                    const mobileToggle = document.getElementById('mobileToggle');
+                    const navMenu = document.getElementById('navMenu');
+
+                    if(mobileToggle && navMenu) {
+                        mobileToggle.addEventListener('click', () => {
+                            navMenu.classList.toggle('active');
+                            mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
+                        });
+                    }
+
+                    const navItems = document.querySelectorAll('.nav-item');
+                    navItems.forEach(item => {
+                        const link = item.querySelector('.nav-link');
+                        if (link) {
+                            link.addEventListener('click', (e) => {
+                                if (window.innerWidth <= 1024) {
+                                    e.preventDefault(); 
+                                    navItems.forEach(otherItem => {
+                                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                                            otherItem.classList.remove('active');
+                                        }
+                                    });
+                                    item.classList.toggle('active');
+                                }
+                            });
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading header:', error));
+
+            // -----------------------------------------
+            // Load Dynamic Footer
+            // -----------------------------------------
+            fetch('https://jkmedit.in/footer.html')
+                .then(response => response.text())
+                .then(data => document.getElementById('footer-placeholder').innerHTML = data)
+                .catch(error => console.error('Error loading footer:', error));
+
+            // Link Transitions
             document.querySelectorAll('a').forEach(link => {
                 const linkUrl = link.getAttribute('href');
                 if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
@@ -252,6 +349,9 @@
                 }
             });
 
+            // -----------------------------------------
+            // PDF Rotation Logic
+            // -----------------------------------------
             const uploadArea = document.getElementById('upload-area');
             const pdfUpload = document.getElementById('pdf-upload');
             const fileInfo = document.getElementById('file-info');
