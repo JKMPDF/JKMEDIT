@@ -75,29 +75,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { font-family: var(--iphone-font); background-color: var(--bg); color: var(--text-main); -webkit-font-smoothing: antialiased; }
 
-        /* --- NAVIGATION --- */
-        nav {
-            background: var(--glass);
-            backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .logo-img { 
-            width: 40px; height: 40px; background-size: contain; 
-            background-repeat: no-repeat; background-position: center; display: block;
-            background-image: url('https://jkmedit.in/assets/jkm-edit-logo.png');
-        }
-        .brand-name { font-size: 20px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; }
-
         /* --- HERO & SEARCH --- */
         .hero { text-align: center; padding: 100px 20px 80px; background: white; }
         .hero h1 { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 15px; color: #111; }
@@ -109,7 +86,7 @@
         .search-input { flex: 1; border: none; font-size: 17px; padding-left: 12px; font-family: var(--iphone-font); }
 
         /* --- TABS --- */
-        .tab-section { position: sticky; top: 64px; background: var(--bg); z-index: 99; padding: 15px 0; border-bottom: 1px solid #d2d2d7; }
+        .tab-section { background: var(--bg); padding: 15px 0; border-bottom: 1px solid #d2d2d7; }
         .tab-list { display: flex; gap: 10px; max-width: 1200px; margin: 0 auto; overflow-x: auto; padding: 0 20px; scrollbar-width: none; cursor: grab; user-select: none; }
         .tab-list::-webkit-scrollbar { display: none; }
         .tab-btn { padding: 10px 22px; background: #fff; border: 1px solid #d2d2d7; border-radius: 40px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.2s; }
@@ -152,7 +129,7 @@
         
         .media-box { min-width: 300px; background: var(--bg); border-radius: 20px; overflow: hidden; border: 1px solid #e5e5ea; flex-shrink: 0; pointer-events: none; }
         .video-container { aspect-ratio: 16/9; background: #000; position: relative; pointer-events: auto; }
-        .video-container iframe, .video-container video { width: 100%; height: 100%; border: none; }
+        .video-container iframe, .video-container video, .video-container img { width: 100%; height: 100%; border: none; object-fit: cover; }
         .media-text { padding: 15px; }
 
         /* --- SEO CONTENT --- */
@@ -162,36 +139,15 @@
         .seo-inner h3 { font-size: 24px; margin: 30px 0 15px; color: var(--primary); font-weight: 700; }
         .seo-inner p { font-size: 17px; color: #424245; margin-bottom: 25px; }
 
-        /* --- FOOTER --- */
-        footer { background: #1d1d1f; color: #f5f5f7; padding: 80px 5% 40px; }
-        .footer-grid { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px; }
-        .footer-brand-info h2 { color: var(--primary); margin-bottom: 15px; font-size: 24px; font-weight: 700; }
-        .footer-brand-info p { font-size: 14px; color: var(--text-sub); line-height: 1.6; max-width: 400px; }
-        .footer-right { display: flex; gap: 80px; }
-        .footer-col h4 { color: #fff; margin-bottom: 25px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-        .footer-col ul { list-style: none; }
-        .footer-col a { color: var(--text-sub); text-decoration: none; font-size: 14px; transition: 0.2s; display: inline-block; padding: 5px 0; }
-        .footer-col a:hover { color: var(--primary); }
-
-        .footer-bottom { max-width: 1200px; margin: 60px auto 0; padding-top: 30px; border-top: 1px solid #424245; display: flex; justify-content: space-between; align-items: center; }
-        .socials { display: flex; gap: 20px; align-items: center; }
-        .social-link { color: var(--text-sub); transition: 0.3s; display: flex; align-items: center; }
-        .social-link:hover { color: white; transform: translateY(-3px); }
-
         #cookie-box { position: fixed; bottom: 20px; right: 20px; width: 350px; background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); z-index: 10000; display: none; border: 1px solid #d2d2d7; }
         .cookie-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 15px; width: 100%; }
 
-        @media (max-width: 768px) { .footer-right { gap: 40px; width: 100%; } .footer-bottom { flex-direction: column; text-align: center; gap: 20px; } .hero h1 { font-size: 38px; } }
+        @media (max-width: 768px) { .hero h1 { font-size: 38px; } }
     </style>
 </head>
 <body>
 
-<nav>
-    <a href="#" class="brand">
-        <div class="logo-img"></div>
-        <span class="brand-name">JKM Edit</span>
-    </a>
-</nav>
+<div id="header-placeholder"></div>
 
 <section class="hero">
     <h1>Every utility tool you need, in one place</h1>
@@ -612,26 +568,77 @@
     <div class="gallery-inner">
         <h3>Feature Spotlights</h3>
         <div class="gallery-scroll" id="slider">
+            
             <div class="media-box">
                 <div class="video-container">
-                    <iframe src="" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_1" allowfullscreen></iframe>
                 </div>
                 <div class="media-text"><h4>Tutorial: PDF Master</h4><p>Master document merging.</p></div>
             </div>
-            <script>
-                for(let i=2; i<=10; i++){
-                    document.write(`
-                    <div class="media-box">
-                        <div class="video-container">
-                            <div style="height:100%; background:#222; display:flex; align-items:center; justify-content:center; color:#555;">
-                                <span class="material-symbols-outlined" style="font-size:48px;">play_circle</span>
-                            </div>
-                        </div>
-                        <div class="media-text"><h4>Web Function ${i}</h4><p>Optimization and secure processing demo.</p></div>
-                    </div>
-                    `);
-                }
-            </script>
+
+            <div class="media-box">
+                <div class="video-container">
+                    <img src="YOUR_IMAGE_LINK_2.jpg" alt="Feature 2">
+                </div>
+                <div class="media-text"><h4>Fast Processing</h4><p>Server-side optimization for speed.</p></div>
+            </div>
+
+            <div class="media-box">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_3" allowfullscreen></iframe>
+                </div>
+                <div class="media-text"><h4>Feature 3</h4><p>Add your description here.</p></div>
+            </div>
+
+            <div class="media-box">
+                <div class="video-container">
+                    <img src="YOUR_IMAGE_LINK_4.jpg" alt="Feature 4">
+                </div>
+                <div class="media-text"><h4>Feature 4</h4><p>Add your description here.</p></div>
+            </div>
+
+            <div class="media-box">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_5" allowfullscreen></iframe>
+                </div>
+                <div class="media-text"><h4>Feature 5</h4><p>Add your description here.</p></div>
+            </div>
+
+            <div class="media-box">
+                <div class="video-container">
+                    <img src="YOUR_IMAGE_LINK_6.jpg" alt="Feature 6">
+                </div>
+                <div class="media-text"><h4>Feature 6</h4><p>Add your description here.</p></div>
+            </div>
+
+            <div class="media-box">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_7" allowfullscreen></iframe>
+                </div>
+                <div class="media-text"><h4>Feature 7</h4><p>Add your description here.</p></div>
+            </div>
+
+            <div class="media-box">
+                <div class="video-container">
+                    <img src="YOUR_IMAGE_LINK_8.jpg" alt="Feature 8">
+                </div>
+                <div class="media-text"><h4>Feature 8</h4><p>Add your description here.</p></div>
+            </div>
+
+            <div class="media-box">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_9" allowfullscreen></iframe>
+                </div>
+                <div class="media-text"><h4>Feature 9</h4><p>Add your description here.</p></div>
+            </div>
+
+            <div class="media-box">
+                <div class="video-container">
+                    <img src="YOUR_IMAGE_LINK_10.jpg" alt="Feature 10">
+                </div>
+                <div class="media-text"><h4>Feature 10</h4><p>Add your description here.</p></div>
+            </div>
+
         </div>
     </div>
 </section>
@@ -683,34 +690,7 @@
     </div>
 </article>
 
-<footer>
-    <div class="footer-grid">
-        <div class="footer-left">
-            <div class="footer-brand-info">
-                <h2>JKM EDIT</h2>
-                <p>JKM Edit Provides Free online digital tool to help you solve problems of all types. No data or files to be collected or sales to third parties.</p>
-            </div>
-        </div>
-        <div class="footer-right">
-            <div class="footer-col">
-                <h4>Legal</h4>
-                <ul><li><a href="https://jkmedit.in/help/privacy.html">Privacy Policy</a></li><li><a href="https://jkmedit.in/help/terms.html">Terms & Conditions</a></li><li><a href="https://jkmedit.in/help/disclaimer.html">Disclaimer</a></li><li><a href="https://jkmedit.in/help/cookie.html">Cookie Policy</a></li></ul>
-            </div>
-            <div class="footer-col">
-                <h4>Resources</h4>
-                <ul><li><a href="https://jkmedit.in/help/about.html">About Us</a></li><li><a href="https://jkmedit.in/help/contact.html">Contact Support</a></li></ul>
-            </div>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <div style="font-size: 13px; color: #86868b;">&copy; 2026 <strong>JKM Edit</strong>. All rights reserved.</div>
-        <div class="socials">
-            <a href="mailto:contact.jkmedit@gmail.com" class="social-link"><span class="material-symbols-outlined">mail</span></a>
-            <a href="https://www.instagram.com/jkmedit.in?igsh=MWxtdG80MzUwb2Jvdg==" class="social-link"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-            <a href="https://youtube.com/@jkm-edit?si=S_yQad4NQAGaXdWv" class="social-link"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
-        </div>
-    </div>
-</footer>
+<div id="footer-placeholder"></div>
 
 <div id="cookie-box">
     <p style="font-size: 14px; font-weight: 500;">Privacy. Essential cookies only.</p>
@@ -718,6 +698,20 @@
 </div>
 
 <script>
+    // Fetch Header and Footer from external links
+    async function loadRemoteElements() {
+        try {
+            const headerRes = await fetch('https://jkmedit.in/header.html');
+            const footerRes = await fetch('https://jkmedit.in/footer.html');
+            
+            if(headerRes.ok) document.getElementById('header-placeholder').innerHTML = await headerRes.text();
+            if(footerRes.ok) document.getElementById('footer-placeholder').innerHTML = await footerRes.text();
+        } catch (err) {
+            console.error("Failed to load header/footer:", err);
+        }
+    }
+    loadRemoteElements();
+
     function searchTools() {
         let q = document.getElementById('toolSearch').value.toLowerCase();
         document.querySelectorAll('.tool-card').forEach(c => {
@@ -735,6 +729,7 @@
     // DRAG-TO-SCROLL ENABLED FOR DESKTOP
     function initDrag(selector) {
         const el = document.querySelector(selector);
+        if(!el) return;
         let isDown = false, startX, scrollLeft;
         el.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - el.offsetLeft; scrollLeft = el.scrollLeft; });
         el.addEventListener('mouseleave', () => { isDown = false; });
