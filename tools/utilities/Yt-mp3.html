@@ -372,9 +372,19 @@
         }
 
       function loadDownloadWidget(videoId, btnElement) {
-            // Because your browser blocks iframes, we use a clean redirect.
-            // This immediately opens the Y2Mate downloader with the MP3 ready to save.
-            window.open(`https://www.y2mate.com/youtube/${videoId}`, '_blank');
+            const container = btnElement.parentElement;
+            
+            // We added the 'sandbox' attribute below.
+            // This blocks the API from opening new tabs (ads) or redirecting your website,
+            // while still allowing it to process the script and trigger the MP3 download.
+            container.innerHTML = `
+                <iframe 
+                    sandbox="allow-scripts allow-same-origin allow-downloads"
+                    style="width: 100%; height: 60px; border: none; overflow: hidden; border-radius: 6px;" 
+                    scrolling="no" 
+                    src="https://apiyt.com/iframe/?vid=${videoId}&color=0052cc">
+                </iframe>
+            `;
         }
     </script>
 </body>
