@@ -87,6 +87,8 @@
     }
     </script>
      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    
+    <!-- MAIN SITE STYLES -->
     <style>
         :root {
             --primary: #007AFF;
@@ -171,26 +173,26 @@
         @media (max-width: 768px) { .hero h1 { font-size: 38px; } }
     </style>
 
+    <!-- HEADER SPECIFIC STYLES -->
     <style>
         :root {
-            --primary-text: #1d1d1f; /* Apple standard text */
-            --hover-bg: #f5f5f7;
-            --border-color: #d2d2d7;
-            --brand-color: #0071e3; /* Apple blue */
-            --corporate-blue: #0047AB; /* Deep corporate blue */
+            --primary-text: #1d1d1f; 
+            --hover-bg: #f8faff; /* Light corporate blue tint for hover */
+            --border-color: #e1e1e1; /* Clean grey border */
+            --brand-color: #0071e3; 
+            --corporate-blue: #0047AB; 
             --header-height: 84px;
         }
         
         /* Professional Header Base */
         header {
             background-color: rgba(255, 255, 255, 0.98); 
-            backdrop-filter: saturate(180%) blur(20px); /* Apple glassmorphism effect */
+            backdrop-filter: saturate(180%) blur(20px); 
             -webkit-backdrop-filter: saturate(180%) blur(20px);
-            /* The Corporate Blue Line */
             border-bottom: 4px solid var(--corporate-blue);
             position: sticky;
             top: 0;
-            z-index: 2147483647 !important; /* Absolute maximum CSS z-index to force to front */
+            z-index: 2147483647 !important; 
             padding: 0 40px;
             display: flex;
             align-items: center;
@@ -199,7 +201,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.04);
         }
         
-        /* Logo Section */
         .logo {
             font-size: 20px;
             font-weight: 600;
@@ -208,7 +209,7 @@
             letter-spacing: 0.5px;
             display: flex;
             align-items: center;
-            gap: 12px; /* Space between icon and text */
+            gap: 12px;
             padding: 6px 12px;
             border-radius: 8px;
             transition: opacity 0.2s;
@@ -221,33 +222,35 @@
             width: 40px;
             height: 40px;
             fill: var(--primary-text);
-            /* If you upload an image, the CSS below ensures it fits well */
             object-fit: contain;
         }
         
-        /* Desktop Navigation */
         .nav-menu {
             display: flex;
             list-style: none;
             height: 100%;
             margin: 0;
+            align-items: center;
         }
         
         .nav-item {
             height: 100%;
             display: flex;
             align-items: center;
-            margin: 0 4px;
+            margin: 0 6px;
         }
         
+        /* Professional Border Button Style */
         .nav-link {
             color: var(--primary-text);
+            background-color: transparent;
             text-decoration: none;
             font-weight: 500;
             font-size: 14px;
-            padding: 8px 16px;
-            border-radius: 98px; /* Pill shape hover like modern Apple UI */
-            transition: all 0.2s ease;
+            padding: 10px 22px;
+            border: 1.5px solid var(--border-color); 
+            border-radius: 98px; 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -260,9 +263,12 @@
             transition: transform 0.3s ease;
         }
 
+        /* Hover Effect for Border Buttons */
         .nav-item:hover .nav-link {
-            background-color: var(--hover-bg);
+            border-color: var(--corporate-blue);
             color: var(--corporate-blue);
+            background-color: var(--hover-bg);
+            box-shadow: 0 4px 10px rgba(0, 71, 171, 0.08);
         }
         
         .nav-item:hover .arrow {
@@ -270,7 +276,6 @@
             opacity: 1;
         }
 
-        /* Mega Menu Dropdown */
         .mega-menu {
             position: absolute;
             top: var(--header-height);
@@ -278,7 +283,7 @@
             width: 100%;
             background: #ffffff;
             box-shadow: 0 16px 40px rgba(0,0,0,0.08);
-            border-bottom: 1px solid var(--border-color);
+            border-top: 1px solid var(--border-color);
             opacity: 0;
             visibility: hidden;
             transform: translateY(-5px);
@@ -317,11 +322,10 @@
         }
 
         .mega-menu-link:hover {
-            background-color: var(--hover-bg);
+            background-color: #f5f5f7;
             color: var(--corporate-blue);
         }
 
-        /* Mobile Toggle Hamburger */
         .mobile-toggle {
             display: none;
             font-size: 24px;
@@ -351,9 +355,9 @@
                 align-items: flex-start;
                 overflow-y: auto;
                 transition: left 0.3s ease;
-                padding: 20px 20px 80px 20px; 
+                padding: 30px 20px 80px 20px; 
                 display: block;
-                z-index: 2147483647 !important; /* Maximum z-index */
+                z-index: 2147483647 !important;
             }
             .nav-menu.active {
                 left: 0;
@@ -363,41 +367,36 @@
                 width: 100%;
                 flex-direction: column;
                 align-items: flex-start;
-                margin: 0;
-                border-bottom: 1px solid var(--border-color);
-            }
-            .nav-item:last-child {
-                border-bottom: none;
+                margin: 0 0 12px 0;
             }
             .nav-link {
                 width: 100%;
-                padding: 18px 10px;
+                padding: 16px 20px;
                 display: flex;
                 justify-content: space-between;
                 font-size: 16px;
-                border-radius: 0;
-            }
-            .nav-item:hover .nav-link {
-                background: transparent;
-                color: var(--primary-text);
+                border-radius: 12px; 
+                border: 1.5px solid var(--border-color);
             }
             .nav-item.active .nav-link {
+                border-color: var(--corporate-blue);
                 color: var(--corporate-blue);
+                background-color: var(--hover-bg);
             }
             .nav-item.active .arrow {
                 transform: rotate(180deg);
             }
             
-            /* Convert Mega Menu to Accordion for Mobile */
             .mega-menu {
                 position: static;
                 box-shadow: none;
                 opacity: 1;
                 visibility: visible;
                 display: none; 
-                padding: 10px 0 20px 15px;
+                padding: 10px 0 10px 15px;
                 border: none;
                 transform: none;
+                width: 100%;
             }
             .nav-item.active .mega-menu {
                 display: block;
@@ -413,8 +412,8 @@
         }
     </style>
 
+    <!-- FOOTER STYLES -->
     <style>
-        /* Footer Main Container */
         .site-footer {
             background-color: #1a1a1a;
             color: #9e9e9e;
@@ -436,7 +435,6 @@
             margin-bottom: 50px;
         }
 
-        /* Brand & Description Section */
         .footer-brand {
             flex: 2;
             min-width: 300px;
@@ -445,7 +443,7 @@
         }
 
         .footer-logo {
-            color: #007BFF; /* Corporate Blue */
+            color: #007BFF; 
             font-size: 24px;
             font-weight: 700;
             text-decoration: none;
@@ -458,7 +456,6 @@
             max-width: 420px;
         }
 
-        /* Navigation Links Section */
         .footer-links-col {
             flex: 1;
             min-width: 150px;
@@ -492,7 +489,6 @@
             color: #ffffff;
         }
 
-        /* Footer Bottom Row */
         .footer-bottom-row {
             display: flex;
             justify-content: space-between;
@@ -506,7 +502,6 @@
             margin-bottom: 15px;
         }
 
-        /* Social Icons */
         .footer-socials {
             display: flex;
             gap: 20px;
@@ -531,7 +526,6 @@
             fill: currentColor;
         }
 
-        /* Responsive Adjustments */
         @media (max-width: 768px) {
             .footer-top-row {
                 flex-direction: column;
@@ -549,11 +543,10 @@
 </head>
 <body>
 
+<!-- UPDATED HEADER WITH BORDER BUTTONS -->
 <header>
     <a href="https://jkmedit.in/" class="logo">
-              <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM EDIT Logo" class="logo-icon">
-            <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
-        </svg>
+        <img src="https://jkmedit.in/assets/jkm-edit-logo.png" alt="JKM EDIT Logo" class="logo-icon">
         JKM EDIT
     </a>
     
@@ -562,146 +555,35 @@
     </button>
 
     <ul class="nav-menu" id="navMenu">
+        
+        <!-- Home Bordered Button -->
         <li class="nav-item">
-            <a href="#" class="nav-link">PDF Tools <span class="arrow">&#9662;</span></a>
+            <a href="https://jkmedit.in/" class="nav-link">Home</a>
+        </li>
+        
+        <!-- Blog Bordered Button -->
+        <li class="nav-item">
+            <a href="https://jkmedit.in/blog/index.html" class="nav-link">Blog</a>
+        </li>
+
+        <!-- Tools Dropdown Bordered Button -->
+        <li class="nav-item">
+            <a href="#" class="nav-link">Tools <span class="arrow">&#9662;</span></a>
             <div class="mega-menu">
                 <div class="mega-menu-inner">
-                    <a href="https://jkmedit.in/tools/pdf-tools/merge-pdf.html" target="_blank" class="mega-menu-link">Merge PDF</a>
-                    <a href="https://jkmedit.in/tools/pdf-tools/split-pdf.html" target="_blank" class="mega-menu-link">Split PDF</a>
-                    <a href="https://jkmedit.in/tools/pdf-tools/compress-pdf.html" target="_blank" class="mega-menu-link">Compress PDF</a>
-                    <a href="https://jkmedit.in/tools/pdf-tools/Watermark.html" target="_blank" class="mega-menu-link">Add Watermark</a>
-                    <a href="https://jkmedit.in/tools/pdf-tools/View-PDF.html" target="_blank" class="mega-menu-link">View PDF</a>
-                    <a href="https://jkmedit.in/tools/pdf-tools/pdf-to-image.html" target="_blank" class="mega-menu-link">PDF to JPG</a>
-                    <a href="https://jkmedit.in/tools/pdf-tools/PNG-to-pdf.html" target="_blank" class="mega-menu-link">JPG to PDF</a>
-                    <a href="https://jkmedit.in/tools/pdf-tools/Dark-Mode.html" target="_blank" class="mega-menu-link">Dark Mode</a>
-                    <a href="https://jkmedit.in/tools/pdf-tools/PDF-auto.html" target="_blank" class="mega-menu-link">PDF auto scroll</a>
-                    <a href="https://jkmedit.in/tools/pdf-tools/PDF-Notepad.html" target="_blank" class="mega-menu-link">PDF note Pad</a>
-                    <a href="https://jkmedit.in/tools/pdf-tools/add-page-number.html" target="_blank" class="mega-menu-link">Add Page Number</a>
-                    <a href="https://jkmedit.in/tools/pdf-tools/rotate-pdf.html" target="_blank" class="mega-menu-link">Rotate PDF</a>
+                    <a href="https://jkmedit.in/tools/pdf-tools/index.html" class="mega-menu-link">PDF Tools</a>
+                    <a href="https://jkmedit.in/tools/image-tools/index.html" class="mega-menu-link">Image Tools</a>
+                    <a href="https://jkmedit.in/tools/finance/index.html" class="mega-menu-link">Finance & Accounting</a>
+                    <a href="https://jkmedit.in/tools/file-tools/index.html" class="mega-menu-link">File Tools</a>
+                    <a href="https://jkmedit.in/tools/code-generators/index.html" class="mega-menu-link">Code Generators</a>
+                    <a href="https://jkmedit.in/tools/time-date/index.html" class="mega-menu-link">Time & Date</a>
+                    <a href="https://jkmedit.in/tools/unit-convertors/index.html" class="mega-menu-link">Unit Convertors</a>
+                    <a href="https://jkmedit.in/tools/web/index.html" class="mega-menu-link">Web & UI Tools</a>
+                    <a href="https://jkmedit.in/tools/utilities/index.html" class="mega-menu-link">Utilities</a>
                 </div>
             </div>
         </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">Image Tools <span class="arrow">&#9662;</span></a>
-            <div class="mega-menu">
-                <div class="mega-menu-inner">
-                    <a href="https://jkmedit.in/tools/image-tools/Img-crop.html" target="_blank" class="mega-menu-link">Image Cropper</a>
-                    <a href="https://jkmedit.in/tools/image-tools/image-resizer.html" target="_blank" class="mega-menu-link">Image Resizer</a>
-                    <a href="https://jkmedit.in/tools/image-tools/Jpg-Png.html" target="_blank" class="mega-menu-link">JPG/PNG convertor</a>
-                    <a href="https://jkmedit.in/tools/image-tools/BG-remove.html" target="_blank" class="mega-menu-link">Background remover</a>
-                    <a href="https://jkmedit.in/tools/image-tools/grayscale-filter.html" target="_blank" class="mega-menu-link">Grayscale Filter</a>
-                    <a href="https://jkmedit.in/tools/image-tools/rotate-flip.html" target="_blank" class="mega-menu-link">Rotate & Flip</a>
-                    <a href="https://jkmedit.in/tools/image-tools/brightness-contrast.html" target="_blank" class="mega-menu-link">Brightness Adjuster</a>
-                    <a href="https://jkmedit.in/tools/image-tools/add-text.html" target="_blank" class="mega-menu-link">Add text Overlay</a>
-                    <a href="https://jkmedit.in/tools/image-tools/exif-viewer.html" target="_blank" class="mega-menu-link">Exif Data Viewer</a>
-                </div>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">Finance & Accounting <span class="arrow">&#9662;</span></a>
-            <div class="mega-menu">
-                <div class="mega-menu-inner">
-                    <a href="https://jkmpdf.github.io/ACCT/#/welcome" target="_blank" class="mega-menu-link">Accounting Software</a>
-                    <a href="https://jkmedit.in/tools/finance/invoicemaker.html" target="_blank" class="mega-menu-link">Invoice maker</a>
-                    <a href="https://jkmedit.in/tools/finance/EMI-Calculator.html" target="_blank" class="mega-menu-link">EMI Calculator</a>
-                    <a href="https://jkmedit.in/tools/finance/bank-reco.html" target="_blank" class="mega-menu-link">Bank Analysis</a>
-                    <a href="https://jkmedit.in/tools/finance/build-cv.html" target="_blank" class="mega-menu-link">Build CV</a>
-                    <a href="https://jkmedit.in/tools/finance/ledger.html" target="_blank" class="mega-menu-link">Udhar Khata</a>
-                </div>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">File Tools <span class="arrow">&#9662;</span></a>
-            <div class="mega-menu">
-                <div class="mega-menu-inner">
-                    <a href="https://jkmedit.in/tools/file-tools/csv-to-json.html" target="_blank" class="mega-menu-link">CSV to JSON convertor</a>
-                    <a href="https://jkmedit.in/tools/file-tools/json-formatter.html" target="_blank" class="mega-menu-link">JSON Formater</a>
-                    <a href="https://jkmedit.in/tools/file-tools/base64-tool.html" target="_blank" class="mega-menu-link">Base64 Encoder/Decoder</a>
-                    <a href="https://jkmedit.in/tools/file-tools/Text-Case-Converter.html" target="_blank" class="mega-menu-link">Text Case Convertor</a>
-                    <a href="https://jkmedit.in/tools/file-tools/remove-duplicates.html" target="_blank" class="mega-menu-link">Remove duplicates lines</a>
-                    <a href="https://jkmedit.in/tools/file-tools/find-replace.html" target="_blank" class="mega-menu-link">Find/Replace Text</a>
-                    <a href="https://jkmedit.in/tools/file-tools/hash-calculator.html" target="_blank" class="mega-menu-link">Calculate text hash </a>
-                    <a href="https://jkmedit.in/tools/file-tools/file-viewer.html" target="_blank" class="mega-menu-link">Find Reader/viewer</a>
-                    <a href="https://jkmedit.in/tools/file-tools/line-sorter.html" target="_blank" class="mega-menu-link">Line shorter</a>
-                    <a href="https://jkmedit.in/tools/file-tools/file-splitter.html" target="_blank" class="mega-menu-link">File Splitter</a>
-                </div>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">Code Generators <span class="arrow">&#9662;</span></a>
-            <div class="mega-menu">
-                <div class="mega-menu-inner">
-                    <a href="https://jkmedit.in/tools/code-generators/Qr-Code.html" target="_blank" class="mega-menu-link">QR Code Generators</a>
-                    <a href="https://jkmedit.in/tools/code-generators/barcode-generator.html" target="_blank" class="mega-menu-link">Bar Code Generators</a>
-                    <a href="https://jkmedit.in/tools/code-generators/password-generator.html" target="_blank" class="mega-menu-link">Password Generators</a>
-                    <a href="https://jkmedit.in/tools/code-generators/uuid-generator.html" target="_blank" class="mega-menu-link">UUID/GUID Generators</a>
-                    <a href="https://jkmedit.in/tools/code-generators/color-palette.html" target="_blank" class="mega-menu-link">Color Palette Generators</a>
-                    <a href="https://jkmedit.in/tools/code-generators/favicon-generator.html" target="_blank" class="mega-menu-link">Favicon Preview/ Generators </a>
-                    <a href="https://jkmedit.in/tools/code-generators/box-shadow.html" target="_blank" class="mega-menu-link">CSS box shadow Generators</a>
-                    <a href="https://jkmedit.in/tools/code-generators/gradient-generator.html" target="_blank" class="mega-menu-link">CSS liner Gradient Generators</a>
-                    <a href="https://jkmedit.in/tools/code-generators/html-entities.html" target="_blank" class="mega-menu-link">HTML Entities Convertors</a>
-                    <a href="https://jkmedit.in/tools/code-generators/qr-excel.html" target="_blank" class="mega-menu-link">QR Scan to Excel</a>
-                </div>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">Time & Date <span class="arrow">&#9662;</span></a>
-            <div class="mega-menu">
-                <div class="mega-menu-inner">
-                    <a href="https://jkmedit.in/tools/time-date/timestamp-converter.html" target="_blank" class="mega-menu-link">Timestamp Convertors</a>
-                    <a href="https://jkmedit.in/tools/time-date/date-difference.html" target="_blank" class="mega-menu-link">Date Difference convertors</a>
-                    <a href="https://jkmedit.in/tools/time-date/countdown.html" target="_blank" class="mega-menu-link">Countdown timer</a>
-                    <a href="https://jkmedit.in/tools/time-date/Stopwatch.html" target="_blank" class="mega-menu-link">Stopwatch</a>
-                    <a href="https://jkmedit.in/tools/time-date/timezone.html" target="_blank" class="mega-menu-link">Timezone convertors</a>
-                    <a href="https://jkmedit.in/tools/time-date/leap-year.html" target="_blank" class="mega-menu-link">Leap Year Checker</a>
-                    <a href="https://jkmedit.in/tools/time-date/day-of-week.html" target="_blank" class="mega-menu-link">Day of week calculator</a>
-                    <a href="https://jkmedit.in/tools/time-date/age-calculator.html" target="_blank" class="mega-menu-link">Age Calculator</a>
-                    <a href="https://jkmedit.in/tools/time-date/time-adder.html" target="_blank" class="mega-menu-link">Time Adder/substracker</a>
-                    <a href="https://jkmedit.in/tools/time-date/calendar.html" target="_blank" class="mega-menu-link">Calender Generator</a>
-                </div>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">Unit Convertors <span class="arrow">&#9662;</span></a>
-            <div class="mega-menu">
-                <div class="mega-menu-inner">
-                    <a href="https://jkmedit.in/tools/unit-convertors/length-converter.html" target="_blank" class="mega-menu-link">Length Convertor</a>
-                    <a href="https://jkmedit.in/tools/unit-convertors/weight-converter.html" target="_blank" class="mega-menu-link">Mass/Weight Convertor</a>
-                    <a href="https://jkmedit.in/tools/unit-convertors/temp-converter.html" target="_blank" class="mega-menu-link">Tempture convertor</a>
-                    <a href="https://jkmedit.in/tools/unit-convertors/area-converter.html" target="_blank" class="mega-menu-link">Area Convertor</a>
-                    <a href="https://jkmedit.in/tools/unit-convertors/volume-converter.html" target="_blank" class="mega-menu-link">Volume Convertor</a>
-                    <a href="https://jkmedit.in/tools/unit-convertors/speed-converter.html" target="_blank" class="mega-menu-link">Speed convertor</a>
-                    <a href="https://jkmedit.in/tools/unit-convertors/base-converter.html" target="_blank" class="mega-menu-link">Base Convertor</a>
-                    <a href="https://jkmedit.in/tools/unit-convertors/color-code-converter.html" target="_blank" class="mega-menu-link">HEX-RGB-HSL Convertor</a>
-                    <a href="https://jkmedit.in/tools/unit-convertors/sci-calculator.html" target="_blank" class="mega-menu-link">Scientific Calculator</a>
-                    <a href="https://jkmedit.in/tools/unit-convertors/interest-calculator.html" target="_blank" class="mega-menu-link">Simple Interest calculator</a>
-                </div>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">Web & UI Tools <span class="arrow">&#9662;</span></a>
-            <div class="mega-menu">
-                <div class="mega-menu-inner">
-                    <a href="https://jkmedit.in/tools/web/web-preview.html" target="_blank" class="mega-menu-link">Web Code Preview</a>
-                    <a href="https://jkmedit.in/tools/web/Webeditor.html" target="_blank" class="mega-menu-link">Web Code Editor</a>
-                    <a href="https://jkmedit.in/tools/web/sitemap.html" target="_blank" class="mega-menu-link">Sitemap</a>
-                </div>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">Utilities <span class="arrow">&#9662;</span></a>
-            <div class="mega-menu">
-                <div class="mega-menu-inner">
-                    <a href="https://jkmedit.in/tools/utilities/Chat.html" target="_blank" class="mega-menu-link">Chat</a>
-                    <a href="https://jkmedit.in/tools/utilities/Color-Picker.html" target="_blank" class="mega-menu-link">Color Picker</a>
-                    <a href="https://jkmedit.in/tools/utilities/hinglish.html" target="_blank" class="mega-menu-link">Hindi to Hinglish</a>
-                    <a href="https://jkmedit.in/tools/utilities/lyricmaker.html" target="_blank" class="mega-menu-link">Lyrics Maker</a>
-                    <a href="https://jkmedit.in/tools/utilities/screen-recorder.html" target="_blank" class="mega-menu-link">Screen Recorder</a>
-                    <a href="https://jkmedit.in/tools/utilities/Whatsapp-chat.html" target="_blank" class="mega-menu-link">Whatsapp Chat Backup</a>
-                    <a href="https://jkmedit.in/tools/utilities/Yt-mp3.html" target="_blank" class="mega-menu-link">Youtube to MP3</a>
-                </div>
-            </div>
-        </li>
+
     </ul>
 </header>
 
@@ -862,11 +744,12 @@
         <div class="icon-box"><span class="material-symbols-outlined">work</span></div>
         <h3>Build CV</h3>
         <p>Build a professional CV/Resume.</p>
-<a href="https://jkmedit.in/tools/finance/ledger.html" class="tool-card" data-cat="finance">
+    </a>
+    <a href="https://jkmedit.in/tools/finance/ledger.html" class="tool-card" data-cat="finance">
         <div class="icon-box"><span class="material-symbols-outlined">work</span></div>
-        <h3>UDhar khata</h3>
+        <h3>Udhar Khata</h3>
         <p>Manage your day to day transaction</p>
-        </a>
+    </a>
     <a href="https://jkmedit.in/tools/file-tools/csv-to-json.html" class="tool-card" data-cat="file">
         <div class="icon-box"><span class="material-symbols-outlined">data_object</span></div>
         <h3>CSV to JSON convertor</h3>
@@ -1334,35 +1217,37 @@
     const mobileToggle = document.getElementById('mobileToggle');
     const navMenu = document.getElementById('navMenu');
 
-    mobileToggle.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-        // Switch between hamburger and close icon
-        mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
-    });
+    if(mobileToggle && navMenu) {
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
+        });
+    }
 
-    // Mobile accordion logic
+    // Mobile accordion logic (Only blocks click and drops down IF it has a mega menu)
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         const link = item.querySelector('.nav-link');
-        link.addEventListener('click', (e) => {
-            if (window.innerWidth <= 1024) {
-                e.preventDefault(); 
-                
-                // Close other open accordions
-                navItems.forEach(otherItem => {
-                    if (otherItem !== item && otherItem.classList.contains('active')) {
-                        otherItem.classList.remove('active');
-                    }
-                });
+        const hasDropdown = item.querySelector('.mega-menu');
+        
+        if (link && hasDropdown) {
+            link.addEventListener('click', (e) => {
+                if (window.innerWidth <= 1024) {
+                    e.preventDefault(); 
+                    
+                    navItems.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                            otherItem.classList.remove('active');
+                        }
+                    });
 
-                // Toggle the clicked one
-                item.classList.toggle('active');
-            }
-        });
+                    item.classList.toggle('active');
+                }
+            });
+        }
     });
 
     // --- FOOTER JS ---
-    // Dynamically update the copyright year so you never have to manually change it
     document.addEventListener('DOMContentLoaded', () => {
         const yearElement = document.getElementById('auto-year');
         if (yearElement) {
