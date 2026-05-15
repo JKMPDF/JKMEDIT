@@ -7,8 +7,8 @@
     <style>
         :root {
             --primary-text: #1d1d1f; /* Apple standard text */
-            --hover-bg: #f5f5f7;
-            --border-color: #d2d2d7;
+            --hover-bg: #f8faff; /* Light corporate blue tint for hover */
+            --border-color: #e1e1e1; /* Clean grey border */
             --brand-color: #0071e3; /* Apple blue */
             --corporate-blue: #0047AB; /* Deep corporate blue */
             --header-height: 84px;
@@ -19,7 +19,6 @@
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             background-color: #fbfbfd; 
-            height: 200vh; /* For scroll demo */
         }
         
         /* Professional Header Base */
@@ -62,7 +61,6 @@
             width: 40px;
             height: 40px;
             fill: var(--primary-text);
-            /* If you upload an image, the CSS below ensures it fits well */
             object-fit: contain;
         }
         
@@ -72,23 +70,27 @@
             list-style: none;
             height: 100%;
             margin: 0;
+            align-items: center;
         }
         
         .nav-item {
             height: 100%;
             display: flex;
             align-items: center;
-            margin: 0 4px;
+            margin: 0 6px;
         }
         
+        /* Professional Border Button Style */
         .nav-link {
             color: var(--primary-text);
+            background-color: transparent;
             text-decoration: none;
             font-weight: 500;
             font-size: 14px;
-            padding: 8px 16px;
-            border-radius: 98px; /* Pill shape hover like modern Apple UI */
-            transition: all 0.2s ease;
+            padding: 10px 22px;
+            border: 1.5px solid var(--border-color); /* Professional Border */
+            border-radius: 98px; /* Clean Pill Shape */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -101,9 +103,12 @@
             transition: transform 0.3s ease;
         }
 
+        /* Hover Effect for Border Buttons */
         .nav-item:hover .nav-link {
-            background-color: var(--hover-bg);
+            border-color: var(--corporate-blue);
             color: var(--corporate-blue);
+            background-color: var(--hover-bg);
+            box-shadow: 0 4px 10px rgba(0, 71, 171, 0.08); /* Subtle 3D lift */
         }
         
         .nav-item:hover .arrow {
@@ -119,7 +124,7 @@
             width: 100%;
             background: #ffffff;
             box-shadow: 0 16px 40px rgba(0,0,0,0.08);
-            border-bottom: 1px solid var(--border-color);
+            border-top: 1px solid var(--border-color);
             opacity: 0;
             visibility: hidden;
             transform: translateY(-5px);
@@ -158,7 +163,7 @@
         }
 
         .mega-menu-link:hover {
-            background-color: var(--hover-bg);
+            background-color: #f5f5f7;
             color: var(--corporate-blue);
         }
 
@@ -192,9 +197,9 @@
                 align-items: flex-start;
                 overflow-y: auto;
                 transition: left 0.3s ease;
-                padding: 20px 20px 80px 20px; 
+                padding: 30px 20px 80px 20px; 
                 display: block;
-                z-index: 2147483647 !important; /* Maximum z-index */
+                z-index: 2147483647 !important;
             }
             .nav-menu.active {
                 left: 0;
@@ -204,26 +209,21 @@
                 width: 100%;
                 flex-direction: column;
                 align-items: flex-start;
-                margin: 0;
-                border-bottom: 1px solid var(--border-color);
-            }
-            .nav-item:last-child {
-                border-bottom: none;
+                margin: 0 0 12px 0; /* Space out the mobile buttons */
             }
             .nav-link {
                 width: 100%;
-                padding: 18px 10px;
+                padding: 16px 20px;
                 display: flex;
                 justify-content: space-between;
                 font-size: 16px;
-                border-radius: 0;
-            }
-            .nav-item:hover .nav-link {
-                background: transparent;
-                color: var(--primary-text);
+                border-radius: 12px; /* Rounded rectangle for mobile */
+                border: 1.5px solid var(--border-color);
             }
             .nav-item.active .nav-link {
+                border-color: var(--corporate-blue);
                 color: var(--corporate-blue);
+                background-color: var(--hover-bg);
             }
             .nav-item.active .arrow {
                 transform: rotate(180deg);
@@ -236,9 +236,10 @@
                 opacity: 1;
                 visibility: visible;
                 display: none; 
-                padding: 10px 0 20px 15px;
+                padding: 10px 0 10px 15px;
                 border: none;
                 transform: none;
+                width: 100%;
             }
             .nav-item.active .mega-menu {
                 display: block;
@@ -271,17 +272,17 @@
 
     <ul class="nav-menu" id="navMenu">
         
-        <!-- Home Button -->
+        <!-- Home Bordered Button -->
         <li class="nav-item">
             <a href="https://jkmedit.in/" class="nav-link">Home</a>
         </li>
         
-        <!-- Blog Button -->
+        <!-- Blog Bordered Button -->
         <li class="nav-item">
             <a href="https://jkmedit.in/blog/index.html" class="nav-link">Blog</a>
         </li>
 
-        <!-- Tools Dropdown -->
+        <!-- Tools Dropdown Bordered Button -->
         <li class="nav-item">
             <a href="#" class="nav-link">Tools <span class="arrow">&#9662;</span></a>
             <div class="mega-menu">
@@ -315,7 +316,7 @@
         });
     }
 
-    // Mobile accordion logic (Updated to only trigger on links that ACTUALLY have a dropdown)
+    // Mobile accordion logic (Triggers ONLY on links that have a dropdown)
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         const link = item.querySelector('.nav-link');
