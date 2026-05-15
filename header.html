@@ -316,34 +316,29 @@
         });
     }
 
-    // Mobile accordion logic
+    // Mobile accordion logic (Triggers ONLY on links that actually contain a mega-menu)
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         const link = item.querySelector('.nav-link');
         const hasDropdown = item.querySelector('.mega-menu'); // Check if it has a submenu
         
-        if (link) {
+        // Only attach the block/dropdown logic IF there is a dropdown!
+        // This ensures the browser handles normal links natively.
+        if (link && hasDropdown) {
             link.addEventListener('click', (e) => {
                 if (window.innerWidth <= 1024) {
-                    if (hasDropdown) {
-                        // It is a dropdown link (e.g., Tools)
-                        e.preventDefault(); 
-                        e.stopPropagation(); // Block external scripts from hijacking this
-                        
-                        // Close other open accordions
-                        navItems.forEach(otherItem => {
-                            if (otherItem !== item && otherItem.classList.contains('active')) {
-                                item.classList.remove('active');
-                            }
-                        });
+                    e.preventDefault(); 
+                    e.stopPropagation(); // Block external scripts from hijacking this
+                    
+                    // Close other open accordions
+                    navItems.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                            otherItem.classList.remove('active');
+                        }
+                    });
 
-                        // Toggle the clicked one
-                        item.classList.toggle('active');
-                    } else {
-                        // It is a direct link (Home, Blog)
-                        // Force navigation to bypass any blocks from your index.html
-                        window.location.href = link.href;
-                    }
+                    // Toggle the clicked one
+                    item.classList.toggle('active');
                 }
             });
         }
