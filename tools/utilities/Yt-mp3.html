@@ -271,31 +271,86 @@
             });
         });
 
-        const BACKEND_URL = 'https://jkmedit.onrender.com'; 
+        // DOM Elements
         const loader = document.getElementById('loader');
         const resultsDiv = document.getElementById('results');
 
+        // Helper function to cleanly extract video ID from various YouTube URL formats
+        function extractVideoID(url) {
+            let videoId = "";
+            try {
+                if (url.includes("youtu.be/")) {
+                    videoId = url.split("youtu.be/")[1].split("?")[0];
+                } else if (url.includes("youtube.com/watch")) {
+                    const urlParams = new URL(url).searchParams;
+                    videoId = urlParams.get("v");
+                }
+            } catch (e) {
+                console.error("URL Parsing error", e);
+            }
+            return videoId;
+        }
+
         async function fetchInfo() {
-            const url = document.getElementById('videoUrl').value.trim();
-            if (!url) return alert("Please enter a YouTube URL");
+            const urlInput = document.getElementById('videoUrl').value.trim();
+            if (!urlInput) return alert("Please enter a YouTube URL");
+
+            const videoId = extractVideoID(urlInput);
+            if (!videoId) return alert("Could not extract a valid YouTube Video ID from the link provided.");
 
             loader.style.display = 'block';
             resultsDiv.innerHTML = '';
 
+            // Modernizing the provided RapidAPI logic into a professional async fetch request
+            const apiUrl = `https://youtube138.p.rapidapi.com/v2/video-details?video_id=${videoId}&hl=en`;
+            
+            const options = {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-key': 'f38c64abb6mshf9bf197a414a3a8p1a2999jsn36d8e83c6533',
+                    'x-rapidapi-host': 'youtube138.p.rapidapi.com',
+                    'Content-Type': 'application/json'
+                }
+            };
+
             try {
-                const response = await fetch(`${BACKEND_URL}/api/info?url=${encodeURIComponent(url)}`);
+                const response = await fetch(apiUrl, options);
+                if (!response.ok) throw new Error("Failed to connect to the API. Please check your rate limits.");
+                
                 const data = await response.json();
 
-                if (!data.success) throw new Error(data.error);
+                // Check for audio streams inside the RapidAPI response
+                let audioUrl = "";
+                if (data && data.streamingData && data.streamingData.adaptiveFormats) {
+                    const audioFormats = data.streamingData.adaptiveFormats.filter(
+                        format => format.mimeType && format.mimeType.includes("audio/")
+                    );
+                    
+                    if (audioFormats.length > 0) {
+                        // Prefer mp4a (m4a/mp3 wrapper) if available, otherwise take the first audio format
+                        const preferredFormat = audioFormats.find(f => f.mimeType.includes("mp4a"));
+                        audioUrl = preferredFormat ? preferredFormat.url : audioFormats[0].url;
+                    }
+                }
 
-                const items = Array.isArray(data.info) ? data.info : [data.info];
+                if (!audioUrl) {
+                    throw new Error("No audio streams available for this video (it might be protected/copyrighted).");
+                }
 
-                items.forEach(video => {
-                    createVideoCard(video);
-                });
+                // Construct a video object mapped exactly how your createVideoCard expects it
+                const videoInfo = {
+                    title: data.title || "Unknown Title",
+                    author: data.author?.title || "YouTube Channel",
+                    thumbnail: data.thumbnails && data.thumbnails.length > 0 ? data.thumbnails[data.thumbnails.length - 1].url : "https://jkmedit.in/assets/jkm-edit-logo.png",
+                    url: audioUrl
+                };
+
+                // Render the UI
+                createVideoCard(videoInfo);
 
             } catch (error) {
                 alert("Error: " + error.message);
+                console.error(error);
             } finally {
                 loader.style.display = 'none';
             }
@@ -304,6 +359,10 @@
         function createVideoCard(video) {
             const card = document.createElement('div');
             card.className = 'video-card';
+            
+            // Replaces quotes to prevent breaking the inline onclick attribute
+            const safeTitle = video.title.replace(/'/g, "").replace(/"/g, "");
+
             card.innerHTML = `
                 <div class="thumb-wrapper">
                     <img src="${video.thumbnail}" class="thumb-img" alt="Thumb">
@@ -313,16 +372,18 @@
                         <div class="video-title">${video.title}</div>
                         <div class="video-meta">By ${video.author}</div>
                     </div>
-                    <button class="btn-download" onclick="downloadMp3('${video.url}', '${video.title.replace(/'/g, "")}')">
-                        <i class="fa-solid fa-download"></i> Download MP3
+                    <button class="btn-download" onclick="downloadMp3('${video.url}')">
+                        <i class="fa-solid fa-download"></i> Download / Play Audio
                     </button>
                 </div>
             `;
             resultsDiv.appendChild(card);
         }
 
-        function downloadMp3(url, title) {
-            window.location.href = `${BACKEND_URL}/api/download?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`;
+        function downloadMp3(url) {
+            // Because the API returns a direct googlevideo link and there is no backend server,
+            // we open the direct audio stream in a new browser tab.
+            window.open(url, '_blank');
         }
     </script>
 </body>
