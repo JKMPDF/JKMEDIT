@@ -371,17 +371,17 @@
             resultsDiv.appendChild(card);
         }
 
-        function loadDownloadWidget(videoId, btnElement) {
+       function loadDownloadWidget(videoId, btnElement) {
             // Find the container holding the button
             const container = btnElement.parentElement;
             
-            // Inject the loader.to iframe exactly where the button was.
-            // The color code matches your site's theme (0052cc).
+            // Inject the Vevioz API iframe instead of Loader.to
+            // Vevioz allows cross-origin embedding, so you will not get the sad document icon!
             container.innerHTML = `
                 <iframe 
-                    style="width: 100%; height: 60px; border: 0; overflow: hidden; border-radius: 6px;" 
+                    style="width: 100%; height: 60px; border: 0; overflow: hidden; border-radius: 6px; background: transparent;" 
                     scrolling="no" 
-                    src="https://loader.to/api/button/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3&color=0052cc">
+                    src="https://api.vevioz.com/api/button/mp3/${videoId}">
                 </iframe>
             `;
         }
