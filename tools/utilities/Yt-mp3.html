@@ -272,7 +272,8 @@
         });
 
         // -------------------------------------------------------------
-        // GOOGLE CLOUD API KEY APPLIED BELOW
+        // YOUR SECURE GOOGLE CLOUD API KEY
+        // Make sure you restricted this key in Google Cloud Console
         // -------------------------------------------------------------
         const GOOGLE_API_KEY = 'AIzaSyDrGAKT57MsfecdUNYt9nPc9DHItgZv9Wo';
         
@@ -296,7 +297,7 @@
 
         async function fetchInfo() {
             const urlInput = document.getElementById('videoUrl').value.trim();
-            if (!urlInput) return alert("Please enter a YouTube URL");
+            if (!urlInput) return alert("Please enter a valid YouTube URL");
 
             const videoId = extractVideoID(urlInput);
             if (!videoId) return alert("Could not extract a valid YouTube Video ID from the link provided.");
@@ -304,23 +305,19 @@
             loader.style.display = 'block';
             resultsDiv.innerHTML = '';
 
-            // Calling the Official Google YouTube Data API v3
             const googleApiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${GOOGLE_API_KEY}`;
 
             try {
                 const response = await fetch(googleApiUrl);
                 const data = await response.json();
                 
-                // If Google blocks the request (e.g., incorrect API restrictions), it will show here
                 if (data.error) {
                     throw new Error("Google API Error: " + data.error.message);
                 }
 
-                // Make sure the video exists
                 if (data.items && data.items.length > 0) {
                     const videoDetails = data.items[0].snippet;
 
-                    // Grab the highest resolution thumbnail available
                     let thumbUrl = "https://jkmedit.in/assets/jkm-edit-logo.png";
                     if (videoDetails.thumbnails) {
                         if (videoDetails.thumbnails.maxres) thumbUrl = videoDetails.thumbnails.maxres.url;
@@ -328,7 +325,6 @@
                         else if (videoDetails.thumbnails.medium) thumbUrl = videoDetails.thumbnails.medium.url;
                     }
 
-                    // Create object to render
                     const videoInfo = {
                         id: videoId,
                         title: videoDetails.title,
@@ -353,7 +349,6 @@
             const card = document.createElement('div');
             card.className = 'video-card';
             
-            // Replaces quotes so inline HTML does not break
             const safeTitle = video.title.replace(/'/g, "").replace(/"/g, "");
 
             card.innerHTML = `
@@ -365,20 +360,30 @@
                         <div class="video-title">${safeTitle}</div>
                         <div class="video-meta">By ${video.author}</div>
                     </div>
-                    <!-- Send the video.id to our downloader function -->
-                    <button class="btn-download" onclick="downloadMp3('${video.id}')">
-                        <i class="fa-solid fa-download"></i> Download MP3
-                    </button>
+                    <!-- Create a container specifically for our downloader widget -->
+                    <div id="download-container-${video.id}" style="width: 100%; margin-top: 10px;">
+                        <button class="btn-download" onclick="loadDownloadWidget('${video.id}', this)">
+                            <i class="fa-solid fa-gear"></i> Convert to MP3
+                        </button>
+                    </div>
                 </div>
             `;
             resultsDiv.appendChild(card);
         }
 
-        function downloadMp3(videoId) {
-            // STEP 2: Conversion and Download using a public 3rd-party endpoint.
-            // Opens a clean popup redirect to a server that extracts the audio file natively.
-            const downloadLink = `https://loader.to/api/button/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3`;
-            window.open(downloadLink, '_blank', 'width=600,height=400');
+        function loadDownloadWidget(videoId, btnElement) {
+            // Find the container holding the button
+            const container = btnElement.parentElement;
+            
+            // Inject the loader.to iframe exactly where the button was.
+            // The color code matches your site's theme (0052cc).
+            container.innerHTML = `
+                <iframe 
+                    style="width: 100%; height: 60px; border: 0; overflow: hidden; border-radius: 6px;" 
+                    scrolling="no" 
+                    src="https://loader.to/api/button/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3&color=0052cc">
+                </iframe>
+            `;
         }
     </script>
 </body>
