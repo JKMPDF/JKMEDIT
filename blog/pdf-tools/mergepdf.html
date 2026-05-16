@@ -310,15 +310,46 @@
             border: 1px solid #e0e7ff;
         }
 
-        /* Comparison Table */
+        /* Video Embed */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            margin: 2rem 0;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            border: none;
+        }
+
+        /* Comparison Table & Scroll Wrapper */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 2rem 0;
+            box-shadow: var(--shadow-sm);
+            border-radius: var(--radius-md);
+            background: var(--white);
+        }
+
         .comparison-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 2rem 0;
+            margin: 0; /* Margin moved to wrapper */
             background: var(--white);
-            border-radius: var(--radius-md);
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
         }
 
         .comparison-table th, .comparison-table td {
@@ -544,7 +575,8 @@
             .hero-title { font-size: 2rem; }
             .blog-content { padding: 2rem 1.5rem; }
             .hero-meta { flex-direction: column; gap: 0.5rem; }
-            .comparison-table { display: block; overflow-x: auto; }
+            /* Ensures table allows horizontal scroll smoothly without getting squeezed unreadably */
+            .comparison-table { min-width: 600px; }
             .tool-box { min-width: 150px; height: 150px; }
         }
     </style>
@@ -732,52 +764,54 @@
                 <h2>Benefits of Using JKM Edit Instead of Traditional Software</h2>
                 <p>When comparing modern web-based utilities to outdated traditional desktop software, the choice becomes clear for daily productivity.</p>
                 
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Feature</th>
-                            <th>Traditional Software</th>
-                            <th>JKM Edit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Installation Required</td>
-                            <td>Yes</td>
-                            <td><strong>No</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Device Compatibility</td>
-                            <td>Limited to OS</td>
-                            <td><strong>Cross-platform (Any OS)</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Browser Access</td>
-                            <td>Rare</td>
-                            <td><strong>Yes</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Quick Usage</td>
-                            <td>Moderate (Launch time)</td>
-                            <td><strong>Fast & Instant</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Mobile Friendly</td>
-                            <td>Sometimes</td>
-                            <td><strong>100% Yes</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Easy Interface</td>
-                            <td>Often cluttered</td>
-                            <td><strong>Simple & Clean</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Cost</td>
-                            <td>Often Paid/Subscription</td>
-                            <td><strong>Free Access</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Traditional Software</th>
+                                <th>JKM Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Installation Required</td>
+                                <td>Yes</td>
+                                <td><strong>No</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Device Compatibility</td>
+                                <td>Limited to OS</td>
+                                <td><strong>Cross-platform (Any OS)</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Browser Access</td>
+                                <td>Rare</td>
+                                <td><strong>Yes</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Quick Usage</td>
+                                <td>Moderate (Launch time)</td>
+                                <td><strong>Fast & Instant</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Mobile Friendly</td>
+                                <td>Sometimes</td>
+                                <td><strong>100% Yes</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Easy Interface</td>
+                                <td>Often cluttered</td>
+                                <td><strong>Simple & Clean</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Cost</td>
+                                <td>Often Paid/Subscription</td>
+                                <td><strong>Free Access</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <!-- 13. PRIVACY & SECURITY SECTION -->
                 <h2>Privacy and Security in PDF Tools</h2>
@@ -866,7 +900,7 @@
 
                 <!-- 19. FINAL CTA SECTION -->
                 <div class="cta-section" style="margin-top: 4rem; text-align: center;">
-                    <img src="assets/mergingpdf.jpg" alt="Start merging PDF files now" style="max-width: 300px; margin: 0 auto 1.5rem auto; box-shadow: none;">
+                    <img src="assets/mergingpdf.jpg" alt="Start merging PDF files now" style="width: 100%; max-width: 300px; height: auto; margin: 0 auto 1.5rem auto; box-shadow: none;">
                     <h2>Ready to Streamline Your Documents?</h2>
                     <p>Experience the easiest, fastest, and most secure way to combine multiple PDF files into one. No installation required.</p>
                     <br>
