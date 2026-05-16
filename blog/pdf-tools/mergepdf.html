@@ -177,11 +177,10 @@
             position: sticky;
             top: 0;
             width: 100%;
-            z-index: 999999; /* Forces header to stay above all page content */
+            z-index: 999999;
             background-color: var(--white);
         }
 
-        /* Forced mobile menu styles in case external CSS fails */
         .force-mobile-show {
             display: flex !important;
             flex-direction: column !important;
@@ -195,7 +194,7 @@
             z-index: 999999 !important;
         }
 
-        /* Header & Navigation (Keeping styles intact for fallback) */
+        /* Header & Navigation */
         .header {
             background-color: var(--white);
             box-shadow: var(--shadow-sm);
@@ -334,26 +333,6 @@
             color: var(--text-main);
         }
 
-        /* Video Embed */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
-            height: 0;
-            overflow: hidden;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            margin: 2rem 0;
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
         /* FAQ Accordion */
         .faq-item {
             border: 1px solid var(--border-color);
@@ -398,31 +377,133 @@
             transform: rotate(45deg);
         }
 
-        /* Cards Layout */
-        .grid-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+        /* ---- PROFESSIONAL SQUARE TOOL BOXES ---- */
+        .swipe-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 1.5rem;
+            padding-bottom: 1.5rem;
             margin: 2rem 0 4rem;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .card {
+        .swipe-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .swipe-container::-webkit-scrollbar-track {
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+        }
+
+        .swipe-container::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
+        .swipe-container::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        .tool-box {
+            min-width: 170px;
+            height: 170px;
+            scroll-snap-align: start;
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             background: var(--white);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
             padding: 1.5rem;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tool-box:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .tool-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #eff6ff;
+            color: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
             transition: var(--transition);
         }
 
-        .card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-5px);
+        .tool-box:hover .tool-icon {
+            background-color: var(--primary-color);
+            color: var(--white);
         }
 
-        .card h4 { margin-top: 0; font-size: 1.25rem; }
-        .card img { margin: 0 0 1rem 0; width: 100%; border-radius: var(--radius-md); box-shadow: none; }
+        .tool-icon svg {
+            width: 26px;
+            height: 26px;
+        }
 
-        /* Footer (Keeping styles intact for fallback) */
+        .tool-box h4 {
+            margin: 0;
+            font-size: 1.05rem;
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        /* ---- MINIMAL BLOG CARDS (Image + Heading Only) ---- */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0 4rem;
+        }
+
+        .blog-card-minimal {
+            display: block;
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            text-decoration: none;
+        }
+
+        .blog-card-minimal:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .blog-card-minimal img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .blog-card-minimal h4 {
+            margin: 0;
+            padding: 1.25rem;
+            font-size: 1.15rem;
+            color: var(--text-main);
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* Footer */
         .footer {
             background-color: #0f172a;
             color: #94a3b8;
@@ -464,6 +545,7 @@
             .blog-content { padding: 2rem 1.5rem; }
             .hero-meta { flex-direction: column; gap: 0.5rem; }
             .comparison-table { display: block; overflow-x: auto; }
+            .tool-box { min-width: 150px; height: 150px; }
         }
     </style>
 </head>
@@ -796,22 +878,78 @@
         <!-- 20. RELATED TOOLS SECTION -->
         <section class="related-sections">
             <h3 style="font-size: 1.75rem; text-align: center; margin-bottom: 2rem;">Explore More Free Tools</h3>
-            <div class="grid-cards">
-                <a href="https://jkmedit.in/tools/pdf-tools/compress-pdf.html" class="card">
+            <div class="swipe-container">
+                <a href="https://jkmedit.in/tools/pdf-tools/compress-pdf.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
                     <h4>Compress PDF</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0;">Reduce the file size of your PDF documents instantly without losing quality.</p>
                 </a>
-                <a href="https://jkmedit.in/tools/pdf-tools/split-pdf.html" class="card">
+                <a href="https://jkmedit.in/tools/pdf-tools/split-pdf.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
                     <h4>Split PDF</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0;">Extract specific pages or separate a large PDF into multiple smaller files.</p>
                 </a>
-                <a href="https://jkmedit.in/tools/pdf-tools/pdf-to-image.html" class="card">
+                <a href="https://jkmedit.in/tools/pdf-tools/pdf-to-image.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
                     <h4>PDF to JPG</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0;">Convert your PDF pages into high-quality JPG image files easily.</p>
                 </a>
-                <a href="https://jkmedit.in/tools/pdf-tools/PNG-to-pdf.html" class="card">
+                <a href="https://jkmedit.in/tools/pdf-tools/PNG-to-pdf.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
                     <h4>JPG to PDF</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0;">Turn your images and photos into a professional PDF document in seconds.</p>
+                </a>
+                <a href="https://jkmedit.in/tools/pdf-tools/merge-pdf.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h4>Merge PDF</h4>
+                </a>
+                <a href="https://jkmedit.in/tools/pdf-tools/protect-pdf.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h4>Protect PDF</h4>
+                </a>
+                <a href="https://jkmedit.in/tools/pdf-tools/unlock-pdf.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h4>Unlock PDF</h4>
+                </a>
+                <a href="https://jkmedit.in/tools/pdf-tools/rotate-pdf.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </div>
+                    <h4>Rotate PDF</h4>
+                </a>
+                <a href="https://jkmedit.in/tools/pdf-tools/pdf-to-word.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h4>PDF to Word</h4>
+                </a>
+                <a href="https://jkmedit.in/tools/pdf-tools/word-to-pdf.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h4>Word to PDF</h4>
+                </a>
+                <a href="https://jkmedit.in/tools/image-tools/compress-image.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h4>Compress Image</h4>
+                </a>
+                <a href="https://jkmedit.in/tools/image-tools/resize-image.html" class="tool-box">
+                    <div class="tool-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                    </div>
+                    <h4>Resize Image</h4>
                 </a>
             </div>
         </section>
@@ -819,25 +957,21 @@
         <!-- 21. RELATED BLOGS SECTION -->
         <section class="related-sections">
             <h3 style="font-size: 1.75rem; text-align: center; margin-bottom: 2rem;">Read More From Our Blog</h3>
-            <div class="grid-cards">
-                <div class="card">
-                    <img src="images/blog/thumb-compress.jpg" alt="How to compress PDF files">
+            
+            <div id="dynamic-blog-container" class="grid-cards">
+                <!-- Fallback content (replaced automatically via JavaScript if fetch succeeds) -->
+                <a href="#" class="blog-card-minimal">
+                    <img src="images/blog/thumb-compress.jpg" alt="How to Compress Large PDF Files">
                     <h4>How to Compress Large PDF Files</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">Struggling with email attachment limits? Learn how to compress your PDFs without losing quality.</p>
-                    <a href="#" style="font-weight: 600; font-size: 0.9rem;">Read More →</a>
-                </div>
-                <div class="card">
-                    <img src="images/blog/thumb-protect.jpg" alt="How to password protect PDF">
+                </a>
+                <a href="#" class="blog-card-minimal">
+                    <img src="images/blog/thumb-protect.jpg" alt="Securing Your PDF Documents">
                     <h4>Securing Your PDF Documents</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">A comprehensive guide to adding strong passwords and encryption to your sensitive files.</p>
-                    <a href="#" style="font-weight: 600; font-size: 0.9rem;">Read More →</a>
-                </div>
-                <div class="card">
-                    <img src="images/blog/thumb-convert.jpg" alt="Convert images to PDF">
+                </a>
+                <a href="#" class="blog-card-minimal">
+                    <img src="images/blog/thumb-convert.jpg" alt="JPG vs PDF: Which is Better?">
                     <h4>JPG vs PDF: Which is Better?</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">Understand the difference between image formats and document formats for professional sharing.</p>
-                    <a href="#" style="font-weight: 600; font-size: 0.9rem;">Read More →</a>
-                </div>
+                </a>
             </div>
         </section>
     </main>
@@ -845,7 +979,7 @@
     <!-- 22. FOOTER SECTION (Dynamically Loaded) -->
     <div id="footer-placeholder"></div>
 
-    <!-- Script to Handle Dynamic Header/Footer & FAQ Accordion -->
+    <!-- Script to Handle Dynamic Header/Footer, Blogs & FAQ Accordion -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
@@ -859,7 +993,6 @@
                     const headerPlaceholder = document.getElementById('header-placeholder');
                     headerPlaceholder.innerHTML = data;
                     
-                    // 1. Re-execute any scripts loaded via the dynamic header HTML
                     const scripts = headerPlaceholder.getElementsByTagName('script');
                     for (let i = 0; i < scripts.length; i++) {
                         const newScript = document.createElement('script');
@@ -871,7 +1004,6 @@
                         document.body.appendChild(newScript);
                     }
 
-                    // 2. Fallback mobile menu toggle to force UI above content
                     const toggleBtn = headerPlaceholder.querySelector('.navbar-toggler, .menu-toggle, .hamburger, [data-toggle="collapse"], button');
                     const navMenu = headerPlaceholder.querySelector('.nav-links, .navbar-collapse, .nav-menu, ul');
                     
@@ -895,6 +1027,65 @@
                 })
                 .catch(error => console.error('Error fetching footer:', error));
 
+            // Fetch Random 3 Blogs Automatically (Image + Title only)
+            fetch('https://jkmedit.in/blog/index.html')
+                .then(response => {
+                    if (!response.ok) throw new Error('Blog index load failed');
+                    return response.text();
+                })
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    let fetchedCards = Array.from(doc.querySelectorAll('.grid-cards .card, article.card, .blog-card, .blog-card-minimal'));
+                    
+                    if (fetchedCards.length > 0) {
+                        const blogContainer = document.getElementById('dynamic-blog-container');
+                        blogContainer.innerHTML = ''; // Clear fallback content
+
+                        // Fisher-Yates Shuffle to get random blogs on every page refresh
+                        for (let i = fetchedCards.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [fetchedCards[i], fetchedCards[j]] = [fetchedCards[j], fetchedCards[i]];
+                        }
+
+                        // Select the first 3 random blogs
+                        const random3Blogs = fetchedCards.slice(0, 3);
+                        
+                        random3Blogs.forEach(card => {
+                            const imgElement = card.querySelector('img');
+                            const headingElement = card.querySelector('h1, h2, h3, h4, h5, h6');
+                            const linkElement = card.tagName.toLowerCase() === 'a' ? card : card.querySelector('a');
+
+                            if (imgElement && headingElement) {
+                                const newCard = document.createElement('a');
+                                newCard.className = 'blog-card-minimal';
+                                
+                                let href = linkElement ? linkElement.getAttribute('href') : '#';
+                                if (href && !href.startsWith('http') && !href.startsWith('//')) {
+                                    href = new URL(href, 'https://jkmedit.in/blog/').href;
+                                }
+                                newCard.href = href;
+
+                                let imgSrc = imgElement.getAttribute('src');
+                                if (imgSrc && !imgSrc.startsWith('http') && !imgSrc.startsWith('//')) {
+                                    imgSrc = new URL(imgSrc, 'https://jkmedit.in/blog/').href;
+                                }
+
+                                const altText = imgElement.getAttribute('alt') || headingElement.innerText;
+
+                                newCard.innerHTML = `
+                                    <img src="${imgSrc}" alt="${altText}">
+                                    <h4>${headingElement.innerText}</h4>
+                                `;
+
+                                blogContainer.appendChild(newCard);
+                            }
+                        });
+                    }
+                })
+                .catch(error => console.log('Using fallback blogs due to fetch error:', error));
+
             // FAQ Accordion Logic
             const faqItems = document.querySelectorAll('.faq-item');
             faqItems.forEach(item => {
@@ -902,13 +1093,11 @@
                 button.addEventListener('click', () => {
                     const isActive = item.classList.contains('active');
                     
-                    // Close all FAQs first
                     faqItems.forEach(faq => {
                         faq.classList.remove('active');
                         faq.querySelector('.faq-icon').textContent = '+';
                     });
                     
-                    // Open the clicked one if it wasn't already active
                     if (!isActive) {
                         item.classList.add('active');
                         item.querySelector('.faq-icon').textContent = '×';
