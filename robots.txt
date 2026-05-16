@@ -1,9 +1,40 @@
-User-agent: *
+# ==========================================
+# JKM Edit - AI & Search Crawler Directives
+# ==========================================
+
+# 1. Target Specific AI Crawlers (OpenAI, Anthropic, Google)
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: Claude-Web
+User-agent: ClaudeBot
+User-agent: Google-Extended
+User-agent: PerplexityBot
+User-agent: OmgiliBot
+Crawl-delay: 5
+
+# Allow AI to access tools and learning content
+Allow: /blog/
+Allow: /tools/
+Allow: /llms.txt
+
+# Disallow AI from training on sensitive/backend data
 Disallow: /admin/
-Disallow: /private/
-Allow: /
+Disallow: /login/
+Disallow: /assets/
+Disallow: /cgi-bin/
+Disallow: /*?* # Blocks URLs with query parameters to avoid duplicate crawling
+Disallow: /search/
 
-# Crawl delay (optional)
-# Crawl-delay: 2
+# 2. General Web Crawlers (Google, Bing, etc.)
+User-agent: *
+Crawl-delay: 2
+Disallow: /admin/
+Disallow: /login/
+Disallow: /cgi-bin/
+Disallow: /*?*
 
+# 3. Preferred Domain
+Host: https://jkmedit.in
+
+# 4. Sitemap Location
 Sitemap: https://jkmedit.in/sitemap.xml
