@@ -349,6 +349,11 @@
 
     function showImportView() { document.getElementById('login-view').classList.add('hidden'); document.getElementById('import-view').classList.remove('hidden'); }
 
+    function hideSeoIntro() {
+        const intro = document.getElementById('seo-intro');
+        if (intro) intro.style.display = 'none';
+    }
+
     // --- DRIVE SYNC LOGIC ---
     async function startApp() {
         showLoader("Searching for your backup...");
@@ -363,6 +368,7 @@
             document.getElementById('dashboard-view').classList.remove('hidden');
             document.getElementById('header-tools').classList.remove('hidden');
             document.getElementById('header-tools').style.display = 'flex';
+            hideSeoIntro();
             if(deviceCheckInterval) clearInterval(deviceCheckInterval);
             deviceCheckInterval = setInterval(checkDeviceStatus, 15000);
         } catch (e) {
@@ -582,8 +588,8 @@
         });
     }
 
-    function openUserDashboard(id) { currentUserId = id; document.getElementById('dashboard-view').classList.add('hidden'); document.getElementById('user-dashboard-view').classList.remove('hidden'); renderUserDashboard(); }
-    function goBackToDashboard() { currentUserId = null; document.getElementById('user-dashboard-view').classList.add('hidden'); document.getElementById('dashboard-view').classList.remove('hidden'); renderUsers(); }
+    function openUserDashboard(id) { currentUserId = id; document.getElementById('dashboard-view').classList.add('hidden'); document.getElementById('user-dashboard-view').classList.remove('hidden'); renderUserDashboard(); hideSeoIntro(); }
+    function goBackToDashboard() { currentUserId = null; document.getElementById('user-dashboard-view').classList.add('hidden'); document.getElementById('dashboard-view').classList.remove('hidden'); renderUsers(); hideSeoIntro(); }
 
     function renderUserDashboard() {
         const user = state.users.find(u => u.id === currentUserId); if (!user) return goBackToDashboard();

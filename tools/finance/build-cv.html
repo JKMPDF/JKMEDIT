@@ -714,11 +714,17 @@
             document.documentElement.style.setProperty('--font-head', h);
             document.documentElement.style.setProperty('--font-body', b);
         }
+        function hideSeoIntro() {
+            const intro = document.getElementById('seo-intro');
+            if (intro) intro.style.display = 'none';
+        }
+
         function switchTab(t) {
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
             document.getElementById('panel-'+t).classList.add('active');
             event.target.classList.add('active');
+            if (t !== 'content') hideSeoIntro();
         }
 
         renderEditor();

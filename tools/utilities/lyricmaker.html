@@ -259,6 +259,15 @@
         audio.currentTime = 0; audio.play(); recorder.start();
         audio.onended = () => recorder.stop();
     }
+
+    const seoIntro = document.getElementById('seo-intro');
+    function hideSeoIntro() {
+        if (seoIntro) seoIntro.style.display = 'none';
+    }
+    document.getElementById('lyricIn').addEventListener('focus', hideSeoIntro);
+    document.getElementById('audioIn').addEventListener('change', hideSeoIntro);
+    document.getElementById('bgIn').addEventListener('change', hideSeoIntro);
+    document.getElementById('renderBtn').addEventListener('click', hideSeoIntro);
 </script>
 </body>
 </html>

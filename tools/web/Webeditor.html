@@ -204,6 +204,11 @@
     let currentEditId = null; // The fingerprint of the element currently being edited
     let snippets = { html: "", css: "", js: "" };
 
+    function hideSeoIntro() {
+        const intro = document.getElementById('seo-intro');
+        if (intro) intro.style.display = 'none';
+    }
+
     // --- 1. STARTUP & FINGERPRINTING ---
     function loadSource() {
         const input = document.getElementById('sourceInput').value;
@@ -213,6 +218,7 @@
         TAGGED_SOURCE = injectFingerprints(input);
         
         document.getElementById('startupModal').style.display = 'none';
+        hideSeoIntro();
         renderPreview();
     }
 
