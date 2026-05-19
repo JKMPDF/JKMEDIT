@@ -75,7 +75,7 @@
             }
             #${bannerId} .jkm-cookie-reject {
                 background: transparent;
-                color: #cbd5e1;
+                color: #a0aec0;
                 border-color: #475569;
             }
             @media (max-width: 680px) {
