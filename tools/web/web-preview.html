@@ -366,13 +366,16 @@
             const frameDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
             frameDoc.open();
             if(code.trim() === "") {
-                frameDoc.write('<body style="font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; color:#888; margin:0;">No code to preview yet. Switch to Editor.</body>');
+                frameDoc.write('<body style="font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; color:#888; margin:0;">No code to preview yet. Switch to Editor.    <script src="/assets/cookie-consent.js" async></script>
+</body>');
             } else {
                 frameDoc.write(code);
             }
             frameDoc.close();
         }
     </script>
+    <script src="/assets/cookie-consent.js" async></script>
 </body>
 </html>
+
 

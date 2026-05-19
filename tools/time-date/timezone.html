@@ -454,7 +454,7 @@
                 const m = document.getElementById('mobileToggle'), n = document.getElementById('navMenu');
                 if(m && n) m.onclick = () => { n.classList.toggle('active'); m.innerHTML = n.classList.contains('active') ? '&#10005;' : '&#9776;'; };
             });
-            fetch('https://jkmedit.in/footer.html').then(r => r.text()).then(d => document.getElementById('footer-placeholder').innerHTML = d);
+            fetch('https://jkmedit.in/footer.html').then(r => r.text()).then(d => { document.getElementById('footer-placeholder').innerHTML = d; });
 
             document.querySelectorAll('a').forEach(link => {
                 const linkUrl = link.getAttribute('href');
@@ -584,5 +584,9 @@
             setNowBtn.addEventListener('click', setNow);
         });
     </script>
+    <script src="/assets/cookie-consent.js" async></script>
 </body>
 </html>
+
+
+

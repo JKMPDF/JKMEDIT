@@ -230,18 +230,6 @@
         <p><strong>Email:</strong> <a href="mailto:contact.jkmedit@gmail.com">contact.jkmedit@gmail.com</a></p>
     </div>
 
-    <div id="cookie-consent-banner" class="cookie-banner">
-        <div class="cookie-content">
-            <h3 class="cookie-title">Cookie Preferences</h3>
-            <p class="cookie-text">
-                JKM Edit uses essential, analytical, and advertising cookies to ensure a smooth user experience and keep our utility tools 100% free. Your uploaded files are processed client-side and are never tracked. Read our <a href="https://jkmedit.in/help/cookie.html">Cookie Policy</a> for details.
-            </p>
-            <div class="cookie-buttons">
-                <button id="cookie-reject" class="btn-cookie btn-reject">Reject Non-Essential</button>
-                <button id="cookie-accept" class="btn-cookie btn-accept">Accept All</button>
-            </div>
-        </div>
-    </div>
 </main>
 
 <div id="footer-container"></div>
@@ -313,51 +301,8 @@
 }
 </script>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    // Run an interval check or append this setup to execute right after footer.html finishes loading
-    const checkFooterLoaded = setInterval(() => {
-        const banner = document.getElementById("cookie-consent-banner");
-        const acceptBtn = document.getElementById("cookie-accept");
-        const rejectBtn = document.getElementById("cookie-reject");
 
-        if (banner && acceptBtn && rejectBtn) {
-            clearInterval(checkFooterLoaded); // Target found, clear timer
-            
-            const cookieConsent = localStorage.getItem("jkm_cookie_consent");
-
-            // If the user hasn't chosen yet, display the popup
-            if (!cookieConsent) {
-                banner.style.display = "block";
-            }
-
-            // User accepts all cookies
-            acceptBtn.addEventListener("click", function () {
-                localStorage.setItem("jkm_cookie_consent", "accepted");
-                banner.style.display = "none";
-                enableTrackingFeatures();
-            });
-
-            // User rejects tracking cookies
-            rejectBtn.addEventListener("click", function () {
-                localStorage.setItem("jkm_cookie_consent", "rejected");
-                banner.style.display = "none";
-                disableTrackingFeatures();
-            });
-        }
-    }, 100);
-
-    function enableTrackingFeatures() {
-        console.log("Analytics & AdSense Allowed.");
-        // If you want to dynamically initialize Google Analytics/AdSense conditionally, put that initialization logic here.
-    }
-
-    function disableTrackingFeatures() {
-        console.log("Non-essential tracking disabled.");
-        // Keep optional analytics turned off
-    }
-});
-</script>
-
+    <script src="/assets/cookie-consent.js" async></script>
 </body>
 </html>
+
