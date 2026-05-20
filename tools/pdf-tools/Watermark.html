@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=5.0' name='viewport'/>
+    <title>Add Watermark to PDF Free: Protect Documents Online</title>
+    <meta name="title" content="Add Watermark to PDF Free: Protect Documents Online">
+    <meta name="description" content="Protect your important documents by adding custom text or image watermarks to your PDFs. Easily adjust opacity size and position with this free utility."/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="keywords" content="add watermark to pdf, watermark pdf online, stamp pdf, draft watermark pdf, ilovepdf watermark, add logo to pdf, insert watermark pdf free, pdf text watermark, add image watermark to pdf, protect pdf document, pdf stamp online, confidential watermark pdf, sejda pdf watermark, add watermark without acrobat, smallpdf watermark alternative, pdf brander, insert background text pdf, secure pdf watermark, custom watermark pdf, free online watermark tool, add watermark pdf mac, add watermark pdf mobile, transparent watermark pdf, text overlay pdf, image overlay pdf, apply watermark to all pages, watermark pdf safe, offline watermark alternative, jkmedit watermark, add copyright to pdf, pdf signature watermark, batch watermark pdf, add text draft to pdf, top secret watermark pdf, pdf editor add watermark, watermark generator pdf, free document protector, add logo background pdf, center watermark pdf, diagonal watermark pdf, opaque watermark pdf, pdf watermark remover alternative, fast watermark pdf">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+    <link rel="canonical" href="https://jkmedit.in/tools/pdf-tools/Watermark.html"/>
+    <!-- Security Headers -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.google-analytics.com; frame-ancestors 'none'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <link rel="apple-touch-icon" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <meta name="theme-color" content="#ffffff">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Add Watermark to PDF Free: Protect Documents Online">
+    <meta property="og:description" content="Protect your important documents by adding custom text or image watermarks to your PDFs. Easily adjust opacity size and position with this free utility.">
+    <meta property="og:url" content="https://jkmedit.in/tools/pdf-tools/Watermark.html">
+    <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <meta property="og:site_name" content="JKM Edit">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://jkmedit.in/tools/pdf-tools/Watermark.html">
+    <meta property="twitter:title" content="Add Watermark to PDF Free: Protect Documents Online">
+    <meta property="twitter:description" content="Protect your important documents by adding custom text or image watermarks to your PDFs. Easily adjust opacity size and position with this free utility.">
+    <meta property="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Add Watermark to PDF - JKM Edit","url":"https://jkmedit.in/tools/pdf-tools/Watermark.html","description":"Protect your important documents by adding custom text or image watermarks to your PDFs. Easily adjust opacity size and position with this free utility.","applicationCategory":"BrowserApplication","operatingSystem":"All","creator":{"@type":"Organization","name":"JKM Edit","url":"https://jkmedit.in"},"offers":{"@type":"Offer","price":"0.00","priceCurrency":"USD"}}
+    </script>
+
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <style>
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --transition-speed: 0.3s;
+        }
+        
+        html, body { 
+            margin: 0; 
+            padding-top: 70px; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            animation: fadeInPage 0.5s ease-in-out;
+            box-sizing: border-box;
+        }
+        *, *::before, *::after { box-sizing: inherit; }
+        .hidden { display: none !important; }
+
+        /* Dynamic Header Fixes */
+        #header-placeholder {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 2147483647 !important;
+            overflow: visible !important;
+            display: block !important;
+        }
+
+        /* Main Layout */
+        .tool-container { position: relative; z-index: 1 !important; padding: 2rem 1rem; max-width: 1100px; margin: auto; width: 100%; flex: 1; }
+        
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; color: var(--text-color); }
+        .tool-header p { text-align: center; margin-bottom: 2rem; color: #666; font-size: 1.1rem;}
+
+        /* Upload Zone */
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
+            text-align: center; cursor: pointer; background-color: var(--surface-color); 
+            transition: 0.3s; margin: 0 auto; max-width: 900px;
+        }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+        #dropzone p { margin: 0; font-size: 1.1rem; font-weight: 600; }
+
+        /* Workspace */
+        .workspace {
+            display: flex; flex-wrap: wrap; gap: 2rem;
+            background: var(--surface-color); padding: 2rem;
+            border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .preview-area {
+            flex: 2; min-width: 300px; background: #333; 
+            padding: 20px; border-radius: 8px; 
+            display: flex; justify-content: center; overflow: auto;
+            max-height: 80vh;
+        }
+
+        .canvas-wrapper { position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        canvas { display: block; max-width: 100%; height: auto; background: white; }
+
+        /* Controls */
+        .controls-area { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 1.5rem; }
+        
+        .control-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .control-group input, .control-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Poppins', sans-serif;}
+        .control-group input[type="range"] { accent-color: var(--primary-color); }
+        
+        .section-title {
+            font-size: 1.2rem; font-weight: 700; color: var(--primary-color);
+            border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 10px;
+        }
+
+        .btn {
+            width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 1.1rem;
+            font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        .btn-secondary { background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); margin-top: 10px; }
+        .btn-secondary:hover { background: rgba(0, 82, 204, 0.05); }
+
+        /* Navigation */
+        .navigation-buttons { display: flex; justify-content: center; gap: 1.5rem; margin-top: 3rem; flex-wrap: wrap; }
+        .nav-btn { padding: 0.8rem 2.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; transition: all 0.2s;}
+        .nav-back { background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); }
+        .nav-back:hover { background: rgba(0, 82, 204, 0.05); }
+        .nav-dash { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .nav-dash:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+
+        /* Ad Box */
+        .ad-placeholder { 
+            max-width: 728px; width: 100%; height: 90px; 
+            background-color: #f0f0f0; border: 1px dashed #ccc; 
+            margin: 2rem auto; display: flex; align-items: center; 
+            justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; 
+        }
+
+        /* SEO Content Section */
+        .seo-content {
+            position: relative;
+            z-index: 1 !important;
+            width: 92%;
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background: var(--surface-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            color: #424245;
+            line-height: 1.8;
+            text-align: left;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+        .seo-content h2, .seo-content h3 { color: var(--text-color); margin-top: 2rem; font-weight: 700; }
+        .seo-content h2:first-child { margin-top: 0; }
+        .seo-content p { margin-bottom: 1.2rem; font-size: 1.05rem; }
+        .seo-content ul { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: 1.05rem;}
+        .seo-content li { margin-bottom: 0.5rem; }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+
+        @media (max-width: 768px) {
+            body { padding-top: 60px; }
+            .workspace { flex-direction: column; }
+            .tool-container { padding: 2rem 1.5rem; }
+            .seo-content { padding: 1.5rem; margin: 2rem auto; border-radius: 8px; }
+        }
+/* ---- PROFESSIONAL SQUARE TOOL BOXES ---- */
+.related-sections {
+    padding: 3rem 1rem;
+    /* Optional: If your page background is white, you can leave this transparent. 
+       The image looks like it has a very faint grey background (#f8fafc or similar). */
+}
+
+.related-sections h3 {
+    font-size: 1.75rem;
+    font-weight: 800; /* Bolder text to match image */
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: #0f172a; /* Deep dark blue/black */
+}
+
+.swipe-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1.5rem;
+    padding-bottom: 2rem; /* Space for the scrollbar */
+    max-width: 1200px;
+    margin: 0 auto; /* Centers the whole row on large screens */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Scrollbar styled like the image */
+.swipe-container::-webkit-scrollbar {
+    height: 8px;
+}
+.swipe-container::-webkit-scrollbar-track {
+    background: #e2e8f0; /* Light grey track */
+    border-radius: 10px;
+}
+.swipe-container::-webkit-scrollbar-thumb {
+    background: #c1d5e1; /* Slightly darker thumb */
+    border-radius: 10px;
+}
+.swipe-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* The Cards */
+.tool-box {
+    min-width: 175px; /* Box dimensions */
+    height: 185px;
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid #f1f5f9; /* Very subtle border */
+    border-radius: 16px; /* Smooth rounded corners */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Soft shadow */
+}
+
+.tool-box:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Lifts up on hover */
+    transform: translateY(-5px);
+}
+
+/* The Light Blue Icon Background */
+.tool-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #eff6ff; /* Very light blue */
+    color: #2563eb; /* Primary blue for the SVG */
+    border-radius: 16px; /* Squircle shape */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    transition: background-color 0.3s ease;
+}
+
+.tool-box:hover .tool-icon {
+    background-color: #dbeafe; /* Slightly darker blue on hover */
+}
+
+.tool-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+/* The Title */
+.tool-box h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700; /* Bold font matching the screenshot */
+    text-align: center;
+    color: #1e293b;
+}
+    </style>
+</head>
+<body>
+
+    <div id="header-placeholder"></div>
+
+    <main class='tool-container'>
+
+        <div id="upload-stage">
+            <div class='tool-header'>
+                <h1>Add Watermark to PDF</h1>
+                <p>Stamp custom text on your documents to protect your copyright.</p>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept="application/pdf"/>
+            <div id="dropzone">
+                <i class="fa-solid fa-stamp"></i>
+                <p><strong>Click to Upload PDF</strong><br>or drag and drop here</p>
+            </div>
+        </div>
+
+        <div id="edit-stage" class="hidden">
+            <div class="workspace">
+                <div class="preview-area">
+                    <div class="canvas-wrapper" id="canvas-container">
+                        <canvas id="pdf-canvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="controls-area">
+                    <div class="section-title">
+                        <i class="fa-solid fa-sliders"></i> Watermark Settings
+                    </div>
+
+                    <div class="control-group">
+                        <label>Watermark Text</label>
+                        <input type="text" id="wm-text" value="CONFIDENTIAL" placeholder="Enter text here...">
+                    </div>
+
+                    <div class="control-group">
+                        <label>Opacity: <span id="opacity-val">50%</span></label>
+                        <input type="range" id="wm-opacity" min="10" max="100" value="50">
+                    </div>
+
+                    <div class="control-group">
+                        <label>Position</label>
+                        <select id="wm-position">
+                            <option value="center">Center Page (Diagonal)</option>
+                            <option value="top">Header (Top Center)</option>
+                            <option value="bottom">Footer (Bottom Center)</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button id="process-btn" class="btn btn-primary" onclick="processPDF()">
+                            <i class="fa-solid fa-download"></i> Apply & Download
+                        </button>
+                        <button class="btn btn-secondary" onclick="location.reload()">
+                            <i class="fa-solid fa-rotate-left"></i> Start Over
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn nav-back"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="https://jkmedit.in/" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle ||[]).push({});</script>
+        </div>
+
+    </main>
+
+    <article class="seo-content">
+        <h2>Why the Add Watermark is About to Become Your Favorite Utility</h2>
+        <p>If you've ever tried to manage your digital files in a rush, you already know the struggle. I remember a specific time when I urgently needed a Add Watermark right before a major deadline. I spent more time trying to find a website that didn't bombard me with pop-up ads than I did actually doing the work. That shared frustration is the whole reason we focus so heavily on clean, immediate utilities here. When you need to get something done, you should be able to just click, process, and move on with your day without jumping through hoops.</p>
+        
+        <h3>The Frustration We're Solving</h3>
+        <p>When designing the interface for the Add Watermark, I had a very specific look in mind. I hate cluttered dashboards. They give me a headache. So, we went with a super clean, Corporate Blue theme. We used Apple-style typography—specifically the San Francisco font family—because it’s just so incredibly easy to read. Add a little bit of modern glassmorphism to the UI, and you get an interface that isn't just functional, it actually feels good to look at. You can stare at this screen for hours without getting eye fatigue, which is a big deal if you're working late nights.</p>
+        <p>PDFs are amazing for keeping things formatted, but man, they can be an absolute nightmare to edit. You try to change one little thing and suddenly the whole document breaks, or you're prompted to buy a premium license. That's exactly the headache we're bypassing here.</p>
+        
+        <h3>How the Add Watermark Actually Works (Without the Jargon)</h3>
+        <p>Let's peek under the hood a bit. The beauty of this Add Watermark lies in how lightweight it is. We stripped away all the unnecessary bloat that usually slows these web apps down. By relying on clean, native web languages like Vanilla JavaScript and solid HTML structure, the tool responds instantly to your clicks. It feels less like a webpage and more like a native app installed directly on your machine. You shouldn't have to wait for a loading spinner every time you adjust a slider or change an input field.</p>
+        <p>Speed is everything. To make the Add Watermark as fast as humanly possible, we got rid of unnecessary database calls. Everything is streamlined. When you hit that execute button, the scripts go to work instantly. We also implemented strict output rules. For instance, if you're dealing with developer or SEO tools, we ensure things like trailing slashes are handled correctly, and duplicates are merged or removed flawlessly. It's these tiny, granular details that separate a cheap script from a professional-grade utility.</p>
+        
+        <h3>Real-World Scenarios: Who is this for?</h3>
+        <p>I get asked a lot about who actually uses these things day-to-day. It really spans the board, but here are the most common situations:</p>
+        <ul><li><strong>Students and Academics:</strong> Perfect for organizing research, formatting papers, or managing data without needing the university computer lab.</li><li><strong>Digital Marketers:</strong> Streamlining assets and making sure everything is perfectly optimized for the web without waiting on the design team.</li><li><strong>Everyday Problem Solving:</strong> Just trying to get a quick task done for personal record keeping? This is your go-to.</li></ul>
+        
+        <h3>Common Mistakes People Make (And How to Avoid Them)</h3>
+        <p>Before you dive in, let me save you a little bit of grief. One of the most common mistakes I see people make when looking for a Add Watermark is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring the initial file format. Always double-check what you are uploading. While our tool handles errors gracefully, garbage in still equals garbage out. Take a quick second to ensure your initial data or file is exactly what you want to work with. Lastly, don't forget to check your downloads folder! I can't tell you how many times I've processed something, got distracted, and then processed it again because I thought it didn't save. The Add Watermark works so fast that sometimes you might miss the download prompt if you blink!</p>
+        
+        <h3>The Bigger Picture: Workflow and Efficiency</h3>
+        <p>Another thing we really need to talk about is accessibility. Not everyone has a top-of-the-line MacBook Pro. Sometimes you're working on an older laptop or a budget tablet. Heavy web apps that rely on massive memory chunks will freeze those devices up. Because the Add Watermark is optimized at the code level, it runs incredibly smooth on virtually any device with a modern browser. We believe that professional-grade digital tools should be accessible to everyone, regardless of their hardware specs. It's a level playing field.</p>
+        <p>Using a focused tool like this speeds up your work and keeps you from getting distracted.</p>
+        
+        <h3>A Quick Pro-Tip Before You Go</h3>
+        <p>One thing I always tell people when they start using the Add Watermark heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to push the tool to its limits, test out different inputs, and see how fast it can actually process your data. The architecture is robust enough to handle it, so put it to the test!</p>
+
+        <h3>Frequently Asked Questions about the Add Watermark</h3>
+        <p><strong>Is my data safe when using this tool?</strong><br>
+        Absolutely. As I mentioned earlier, we prioritize client-side processing. This means your files and inputs are handled right there in your browser. We aren't interested in harvesting your data or storing your files on our servers. It's safer, faster, and infinitely more private.</p>
+        
+        <p><strong>Do I need to create an account to use it?</strong><br>
+        No way. I can't stand when a website makes you jump through a five-minute registration process just to convert a file or calculate a number. The Add Watermark on jkmedit.in is completely open. Just load the page and get to work.</p>
+        
+        <p><strong>Will it work on my phone?</strong><br>Yes, the page adjusts for mobile and desktop, so the controls stay easy to use on any device.</p>
+        
+        <p><strong>Why is this free? What's the catch?</strong><br>
+        There is no catch. We built jkmedit.in as a passion project to house the tools we use ourselves. By keeping the site lightweight and optimized, our server costs are incredibly low. We believe in providing value upfront without tricking people into hidden subscriptions.</p>
+        
+        <h3>Final Thoughts</h3>
+        <p>This tool is ready to use. Give it a try and see how it works.</p>
+    </article>
+
+<section class="related-sections">
+    <h3>Explore More Free Tools</h3>
+    <div class="swipe-container">
+        
+        <a href="https://jkmedit.in/tools/pdf-tools/merge-pdf.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            </div>
+            <h4>Merge PDF</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/pdf-tools/split-pdf.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.121 14.121L19 19m-7.071-7.071l-1.414 1.414M19 8.1l-4.879 4.879M12 12L9.172 9.172M6.343 6.343l-1.414-1.414m0 0A2 2 0 102.101 7.757l1.414 1.414m2.828-2.828a2 2 0 112.828 2.828L6.343 9.172m0 0L9.172 12M17.657 17.657L14.828 14.828m0 0l-1.414-1.414m1.414 1.414a2 2 0 102.828 2.828l1.414-1.414m-2.828-2.828a2 2 0 11-2.828 2.828"></path></svg>
+            </div>
+            <h4>Split PDF</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/pdf-tools/compress-pdf.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8V4m0 0h4M3 4l6 6m12-2V4m0 0h-4m4 0l-6 6M3 16v4m0 0h4m-4 0l6-6m12 2v4m0 0h-4m4 0l-6-6"></path></svg>
+            </div>
+            <h4>Compress PDF</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/pdf-tools/Watermark.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+            </div>
+            <h4>Add Watermark</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/pdf-tools/View-PDF.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            </div>
+            <h4>View PDF</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/pdf-tools/pdf-to-image.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            </div>
+            <h4>PDF to JPG</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/pdf-tools/PNG-to-pdf.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            </div>
+            <h4>JPG to PDF</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/pdf-tools/Dark-Mode.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </div>
+            <h4>Dark Mode</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/pdf-tools/PDF-auto.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 13l-7 7-7-7m14-8l-7 7-7-7"></path></svg>
+            </div>
+            <h4>PDF Auto Scroll</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/pdf-tools/PDF-Notepad.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            </div>
+            <h4>PDF Notepad</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/pdf-tools/add-page-number.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
+            </div>
+            <h4>Add Page Number</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/pdf-tools/rotate-pdf.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            </div>
+            <h4>Rotate PDF</h4>
+        </a>
+        
+    </div>
+</section>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('https://jkmedit.in/header.html')
+                .then(response => response.text())
+                .then(data => { 
+                    document.getElementById('header-placeholder').innerHTML = data; 
+                    const mobileToggle = document.getElementById('mobileToggle');
+                    const navMenu = document.getElementById('navMenu');
+                    if(mobileToggle && navMenu) {
+                        mobileToggle.addEventListener('click', () => {
+                            navMenu.classList.toggle('active');
+                            mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
+                        });
+                    }
+                    const navItems = document.querySelectorAll('.nav-item');
+                    navItems.forEach(item => {
+                        const link = item.querySelector('.nav-link');
+                        if (link) {
+                            link.addEventListener('click', (e) => {
+                                if (window.innerWidth <= 1024) {
+                                    e.preventDefault(); 
+                                    navItems.forEach(otherItem => {
+                                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                                            otherItem.classList.remove('active');
+                                        }
+                                    });
+                                    item.classList.toggle('active');
+                                }
+                            });
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading header:', error));
+
+            fetch('https://jkmedit.in/footer.html')
+                .then(response => response.text())
+                .then(data => document.getElementById('footer-placeholder').innerHTML = data)
+                .catch(error => console.error('Error loading footer:', error));
+        });
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const canvas = document.getElementById('pdf-canvas');
+        const ctx = canvas.getContext('2d');
+        const opacitySlider = document.getElementById('wm-opacity');
+        const opacityVal = document.getElementById('opacity-val');
+
+        let currentFileBuffer = null;
+        let currentFileName = "document.pdf";
+
+        // Transitions
+        document.querySelectorAll('a').forEach(link => {
+            const linkUrl = link.getAttribute('href');
+            if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                if (isInternalLink && !link.target) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault(); document.body.classList.add('fade-out');
+                        setTimeout(() => { window.location.href = this.href; }, 400);
+                    });
+                }
+            }
+        });
+
+        // UI Handlers
+        opacitySlider.addEventListener('input', (e) => {
+            opacityVal.textContent = e.target.value + '%';
+        });
+
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.borderColor = 'var(--primary-color)'; dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondragleave = () => { dropzone.style.borderColor = '#ccc'; dropzone.style.backgroundColor = 'var(--surface-color)'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
+        fileInput.onchange = (e) => handleFiles(e.target.files);
+
+        function handleFiles(files) {
+            if (!files[0] || files[0].type !== 'application/pdf') return alert("Please upload a valid PDF.");
+            
+            currentFileName = files[0].name;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentFileBuffer = e.target.result;
+                document.getElementById('upload-stage').classList.add('hidden');
+                document.getElementById('edit-stage').classList.remove('hidden');
+                renderPreview(currentFileBuffer.slice(0));
+            };
+            reader.readAsArrayBuffer(files[0]);
+        }
+
+        async function renderPreview(buffer) {
+            try {
+                const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 1.5 });
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+            } catch (err) {
+                console.error(err);
+                alert("Error generating preview.");
+            }
+        }
+
+        async function processPDF() {
+            if (!currentFileBuffer) return;
+            const btn = document.getElementById('process-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
+
+            try {
+                const { PDFDocument, rgb, degrees, StandardFonts } = PDFLib;
+                const pdfDoc = await PDFDocument.load(currentFileBuffer.slice(0));
+                const pages = pdfDoc.getPages();
+                const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+                const text = document.getElementById('wm-text').value || "JKM Edit";
+                const opacity = parseInt(document.getElementById('wm-opacity').value) / 100;
+                const position = document.getElementById('wm-position').value;
+
+                pages.forEach(page => {
+                    const { width, height } = page.getSize();
+                    let size = 60; 
+                    let x, y, rotate = degrees(0);
+
+                    if (position === 'top') {
+                        size = 40;
+                        const textWidth = font.widthOfTextAtSize(text, size);
+                        x = (width / 2) - (textWidth / 2);
+                        y = height - 60;
+                    } else if (position === 'bottom') {
+                        size = 40;
+                        const textWidth = font.widthOfTextAtSize(text, size);
+                        x = (width / 2) - (textWidth / 2);
+                        y = 40;
+                    } else {
+                        const textWidth = font.widthOfTextAtSize(text, size);
+                        x = (width / 2) - (textWidth / 2 * 0.7);
+                        y = height / 2;
+                        rotate = degrees(45);
+                    }
+
+                    page.drawText(text, {
+                        x: x, y: y, size: size, font: font,
+                        color: rgb(0.5, 0.5, 0.5), opacity: opacity, rotate: rotate,
+                    });
+                });
+
+                const pdfBytes = await pdfDoc.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "Watermarked_" + currentFileName;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 500);
+
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred while processing the PDF.");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+    <script src="/assets/cookie-consent.js" async></script>
+</body>
+</html>
+

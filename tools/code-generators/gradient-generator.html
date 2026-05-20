@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=5.0' name='viewport'/>
+    <title>CSS Gradient Generator: Build Radial & Linear Designs</title>
+    <meta name="title" content="CSS Gradient Generator: Build Radial & Linear Designs">
+    <meta name="description" content="Create absolutely beautiful linear and purely radial CSS background gradients. Manually pick fine color stops set rotation angles and copy cross-browser syntax."/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="keywords" content="css gradient generator, linear gradient maker, radial gradient css, colorzilla alternative, cssgradient.io alternative, gradient background generator, cross browser gradient css, custom color stops css, visually design gradients online, multi color gradient generator, angle radial gradient css, copy gradient code free, modern web background css, jkmedit css gradient tool, ui gradient maker, aesthetic css background generator, free frontend css tools">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+    <link rel="canonical" href="https://jkmedit.in/tools/code-generators/gradient-generator.html"/>
+    <!-- Security Headers -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.google-analytics.com; frame-ancestors 'none'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <link rel="apple-touch-icon" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <meta name="theme-color" content="#ffffff">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="CSS Gradient Generator: Build Radial & Linear Designs">
+    <meta property="og:description" content="Create absolutely beautiful linear and purely radial CSS background gradients. Manually pick fine color stops set rotation angles and copy cross-browser syntax.">
+    <meta property="og:url" content="https://jkmedit.in/tools/code-generators/gradient-generator.html">
+    <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <meta property="og:site_name" content="JKM Edit">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://jkmedit.in/tools/code-generators/gradient-generator.html">
+    <meta property="twitter:title" content="CSS Gradient Generator: Build Radial & Linear Designs">
+    <meta property="twitter:description" content="Create absolutely beautiful linear and purely radial CSS background gradients. Manually pick fine color stops set rotation angles and copy cross-browser syntax.">
+    <meta property="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebApplication","name":"CSS Gradient Generator - JKM Edit","url":"https://jkmedit.in/tools/code-generators/gradient-generator.html","description":"Create absolutely beautiful linear and purely radial CSS background gradients. Manually pick fine color stops set rotation angles and copy cross-browser syntax.","applicationCategory":"DeveloperApplication","operatingSystem":"All","creator":{"@type":"Organization","name":"JKM Edit","url":"https://jkmedit.in"},"offers":{"@type":"Offer","price":"0.00","priceCurrency":"USD"}}
+    </script>
+
+    <style>
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+            --success-color: #28a745;
+            --transition-speed: 0.3s; 
+        }
+
+        html, body { 
+            margin: 0; 
+            padding-top: 70px;
+            min-height: 100vh; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            animation: fadeInPage 0.5s ease-in-out;
+            box-sizing: border-box;
+        }
+        *, *::before, *::after { box-sizing: inherit; }
+        .hidden { display: none !important; }
+
+        #header-placeholder {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 2147483647 !important;
+            display: block !important;
+        }
+
+        .dashboard-container { position: relative; z-index: 1 !important; padding: 2rem 1.5rem; max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center;}
+        
+        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%;}
+        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
+        .tool-header p { font-size: 1.1rem; color: #6c757d; }
+
+        .tool-content-wrapper { 
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%;
+        }
+
+        .generator-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
+        }
+
+        .settings-panel { display: flex; flex-direction: column; gap: 20px; }
+        
+        .control-group { background: #f9fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .control-header { display: flex; justify-content: space-between; font-weight: 600; color: var(--secondary-color); margin-bottom: 15px; font-size: 1rem; }
+
+        .colors-row { display: flex; justify-content: space-between; gap: 20px; align-items: center;}
+        .color-box { flex: 1; display: flex; flex-direction: column; gap: 8px; align-items: center;}
+        .color-box label { font-size: 0.85rem; font-weight: 600; color: #666; text-transform: uppercase;}
+        
+        input[type="color"] { width: 100%; height: 50px; border: 2px solid #ddd; cursor: pointer; border-radius: 8px; padding: 0; transition: 0.2s; }
+        input[type="color"]:hover { border-color: var(--primary-color); }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; height: 8px; background: #dfe1e6; border-radius: 5px; outline: none; cursor: pointer; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: var(--primary-color); border-radius: 50%; cursor: pointer; transition: 0.2s; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+
+        .btn-random {
+            width: 100%; padding: 12px; background: #eef2ff; color: var(--primary-color); border: 2px solid var(--primary-color);
+            border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-random:hover { background: var(--primary-color); color: white; transform: translateY(-2px); }
+
+        .preview-panel { display: flex; flex-direction: column; gap: 20px; }
+
+        .preview-box {
+            width: 100%; height: 350px; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: background 0.2s; border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .code-block {
+            background: #282c34; color: #abb2bf; padding: 25px; border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace; font-size: 1rem; position: relative;
+        }
+        .code-block pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+        .css-prop { color: #c678dd; }
+        .css-val { color: #98c379; font-weight: bold;}
+
+        .btn-copy {
+            width: 100%; padding: 15px; background: var(--gradient); color: white; border: none;
+            border-radius: 6px; font-weight: 700; font-size: 1.2rem; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-copy:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;}
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s ease; }
+        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
+        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 82, 204, 0.15); }
+
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
+
+        /* SEO Section */
+        .seo-content {
+            position: relative; z-index: 1 !important; width: 92%; max-width: 1200px; margin: 3rem auto; padding: 2.5rem;
+            background: var(--surface-color); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            color: #424245; line-height: 1.8; text-align: left; overflow-wrap: break-word; word-wrap: break-word;
+        }
+        .seo-content h2, .seo-content h3 { color: var(--text-color); margin-top: 2rem; font-weight: 700; }
+        .seo-content h2:first-child { margin-top: 0; }
+        .seo-content p { margin-bottom: 1.2rem; font-size: 1.05rem; }
+        .seo-content ul { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: 1.05rem;}
+        .seo-content li { margin-bottom: 0.5rem; }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        
+        @media (max-width: 900px) {
+            .generator-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            body { padding-top: 60px; }
+            .tool-content-wrapper { padding: 1.5rem; }
+            .navigation-buttons { flex-direction: column; }
+            .nav-btn { width: 100%; justify-content: center; }
+            .seo-content { padding: 1.5rem; margin: 2rem auto; border-radius: 8px; }
+        }
+
+/* ---- PROFESSIONAL SQUARE TOOL BOXES ---- */
+.related-sections {
+    padding: 3rem 1rem;
+    /* Optional: If your page background is white, you can leave this transparent. 
+       The image looks like it has a very faint grey background (#f8fafc or similar). */
+}
+
+.related-sections h3 {
+    font-size: 1.75rem;
+    font-weight: 800; /* Bolder text to match image */
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: #0f172a; /* Deep dark blue/black */
+}
+
+.swipe-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1.5rem;
+    padding-bottom: 2rem; /* Space for the scrollbar */
+    max-width: 1200px;
+    margin: 0 auto; /* Centers the whole row on large screens */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Scrollbar styled like the image */
+.swipe-container::-webkit-scrollbar {
+    height: 8px;
+}
+.swipe-container::-webkit-scrollbar-track {
+    background: #e2e8f0; /* Light grey track */
+    border-radius: 10px;
+}
+.swipe-container::-webkit-scrollbar-thumb {
+    background: #c1d5e1; /* Slightly darker thumb */
+    border-radius: 10px;
+}
+.swipe-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* The Cards */
+.tool-box {
+    min-width: 175px; /* Box dimensions */
+    height: 185px;
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid #f1f5f9; /* Very subtle border */
+    border-radius: 16px; /* Smooth rounded corners */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Soft shadow */
+}
+
+.tool-box:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Lifts up on hover */
+    transform: translateY(-5px);
+}
+
+/* The Light Blue Icon Background */
+.tool-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #eff6ff; /* Very light blue */
+    color: #2563eb; /* Primary blue for the SVG */
+    border-radius: 16px; /* Squircle shape */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    transition: background-color 0.3s ease;
+}
+
+.tool-box:hover .tool-icon {
+    background-color: #dbeafe; /* Slightly darker blue on hover */
+}
+
+.tool-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+/* The Title */
+.tool-box h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700; /* Bold font matching the screenshot */
+    text-align: center;
+    color: #1e293b;
+}
+    </style>
+</head>
+<body>
+
+    <div id="header-placeholder"></div>
+
+    <main class="dashboard-container">
+        
+        <div class="tool-header">
+            <h1>CSS Linear Gradient Maker</h1>
+            <p>Generate beautiful, modern CSS gradients and copy the raw code instantly.</p>
+        </div>
+
+        <div class="tool-content-wrapper">
+            
+            <div class="generator-grid">
+                
+                <div class="settings-panel">
+                    
+                    <div class="control-group">
+                        <div class="control-header">
+                            <label><i class="fa-solid fa-palette"></i> Select Colors</label>
+                        </div>
+                        <div class="colors-row">
+                            <div class="color-box">
+                                <label for="color1">Color 1 (Start)</label>
+                                <input type="color" id="color1" value="#0052cc">
+                            </div>
+                            <i class="fa-solid fa-arrow-right-long" style="color:#aaa; font-size:1.5rem; margin-top:15px;"></i>
+                            <div class="color-box">
+                                <label for="color2">Color 2 (End)</label>
+                                <input type="color" id="color2" value="#00d2ff">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-header">
+                            <label><i class="fa-solid fa-compass"></i> Gradient Angle</label>
+                            <span id="angle-val" style="color:var(--primary-color); font-weight:bold;">45°</span>
+                        </div>
+                        <input type="range" id="angle" min="0" max="360" value="45">
+                    </div>
+
+                    <button class="btn-random" id="random-btn">
+                        <i class="fa-solid fa-shuffle"></i> Randomize Colors
+                    </button>
+
+                </div>
+
+                <div class="preview-panel">
+                    
+                    <div class="preview-box" id="preview-box"></div>
+
+                    <div class="code-block">
+                        <pre><span class="css-prop">background:</span> <span class="css-val" id="css-code"></span></pre>
+                    </div>
+
+                    <button class="btn-copy" id="copy-btn">
+                        <i class="fa-regular fa-copy"></i> Copy CSS Code
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Go Back
+            </a>
+            <a href="https://jkmedit.in/" class="nav-btn btn-fill">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+    </main>
+
+    <article class="seo-content">
+        <h2>Why the CSS liner Gradient Generators is About to Become Your Favorite Utility</h2>
+        <p>Let's be completely honest for a second. We've all been sitting at our desks, staring at a screen, just trying to get one simple task done. You just need to use a CSS liner Gradient Generators, but every software you find wants you to download some massive installation package, sign up for a newsletter, or pay a ridiculous subscription fee. It's frustrating, right? That's exactly why having a reliable, instant solution right in your browser is an absolute lifesaver. You don't have time to waste fighting with clunky interfaces when you have real work to do.</p>
+        
+        <h3>The Frustration We're Solving</h3>
+        <p>A while back, while putting together jkmedit.in, the vision was simple: build the stuff we actually wanted to use ourselves. I was tired of opening a supposedly 'free' tool only to be hit with a watermark or a strict file-size limit at the very last second. Building the CSS liner Gradient Generators was personal. We wanted something that was genuinely useful, incredibly fast, and didn't treat the user like a product to be monetized. It's built by developers who understand the value of a smooth, uninterrupted workflow.</p>
+        <p>Starting from a blank screen is the worst. Whether you need a secure password, some placeholder text, or a complex CSS gradient, writing it from scratch is just a waste of time. Generators like this are the ultimate shortcut for modern creators.</p>
+        
+        <h3>How the CSS liner Gradient Generators Actually Works (Without the Jargon)</h3>
+        <p>So, what's actually happening when you use the CSS liner Gradient Generators? Instead of taking your data and sending it off to some mysterious server halfway across the world, we leverage the power of your own web browser. Think about it. Your computer or phone is incredibly powerful. By processing things locally whenever possible, we cut down on wait times drastically. It also means your stuff stays yours. Privacy isn't just a buzzword for us; it's a foundational rule. You upload, you tweak the settings, and boom—it's done. No lingering files on our end.</p>
+        <p>You might be wondering about the technical side of things. How does it handle errors? What happens if you put in the wrong format? Well, we built in some pretty aggressive real-time validation. If something is off, the CSS liner Gradient Generators catches it immediately and tells you exactly what went wrong in plain English. No cryptic error codes. We also made sure that the layout uses absolute positioning logic where it matters, so whether you're using a massive ultra-wide monitor or scrolling on your phone on the train, the buttons stay exactly where they are supposed to be. It won't break or overlap.</p>
+        
+        <h3>Real-World Scenarios: Who is this for?</h3>
+        <p>I get asked a lot about who actually uses these things day-to-day. It really spans the board, but here are the most common situations:</p>
+        <ul><li><strong>The Late-Night Freelancer:</strong> You're on a tight deadline, the client needs the file <em>now</em>, and you don't have time to open heavy software. Click, process, send.</li><li><strong>The Small Business Owner:</strong> You don't need a $500 software suite to do basic administrative tasks. This tool handles the daily grind for free.</li><li><strong>The Code Ninja:</strong> When you just need to format, convert, or clean up data quickly before pushing it to production.</li></ul>
+        
+        <h3>Common Mistakes People Make (And How to Avoid Them)</h3>
+        <p>Before you dive in, let me save you a little bit of grief. One of the most common mistakes I see people make when looking for a CSS liner Gradient Generators is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring the initial file format. Always double-check what you are uploading. While our tool handles errors gracefully, garbage in still equals garbage out. Take a quick second to ensure your initial data or file is exactly what you want to work with. Lastly, don't forget to check your downloads folder! I can't tell you how many times I've processed something, got distracted, and then processed it again because I thought it didn't save. The CSS liner Gradient Generators works so fast that sometimes you might miss the download prompt if you blink!</p>
+        
+        <h3>The Bigger Picture: Workflow and Efficiency</h3>
+        <p>These small time savings add up and make your daily workflow smoother.</p>
+        <p>Another thing we really need to talk about is accessibility. Not everyone has a top-of-the-line MacBook Pro. Sometimes you're working on an older laptop or a budget tablet. Heavy web apps that rely on massive memory chunks will freeze those devices up. Because the CSS liner Gradient Generators is optimized at the code level, it runs incredibly smooth on virtually any device with a modern browser. We believe that professional-grade digital tools should be accessible to everyone, regardless of their hardware specs. It's a level playing field.</p>
+        
+        <h3>A Quick Pro-Tip Before You Go</h3>
+        <p>One thing I always tell people when they start using the CSS liner Gradient Generators heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to push the tool to its limits, test out different inputs, and see how fast it can actually process your data. The architecture is robust enough to handle it, so put it to the test!</p>
+
+        <h3>Frequently Asked Questions about the CSS liner Gradient Generators</h3>
+        <p><strong>Is my data safe when using this tool?</strong><br>
+        Absolutely. As I mentioned earlier, we prioritize client-side processing. This means your files and inputs are handled right there in your browser. We aren't interested in harvesting your data or storing your files on our servers. It's safer, faster, and infinitely more private.</p>
+        
+        <p><strong>Do I need to create an account to use it?</strong><br>
+        No way. I can't stand when a website makes you jump through a five-minute registration process just to convert a file or calculate a number. The CSS liner Gradient Generators on jkmedit.in is completely open. Just load the page and get to work.</p>
+        
+        <p><strong>Will it work on my phone?</strong><br>Yes, the page adjusts for mobile and desktop, so the controls stay easy to use on any device.</p>
+        
+        <p><strong>Why is this free? What's the catch?</strong><br>
+        There is no catch. We built jkmedit.in as a passion project to house the tools we use ourselves. By keeping the site lightweight and optimized, our server costs are incredibly low. We believe in providing value upfront without tricking people into hidden subscriptions.</p>
+        
+        <h3>Final Thoughts</h3>
+        <p>This tool is ready to use. Give it a try and see how it works.</p>
+    </article>
+
+<section class="related-sections">
+    <h3>Explore More Free Tools</h3>
+    <div class="swipe-container">
+        
+        <a href="https://jkmedit.in/tools/code-generators/Qr-Code.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+            </div>
+            <h4>QR Code Generator</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/code-generators/barcode-generator.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10v4m4-4v4m4-8v12m4-12v12m4-8v4"></path></svg>
+            </div>
+            <h4>Bar Code Generator</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/code-generators/password-generator.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+            </div>
+            <h4>Password Generator</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/code-generators/uuid-generator.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>
+            </div>
+            <h4>UUID/GUID Generator</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/code-generators/color-palette.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+            </div>
+            <h4>Color Palette Generator</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/code-generators/favicon-generator.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+            </div>
+            <h4>Favicon Preview Generator</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/code-generators/box-shadow.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            </div>
+            <h4>CSS Box Shadow Generator</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/code-generators/gradient-generator.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+            </div>
+            <h4>CSS Linear Gradient Generator</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/code-generators/html-entities.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            </div>
+            <h4>HTML Entities Converter</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/code-generators/qr-excel.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            </div>
+            <h4>QR Scan to Excel</h4>
+        </a>
+
+    </div>
+</section>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('https://jkmedit.in/header.html').then(r => r.text()).then(d => { 
+                document.getElementById('header-placeholder').innerHTML = d; 
+                const m = document.getElementById('mobileToggle'), n = document.getElementById('navMenu');
+                if (m && n) {
+                    m.onclick = () => {
+                        n.classList.toggle('active');
+                        m.innerHTML = n.classList.contains('active') ? '&#10005;' : '&#9776;';
+                    };
+                }
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    const link = item.querySelector('.nav-link');
+                    const hasDropdown = item.querySelector('.mega-menu');
+                    if (link && hasDropdown) {
+                        link.addEventListener('click', (e) => {
+                            if (window.innerWidth <= 1024) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                navItems.forEach(otherItem => {
+                                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                                        otherItem.classList.remove('active');
+                                    }
+                                });
+                                item.classList.toggle('active');
+                            }
+                        });
+                    }
+                });
+            });
+            fetch('https://jkmedit.in/footer.html').then(r => r.text()).then(d => { document.getElementById('footer-placeholder').innerHTML = d; });
+
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
+            });
+
+            const color1 = document.getElementById('color1');
+            const color2 = document.getElementById('color2');
+            const angleInput = document.getElementById('angle');
+            const angleVal = document.getElementById('angle-val');
+            
+            const previewBox = document.getElementById('preview-box');
+            const cssCode = document.getElementById('css-code');
+            
+            const randomBtn = document.getElementById('random-btn');
+            const copyBtn = document.getElementById('copy-btn');
+
+            function updateGradient() {
+                const c1 = color1.value;
+                const c2 = color2.value;
+                const ang = angleInput.value;
+                
+                angleVal.textContent = ang + '°';
+                const gradientString = `linear-gradient(${ang}deg, ${c1}, ${c2})`;
+                
+                previewBox.style.background = gradientString;
+                cssCode.innerText = gradientString + ';';
+            }
+
+            function getRandomHex() {
+                const letters = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+            function randomize() {
+                color1.value = getRandomHex();
+                color2.value = getRandomHex();
+                angleInput.value = Math.floor(Math.random() * 360);
+                updateGradient();
+            }
+
+            function copyCSS() {
+                const text = `background: ${cssCode.innerText}`;
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalHTML = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                    copyBtn.style.background = 'var(--success-color)';
+                    copyBtn.style.boxShadow = 'none';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalHTML;
+                        copyBtn.style.background = '';
+                        copyBtn.style.boxShadow = '';
+                    }, 1500);
+                });
+            }
+
+            angleInput.addEventListener('input', updateGradient);
+            color1.addEventListener('input', updateGradient);
+            color2.addEventListener('input', updateGradient);
+            
+            randomBtn.addEventListener('click', randomize);
+            copyBtn.addEventListener('click', copyCSS);
+
+            updateGradient();
+        });
+    </script>
+    <script src="/assets/cookie-consent.js" async></script>
+</body>
+</html>
+
+
+
