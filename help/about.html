@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | JKM Edit</title>
+    <meta name="description" content="Learn about JKM Edit's mission to provide secure, lightning-fast utility tools with 100% privacy through client-side processing.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://jkmedit.in/help/about.html">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" />
+
+    <style>
+        :root {
+            --primary: #007AFF;
+            --bg: #f5f5f7;
+            --card: #ffffff;
+            --text-main: #1d1d1f;
+            --text-sub: #86868b;
+            --glass: rgba(255, 255, 255, 0.72);
+            --iphone-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body { font-family: var(--iphone-font); background-color: var(--bg); color: var(--text-main); -webkit-font-smoothing: antialiased; line-height: 1.6; }
+
+        /* --- HERO HEADER --- */
+        .hero-page { text-align: center; padding: 80px 20px 60px; background: white; border-bottom: 1px solid #d2d2d7; }
+        .hero-page h1 { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 15px; color: #111; }
+        .hero-page p { color: var(--text-sub); font-size: 18px; max-width: 600px; margin: 0 auto; }
+
+        /* --- CONTENT --- */
+        .content-container { max-width: 900px; margin: 60px auto; padding: 0 20px; }
+        .content-inner { background: var(--card); padding: 50px 60px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.04); }
+        
+        .content-inner h2 { font-size: 28px; font-weight: 700; margin: 40px 0 15px; color: #000; letter-spacing: -0.5px; }
+        .content-inner h2:first-child { margin-top: 0; }
+        .content-inner p { font-size: 17px; color: #424245; margin-bottom: 20px; line-height: 1.8; }
+        
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin: 40px 0; }
+        .feature-box { text-align: center; padding: 30px; background: var(--bg); border-radius: 20px; }
+        .feature-icon { font-size: 40px; color: var(--primary); margin-bottom: 15px; }
+        .feature-box h3 { font-size: 18px; margin-bottom: 10px; }
+        .feature-box p { font-size: 14px; color: var(--text-sub); }
+
+        @media (max-width: 768px) { 
+            .content-inner { padding: 30px 20px; }
+            .hero-page h1 { font-size: 36px; }
+        }
+
+        /* --- HEADER CONTAINER FIX --- */
+        #header-container {
+            position: sticky;
+            top: 0;
+            z-index: 2147483647; /* Maximum possible z-index to guarantee it stays on top */
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<noscript>
+    <div style="padding:20px;text-align:center;">
+        Please enable JavaScript to use the full functionality of this website.
+    </div>
+</noscript>
+
+<div id="header-container"></div>
+
+<section class="hero-page">
+    <h1>About JKM Edit</h1>
+    <p>Empowering creators and professionals with privacy-first, lightning-fast digital utility tools.</p>
+</section>
+
+<main class="content-container">
+    <div class="content-inner">
+        <h2>Our Mission</h2>
+        <p>In a world where data is constantly being uploaded, stored, and analyzed by third-party servers, JKM Edit was founded on a simple principle: <strong>Your files belong to you.</strong> Our mission is to provide premium, professional-grade utility tools that are completely free to use, without ever compromising your digital privacy.</p>
+
+        <div class="feature-grid">
+            <div class="feature-box">
+                <span class="material-symbols-outlined feature-icon">verified_user</span>
+                <h3>100% Private</h3>
+                <p>We use Client-Side Processing. Your files never leave your browser.</p>
+            </div>
+            <div class="feature-box">
+                <span class="material-symbols-outlined feature-icon">bolt</span>
+                <h3>Lightning Fast</h3>
+                <p>No upload times or server queues. Edits happen instantly on your device.</p>
+            </div>
+            <div class="feature-box">
+                <span class="material-symbols-outlined feature-icon">money_off</span>
+                <h3>Completely Free</h3>
+                <p>No hidden fees, no premium subscriptions, and no strict file limits.</p>
+            </div>
+        </div>
+
+        <h2>The "Zero-Server" Difference</h2>
+        <p>Most online tools require you to upload your sensitive PDFs, private images, or proprietary code to a cloud server to be processed. This is slow and poses a massive security risk.</p>
+        <p>At JKM Edit, we leverage modern browser technologies (like WebAssembly and advanced JavaScript APIs) to do all the heavy lifting locally on your computer or smartphone. This means we literally do not have the capability to see, store, or share your data. It is a mathematically secure way to handle your workflow.</p>
+
+        <h2>Built for Professionals</h2>
+        <p>Whether you are a developer needing to instantly minify JSON, a student merging PDF assignments, or an accountant calculating EMIs, our suite of over 80+ tools is designed to look beautiful and function flawlessly across desktops, tablets, and mobile devices.</p>
+    </div>
+</main>
+
+<div id="footer-container"></div>
+
+<script>
+    // Fetch Header
+    fetch('https://jkmedit.in/header.html')
+        .then(response => response.text())
+        .then(data => { 
+            document.getElementById('header-container').innerHTML = data; 
+            
+            // Re-initialize the mobile menu scripts after injection
+            const mobileToggle = document.getElementById('mobileToggle');
+            const navMenu = document.getElementById('navMenu');
+
+            if(mobileToggle && navMenu) {
+                mobileToggle.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                    mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
+                });
+            }
+
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                const link = item.querySelector('.nav-link');
+                link.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 1024) {
+                        e.preventDefault(); 
+                        navItems.forEach(otherItem => {
+                            if (otherItem !== item && otherItem.classList.contains('active')) {
+                                otherItem.classList.remove('active');
+                            }
+                        });
+                        item.classList.toggle('active');
+                    }
+                });
+            });
+        })
+        .catch(error => console.error('Error loading header:', error));
+
+    // Fetch Footer
+    fetch('https://jkmedit.in/footer.html')
+        .then(response => response.text())
+        .then(data => { document.getElementById('footer-container').innerHTML = data; })
+        .catch(error => console.error('Error loading footer:', error));
+</script>
+
+    <script src="/assets/cookie-consent.js" async></script>
+</body>
+</html>
+

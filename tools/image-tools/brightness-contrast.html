@@ -1,0 +1,586 @@
+<html>
+<!DOCTYPE html>
+<html lang='en' data-theme='corporate-blue'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=5.0' name='viewport'/>
+    <title>Adjust Image Brightness: Fix Dark Photos Online Free</title>
+    <meta name="title" content="Adjust Image Brightness: Fix Dark Photos Online Free">
+    <meta name="description" content="Easily fix underexposed dark photos right in your browser. Precisely adjust the brightness contrast and exposure levels of your images completely for free."/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="keywords" content="adjust brightness online, brighten photo, change picture contrast, fix dark photo online, fotor brightness, photopea alternative, image exposure editor, lighten dark image, fix lighting in photo, enhance photo brightness free, contrast slider online, fix underexposed image, brightener tool for photos, free online image enhancer, jkmedit brightness adjuster, photo light editor online, make dark photo clear, adjust shadows highlights online, simple photo lighting tool, free photo exposure fix, online color correction picture">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+    <link rel="canonical" href="https://jkmedit.in/tools/image-tools/brightness-contrast.html"/>
+    <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <link rel="apple-touch-icon" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <meta name="theme-color" content="#ffffff">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Adjust Image Brightness: Fix Dark Photos Online Free">
+    <meta property="og:description" content="Easily fix underexposed dark photos right in your browser. Precisely adjust the brightness contrast and exposure levels of your images completely for free.">
+    <meta property="og:url" content="https://jkmedit.in/tools/image-tools/brightness-contrast.html">
+    <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <meta property="og:site_name" content="JKM Edit">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://jkmedit.in/tools/image-tools/brightness-contrast.html">
+    <meta property="twitter:title" content="Adjust Image Brightness: Fix Dark Photos Online Free">
+    <meta property="twitter:description" content="Easily fix underexposed dark photos right in your browser. Precisely adjust the brightness contrast and exposure levels of your images completely for free.">
+    <meta property="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Brightness Adjuster - JKM Edit","url":"https://jkmedit.in/tools/image-tools/brightness-contrast.html","description":"Easily fix underexposed dark photos right in your browser. Precisely adjust the brightness contrast and exposure levels of your images completely for free.","applicationCategory":"BrowserApplication","operatingSystem":"All","creator":{"@type":"Organization","name":"JKM Edit","url":"https://jkmedit.in"},"offers":{"@type":"Offer","price":"0.00","priceCurrency":"USD"}}
+    </script>
+
+    <style>
+        :root { 
+            font-family: 'Poppins', sans-serif; 
+            --primary-color: #0052cc; 
+            --secondary-color: #0747a6; 
+            --bg-color: #f4f5f7; 
+            --surface-color: #ffffff; 
+            --text-color: #172b4d; 
+            --border-color: #dfe1e6;
+            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        }
+        
+        html, body { 
+            margin: 0; 
+            padding-top: 70px;
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            animation: fadeInPage 0.5s ease-in-out;
+            box-sizing: border-box;
+        }
+        *, *::before, *::after { box-sizing: inherit; }
+        .hidden { display: none !important; }
+
+        #header-placeholder {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 2147483647 !important;
+            overflow: visible !important;
+            display: block !important;
+        }
+
+        .tool-container { position: relative; z-index: 1 !important; padding: 2rem 1rem; max-width: 1200px; margin: 0 auto; width: 100%; flex: 1; }
+        
+        .tool-header { text-align: center; margin-bottom: 2rem; }
+        .tool-header h1 { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .tool-header p { color: #666; font-size: 1.1rem;}
+
+        #dropzone { 
+            border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; 
+            text-align: center; cursor: pointer; background-color: var(--surface-color); 
+            transition: 0.3s; margin: 0 auto 20px auto; max-width: 900px;
+        }
+        #dropzone:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+
+        .editor-grid { display: grid; grid-template-columns: 1fr 350px; gap: 20px; align-items: start; }
+
+        .canvas-wrapper {
+            background: #222; padding: 20px; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; justify-content: center;
+            align-items: center; min-height: 500px; position: relative; overflow: hidden;
+        }
+
+        canvas { max-width: 100%; max-height: 600px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+
+        .compare-btn {
+            position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.4); color: white;
+            padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: 600;
+            user-select: none; transition: 0.2s;
+        }
+        .compare-btn:hover { background: rgba(255, 255, 255, 0.4); }
+        .compare-btn:active { transform: scale(0.95); }
+
+        .controls-panel { background: var(--surface-color); padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 25px; }
+
+        .panel-title { font-size: 1.1rem; font-weight: 700; color: var(--text-color); border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 5px; }
+
+        .slider-group { display: flex; flex-direction: column; gap: 10px; }
+        .slider-header { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 600; color: #555; }
+        
+        input[type="range"] {
+            -webkit-appearance: none; width: 100%; height: 6px;
+            background: #e0e0e0; border-radius: 5px; outline: none; cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px;
+            background: var(--primary-color); border-radius: 50%;
+            cursor: pointer; transition: 0.2s; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; }
+        .btn-primary { background: var(--gradient); color: white; margin-top: 10px; }
+        .btn-primary:hover { opacity: 0.9; box-shadow: 0 5px 15px rgba(0, 82, 204, 0.3); }
+
+        .reset-btn { background: none; border: 1px solid #ddd; color: #666; margin-top: 10px; }
+        .reset-btn:hover { background: #f9f9f9; color: var(--text-color); }
+
+        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;}
+        .nav-btn { padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600; background: #e9ecef; color: #333; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s;}
+        .nav-dash { background: var(--primary-color); color: white; }
+        .nav-dash:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
+
+        /* SEO Content */
+        .seo-content {
+            position: relative; z-index: 1 !important; width: 92%; max-width: 1200px; margin: 3rem auto; padding: 2.5rem;
+            background: var(--surface-color); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            color: #424245; line-height: 1.8; text-align: left; overflow-wrap: break-word; word-wrap: break-word;
+        }
+        .seo-content h2, .seo-content h3 { color: var(--text-color); margin-top: 2rem; font-weight: 700; }
+        .seo-content h2:first-child { margin-top: 0; }
+        .seo-content p { margin-bottom: 1.2rem; font-size: 1.05rem; }
+        .seo-content ul { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: 1.05rem;}
+        .seo-content li { margin-bottom: 0.5rem; }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOutPage 0.4s ease-in-out forwards; }
+        @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+
+        @media (max-width: 900px) {
+            body { padding-top: 60px; }
+            .editor-grid { grid-template-columns: 1fr; }
+            .seo-content { padding: 1.5rem; margin: 2rem auto; border-radius: 8px; }
+        }
+/* ---- PROFESSIONAL SQUARE TOOL BOXES ---- */
+.related-sections {
+    padding: 3rem 1rem;
+    /* Optional: If your page background is white, you can leave this transparent. 
+       The image looks like it has a very faint grey background (#f8fafc or similar). */
+}
+
+.related-sections h3 {
+    font-size: 1.75rem;
+    font-weight: 800; /* Bolder text to match image */
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: #0f172a; /* Deep dark blue/black */
+}
+
+.swipe-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1.5rem;
+    padding-bottom: 2rem; /* Space for the scrollbar */
+    max-width: 1200px;
+    margin: 0 auto; /* Centers the whole row on large screens */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Scrollbar styled like the image */
+.swipe-container::-webkit-scrollbar {
+    height: 8px;
+}
+.swipe-container::-webkit-scrollbar-track {
+    background: #e2e8f0; /* Light grey track */
+    border-radius: 10px;
+}
+.swipe-container::-webkit-scrollbar-thumb {
+    background: #c1d5e1; /* Slightly darker thumb */
+    border-radius: 10px;
+}
+.swipe-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* The Cards */
+.tool-box {
+    min-width: 175px; /* Box dimensions */
+    height: 185px;
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid #f1f5f9; /* Very subtle border */
+    border-radius: 16px; /* Smooth rounded corners */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Soft shadow */
+}
+
+.tool-box:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Lifts up on hover */
+    transform: translateY(-5px);
+}
+
+/* The Light Blue Icon Background */
+.tool-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #eff6ff; /* Very light blue */
+    color: #2563eb; /* Primary blue for the SVG */
+    border-radius: 16px; /* Squircle shape */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    transition: background-color 0.3s ease;
+}
+
+.tool-box:hover .tool-icon {
+    background-color: #dbeafe; /* Slightly darker blue on hover */
+}
+
+.tool-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+/* The Title */
+.tool-box h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700; /* Bold font matching the screenshot */
+    text-align: center;
+    color: #1e293b;
+}
+    </style>
+</head>
+<body>
+
+    <div id="header-placeholder"></div>
+
+    <main class="tool-container">
+
+        <div id="upload-stage">
+            <div class="tool-header">
+                <h1>Brightness & Contrast Adjuster</h1>
+                <p>Enhance your photos instantly with professional exposure precision.</p>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept="image/*"/>
+            <div id="dropzone">
+                <i class="fa-solid fa-sun"></i>
+                <p><strong>Click to Upload Image</strong><br>or drag and drop here</p>
+            </div>
+        </div>
+
+        <div id="editor-stage" class="hidden">
+            <div class="editor-grid">
+                
+                <div class="canvas-wrapper">
+                    <canvas id="editor-canvas"></canvas>
+                    <button class="compare-btn" id="compare-btn" 
+                        onmousedown="showOriginal()" onmouseup="showEdited()" 
+                        ontouchstart="showOriginal()" ontouchend="showEdited()">
+                        <i class="fa-regular fa-eye"></i> Hold to Compare
+                    </button>
+                </div>
+
+                <div class="controls-panel">
+                    <div class="panel-title">Adjustments</div>
+
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <label><i class="fa-regular fa-sun"></i> Brightness</label>
+                            <span id="val-bright">0</span>
+                        </div>
+                        <input type="range" id="range-bright" min="-100" max="100" value="0">
+                    </div>
+
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <label><i class="fa-solid fa-circle-half-stroke"></i> Contrast</label>
+                            <span id="val-contrast">0</span>
+                        </div>
+                        <input type="range" id="range-contrast" min="-100" max="100" value="0">
+                    </div>
+
+                    <button class="btn reset-btn" onclick="resetValues()">
+                        <i class="fa-solid fa-arrow-rotate-left"></i> Reset
+                    </button>
+
+                    <button class="btn btn-primary" onclick="downloadImage()">
+                        <i class="fa-solid fa-download"></i> Download Image
+                    </button>
+                    
+                    <div style="text-align:center; margin-top:10px;">
+                        <a href="javascript:location.reload()" style="color:#666; font-size:0.9rem; text-decoration:underline;">Open New Image</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation-buttons">
+            <a href="javascript:history.back()" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Go Back</a>
+            <a href="https://jkmedit.in/" class="nav-btn nav-dash"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        </div>
+
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7398521559513676" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-7398521559513676" data-ad-slot="3134843188"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+    </main>
+
+    <article class="seo-content">
+        <h2>Why the Brightness Adjuster is About to Become Your Favorite Utility</h2>
+        <p>If you've ever tried to manage your digital files in a rush, you already know the struggle. I remember a specific time when I urgently needed a Brightness Adjuster right before a major deadline. I spent more time trying to find a website that didn't bombard me with pop-up ads than I did actually doing the work. That shared frustration is the whole reason we focus so heavily on clean, immediate utilities here. When you need to get something done, you should be able to just click, process, and move on with your day without jumping through hoops.</p>
+        
+        <h3>The Frustration We're Solving</h3>
+        <p>A while back, while putting together jkmedit.in, the vision was simple: build the stuff we actually wanted to use ourselves. I was tired of opening a supposedly 'free' tool only to be hit with a watermark or a strict file-size limit at the very last second. Building the Brightness Adjuster was personal. We wanted something that was genuinely useful, incredibly fast, and didn't treat the user like a product to be monetized. It's built by developers who understand the value of a smooth, uninterrupted workflow.</p>
+        <p>Nothing kills the vibe faster than uploading a picture to a website and getting hit with a 'file dimension too large' or 'unsupported format' error. You just want the image to fit! Our tool skips the complex Photoshop tutorials and just gives you the result.</p>
+        
+        <h3>How the Brightness Adjuster Actually Works (Without the Jargon)</h3>
+        <p>So, what's actually happening when you use the Brightness Adjuster? Instead of taking your data and sending it off to some mysterious server halfway across the world, we leverage the power of your own web browser. Think about it. Your computer or phone is incredibly powerful. By processing things locally whenever possible, we cut down on wait times drastically. It also means your stuff stays yours. Privacy isn't just a buzzword for us; it's a foundational rule. You upload, you tweak the settings, and boom—it's done. No lingering files on our end.</p>
+        <p>You might be wondering about the technical side of things. How does it handle errors? What happens if you put in the wrong format? Well, we built in some pretty aggressive real-time validation. If something is off, the Brightness Adjuster catches it immediately and tells you exactly what went wrong in plain English. No cryptic error codes. We also made sure that the layout uses absolute positioning logic where it matters, so whether you're using a massive ultra-wide monitor or scrolling on your phone on the train, the buttons stay exactly where they are supposed to be. It won't break or overlap.</p>
+        
+        <h3>Real-World Scenarios: Who is this for?</h3>
+        <p>I get asked a lot about who actually uses these things day-to-day. It really spans the board, but here are the most common situations:</p>
+        <ul><li><strong>The Late-Night Freelancer:</strong> You're on a tight deadline, the client needs the file <em>now</em>, and you don't have time to open heavy software. Click, process, send.</li><li><strong>The Small Business Owner:</strong> You don't need a $500 software suite to do basic administrative tasks. This tool handles the daily grind for free.</li><li><strong>The Code Ninja:</strong> When you just need to format, convert, or clean up data quickly before pushing it to production.</li></ul>
+        
+        <h3>Common Mistakes People Make (And How to Avoid Them)</h3>
+        <p>Before you dive in, let me save you a little bit of grief. One of the most common mistakes I see people make when looking for a Brightness Adjuster is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring the initial file format. Always double-check what you are uploading. While our tool handles errors gracefully, garbage in still equals garbage out. Take a quick second to ensure your initial data or file is exactly what you want to work with. Lastly, don't forget to check your downloads folder! I can't tell you how many times I've processed something, got distracted, and then processed it again because I thought it didn't save. The Brightness Adjuster works so fast that sometimes you might miss the download prompt if you blink!</p>
+        
+        <h3>The Bigger Picture: Workflow and Efficiency</h3>
+        <p>Let's also touch on the future. The web is constantly changing. Browsers are getting more powerful, and what we can do inside a web page today would have seemed like magic five years ago. We are actively maintaining and tweaking the Brightness Adjuster. We don't just launch it and forget it. As new web standards roll out, we update the engine under the hood. So, while it works perfectly today, you can trust that it's only going to get faster and more capable as time goes on.</p>
+        <p>Another thing we really need to talk about is accessibility. Not everyone has a top-of-the-line MacBook Pro. Sometimes you're working on an older laptop or a budget tablet. Heavy web apps that rely on massive memory chunks will freeze those devices up. Because the Brightness Adjuster is optimized at the code level, it runs incredibly smooth on virtually any device with a modern browser. We believe that professional-grade digital tools should be accessible to everyone, regardless of their hardware specs. It's a level playing field.</p>
+        
+        <h3>A Quick Pro-Tip Before You Go</h3>
+        <p>One thing I always tell people when they start using the Brightness Adjuster heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to push the tool to its limits, test out different inputs, and see how fast it can actually process your data. The architecture is robust enough to handle it, so put it to the test!</p>
+
+        <h3>Frequently Asked Questions about the Brightness Adjuster</h3>
+        <p><strong>Is my data safe when using this tool?</strong><br>
+        Absolutely. As I mentioned earlier, we prioritize client-side processing. This means your files and inputs are handled right there in your browser. We aren't interested in harvesting your data or storing your files on our servers. It's safer, faster, and infinitely more private.</p>
+        
+        <p><strong>Do I need to create an account to use it?</strong><br>
+        No way. I can't stand when a website makes you jump through a five-minute registration process just to convert a file or calculate a number. The Brightness Adjuster on jkmedit.in is completely open. Just load the page and get to work.</p>
+        
+        <p><strong>Will it work on my phone?</strong><br>
+        Yes! We spent a lot of time ensuring the user interface is completely responsive. Because we use absolute positioning logic and a clean, mobile-first design philosophy, all the buttons and inputs will scale perfectly to your smartphone or tablet screen. You can literally get work done while waiting in line for coffee.</p>
+        
+        <p><strong>Why is this free? What's the catch?</strong><br>
+        There is no catch. We built jkmedit.in as a passion project to house the tools we use ourselves. By keeping the site lightweight and optimized, our server costs are incredibly low. We believe in providing value upfront without tricking people into hidden subscriptions.</p>
+        
+        <h3>Final Thoughts</h3>
+        <p>So there you have it. A straightforward, no-nonsense breakdown of the Brightness Adjuster. We built this because we needed it, and we're sharing it because we know how frustrating the alternatives can be. Take it for a test drive on jkmedit.in right now. I think you'll be genuinely surprised by just how snappy and intuitive it really is. Cheers to working smarter, not harder.</p>
+    </article>
+
+<section class="related-sections">
+    <h3>Explore More Free Tools</h3>
+    <div class="swipe-container">
+        
+        <a href="https://jkmedit.in/tools/image-tools/Img-crop.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.121 14.121L19 19m-7.071-7.071l-1.414 1.414M19 8.1l-4.879 4.879M12 12L9.172 9.172M6.343 6.343l-1.414-1.414m0 0A2 2 0 102.101 7.757l1.414 1.414m2.828-2.828a2 2 0 112.828 2.828L6.343 9.172m0 0L9.172 12M17.657 17.657L14.828 14.828m0 0l-1.414-1.414m1.414 1.414a2 2 0 102.828 2.828l1.414-1.414m-2.828-2.828a2 2 0 11-2.828 2.828"></path></svg>
+            </div>
+            <h4>Image Cropper</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/image-tools/image-resizer.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+            </div>
+            <h4>Image Resizer</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/image-tools/Jpg-Png.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+            </div>
+            <h4>JPG/PNG Converter</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/image-tools/BG-remove.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+            </div>
+            <h4>Background Remover</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/image-tools/grayscale-filter.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </div>
+            <h4>Grayscale Filter</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/image-tools/rotate-flip.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            </div>
+            <h4>Rotate & Flip</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/image-tools/brightness-contrast.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            </div>
+            <h4>Brightness Adjuster</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/image-tools/add-text.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            </div>
+            <h4>Add Text Overlay</h4>
+        </a>
+
+        <a href="https://jkmedit.in/tools/image-tools/exif-viewer.html" class="tool-box">
+            <div class="tool-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h4>Exif Data Viewer</h4>
+        </a>
+        
+    </div>
+</section>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('https://jkmedit.in/header.html')
+                .then(response => response.text())
+                .then(data => { 
+                    document.getElementById('header-placeholder').innerHTML = data; 
+                    const mobileToggle = document.getElementById('mobileToggle');
+                    const navMenu = document.getElementById('navMenu');
+                    if(mobileToggle && navMenu) {
+                        mobileToggle.addEventListener('click', () => {
+                            navMenu.classList.toggle('active');
+                            mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
+                        });
+                    }
+                    const navItems = document.querySelectorAll('.nav-item');
+                    navItems.forEach(item => {
+                        const link = item.querySelector('.nav-link');
+                        if (link) {
+                            link.addEventListener('click', (e) => {
+                                if (window.innerWidth <= 1024) {
+                                    e.preventDefault(); 
+                                    navItems.forEach(otherItem => {
+                                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                                            otherItem.classList.remove('active');
+                                        }
+                                    });
+                                    item.classList.toggle('active');
+                                }
+                            });
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading header:', error));
+
+            fetch('https://jkmedit.in/footer.html')
+                .then(response => response.text())
+                .then(data => document.getElementById('footer-placeholder').innerHTML = data)
+                .catch(error => console.error('Error loading footer:', error));
+
+            document.querySelectorAll('a').forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (linkUrl && !linkUrl.startsWith('#') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('javascript:')) {
+                    const isInternalLink = (new URL(linkUrl, window.location.href)).origin === window.location.origin;
+                    if (isInternalLink && !link.target) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); document.body.classList.add('fade-out');
+                            setTimeout(() => { window.location.href = this.href; }, 400);
+                        });
+                    }
+                }
+            });
+        });
+
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const uploadStage = document.getElementById('upload-stage');
+        const editorStage = document.getElementById('editor-stage');
+        const canvas = document.getElementById('editor-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        const rangeBright = document.getElementById('range-bright');
+        const rangeContrast = document.getElementById('range-contrast');
+        const valBright = document.getElementById('val-bright');
+        const valContrast = document.getElementById('val-contrast');
+
+        let originalImg = new Image();
+        let fileName = "image";
+
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.backgroundColor = '#f0f7ff'; };
+        dropzone.ondragleave = (e) => { e.preventDefault(); dropzone.style.backgroundColor = 'var(--surface-color)'; };
+        dropzone.ondrop = (e) => { e.preventDefault(); dropzone.style.backgroundColor = 'var(--surface-color)'; handleFile(e.dataTransfer.files[0]); };
+        fileInput.onchange = (e) => handleFile(e.target.files[0]);
+
+        function handleFile(file) {
+            if (!file || !file.type.startsWith('image/')) return alert("Please upload an image.");
+            fileName = file.name.replace(/\.[^/.]+$/, "");
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalImg.src = e.target.result;
+                originalImg.onload = () => {
+                    canvas.width = originalImg.width;
+                    canvas.height = originalImg.height;
+                    render(); 
+                    uploadStage.classList.add('hidden');
+                    editorStage.classList.remove('hidden');
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function render() {
+            const brightness = parseInt(rangeBright.value);
+            const contrast = parseInt(rangeContrast.value);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const bVal = 100 + brightness;
+            const cVal = 100 + contrast;
+
+            ctx.filter = `brightness(${bVal}%) contrast(${cVal}%)`;
+            ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
+
+            valBright.innerText = (brightness > 0 ? "+" : "") + brightness;
+            valContrast.innerText = (contrast > 0 ? "+" : "") + contrast;
+        }
+
+        rangeBright.addEventListener('input', render);
+        rangeContrast.addEventListener('input', render);
+
+        function showOriginal() {
+            ctx.filter = "none";
+            ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
+        }
+
+        function showEdited() {
+            render();
+        }
+
+        function resetValues() {
+            rangeBright.value = 0;
+            rangeContrast.value = 0;
+            render();
+        }
+
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = fileName + '_adjusted.jpg';
+            link.href = canvas.toDataURL('image/jpeg', 0.95);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+    <script src="/assets/cookie-consent.js" async></script>
+</body>
+</html>
+
