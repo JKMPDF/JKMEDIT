@@ -58,94 +58,13 @@
             --google-red: #DB4437;
         }
         
-        html, body { 
+        html, body {  
             margin: 0; 
             min-height: 100vh; 
             background-color: var(--bg-color); 
             color: var(--text-color); 
             animation: fadeInPage 0.5s ease-in-out; 
-            padding-top: 70px;
-            box-sizing: border-box;
-        }
-        *, *::before, *::after { box-sizing: inherit; }
-        .hidden { display: none !important; }
-
-        #header-placeholder {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            z-index: 2147483647 !important;
-            overflow: visible !important;
-            display: block !important;
-        }
-
-        .tool-container { position: relative; z-index: 1 !important; padding: 2rem 1.5rem; max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center; }
-        
-        .tool-header { text-align: center; margin-bottom: 2rem; width: 100%; }
-        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .tool-header p { font-size: 1.1rem; color: #6c757d; }
-        
-        /* Auth Panel Styles */
-        #auth-panel { text-align: center; background: var(--surface-color); padding: 3rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 600px; margin-bottom: 2rem; }
-        #auth-panel h2 { margin-top: 0; color: var(--text-color); }
-        #auth-panel p { color: #6c757d; margin-bottom: 2rem; font-size: 1.05rem; }
-        
-        /* Upload Stage */
-        #upload-stage { width: 100%; max-width: 900px; }
-        .user-status-bar { display: flex; justify-content: space-between; align-items: center; background: #e3fcef; color: #0f5132; padding: 0.75rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; font-weight: 600; }
-        .logout-btn { background: transparent; border: 1px solid #0f5132; color: #0f5132; padding: 0.4rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
-        .logout-btn:hover { background: #0f5132; color: white; }
-
-        #dropzone { border: 3px dashed #ccc; border-radius: 15px; padding: 3rem; text-align: center; cursor: pointer; background-color: var(--surface-color); transition: border-color 0.3s; }
-        #dropzone:hover, #dropzone.drag-over { border-color: var(--primary-color); background-color: #f0f7ff; }
-        #dropzone i { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
-        
-        /* Edit/Convert Stage */
-        #edit-stage { width: 100%; max-width: 600px; margin: 0 auto; }
-        .file-preview-card { padding: 1.5rem; background: var(--surface-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 1.5rem; }
-        .file-preview-card canvas { width: 80px; height: auto; border: 1px solid #ddd; border-radius: 4px; }
-        .file-info-container { flex-grow: 1; }
-        .file-info-container h3 { margin: 0 0 0.5rem 0; font-size: 1.1rem; word-break: break-all; }
-        .file-info-container p { margin: 0; color: #6c757d; font-size: 0.9rem; }
-        
-        .actions-panel { margin-top: 1.5rem; padding: 1.5rem; background: var(--surface-color); border-radius: 10px; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;}
-        .button-group { display: flex; gap: 1rem; justify-content: center; width: 100%; flex-wrap: wrap; }
-        
-        .action-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; max-width: 300px; padding: 1rem; font-size: 1.1rem; font-weight: 600; color: white; background: var(--gradient); border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s; text-decoration: none; }
-        .action-button:disabled { background: #ccc; cursor: not-allowed; }
-        .action-button:hover:not(:disabled) { transform: translateY(-2px); }
-        .google-btn { background: var(--google-red); max-width: 350px; }
-        .secondary-button { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
-        .success-btn { background: var(--success-color); }
-
-        .progress-text { color: var(--primary-color); font-weight: 600; margin-top: 0.5rem; font-size: 1.1rem; text-align: center; }
-        
-        .navigation-buttons { text-align: center; margin-top: 3rem; display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; width: 100%; }
-        .nav-btn { display: inline-block; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s; }
-        .primary-nav-btn { background: var(--gradient); color: white !important; }
-        .primary-nav-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .secondary-nav-btn { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
-        .secondary-nav-btn:hover { background: rgba(0, 82, 204, 0.05); }
-
-        .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
-
-        /* SEO Content Section - Exact Formatting Replica */
-        .seo-content {
-            position: relative; z-index: 1 !important; width: 92%; max-width: 900px; margin: 3rem auto; padding: 2.5rem;
-            background: var(--surface-color); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            color: #424245; line-height: 1.8; text-align: left; overflow-wrap: break-word; word-wrap: break-word;
-        }
-        .seo-content h2, .seo-content h3 { color: var(--text-color); margin-top: 2rem; font-weight: 700; }
-        .seo-content h2:first-child { margin-top: 0; }
-        .seo-content p { margin-bottom: 1.2rem; font-size: 1.05rem; }
-        .seo-content ul { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: 1.05rem;}
-        .seo-content li { margin-bottom: 0.5rem; }
-
-        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 768px) {
-            body { padding-top: 60px; }
+            padding-top: 70px; } button { min-height: 44px; min-width: 44px; font-size: 16px; } .btn, .nav-btn, .action-button { min-height: 44px; padding: 12px 20px; font-size: 16px; }
             .tool-container { padding: 2rem 1.5rem; }
             .seo-content { padding: 1.5rem; margin: 2rem auto; border-radius: 8px; }
             .file-preview-card { flex-direction: column; text-align: center; }
@@ -325,33 +244,33 @@
     <!-- Exact SEO Article Structure adapted for PDF to Word -->
     <article class="seo-content">
         <h2>Why the PDF to Word Converter is About to Become Your Favorite Utility</h2>
-        <p>If you've ever tried to manage your digital files in a rush, you already know the struggle. I remember a specific time when I urgently needed to edit a locked PDF contract right before a major deadline. I spent more time trying to find a website that didn't destroy the original formatting or bombard me with pop-up ads than I did actually doing the work. That shared frustration is the whole reason we focus so heavily on clean, immediate utilities here. When you need to get something done, you should be able to just authenticate, process, and move on with your day without jumping through hoops.</p>
+        <p>If you've ever tried to manage your digital files in a rush, you already know the struggle. Many people have urgently needed to edit a locked PDF contract right before a major deadline. Finding a reliable tool can take time a website that didn't destroy the original formatting or show many pop-up ads than I did actually doing the work. This is why we focus so heavily on clean, immediate utilities here. When you need to get something done, you should be able to just authenticate, process, and move on with your day without dealing with unnecessary steps.</p>
         
-        <h3>The Frustration We're Solving</h3>
-        <p>A while back, while putting together jkmedit.in, the vision was simple: build the stuff we actually wanted to use ourselves. I was tired of opening a supposedly 'free' tool only to be hit with a completely broken document where the tables were entirely misaligned and the fonts were replaced. Building this PDF to Word converter was personal. We wanted something that was genuinely useful, incredibly fast, and didn't treat the user like a product to be monetized. It's built by developers who understand the value of a smooth, uninterrupted workflow.</p>
-        <p>PDFs are amazing for keeping things securely formatted, but man, they can be an absolute nightmare to edit. You try to copy-paste one little paragraph and suddenly the whole document breaks, or you're prompted to buy a premium license. That's exactly the headache we're bypassing by integrating high-fidelity document parsing right into your workflow.</p>
+        <h3>The Problem We Solve</h3>
+        <p>When building jkmedit.in, the vision was simple: build the stuff we actually wanted to use ourselves. We wanted to avoid a supposedly 'free' tool only to be hit with a completely broken document where the tables were entirely misaligned and the fonts were replaced. Building this PDF to Word converter was personal. We wanted something that was very useful, very fast, and didn't monetize the user. It's built by developers who understand the value of a smooth, uninterrupted workflow.</p>
+        <p>PDFs are amazing for keeping things securely formatted, but man, they can be an very difficult to edit. You try to copy-paste one little paragraph and suddenly the whole document breaks, or you're prompted to buy a premium license. That's exactly the headache we're bypassing by integrating high-fidelity document parsing right into your workflow.</p>
         
         <h3>How the PDF to Word Converter Actually Works (Without the Jargon)</h3>
         <p>So, what's actually happening when you use this tool? Instead of relying on cheap browser tricks that scramble your text, we require a quick secure login to use one of the most powerful document engines on the web: Google Drive. Think about it. Google's infrastructure is incredibly powerful. By processing your file securely through your own authorized session, we ensure that the layout remains intact. It also means your stuff stays yours. Privacy isn't just a buzzword for us; it's a foundational rule. You upload, the engine translates the PDF structures into Word structures, and boom—it's done. Our script then immediately deletes the temporary file so there are no lingering files on our end or yours.</p>
-        <p>You might be wondering about the technical side of things. How does it handle errors? What happens if you put in a massive scanned file? Well, we built in reliable API calls that handle the heavy lifting of OCR (Optical Character Recognition). If a document is scanned, the engine reads the images as text automatically. We also made sure that the layout uses absolute positioning logic where it matters, so whether you're uploading from a massive ultra-wide monitor or your phone on the train, the interface stays perfectly usable.</p>
+        <p>You might be wondering about the technical side of things. How does it handle errors? What happens if you put in a massive scanned file? Well, we built in reliable API calls that handle the heavy lifting of OCR (Optical Character Recognition). If a document is scanned, the engine reads the images as text automatically. We also made sure that the layout uses absolute positioning logic where it matters, so whether you're uploading from a large monitor or your phone on the train, the interface stays perfectly usable.</p>
         
-        <h3>Real-World Scenarios: Who is this for?</h3>
-        <p>I get asked a lot about who actually uses these things day-to-day. It really spans the board, but here are the most common situations:</p>
+        <h3>Who Should Use This Tool</h3>
+        <p>Many people use these things day-to-day. It serves various needs, but here are the most common situations:</p>
         <ul><li><strong>The Late-Night Freelancer:</strong> You're on a tight deadline, the client needs the contract edited <em>now</em>, and you don't have the original source file. Click, convert, edit, send.</li><li><strong>The Small Business Owner:</strong> You don't need a $500 software suite to update an old invoice template. This tool retrieves the layout for free.</li><li><strong>The Code Ninja:</strong> When you just need to pull structured table data cleanly before pushing it into a new database or JSON file.</li></ul>
         
-        <h3>Common Mistakes People Make (And How to Avoid Them)</h3>
-        <p>Before you start, let me save you a little bit of grief. One of the most common mistakes I see people make when converting PDFs is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring password-protected PDFs. Always double-check what you are uploading; if the file requires a password to open, the converter won't be able to read it. Take a quick second to ensure your initial file is unlocked. Lastly, don't forget to check your downloads folder! I can't tell you how many times I've processed something, got distracted, and then processed it again because I thought it didn't save.</p>
+        <h3>Tips for Best Results</h3>
+        <p>Before you begin, here is a helpful tip. One of the most common mistakes I see people make when converting PDFs is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring password-protected PDFs. Always double-check what you are uploading; if the file requires a password to open, the converter won't be able to read it. Take a quick second to ensure your initial file is unlocked. Lastly, don't forget to check your downloads folder! It is common to have processed something, got distracted, and then processed it again because they thought it didn't save.</p>
         
-        <h3>The Bigger Picture: Workflow and Efficiency</h3>
+        <h3>Why This Matters</h3>
         <p>It is also worth noting that The web is constantly changing. Browsers and cloud APIs are getting more powerful, and modern browsers can now handle tasks that once required desktop software. We are actively maintaining and tweaking this utility. We keep improving it over time. As new document standards roll out, the backend engine updates automatically. So, while it works perfectly today, you can trust that it's only going to get faster and more capable as time goes on.</p>
-        <p>Another thing we really need to talk about is accessibility. Not everyone has a top-of-the-line MacBook Pro. Sometimes you're working on an older laptop or a budget tablet. Heavy desktop apps that rely on massive memory chunks will freeze those devices up. Because the heavy processing happens in the cloud, it runs incredibly smooth on virtually any device with a modern browser. We believe that professional-grade digital tools should be accessible to everyone, regardless of their hardware specs. It's a level playing field.</p>
+        <p>Another thing we really need to talk about is accessibility. Not everyone has a high-end MacBook Pro. Sometimes you're working on an older laptop or a budget tablet. Heavy desktop apps that rely on massive memory chunks will freeze those devices up. Because the heavy processing happens in the cloud, it runs very smooth on virtually any device with a modern browser. We believe that professional digital tools should be accessible to everyone, regardless of their hardware specs. It provides equal access.</p>
         
-        <h3>A Quick Pro-Tip Before You Go</h3>
-        <p>One thing I always tell people when they start using these tools heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to trust the persistent login system—once you sign in, leave the tab open and process your documents back-to-back all day long without interruptions.</p>
+        <h3>Helpful Tip</h3>
+        <p>A helpful suggestion when you start using these tools heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to trust the persistent login system—once you sign in, leave the tab open and process your documents back-to-back all day long without interruptions.</p>
 
-        <h3>Frequently Asked Questions about the Converter</h3>
+        <h3>Frequently Asked Questions Converter</h3>
         <p><strong>Is my data safe when using this tool?</strong><br>
-        Absolutely. As I mentioned earlier, we prioritize privacy. By requiring a Google login, the file is processed in a secure environment linked strictly to your session. We immediately send a 'DELETE' command to the temporary processing file as soon as the Word document is generated. We aren't interested in harvesting your data.</p>
+        Absolutely. As I mentioned earlier, we prioritize privacy. By requiring a Google login, the file is processed in a secure environment linked strictly to your session. We immediately send a 'DELETE' command to the temporary processing file as soon as the Word document is generated. We aren't interested in collecting your data.</p>
         
         <p><strong>Will it keep my exact fonts and tables?</strong><br>
         Yes, and that is exactly why we use this specific conversion method. Unlike basic text extractors, this engine analyzes the visual grid of the PDF, meaning columns, margins, images, and tables are preserved beautifully in the final <code>.docx</code> file.</p>
@@ -362,8 +281,8 @@
         <p><strong>Why does it require me to sign in?</strong><br>
         To perform enterprise-level document parsing (which handles exact formats and OCR) without charging you a monthly fee, we route the processing through Google's Drive API. The sign-in simply authorizes your browser to temporarily use that engine on your behalf. There are no hidden fees.</p>
         
-        <h3>Final Thoughts</h3>
-        <p>Wrapping things up, this converter isn't trying to reinvent the wheel—it's just trying to make the wheel roll a lot smoother. I highly recommend bookmarking this page. The next time you find yourself stuck needing to edit a stubborn document, you won't have to go hunting through Google search results. Give it a spin, see how it feels, and enjoy getting your time back.</p>
+        <h3>Summary</h3>
+        <p>In summary, this converter isn't trying to create something new—it's just trying to make things easier. We recommend bookmarking this page. The next time you find yourself stuck needing to edit a stubborn document, you won't have to go hunting through Google search results. try it out, see how it feels, and enjoy getting your time back.</p>
     </article>
 
 <section class="related-sections">
