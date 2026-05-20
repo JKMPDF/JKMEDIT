@@ -469,7 +469,31 @@
             fetch('https://jkmedit.in/header.html').then(r => r.text()).then(d => { 
                 document.getElementById('header-placeholder').innerHTML = d; 
                 const m = document.getElementById('mobileToggle'), n = document.getElementById('navMenu');
-                if(m && n) m.onclick = () => { n.classList.toggle('active'); m.innerHTML = n.classList.contains('active') ? '&#10005;' : '&#9776;'; };
+                if (m && n) {
+                    m.onclick = () => {
+                        n.classList.toggle('active');
+                        m.innerHTML = n.classList.contains('active') ? '&#10005;' : '&#9776;';
+                    };
+                }
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    const link = item.querySelector('.nav-link');
+                    const hasDropdown = item.querySelector('.mega-menu');
+                    if (link && hasDropdown) {
+                        link.addEventListener('click', (e) => {
+                            if (window.innerWidth <= 1024) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                navItems.forEach(otherItem => {
+                                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                                        otherItem.classList.remove('active');
+                                    }
+                                });
+                                item.classList.toggle('active');
+                            }
+                        });
+                    }
+                });
             });
             fetch('https://jkmedit.in/footer.html').then(r => r.text()).then(d => { document.getElementById('footer-placeholder').innerHTML = d; });
 

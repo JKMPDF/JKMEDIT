@@ -135,17 +135,21 @@
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {
                 const link = item.querySelector('.nav-link');
-                link.addEventListener('click', (e) => {
-                    if (window.innerWidth <= 1024) {
-                        e.preventDefault(); 
-                        navItems.forEach(otherItem => {
-                            if (otherItem !== item && otherItem.classList.contains('active')) {
-                                otherItem.classList.remove('active');
-                            }
-                        });
-                        item.classList.toggle('active');
-                    }
-                });
+                const hasDropdown = item.querySelector('.mega-menu');
+                if (link && hasDropdown) {
+                    link.addEventListener('click', (e) => {
+                        if (window.innerWidth <= 1024) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navItems.forEach(otherItem => {
+                                if (otherItem !== item && otherItem.classList.contains('active')) {
+                                    otherItem.classList.remove('active');
+                                }
+                            });
+                            item.classList.toggle('active');
+                        }
+                    });
+                }
             });
         })
         .catch(error => console.error('Error loading header:', error));
