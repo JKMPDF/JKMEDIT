@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | JKM Edit</title>
-    <meta name="description" content="Learn about JKM Edit's mission to provide secure, lightning-fast utility tools with 100% privacy through client-side processing.">
+    <meta name="description" content="Learn about JKM Edit and our mission to provide simple, free tools that keep your files private and work quickly in your browser.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://jkmedit.in/help/about.html">
-    <!-- Security Headers -->
+    <!-- Security settings -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.google-analytics.com; frame-ancestors 'none'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -31,12 +31,12 @@
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { font-family: var(--iphone-font); background-color: var(--bg); color: var(--text-main); -webkit-font-smoothing: antialiased; line-height: 1.6; }
 
-        /* --- HERO HEADER --- */
+        /* Main title section */
         .hero-page { text-align: center; padding: 80px 20px 60px; background: white; border-bottom: 1px solid #d2d2d7; }
         .hero-page h1 { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 15px; color: #111; }
         .hero-page p { color: var(--text-sub); font-size: 18px; max-width: 600px; margin: 0 auto; }
 
-        /* --- CONTENT --- */
+        /* Main content area */
         .content-container { max-width: 900px; margin: 60px auto; padding: 0 20px; }
         .content-inner { background: var(--card); padding: 50px 60px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.04); }
         
@@ -55,11 +55,11 @@
             .hero-page h1 { font-size: 36px; }
         }
 
-        /* --- HEADER CONTAINER FIX --- */
+        /* Header positioning */
         #header-container {
             position: sticky;
             top: 0;
-            z-index: 2147483647; /* Maximum possible z-index to guarantee it stays on top */
+            z-index: 2147483647;
             width: 100%;
         }
     </style>
@@ -75,50 +75,50 @@
 
 <section class="hero-page">
     <h1>About JKM Edit</h1>
-    <p>Empowering creators and professionals with privacy-first, lightning-fast digital utility tools.</p>
+    <p>Making everyday file and data work easier with simple, free tools that keep your files private.</p>
 </section>
 
 <main class="content-container">
     <div class="content-inner">
         <h2>Our Mission</h2>
-        <p>We started JKM Edit to make everyday file and data work easier. The goal is to provide useful, free tools that are simple to use and keep your files on your device whenever possible.</p>
+        <p>We created JKM Edit to help with everyday file and data tasks. Our goal is to provide useful, free tools that are easy to use and keep your files on your device.</p>
 
         <div class="feature-grid">
             <div class="feature-box">
                 <span class="material-symbols-outlined feature-icon">verified_user</span>
-                <h3>Private by default</h3>
-                <p>Many tools keep copies of your files. Here, most processing happens in the browser so your files do not leave your device.</p>
+                <h3>Keeps your files private</h3>
+                <p>Many websites keep copies of your files. Our tools work in your browser, so your files stay on your device.</p>
             </div>
             <div class="feature-box">
                 <span class="material-symbols-outlined feature-icon">bolt</span>
-                <h3>Fast and responsive</h3>
-                <p>There is no waiting for uploads or long server queues. The tools respond quickly in the browser.</p>
+                <h3>Works quickly</h3>
+                <p>No waiting for uploads or slow servers. The tools respond right away in your browser.</p>
             </div>
             <div class="feature-box">
                 <span class="material-symbols-outlined feature-icon">money_off</span>
-                <h3>No cost</h3>
-                <p>Free tools with no sign-up requirement and no hidden fees.</p>
+                <h3>Completely free</h3>
+                <p>No sign-up needed, no hidden fees, just free tools.</p>
             </div>
         </div>
 
         <h2>How it works</h2>
-        <p>Most online tools upload data to remote servers. That can be slower and less private. JKM Edit is built so the work stays in your browser when possible, and we do not keep copies of your files.</p>
+        <p>Most online tools send your data to their servers. This can be slow and less private. JKM Edit is built to do the work in your browser, and we don't keep copies of your files.</p>
 
         <h2>Who uses it</h2>
-        <p>Students, freelancers, and small businesses use these tools for quick edits, file conversions, and simple calculations. The site is designed to work smoothly on desktop, tablet, and mobile devices.</p>
+        <p>Students, freelancers, and small businesses use these tools for quick edits, file changes, and simple calculations. The site works well on computers, tablets, and phones.</p>
     </div>
 </main>
 
 <div id="footer-container"></div>
 
 <script>
-    // Fetch Header
+    // Load header
     fetch('https://jkmedit.in/header.html')
         .then(response => response.text())
         .then(data => { 
             document.getElementById('header-container').innerHTML = data; 
             
-            // Re-initialize the mobile menu scripts after injection
+            // Set up phone menu after loading
             const mobileToggle = document.getElementById('mobileToggle');
             const navMenu = document.getElementById('navMenu');
 
@@ -151,7 +151,7 @@
         })
         .catch(error => console.error('Error loading header:', error));
 
-    // Fetch Footer
+    // Load footer
     fetch('https://jkmedit.in/footer.html')
         .then(response => response.text())
         .then(data => { document.getElementById('footer-container').innerHTML = data; })

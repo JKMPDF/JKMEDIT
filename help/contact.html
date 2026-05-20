@@ -7,7 +7,7 @@
     <meta name="description" content="Get in touch with the JKM Edit team. We are here to help with support, feedback, and business inquiries regarding our utility tools.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://jkmedit.in/help/contact.html">
-    <!-- Security Headers -->
+    <!-- Security settings -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.google-analytics.com; frame-ancestors 'none'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -29,18 +29,51 @@
             --iphone-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
+        /* Reset default browser styles */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { font-family: var(--iphone-font); background-color: var(--bg); color: var(--text-main); -webkit-font-smoothing: antialiased; line-height: 1.6; }
 
-        /* --- HERO HEADER --- */
-        .hero-page { text-align: center; padding: 80px 20px 60px; background: white; border-bottom: 1px solid #d2d2d7; }
-        .hero-page h1 { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 15px; color: #111; }
-        .hero-page p { color: var(--text-sub); font-size: 18px; max-width: 600px; margin: 0 auto; }
+        /* Main title section */
+        .hero-page { 
+            /* Center the content horizontally and vertically */
+            text-align: center; 
+            /* Add padding to create some space around the content */
+            padding: 80px 20px 60px; 
+            /* Set the background color to white */
+            background: white; 
+            /* Add a bottom border to separate the section from the rest of the page */
+            border-bottom: 1px solid #d2d2d7; 
+        }
+        .hero-page h1 { 
+            /* Set the font size to 46px */
+            font-size: 46px; 
+            /* Set the font weight to 800 (bold) */
+            font-weight: 800; 
+            /* Add a negative letter spacing to make the text more compact */
+            letter-spacing: -1.5px; 
+            /* Add a margin bottom to create some space between the title and the paragraph */
+            margin-bottom: 15px; 
+            /* Set the color to a dark gray */
+            color: #111; 
+        }
+        .hero-page p { 
+            /* Set the color to a light gray */
+            color: var(--text-sub); 
+            /* Set the font size to 18px */
+            font-size: 18px; 
+            /* Set the maximum width to 600px to prevent the text from becoming too wide */
+            max-width: 600px; 
+            /* Center the text horizontally */
+            margin: 0 auto; 
+        }
 
-        /* --- CONTACT SECTION --- */
-        .contact-container { max-width: 1000px; margin: 60px auto; padding: 0 20px; }
+        /* Contact form area */
+        .contact-container { 
+            max-width: 1000px; 
+            margin: 60px auto; 
+            padding: 0 20px; 
+        }
         .contact-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 40px; }
-        
         .contact-form-box { background: var(--card); padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.04); }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
@@ -63,7 +96,7 @@
             .hero-page h1 { font-size: 36px; }
         }
 
-        /* --- HEADER CONTAINER FIX --- */
+        /* Header positioning */
         #header-container {
             position: sticky;
             top: 0;
@@ -161,6 +194,8 @@ We typically respond within 24–48 hours.
 <div id="footer-container"></div>
 
 <script>
+    // Load header
+    // Load header
     fetch('https://jkmedit.in/header.html')
         .then(response => response.text())
         .then(data => { 
@@ -198,6 +233,8 @@ We typically respond within 24–48 hours.
         })
         .catch(error => console.error('Error loading header:', error));
 
+    // Load footer
+    // Load footer
     fetch('https://jkmedit.in/footer.html')
         .then(response => response.text())
         .then(data => { document.getElementById('footer-container').innerHTML = data; })
