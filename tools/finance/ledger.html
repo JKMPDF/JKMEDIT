@@ -19,6 +19,11 @@
     
     <!-- Canonical URL to prevent duplicate content penalties -->
     <link rel="canonical" href="https://jkmedit.in/tools/finance/ledger.html"/>
+    <!-- Security Headers -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.google-analytics.com; frame-ancestors 'none'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
     
     <!-- Favicons & Mobile Theme Options -->
     <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
@@ -118,7 +123,7 @@
 
 <header>
     <div style="font-weight: 800; font-size: 22px; display: flex; align-items: center; gap: 12px;">
-        <img id="nav-avatar" src="" class="avatar" style="width:36px; height:36px; display:none;"> JKM Ledger
+        <img id="nav-avatar" src="" class="avatar" style="width:36px; height:36px; display:none;" loading="lazy"> JKM Ledger
     </div>
     <div id="header-tools" class="hidden" style="display: flex; align-items: center; gap: 12px;">
         <span id="sync-status" class="sync-badge">☁️ Synced</span>
@@ -172,7 +177,7 @@
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
             <button class="btn btn-outline" onclick="goBackToDashboard()" style="padding: 10px 16px;">← Back</button>
             <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 8px 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border);" onclick="openUserModal(currentUserId)">
-                <img id="user-dash-pic" class="avatar" src="" style="width: 36px; height: 36px; border:none;">
+                <img id="user-dash-pic" class="avatar" src="" style="width: 36px; height: 36px; border:none;" loading="lazy">
                 <h3 id="user-dash-name" style="margin:0; font-size: 16px;">User ✎</h3>
             </div>
         </div>
@@ -203,7 +208,7 @@
         <div style="text-align: center;">
             <label>Profile Picture</label>
             <input type="file" id="admin-pic-upload" accept="image/*" class="hidden" onchange="processImage(this, 'admin-pic-preview', 'admin')">
-            <img id="admin-pic-preview" class="avatar-lg" src="" style="cursor:pointer;" onclick="document.getElementById('admin-pic-upload').click()">
+            <img id="admin-pic-preview" class="avatar-lg" src="" style="cursor:pointer;" onclick="document.getElementById('admin-pic-upload').click()" loading="lazy">
         </div>
         <input type="text" id="admin-name" placeholder="Full Name">
         <div style="display: flex; gap: 10px;"><input type="email" id="admin-email" placeholder="Email"><input type="text" id="admin-phone" placeholder="Phone"></div>
@@ -231,7 +236,7 @@
         <input type="hidden" id="editing-user-id">
         <div style="text-align: center;">
             <input type="file" id="user-pic-upload" accept="image/*" class="hidden" onchange="processImage(this, 'user-pic-preview', 'user')">
-            <img id="user-pic-preview" class="avatar-lg" src="" style="cursor:pointer;" onclick="document.getElementById('user-pic-upload').click()">
+            <img id="user-pic-preview" class="avatar-lg" src="" style="cursor:pointer;" onclick="document.getElementById('user-pic-upload').click()" loading="lazy">
         </div>
         <input type="text" id="user-name" placeholder="Client Name *">
         <div style="display: flex; gap: 10px;"><input type="text" id="user-phone" placeholder="Phone Number (For SMS)"><input type="email" id="user-email" placeholder="Email"></div>
@@ -272,7 +277,7 @@
         <input type="file" id="entry-pic-upload" accept="image/*" class="hidden" onchange="processImage(this, 'entry-pic-preview', 'entry')">
         <div style="display:flex; gap: 15px; align-items:center; margin-bottom: 20px;">
             <button class="btn btn-outline" style="font-size: 13px;" onclick="document.getElementById('entry-pic-upload').click()">📷 Choose Image</button>
-            <img id="entry-pic-preview" class="avatar" src="" style="width: 50px; height: 50px; border-radius: 8px; display:none; object-fit:cover; border: 1px solid var(--border);">
+            <img id="entry-pic-preview" class="avatar" src="" style="width: 50px; height: 50px; border-radius: 8px; display:none; object-fit:cover; border: 1px solid var(--border);" loading="lazy">
             <button class="btn btn-danger hidden" id="entry-pic-remove" style="padding: 6px 10px; font-size:12px;" onclick="removeEntryPic()">Remove</button>
         </div>
 
@@ -286,7 +291,7 @@
 <!-- FULL IMAGE VIEWER MODAL -->
 <div id="image-viewer-modal" class="modal hidden" onclick="closeModal('image-viewer-modal')">
     <div style="position: relative; max-width: 95%; max-height: 95vh; display: flex; justify-content: center; align-items: center;">
-        <img id="full-screen-image" src="" style="max-width: 100%; max-height: 90vh; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); object-fit: contain;">
+        <img id="full-screen-image" src="" style="max-width: 100%; max-height: 90vh; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); object-fit: contain;" loading="lazy">
         <button class="btn btn-danger" style="position: absolute; top: -15px; right: -15px; border-radius: 50%; width: 35px; height: 35px; padding: 0;" onclick="closeModal('image-viewer-modal')">X</button>
     </div>
 </div>
@@ -576,7 +581,7 @@
             const card = document.createElement('div'); card.className = 'card'; card.style.padding = '10px';
             card.innerHTML = `
                 <div class="user-row" onclick="openUserDashboard(${u.id})">
-                    <img id="list-pic-${u.id}" src="${DEFAULT_PIC}" class="avatar">
+                    <img id="list-pic-${u.id}" src="${DEFAULT_PIC}" class="avatar" loading="lazy">
                     <div style="flex-grow: 1;"><strong style="font-size: 16px;">${u.name}</strong><br><span style="font-size: 13px; color: var(--text-muted);">${u.phone || 'No phone'}</span></div>
                     <div style="text-align: right;">
                         <div style="color: ${isRed ? 'var(--danger)' : 'var(--success)'}; font-weight: 700; font-size: 18px;">₹${Math.abs(u.balance).toLocaleString('en-IN')}</div>
