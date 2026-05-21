@@ -79,20 +79,41 @@
                 border-color: #475569;
             }
             @media (max-width: 680px) {
-                #${bannerId} { 
-                    bottom: 0; 
-                    left: 0; 
-                    right: 0; 
-                    padding: 6px 10px; 
-                    border-radius: 0;
-                    box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-                }
-                #${bannerId} .jkm-cookie-box { flex-direction: column; align-items: stretch; gap: 5px; margin: 0; }
-                #${bannerId} .jkm-cookie-copy { font-size: 10px; line-height: 1.2; margin: 0; padding: 0; }
-                #${bannerId} .jkm-cookie-copy strong { font-weight: 600; }
-                #${bannerId} .jkm-cookie-actions { gap: 5px; margin: 0; }
-                #${bannerId} .jkm-cookie-button { width: 100%; padding: 6px 10px; font-size: 10px; min-width: auto; height: auto; }
-            }
+
+    #${bannerId} {
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        padding: 0;
+    }
+
+    #${bannerId} .jkm-cookie-box {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    #${bannerId} .jkm-cookie-copy {
+        font-size: 12px;
+        line-height: 1.35;
+        margin: 0;
+    }
+
+    #${bannerId} .jkm-cookie-actions {
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+    }
+
+    #${bannerId} .jkm-cookie-button {
+        width: 100%;
+        padding: 9px 12px;
+        font-size: 12px;
+        min-width: auto;
+    }
+}
         `;
         document.head.appendChild(style);
 
@@ -102,7 +123,9 @@
             <div class="jkm-cookie-box">
                 <div class="jkm-cookie-copy">
                     <strong>JKM Edit uses cookies to keep this site free and working.</strong> We use essential cookies plus analytics and ads cookies only after you accept. Your file edits remain private and are processed in your browser.
-                    <a href="https://jkmedit.in/help/cookie.html" target="_blank" rel="noopener noreferrer">Cookie Policy</a>.<a href="https://jkmedit.in/help/privacy.html" target="_blank" rel="noopener noreferrer">Privacy & policy</a>
+                    <a href="https://jkmedit.in/help/cookie.html" target="_blank" rel="noopener noreferrer">Cookie Policy</a>
+&nbsp;|&nbsp;
+<a href="https://jkmedit.in/help/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
                 </div>
                 <div class="jkm-cookie-actions">
                     <button type="button" class="jkm-cookie-button jkm-cookie-reject">Reject Non-Essential</button>
