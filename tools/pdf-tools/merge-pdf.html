@@ -123,39 +123,74 @@
 
         .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        /* SEO Content Section */
         .seo-content {
-            position: relative; z-index: 1 !important; width: 92%; max-width: 900px; margin: 3rem auto; padding: 2.5rem;
-            background: var(--surface-color); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            color: #424245; line-height: 1.8; text-align: left; overflow-wrap: break-word; word-wrap: break-word;
+            position: relative;
+            z-index: 1 !important;
+            width: 92%;
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background: var(--surface-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            color: #424245;
+            line-height: 1.8;
+            text-align: left;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
         }
-        .seo-content h2, .seo-content h3 { color: var(--text-color); margin-top: 2rem; font-weight: 700; }
-        .seo-content h2:first-child { margin-top: 0; }
-        .seo-content p { margin-bottom: 1.2rem; font-size: 1.05rem; }
-        .seo-content ul { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: 1.05rem;}
-        .seo-content li { margin-bottom: 0.5rem; }
+        .seo-content h2, .seo-content h3 {
+            color: var(--text-color);
+            margin-top: 2rem;
+            font-weight: 700;
+        }
+        .seo-content h2:first-child {
+            margin-top: 0;
+        }
+        .seo-content p {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+        }
+        .seo-content ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            font-size: 1.05rem;
+        }
+        .seo-content li {
+            margin-bottom: 0.5rem;
+        }
 
         @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOutPage { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
 
         @media (max-width: 768px) {
-            body { padding-top: 60px; }
-            .tool-container { padding: 2rem 1.5rem; }
+            body { padding-top: 70px; }
+            .tool-container { padding: 2rem 1rem; }
             .seo-content { padding: 1.5rem; margin: 2rem auto; border-radius: 8px; }
+            .tool-header h1 { font-size: 1.8rem; }
+            .tool-header p { font-size: 1rem; }
+            .action-button { font-size: 1.1rem; padding: 0.9rem; }
+            .button-group { gap: 0.75rem; }
+            .page-preview-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; }
+            .nav-btn { padding: 0.7rem 2rem; font-size: 1rem; }
+            .download-button { padding: 0.9rem 2rem; font-size: 1.1rem; }
+            .related-sections { padding: 2rem 1rem; }
+            .related-sections h3 { font-size: 1.5rem; }
+            .tool-box { min-width: 150px; height: 165px; }
+            .tool-icon { width: 50px; height: 50px; }
+            .tool-icon svg { width: 24px; height: 24px; }
+            .tool-box h4 { font-size: 0.95rem; }
         }
-/* ---- PROFESSIONAL SQUARE TOOL BOXES ---- */
 .related-sections {
     padding: 3rem 1rem;
-    /* Optional: If your page background is white, you can leave this transparent. 
-       The image looks like it has a very faint grey background (#f8fafc or similar). */
 }
 
 .related-sections h3 {
     font-size: 1.75rem;
-    font-weight: 800; /* Bolder text to match image */
+    font-weight: 800;
     text-align: center;
     margin-bottom: 2.5rem;
-    color: #0f172a; /* Deep dark blue/black */
+    color: #0f172a;
 }
 
 .swipe-container {
@@ -163,31 +198,29 @@
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     gap: 1.5rem;
-    padding-bottom: 2rem; /* Space for the scrollbar */
+    padding-bottom: 2rem;
     max-width: 1200px;
-    margin: 0 auto; /* Centers the whole row on large screens */
+    margin: 0 auto;
     -webkit-overflow-scrolling: touch;
 }
 
-/* Custom Scrollbar styled like the image */
 .swipe-container::-webkit-scrollbar {
     height: 8px;
 }
 .swipe-container::-webkit-scrollbar-track {
-    background: #e2e8f0; /* Light grey track */
+    background: #e2e8f0;
     border-radius: 10px;
 }
 .swipe-container::-webkit-scrollbar-thumb {
-    background: #c1d5e1; /* Slightly darker thumb */
+    background: #c1d5e1;
     border-radius: 10px;
 }
 .swipe-container::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
 
-/* The Cards */
 .tool-box {
-    min-width: 175px; /* Box dimensions */
+    min-width: 175px;
     height: 185px;
     scroll-snap-align: start;
     flex: 0 0 auto;
@@ -196,25 +229,24 @@
     align-items: center;
     justify-content: center;
     background: #ffffff;
-    border: 1px solid #f1f5f9; /* Very subtle border */
-    border-radius: 16px; /* Smooth rounded corners */
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Soft shadow */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .tool-box:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Lifts up on hover */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     transform: translateY(-5px);
 }
 
-/* The Light Blue Icon Background */
 .tool-icon {
     width: 60px;
     height: 60px;
-    background-color: #eff6ff; /* Very light blue */
-    color: #2563eb; /* Primary blue for the SVG */
-    border-radius: 16px; /* Squircle shape */
+    background-color: #eff6ff;
+    color: #2563eb;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -223,7 +255,7 @@
 }
 
 .tool-box:hover .tool-icon {
-    background-color: #dbeafe; /* Slightly darker blue on hover */
+    background-color: #dbeafe;
 }
 
 .tool-icon svg {
@@ -231,11 +263,10 @@
     height: 28px;
 }
 
-/* The Title */
 .tool-box h4 {
     margin: 0;
     font-size: 1.05rem;
-    font-weight: 700; /* Bold font matching the screenshot */
+    font-weight: 700;
     text-align: center;
     color: #1e293b;
 }
@@ -291,46 +322,46 @@
     </main>
 
     <article class="seo-content">
-        <h2>Why the Merge PDF is About to Become Your Favorite Utility</h2>
-        <p>If you've ever tried to manage your digital files in a rush, you already know the struggle. I remember a specific time when I urgently needed a Merge PDF right before a major deadline. I spent more time trying to find a website that didn't bombard me with pop-up ads than I did actually doing the work. That shared frustration is the whole reason we focus so heavily on clean, immediate utilities here. When you need to get something done, you should be able to just click, process, and move on with your day without jumping through hoops.</p>
+        <h2>Why Merge PDF is about to be your new favorite utility?</h2>
+        <p>If you have ever found yourself in a hurry to manage your digital files you'll know the story. Once I find myself in a urgent situation to merge PDF for an important deadline. Spending so much time to find a site which dust doesn't blast with random pop ups than doing any work. That's how trolls of issue much of our main focus base here. While you want to get things done you should just click and see the processing and go back to whatever you were doing.</p>
         
-        <h3>The Frustration We're Solving</h3>
-        <p>A while back, while putting together jkmedit.in, the vision was simple: build the stuff we actually wanted to use ourselves. I was tired of opening a supposedly 'free' tool only to be hit with a watermark or a strict file-size limit at the very last second. Building the Merge PDF was personal. We wanted something that was genuinely useful, incredibly fast, and didn't treat the user like a product to be monetized. It's built by developers who understand the value of a smooth, uninterrupted workflow.</p>
-        <p>PDFs are amazing for keeping things formatted, but man, they can be an absolute nightmare to edit. You try to change one little thing and suddenly the whole document breaks, or you're prompted to buy a premium license. That's exactly the headache we're bypassing here.</p>
+        <h3>We Are Solving this Frustration.</h3>
+        <p>While we were building jkmedit.in a long time back we decided to build the stuff we actually use ourselves. Too many times I was starting a 'free' Merge PDF web application and then there was an annoying watermark or a bottle necking size limit at the last minute. We wanted to build Merge PDF that is useful, fast and built by us! It is built by us as developers that understand the value of seamless uninterrupted workflow.</p>
+        <p>PDFs to keep formats, but editing them be a nightmare. Just when you think you found a way around, modification ruins it all, or you get asked to buy a premium license or whatever. That's the problem our Merge PDF solves.</p>
         
-        <h3>How the Merge PDF Actually Works (Without the Jargon)</h3>
-        <p>So, what's actually happening when you use the Merge PDF? Instead of taking your data and sending it off to some mysterious server halfway across the world, we leverage the power of your own web browser. Think about it. Your computer or phone is incredibly powerful. By processing things locally whenever possible, we cut down on wait times drastically. It also means your stuff stays yours. Privacy isn't just a buzzword for us; it's a foundational rule. You upload, you tweak the settings, and boom—it's done. No lingering files on our end.</p>
-        <p>You might be wondering about the technical side of things. How does it handle errors? What happens if you put in the wrong format? Well, we built in some pretty aggressive real-time validation. If something is off, the Merge PDF catches it immediately and tells you exactly what went wrong in plain English. No cryptic error codes. We also made sure that the layout uses absolute positioning logic where it matters, so whether you're using a massive ultra-wide monitor or scrolling on your phone on the train, the buttons stay exactly where they are supposed to be. It won't break or overlap.</p>
+        <h3>How We Run the Merge PDF (With Minimal Jargon)</h3>
+        <p>You might wonder what exactly happens under the hood of the Merge PDF. It's not that we send your data to some remote server halfway around the world, we use the best tool we have at our disposal, the browser you run. And think about that. Your computer and your phone are impressively powerful weapons, when we use them to do the heavy lifting whenever possible we massively reduce the time you need to wait. And you get to keep that stuff for yourself. Privacy is not a buzzword to us, it's a rule. Upload, change a setting, sheer triumph. Nothing left behind.</p>
+        <p>You might be wondering about the technical side of things. How does it handle errors? What happens if you put in the wrong format? Well, we built in some pretty aggressive real-time validation. If something is off, the Merge PDF catches it immediately and tells you exactly what went wrong in plain English. No cryptic error codes. We also made sure that the layout uses absolute-positioning logic where it matters, so whether you're using a massive ultra-wide monitor or scrolling on your phone on the train, the buttons stay exactly where they are supposed to be. It won't break or overlap.</p>
         
         <h3>Real-World Scenarios: Who is this for?</h3>
         <p>I get asked a lot about who actually uses these things day-to-day. It really spans the board, but here are the most common situations:</p>
-        <ul><li><strong>The Late-Night Freelancer:</strong> You're on a tight deadline, the client needs the file <em>now</em>, and you don't have time to open heavy software. Click, process, send.</li><li><strong>The Small Business Owner:</strong> You don't need a $500 software suite to do basic administrative tasks. This tool handles the daily grind for free.</li><li><strong>The Code Ninja:</strong> When you just need to format, convert, or clean up data quickly before pushing it to production.</li></ul>
+        <ul><li><strong>The Late-Night Freelancer:</strong> You're on a tight deadline, the client needs the file now, and you don't have time to open heavy software. Click, process, send.</li><li><strong>The Small Business Owner:</strong> You don't need a $500 software suite to do basic administrative tasks. This tool handles the daily grind for free.</li><li><strong>The Code Ninja:</strong> That time you don't need to clean up or convert data, you just need to format it before you ship it off</li></ul>
         
-        <h3>Common Mistakes People Make (And How to Avoid Them)</h3>
-        <p>Before you dive in, let me save you a little bit of grief. One of the most common mistakes I see people make when looking for a Merge PDF is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring the initial file format. Always double-check what you are uploading. While our tool handles errors gracefully, garbage in still equals garbage out. Take a quick second to ensure your initial data or file is exactly what you want to work with. Lastly, don't forget to check your downloads folder! I can't tell you how many times I've processed something, got distracted, and then processed it again because I thought it didn't save. The Merge PDF works so fast that sometimes you might miss the download prompt if you blink!</p>
+        <h3>Common Errors Folks Tend To Make (And How to Avoid Them)</h3>
+        <p>Before you start here, let me spare you a little money. One of the most common pitfalls I see people run into when searching for a Merge PDF is trusting truly random websites that will ask for your e-mail address before giving you the file back. NO. JUST DON'T. You'll have an inbox full of spam before the day ends. The second issue I see people fall into is forgetting about the original file format. Make sure you're double checking what you're going to upload. We're robust at handling errors, but garbage in is garbage output. Take a second to make sure your original data or file is exactly what you want to be working with. And lastly, check your downloads folder! I can't even count how many times I process something else, get distracted, & then process it again because I thought it didn't actually save. This Merge PDF is so fast you might Alex blinks right through the download prompt!</p>
         
-        <h3>The Bigger Picture: Workflow and Efficiency</h3>
-        <p>Let's also touch on the future. The web is constantly changing. Browsers are getting more powerful, and what we can do inside a web page today would have seemed like magic five years ago. We are actively maintaining and tweaking the Merge PDF. We don't just launch it and forget it. As new web standards roll out, we update the engine under the hood. So, while it works perfectly today, you can trust that it's only going to get faster and more capable as time goes on.</p>
-        <p>Another thing we really need to talk about is accessibility. Not everyone has a top-of-the-line MacBook Pro. Sometimes you're working on an older laptop or a budget tablet. Heavy web apps that rely on massive memory chunks will freeze those devices up. Because the Merge PDF is optimized at the code level, it runs incredibly smooth on virtually any device with a modern browser. We believe that professional-grade digital tools should be accessible to everyone, regardless of their hardware specs. It's a level playing field.</p>
+        <h3>The Bigger Picture: Workflow & Efficiency</h3>
+        <p>Oh yeah, let's talk about the future. The web is changing fast. Browsers today are much more powerful than they were 5 years ago. The kind of things we do with the Merge PDF inside one web page would have been sorcery 5 years ago. Well, we maintain and improve the Merge PDF. We don't drop an app in the world and walk away. As new web standards come to market, we keep the engine under the hood up to date. It runs fantastic today and it will keep getting faster and more powerful long after being written.</p>
+        <p>Now there's one last subject we really need to talk about: accessibility. Not everyone out there has 128GB RAM and a top-of-the-line MacBook Pro, so sometimes you're thinking " Come on a budget tablet or old laptop, ugh." Some heavy web apps out there that generate huge amounts of memory will just make the device run flat. But because we were optimizing the Merge PDF at the level of code, it feels incredibly smooth on almost any device with a modern web browser. We're fairly confident that powerful digital tools should be made available to all, regardless of what tools you have to use. It's the nature of the beast.</p>
         
-        <h3>A Quick Pro-Tip Before You Go</h3>
-        <p>One thing I always tell people when they start using the Merge PDF heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to push the tool to its limits, test out different inputs, and see how fast it can actually process your data. The architecture is robust enough to handle it, so put it to the test!</p>
+        <h3>A Tiny Pro-Tip for the Road</h3>
+        <p>One piece of advice that I always give people before they start using the Merge PDF a lot is that you want to incorporate it into your muscle memory. Incorporate it into your lives and you basically keep a browser window open just for your jkmedit.company things. Start treating the browser as if it is actually your OS and you start noticing some pretty sweet shortcuts. The tool is quick too and you should experiment with it and try to push it to its limits, see how quickly it can process different inputs. The whole idea for this tool was to be that way and you should give it a go!</p>
 
-        <h3>Frequently Asked Questions about the Merge PDF</h3>
-        <p><strong>Is my data safe when using this tool?</strong><br>
-        Absolutely. As I mentioned earlier, we prioritize client-side processing. This means your files and inputs are handled right there in your browser. We aren't interested in harvesting your data or storing your files on our servers. It's safer, faster, and infinitely more private.</p>
+        <h3>FAQs - Merge PDF</h3>
+        <p><strong>Will you keep my data private?</strong><br>
+        Sure, we already explained this but to be 100% sure that you know, it is completely 100% client side, all the inputs and the files are processed all running in the browser. We have no ambition to store your data or anything. It is faster, more secure and infinitely more private.</p>
         
-        <p><strong>Do I need to create an account to use it?</strong><br>
-        No way. I can't stand when a website makes you jump through a five-minute registration process just to convert a file or calculate a number. The Merge PDF on jkmedit.in is completely open. Just load the page and get to work.</p>
+        <p><strong>Do I have to create an account to use it?</strong><br>
+        No I would never like a website forcing you to create an account or write five minute registration notes before you can convert a file or do a calculation. JKmedit.in is completely open just open the page and start going.</p>
         
         <p><strong>Will it work on my phone?</strong><br>
-        Yes! We spent a lot of time ensuring the user interface is completely responsive. Because we use absolute positioning logic and a clean, mobile-first design philosophy, all the buttons and inputs will scale perfectly to your smartphone or tablet screen. You can literally get work done while waiting in line for coffee.</p>
+        Yes! a ton of time has been invested to ensure the UI is completely responsive. As we use absolute positioning logic and a very clean and mobile first design philosophy, all buttons and inputs are rendered right on your smartphone or tablet screen. In other words, you're able to finish your work and go get coffee.</p>
         
-        <p><strong>Why is this free? What's the catch?</strong><br>
-        There is no catch. We built jkmedit.in as a passion project to house the tools we use ourselves. By keeping the site lightweight and optimized, our server costs are incredibly low. We believe in providing value upfront without tricking people into hidden subscriptions.</p>
+        <p><strong>Why is this free? Any catch?</strong><br>
+        There is no catch. We created jkmedit.in to share the tools that we use. As the site is very lightweight and optimized we incur very minimal server costs. We're not trying to trick people into signing up for a subscription or any kind of fee.</p>
         
-        <h3>Final Thoughts</h3>
-        <p>Wrapping things up, the Merge PDF isn't trying to reinvent the wheel—it's just trying to make the wheel roll a lot smoother. I highly recommend bookmarking this page. The next time you find yourself stuck needing this exact function, you won't have to go hunting through Google search results. Give it a spin, see how it feels, and enjoy getting your time back.</p>
+        <h3>On a personal note</h3>
+        <p>In a nutshell the Merge PDF here is not trying to reinvent the wheel, it is merely trying to make the wheel run easier. I would definitely save this page. The next time you find yourself googling and realise you need what you want to do here, you won't have to surface multiple search results. Instead you can just jump right in, have fun and enjoy the time you save.</p>
     </article>
 
 <section class="related-sections">
@@ -434,33 +465,52 @@
     document.addEventListener('DOMContentLoaded', () => {
         fetch('https://jkmedit.in/header.html')
             .then(response => response.text())
-            .then(data => { 
-                document.getElementById('header-placeholder').innerHTML = data; 
-                const mobileToggle = document.getElementById('mobileToggle');
-                const navMenu = document.getElementById('navMenu');
-                if(mobileToggle && navMenu) {
-                    mobileToggle.addEventListener('click', () => {
-                        navMenu.classList.toggle('active');
-                        mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
-                    });
-                }
-                const navItems = document.querySelectorAll('.nav-item');
-                navItems.forEach(item => {
-                    const link = item.querySelector('.nav-link');
-                    if (link) {
-                        link.addEventListener('click', (e) => {
-                            if (window.innerWidth <= 1024) {
-                                e.preventDefault(); 
-                                navItems.forEach(otherItem => {
-                                    if (otherItem !== item && otherItem.classList.contains('active')) {
-                                        otherItem.classList.remove('active');
-                                    }
-                                });
-                                item.classList.toggle('active');
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+                
+                setTimeout(() => {
+                    let mobileToggle = document.getElementById('mobileToggle');
+                    const navMenu = document.getElementById('navMenu');
+                    
+                    if (!mobileToggle && navMenu) {
+                        mobileToggle = document.createElement('button');
+                        mobileToggle.id = 'mobileToggle';
+                        mobileToggle.setAttribute('aria-label', 'Toggle navigation menu');
+                        mobileToggle.innerHTML = '&#9776;';
+                        navMenu.parentNode.insertBefore(mobileToggle, navMenu);
+                    }
+                    
+                    if(mobileToggle && navMenu) {
+                        mobileToggle.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navMenu.classList.toggle('active');
+                            mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
+                        });
+                        
+                        document.addEventListener('click', (e) => {
+                            if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && e.target !== mobileToggle) {
+                                navMenu.classList.remove('active');
+                                mobileToggle.innerHTML = '&#9776;';
                             }
                         });
                     }
-                });
+                    
+                    const navItems = document.querySelectorAll('.nav-item');
+                    navItems.forEach(item => {
+                        const link = item.querySelector('.nav-link');
+                        if (link) {
+                            link.addEventListener('click', (e) => {
+                                if (window.innerWidth <= 1024) {
+                                    if (navMenu.classList.contains('active')) {
+                                        navMenu.classList.remove('active');
+                                        if(mobileToggle) mobileToggle.innerHTML = '&#9776;';
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }, 100);
             })
             .catch(error => console.error('Error loading header:', error));
 
@@ -494,7 +544,12 @@
         const sizePreview = document.getElementById('size-preview');
         const originalSizeDisplay = document.getElementById('original-size-display');
         
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
+        if (typeof pdfjsLib === 'undefined') {
+            console.error('PDF.js library not loaded');
+            alert('PDF library not loaded. Please refresh the page and try again.');
+        } else {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
+        }
         
         let allPages =[], fileCounter = 0;
         let fileDataStore = {};
@@ -510,17 +565,26 @@
         if (processBtn) processBtn.addEventListener('click', () => handleProcessing(0));
 
         async function handleFiles(files){
-            for (const file of files){
-                if (file.type !== "application/pdf") continue;
-                fileCounter++;
-                const fileId = fileCounter;
-                const arrayBuffer = await file.arrayBuffer();
-                const pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer.slice(0))}).promise;
-                const numPagesInFile = pdfJsDoc.numPages;
-                fileDataStore[fileId] = { buffer: arrayBuffer, size: file.size, pageCount: numPagesInFile };
-                for (let i = 1; i <= numPagesInFile; i++){
-                    allPages.push({id: `${fileId}-${i}`, fileId: fileId, originalPageIndex: i - 1, pageLabel: `F${fileId}, P${i}`, isSelected: true, pdfDoc: pdfJsDoc});
+            try {
+                for (const file of files){
+                    if (file.type !== "application/pdf") continue;
+                    fileCounter++;
+                    const fileId = fileCounter;
+                    const arrayBuffer = await file.arrayBuffer();
+                    if (typeof pdfjsLib === 'undefined') {
+                        throw new Error('PDF.js library not loaded');
+                    }
+                    const pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer.slice(0))}).promise;
+                    const numPagesInFile = pdfJsDoc.numPages;
+                    fileDataStore[fileId] = { buffer: arrayBuffer, size: file.size, pageCount: numPagesInFile };
+                    for (let i = 1; i <= numPagesInFile; i++){
+                        allPages.push({id: fileId + '-' + i, fileId: fileId, originalPageIndex: i - 1, pageLabel: 'F' + fileId + ', P' + i, isSelected: true, pdfDoc: pdfJsDoc});
+                    }
                 }
+            } catch (error) {
+                console.error('Error loading PDF files:', error);
+                alert('Error loading PDF file: ' + (error.message || 'Unknown error'));
+                return;
             }
             if (allPages.length > 0) {
                 if (uploadStage) uploadStage.classList.add('hidden');
@@ -530,7 +594,7 @@
             }
         }
 
-        function formatBytes(b, d=2){ if(!+b) return '0 Bytes'; const k=1024, i=Math.floor(Math.log(b)/Math.log(k)); return `${parseFloat((b/Math.pow(k,i)).toFixed(d<0?0:d))} ${['Bytes','KB','MB','GB'][i]}` }
+        function formatBytes(b, d=2){ if(!+b) return '0 Bytes'; const k=1024, i=Math.floor(Math.log(b)/Math.log(k)); return parseFloat((b/Math.pow(k,i)).toFixed(d<0?0:d)) + ' ' + ['Bytes','KB','MB','GB'][i]; }
         
         async function renderPagePreviews(){
             if (!pagePreviewGrid) return;
@@ -541,7 +605,7 @@
                 if(!pageObj.isSelected) pageItem.classList.add('deselected');
                 pageItem.dataset.id = pageObj.id;
                 pageItem.draggable = true;
-                pageItem.innerHTML = `<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;
+                pageItem.innerHTML = '<canvas></canvas><div class="page-info">' + pageObj.pageLabel + '</div><i class="fa-solid fa-check page-tick-icon"></i>';
                 pagePreviewGrid.appendChild(pageItem);
                 
                 const canvas = pageItem.querySelector('canvas');
@@ -613,6 +677,9 @@
         }
 
         async function processPdf(compressionLevel) {
+            if (!PDFLib || !PDFLib.PDFDocument) {
+                throw new Error('PDF library not loaded. Please refresh the page and try again.');
+            }
             const { PDFDocument } = PDFLib;
             const selectedPages = allPages.filter(p => p.isSelected);
             if (selectedPages.length === 0) return null;
@@ -628,8 +695,14 @@
                 }
             } else {
                 const quality = 1 - (compressionLevel / 100);
+                const loadedPdfJsDocs = new Map();
                 for (const pageObj of selectedPages) {
-                    const page = await pageObj.pdfDoc.getPage(pageObj.originalPageIndex + 1);
+                    let pdfJsDoc = loadedPdfJsDocs.get(pageObj.fileId);
+                    if (!pdfJsDoc) {
+                        pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(fileDataStore[pageObj.fileId].buffer.slice(0))}).promise;
+                        loadedPdfJsDocs.set(pageObj.fileId, pdfJsDoc);
+                    }
+                    const page = await pdfJsDoc.getPage(pageObj.originalPageIndex + 1);
                     const viewport = page.getViewport({ scale: 1.0 });
                     const canvas = document.createElement('canvas');
                     canvas.height = viewport.height; canvas.width = viewport.width;
@@ -679,7 +752,11 @@
                 }
             } catch (error) {
                 console.error("Error processing PDF:", error);
-                alert("An error occurred. Please try again.");
+                let errorMessage = "An error occurred. Please try again.";
+                if (error.message) {
+                    errorMessage = "Error: " + error.message;
+                }
+                alert(errorMessage);
             } finally {
                 button.disabled = false; button.innerHTML = originalText;
                 if (!isRecompress && addMoreFilesBtn) addMoreFilesBtn.disabled = false;
