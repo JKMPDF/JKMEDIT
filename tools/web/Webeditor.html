@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=5.0' name='viewport'/>
+    <title>Online Code Editor IDE: Compile Scripts in Your Browser</title>
+    <meta name="title" content="Online Code Editor IDE: Compile Scripts in Your Browser">
+    <meta name="description" content="Professionally write actively edit and quickly compile complex programming syntax safely within your web browser. This thoroughly free IDE supports many formats."/>
+    <meta name="author" content="JKM Edit"/>
+    <meta name="keywords" content="online code editor, web ide, browser code editor, text editor online, replit alternative, stackblitz alternative, online code compiler free, javascript IDE online, html syntax editor, cloud coding platform, web based text formatter, developer snippet tool, jkmedit code editor, dark mode code IDE, test programming logic online">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+    <link rel="canonical" href="https://jkmedit.in/tools/web/Webeditor.html"/>
+    <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <link rel="apple-touch-icon" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <meta name="theme-color" content="#ffffff">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Online Code Editor IDE: Compile Scripts in Your Browser">
+    <meta property="og:description" content="Professionally write actively edit and quickly compile complex programming syntax safely within your web browser. This thoroughly free IDE supports many formats.">
+    <meta property="og:url" content="https://jkmedit.in/tools/web/Webeditor.html">
+    <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <meta property="og:site_name" content="JKM Edit">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://jkmedit.in/tools/web/Webeditor.html">
+    <meta property="twitter:title" content="Online Code Editor IDE: Compile Scripts in Your Browser">
+    <meta property="twitter:description" content="Professionally write actively edit and quickly compile complex programming syntax safely within your web browser. This thoroughly free IDE supports many formats.">
+    <meta property="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Web Code Editor - JKM Edit","url":"https://jkmedit.in/tools/web/Webeditor.html","description":"Professionally write actively edit and quickly compile complex programming syntax safely within your web browser. This thoroughly free IDE supports many formats.","applicationCategory":"DeveloperApplication","operatingSystem":"All","creator":{"@type":"Organization","name":"JKM Edit","url":"https://jkmedit.in"},"offers":{"@type":"Offer","price":"0.00","priceCurrency":"USD"}}
+    </script>
+
+    <style>
+        /* --- PROFESSIONAL THEME (UNCHANGED) --- */
+        :root {
+            --bg-dark: #1e1e1e;
+            --bg-panel: #252526;
+            --bg-header: #333333;
+            --border: #3e3e42;
+            --accent: #007acc;
+            --accent-hover: #0062a3;
+            --text-main: #cccccc;
+            --text-white: #ffffff;
+        }
+
+        body, html { margin: 0; padding: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-dark); color: var(--text-main); overflow: hidden; }
+
+        .app-container { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
+
+        .toolbar {
+            height: 45px; background: var(--bg-header); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+        }
+        .brand { font-weight: 600; color: var(--text-white); font-size: 14px; display: flex; align-items: center; gap: 10px; }
+        .brand span { color: var(--accent); }
+
+        .device-group { display: flex; background: #252526; padding: 3px; border-radius: 6px; border: 1px solid var(--border); }
+        .device-btn {
+            background: transparent; border: none; color: #858585; padding: 6px 15px; font-size: 12px; cursor: pointer; border-radius: 4px; transition: 0.2s; display: flex; align-items: center; gap: 6px;
+        }
+        .device-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+        .device-btn.active { background: var(--bg-header); color: var(--text-white); box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+
+        .actions { display: flex; gap: 10px; }
+        .btn { padding: 6px 16px; font-size: 12px; border-radius: 4px; cursor: pointer; border: 1px solid transparent; color: white; font-weight: 500; }
+        .btn-primary { background: var(--accent); }
+        .btn-sec { background: #3c3c3c; border: 1px solid var(--border); }
+
+        .workspace { flex: 1; display: flex; overflow: hidden; background: #121212; position: relative; }
+
+        .preview-canvas {
+            flex: 1; display: flex; justify-content: center; align-items: flex-start;
+            padding: 40px; overflow-y: auto;
+            background-image: radial-gradient(#333 1px, transparent 1px); background-size: 20px 20px;
+        }
+
+        .device-frame {
+            background: white; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6); overflow: hidden; position: relative;
+        }
+        .device-frame.desktop { width: 100%; height: 100%; border-radius: 4px; border: 1px solid #444; }
+        .device-frame.tablet { width: 768px; height: 1024px; border-radius: 12px; border: 12px solid #252526; flex-shrink: 0; }
+        .device-frame.mobile { width: 375px; height: 812px; border-radius: 24px; border: 12px solid #252526; border-bottom-width: 30px; flex-shrink: 0; }
+
+        iframe { width: 100%; height: 100%; border: none; background: white; display: block; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .editor-popup {
+            width: 700px; height: 500px; background: var(--bg-dark); border: 1px solid var(--accent);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8); border-radius: 6px; display: flex; flex-direction: column;
+        }
+
+        .popup-header { height: 35px; background: #252526; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 15px; }
+        .popup-title { font-size: 12px; font-weight: bold; color: white; text-transform: uppercase; }
+        .close-icon { cursor: pointer; color: #888; font-size: 16px; }
+        .close-icon:hover { color: white; }
+
+        .popup-tabs { display: flex; background: #1e1e1e; border-bottom: 1px solid var(--border); }
+        .tab { padding: 8px 20px; font-size: 12px; color: #888; cursor: pointer; border-right: 1px solid var(--border); background: #252526; }
+        .tab.active { color: var(--accent); background: #1e1e1e; border-top: 2px solid var(--accent); }
+
+        .popup-content { flex: 1; position: relative; }
+        textarea.code-editor {
+            width: 100%; height: 100%; background: #1e1e1e; color: #d4d4d4; border: none; padding: 15px;
+            font-family: 'Consolas', monospace; font-size: 13px; resize: none; outline: none; box-sizing: border-box;
+        }
+
+        .popup-footer { padding: 10px 15px; background: #252526; border-top: 1px solid var(--border); text-align: right; }
+
+        .startup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #1e1e1e; z-index: 9999; display: flex; align-items: center; justify-content: center;
+        }
+        .startup-box { width: 500px; background: #252526; padding: 30px; border-radius: 8px; border: 1px solid var(--border); }
+        .startup-box textarea { width: 100%; height: 150px; background: #1e1e1e; border: 1px solid var(--border); color: white; margin: 15px 0; padding: 10px; font-family: monospace; }
+        
+        .toast {
+            position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white;
+            padding: 10px 20px; border-radius: 4px; font-size: 13px; opacity: 0; transition: 0.3s; z-index: 3000; pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="startup-overlay" id="startupModal">
+        <div class="startup-box">
+            <h2 style="margin:0 0 10px 0; color:white;">DevMode Pro</h2>
+            <p style="color:#888; font-size:13px;">Paste your code. Fingerprint Engine Active.</p>
+            <textarea id="sourceInput" placeholder="Paste HTML..."></textarea>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button class="btn btn-sec" onclick="loadDemo()">Load Demo</button>
+                <button class="btn btn-primary" onclick="loadSource()">Start Editor</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- SEO INTRO -->
+        <section id="seo-intro" style="padding:14px 20px; background:linear-gradient(90deg,#121212,#0f1720); border-bottom:1px solid #222; color:#ddd;">
+            <div style="max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:20px;">
+                <div>
+                    <h3 style="margin:0 0 6px; font-size:16px;">Online Code Editor — Fast, Private, Browser IDE</h3>
+                    <p style="margin:0; color:#bbb; font-size:13px;">Edit, preview and download code directly in your browser. The lightweight IDE supports HTML/CSS/JS previews, device frames, and quick exports — perfect for prototyping, teaching, and sharing demos without server uploads.</p>
+                </div>
+                <div style="font-size:13px;color:#999;">Supports HTML • CSS • JavaScript • Static Previews</div>
+            </div>
+        </section>
+        <div class="toolbar">
+            <div class="brand"><span>⚡</span> DEVMODE PRO</div>
+            <div class="device-group">
+                <button class="device-btn" onclick="setDevice('mobile')"><span>📱</span> Mobile</button>
+                <button class="device-btn" onclick="setDevice('tablet')"><span>💊</span> Tablet</button>
+                <button class="device-btn active" onclick="setDevice('desktop')"><span>💻</span> Desktop</button>
+            </div>
+            <div class="actions">
+                <button class="btn btn-sec" onclick="downloadCode()">Download Clean Code</button>
+            </div>
+        </div>
+
+        <div class="workspace">
+            <div class="preview-canvas">
+                <div class="device-frame desktop" id="deviceFrame">
+                    <iframe id="previewFrame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editorModal">
+        <div class="editor-popup">
+            <div class="popup-header">
+                <div class="popup-title" id="popupTitle">EDITING</div>
+                <div class="close-icon" onclick="closePopup()">✕</div>
+            </div>
+            <div class="popup-tabs">
+                <div class="tab active" onclick="switchTab('html')">HTML</div>
+                <div class="tab" onclick="switchTab('css')">CSS</div>
+                <div class="tab" onclick="switchTab('js')">JS</div>
+            </div>
+            <div class="popup-content">
+                <textarea class="code-editor" id="editorArea"></textarea>
+            </div>
+            <div class="popup-footer">
+                <button class="btn btn-primary" onclick="applyChanges()">Apply Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Changes Applied!</div>
+
+<script>
+    // --- GLOBAL STATE ---
+    // TAGGED_SOURCE holds the code with invisible data-dev-id attributes
+    let TAGGED_SOURCE = ""; 
+    let currentTab = 'html';
+    let currentEditId = null; // The fingerprint of the element currently being edited
+    let snippets = { html: "", css: "", js: "" };
+
+    function hideSeoIntro() {
+        const intro = document.getElementById('seo-intro');
+        if (intro) intro.style.display = 'none';
+    }
+
+    // --- 1. STARTUP & FINGERPRINTING ---
+    function loadSource() {
+        const input = document.getElementById('sourceInput').value;
+        if (!input.trim()) return alert("Please paste some code.");
+        
+        // FINGERPRINTING: Inject unique IDs into the source code
+        TAGGED_SOURCE = injectFingerprints(input);
+        
+        document.getElementById('startupModal').style.display = 'none';
+        hideSeoIntro();
+        renderPreview();
+    }
+
+    // Adds data-dev-id="uid" to HTML tags in source string
+    function injectFingerprints(sourceCode) {
+        // Regex finds <tagname ... >
+        return sourceCode.replace(/<([a-zA-Z0-9]+)([^>]*?)>/g, (match, tag, attrs) => {
+            // Don't tag closing tags or special tags if not needed (browsers handle script/style quirks)
+            // We skip if it already has a dev-id (re-injection safety)
+            if(attrs.includes('data-dev-id')) return match;
+            
+            // Create Short UUID
+            const uid = Math.random().toString(36).substr(2, 9);
+            return `<${tag}${attrs} data-dev-id="${uid}">`;
+        });
+    }
+
+    function loadDemo() {
+        const demo = `<!DOCTYPE html>
+<html>
+<style>
+    body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 320px; text-align: center; }
+    h1 { color: #1a1a1a; margin-top: 0; }
+    p { color: #666; line-height: 1.5; }
+    button { background: #007acc; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 15px; transition: 0.2s; }
+    button:hover { background: #005f9e; }
+</style>
+<body>
+    <div class="card" id="mainCard">
+        <h1>Fingerprint Engine</h1>
+        <p>This version uses unique invisible IDs to track elements. You can change text, classes, or nested items without breaking the sync.</p>
+        <button onclick="alert('Synced!')">Test Button</button>
+    </div>
+    <script src="/assets/cookie-consent.js" async></script>
+</body>
+</html>`;
+        document.getElementById('sourceInput').value = demo;
+        loadSource();
+    }
+
+    // --- 2. RENDERER ---
+    function renderPreview() {
+        const frame = document.getElementById('previewFrame');
+        
+        // We inject the inspector logic which reads the fingerprints
+        const inspectorScript = `
+            <script>
+                let hovered = null;
+                const label = document.createElement('div');
+                label.style.cssText = "position:fixed;background:#007acc;color:white;padding:3px 6px;font-size:11px;border-radius:3px;pointer-events:none;z-index:9999;display:none;font-family:sans-serif;";
+                document.body.appendChild(label);
+
+                document.addEventListener('mouseover', (e) => {
+                    e.stopPropagation();
+                    if(e.target.tagName === 'BODY' || e.target.tagName === 'HTML') return;
+                    
+                    if(hovered) hovered.style.outline = '';
+                    hovered = e.target;
+                    hovered.style.outline = '2px solid #007acc';
+                    
+                    const rect = hovered.getBoundingClientRect();
+                    label.style.display = 'block';
+                    label.style.top = (rect.top - 25) + 'px';
+                    label.style.left = rect.left + 'px';
+                    label.innerText = '<' + hovered.tagName.toLowerCase() + '>';
+                });
+
+                document.addEventListener('mouseout', (e) => {
+                    if(hovered) hovered.style.outline = '';
+                    label.style.display = 'none';
+                });
+
+                document.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // GET THE FINGERPRINT
+                    const uid = e.target.getAttribute('data-dev-id');
+                    
+                    if(uid) {
+                        window.parent.postMessage({
+                            type: 'OPEN_EDITOR',
+                            tag: e.target.tagName,
+                            uid: uid,
+                            className: e.target.className,
+                            id: e.target.id
+                        }, '*');
+                    } else {
+                        console.warn("Element has no fingerprint (might be dynamically created JS).");
+                    }
+                });
+            <\/script>
+        `;
+        
+        const blob = new Blob([TAGGED_SOURCE + inspectorScript], { type: 'text/html' });
+        frame.src = URL.createObjectURL(blob);
+    }
+
+    // --- 3. EDITOR & SAVING LOGIC ---
+    window.addEventListener('message', (event) => {
+        if(event.data.type === 'OPEN_EDITOR') openPopup(event.data);
+    });
+
+    // Helper: Find exact block in TAGGED_SOURCE using the Unique ID
+    function locateBlockByFingerprint(uid, tagName) {
+        const regex = new RegExp(`<${tagName}[^>]*data-dev-id="${uid}"[^>]*>`, 'i');
+        const match = TAGGED_SOURCE.match(regex);
+        
+        if (!match) return null;
+        
+        const startIndex = match.index;
+        
+        // Smart Tag Counting to find end
+        const lowerSource = TAGGED_SOURCE.toLowerCase();
+        const startTag = `<${tagName.toLowerCase()}`;
+        const endTag = `</${tagName.toLowerCase()}>`;
+        
+        let depth = 0;
+        let cursor = startIndex;
+        
+        while(cursor < lowerSource.length) {
+            const nextOpen = lowerSource.indexOf(startTag, cursor);
+            const nextClose = lowerSource.indexOf(endTag, cursor);
+            
+            if (nextClose === -1) return null; // Error in HTML structure
+            
+            if (nextOpen !== -1 && nextOpen < nextClose) {
+                if(nextOpen === startIndex) {
+                    // This is our starting tag, move past it
+                    cursor = nextOpen + 1;
+                } else {
+                    depth++;
+                    cursor = nextOpen + 1;
+                }
+            } else {
+                if (depth === 0) {
+                    return {
+                        fullBlock: TAGGED_SOURCE.substring(startIndex, nextClose + endTag.length),
+                        startIndex: startIndex,
+                        endIndex: nextClose + endTag.length
+                    };
+                }
+                depth--;
+                cursor = nextClose + 1;
+            }
+        }
+        return null;
+    }
+
+    function openPopup(data) {
+        currentEditId = data.uid;
+        document.getElementById('popupTitle').innerText = `EDITING: ${data.tag}`;
+
+        const location = locateBlockByFingerprint(data.uid, data.tag);
+        
+        if(location) {
+            // We strip the fingerprints for the editor view so it looks clean to the user
+            const cleanView = location.fullBlock.replace(/\s+data-dev-id="[^"]*"/g, '');
+            snippets.html = cleanView;
+        } else {
+            alert("Could not locate element in source.");
+            return;
+        }
+
+        // CSS
+        snippets.css = "/* CSS */";
+        if(data.className) {
+            const c = data.className.split(' ')[0];
+            const m = TAGGED_SOURCE.match(new RegExp(`\\.${c}\\s*\\{[\\s\\S]*?\\}`, 'g'));
+            if(m) snippets.css = m[0];
+            else snippets.css = `.${c} {\n  /* New Style */\n}`;
+        }
+        
+        snippets.js = "// JS";
+
+        switchTab('html');
+        document.getElementById('editorModal').classList.add('active');
+    }
+
+    function applyChanges() {
+        const userCode = document.getElementById('editorArea').value;
+        const uid = currentEditId;
+
+        if(currentTab === 'html') {
+            // 1. We need to find the OLD block again to replace it
+            // We know the tag name is likely the same, but let's re-verify or assume wrapper
+            // Note: Since we only have the UID, we scan for it.
+            // Simplified: We search regex for the ID again.
+            
+            const regex = new RegExp(`<([a-zA-Z0-9]+)[^>]*data-dev-id="${uid}"[^>]*>`, 'i');
+            const match = TAGGED_SOURCE.match(regex);
+            
+            if(match) {
+                const tagName = match[1];
+                const location = locateBlockByFingerprint(uid, tagName);
+                
+                if(location) {
+                    // 2. Before swapping, we must inject NEW fingerprints into the user's new code
+                    // otherwise subsequent edits to this block will fail
+                    const retaggedUserCode = injectFingerprints(userCode);
+                    
+                    // 3. Perform Swap
+                    TAGGED_SOURCE = TAGGED_SOURCE.substring(0, location.startIndex) + 
+                                    retaggedUserCode + 
+                                    TAGGED_SOURCE.substring(location.endIndex);
+                                    
+                    showToast("Update Successful!");
+                }
+            } else {
+                alert("Error: Element ID lost.");
+            }
+            snippets.html = userCode;
+        } 
+        else if (currentTab === 'css') {
+            const oldCss = snippets.css;
+            if(TAGGED_SOURCE.includes(oldCss)) TAGGED_SOURCE = TAGGED_SOURCE.replace(oldCss, userCode);
+            else TAGGED_SOURCE = TAGGED_SOURCE.replace('</style>', `\n${userCode}\n</style>`);
+            snippets.css = userCode;
+            showToast("CSS Updated");
+        }
+
+        renderPreview();
+    }
+
+    // --- 4. CLEAN & DOWNLOAD ---
+    function downloadCode() {
+        // Strip all data-dev-id attributes for the final file
+        const cleanSource = TAGGED_SOURCE.replace(/\s+data-dev-id="[^"]*"/g, '');
+        
+        const blob = new Blob([cleanSource], {type: "text/html"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "clean_project.html";
+        a.click();
+    }
+
+    // --- UI HELPERS ---
+    function closePopup() { document.getElementById('editorModal').classList.remove('active'); }
+    
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab')[['html','css','js'].indexOf(tab)].classList.add('active');
+        document.getElementById('editorArea').value = snippets[tab];
+    }
+
+    function setDevice(mode) {
+        document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        document.getElementById('deviceFrame').className = 'device-frame ' + mode;
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.style.opacity = '1'; t.style.transform = 'translateY(-10px)';
+        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(0)'; }, 2000);
+    }
+</script>
+
+    <script src="/assets/cookie-consent.js" async></script>
+</body>
+</html>
+
+
