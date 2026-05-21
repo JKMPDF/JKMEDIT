@@ -78,8 +78,7 @@
                 color: #a0aec0;
                 border-color: #475569;
             }
-            @media (max-width: 680px) {
-                 #${bannerId} { 
+             #${bannerId} { 
                     bottom: 0; 
                     left: 0; 
                     right: 0; 
@@ -87,18 +86,11 @@
                     border-radius: 0;
                     box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
                 }
-                #${bannerId} .jkm-cookie-box { flex-direction: column; align-items: stretch; gap: 8px; margin: 0; }
+                #${bannerId} .jkm-cookie-box { flex-direction: column; align-items: stretch; gap: 6px; margin: 0; }
                 #${bannerId} .jkm-cookie-copy { font-size: 11px; line-height: 1.3; margin: 0; padding: 0; }
                 #${bannerId} .jkm-cookie-copy strong { font-weight: 600; }
-                #${bannerId} .jkm-cookie-copy br { display: none; }
-                #${bannerId} .jkm-cookie-copy a { display: none; }
                 #${bannerId} .jkm-cookie-actions { gap: 6px; margin: 0; }
                 #${bannerId} .jkm-cookie-button { width: 100%; padding: 8px 12px; font-size: 12px; min-width: auto; height: auto; }
-                #${bannerId} .jkm-cookie-copy::after {
-                    content: "JKM Edit uses cookies to keep this site free.";
-                    display: block;
-                }
-                #${bannerId} .jkm-cookie-copy > * { display: none; }
             }
         `;
         document.head.appendChild(style);
