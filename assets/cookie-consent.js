@@ -79,10 +79,11 @@
                 border-color: #475569;
             }
             @media (max-width: 680px) {
-                #${bannerId} { padding: 16px 12px; }
-                #${bannerId} .jkm-cookie-box { flex-direction: column; align-items: stretch; }
-                #${bannerId} .jkm-cookie-actions { justify-content: stretch; }
-                #${bannerId} .jkm-cookie-button { width: 100%; }
+                #${bannerId} { padding: 12px 14px; }
+                #${bannerId} .jkm-cookie-box { flex-direction: column; align-items: stretch; gap: 10px; }
+                #${bannerId} .jkm-cookie-copy { font-size: 13px; }
+                #${bannerId} .jkm-cookie-actions { justify-content: stretch; gap: 8px; }
+                #${bannerId} .jkm-cookie-button { width: 100%; padding: 10px 16px; font-size: 13px; }
             }
         `;
         document.head.appendChild(style);
