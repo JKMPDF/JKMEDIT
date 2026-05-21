@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=5.0' name='viewport'/>
+    
+    <title>JKM Edit Blog - Guides, Tips & Tutorials</title>
+    <meta name="title" content="JKM Edit Blog - Guides, Tips & Tutorials">
+    <meta name="description" content="Simple guides and tutorials for the tools I've built. Learn how to use PDF tools, image editors, finance utilities, and more.">
+    <meta name="author" content="JKM Edit"/>
+    
+    <meta name="keywords" content="blog, pdf tools guide, image editing tips, finance tutorials, web dev help, online tools tutorials">
+    
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+    <meta name="language" content="en">
+    
+    <link rel="canonical" href="https://jkmedit.in/blog/index"/>
+    
+    <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <link rel="apple-touch-icon" href="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="JKM Edit Blog - Guides, Tips & Tutorials">
+    <meta property="og:description" content="Simple guides and tutorials for the tools I've built. Learn how to use PDF tools, image editors, finance utilities, and more.">
+    <meta property="og:url" content="https://jkmedit.in/blog/index">
+    <meta property="og:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
+    <meta property="og:image:alt" content="JKM Edit Blog">
+    <meta property="og:site_name" content="JKM Edit">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://jkmedit.in/blog/index">
+    <meta property="twitter:title" content="JKM Edit Blog - Guides, Tips & Tutorials">
+    <meta property="twitter:description" content="Simple guides and tutorials for the tools I've built. Learn how to use PDF tools, image editors, finance utilities, and more.">
+    <meta property="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap' rel='stylesheet'/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      "@id": "https://jkmedit.in/blog/index"#blog",
+      "url": "https://jkmedit.in/blog/index"",
+      "name": "JKM Edit Blog",
+      "description": "Simple guides and tutorials for the tools I've built. Learn how to use PDF tools, image editors, finance utilities, and more.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "JKM Edit",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://jkmedit.in/assets/jkm-edit-logo.png"
+        }
+      }
+    }
+    </script>
+
+    <style>
+        :root {
+            --primary: #007AFF;
+            --bg: #f5f5f7;
+            --card: #ffffff;
+            --text-main: #1d1d1f;
+            --text-sub: #86868b;
+            --border-light: rgba(0,0,0,0.05);
+            --iphone-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            
+            --cat-pdf: #ff416c;
+            --cat-web: #4facfe;
+            --cat-finance: #2af598;
+            --cat-prod: #b224ef;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body { font-family: var(--iphone-font); background-color: var(--bg); color: var(--text-main); -webkit-font-smoothing: antialiased; }
+
+        .hero { text-align: center; padding: 100px 20px 60px; background: white; border-bottom: 1px solid var(--border-light); }
+        .hero h1 { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 15px; color: #111; }
+        .hero p { color: #555; font-size: 21px; max-width: 800px; margin: 0 auto; line-height: 1.6; }
+
+        .toolbar { max-width: 1200px; margin: 40px auto 20px; padding: 0 20px; display: flex; flex-direction: column; gap: 20px; }
+        .search-wrapper { background: var(--card); display: flex; align-items: center; padding: 12px 20px; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); border: 1px solid var(--border-light); transition: 0.3s; max-width: 600px; margin: 0 auto; width: 100%; }
+        .search-wrapper:focus-within { transform: scale(1.01); border-color: var(--primary); box-shadow: 0 12px 30px rgba(0,122,255,0.1); }
+        .search-input { flex: 1; border: none; font-size: 16px; padding-left: 12px; font-family: var(--iphone-font); color: var(--text-main); }
+        
+        .tab-list { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+        .tab-btn { padding: 10px 24px; background: transparent; border: 1px solid #d2d2d7; border-radius: 40px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; color: var(--text-main); }
+        .tab-btn:hover { background: #f0f0f0; }
+        .tab-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
+
+        .blog-grid { max-width: 1200px; margin: 0 auto 60px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 30px; padding: 0 20px; }
+        
+        .blog-card { background: var(--card); border-radius: 24px; overflow: hidden; text-decoration: none; color: inherit; transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid var(--border-light); box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; }
+        .blog-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        
+        .blog-thumb { height: 200px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .blog-thumb span { font-size: 60px; color: rgba(255,255,255,0.9); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); z-index: 1; }
+        
+        .blog-thumb img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; transition: transform 0.4s ease; }
+        .blog-card:hover .blog-thumb img { transform: scale(1.05); }
+
+        .blog-card[data-cat="pdf"] .blog-thumb { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
+        .blog-card[data-cat="web"] .blog-thumb { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .blog-card[data-cat="finance"] .blog-thumb { background: linear-gradient(135deg, #2af598 0%, #009efd 100%); }
+        .blog-card[data-cat="prod"] .blog-thumb { background: linear-gradient(135deg, #b224ef 0%, #7579ff 100%); }
+
+        .blog-content { padding: 25px; display: flex; flex-direction: column; flex: 1; }
+        
+        .category-badge { align-self: flex-start; padding: 4px 12px; font-size: 12px; font-weight: 700; border-radius: 8px; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .blog-card[data-cat="pdf"] .category-badge { color: var(--cat-pdf); background: rgba(255, 65, 108, 0.1); }
+        .blog-card[data-cat="web"] .category-badge { color: var(--corporate-blue); background: rgba(0, 113, 227, 0.1); }
+        .blog-card[data-cat="finance"] .category-badge { color: #008f7a; background: rgba(42, 245, 152, 0.15); }
+        .blog-card[data-cat="prod"] .category-badge { color: var(--cat-prod); background: rgba(178, 36, 239, 0.1); }
+
+        .blog-content h3 { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 10px; line-height: 1.3; }
+        .blog-content p { font-size: 15px; color: var(--text-sub); line-height: 1.6; margin-bottom: 20px; flex: 1; }
+        
+        .blog-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); padding-top: 15px; font-size: 13px; color: #888; font-weight: 500; }
+        .meta-left { display: flex; align-items: center; gap: 6px; }
+        .meta-left span { font-size: 16px; }
+
+        .blog-card.hidden { display: none; }
+        
+        .load-more-container { text-align: center; padding: 40px 20px; }
+        #loadMoreBtn { background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,122,255,0.3); }
+        #loadMoreBtn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,122,255,0.4); }
+
+        .seo-container { background: #fff; padding: 80px 20px; border-top: 1px solid #d2d2d7; }
+        .seo-inner { max-width: 900px; margin: 0 auto; line-height: 1.8; }
+        .seo-inner h1 { font-size: 36px; margin: 0 0 25px; color: #000; letter-spacing: -1px; font-weight: 800; }
+        .seo-inner h2 { font-size: 28px; margin: 40px 0 15px; color: #111; font-weight: 700; letter-spacing: -0.5px;}
+        .seo-inner h3 { font-size: 22px; margin: 30px 0 10px; color: var(--primary); font-weight: 600; }
+        .seo-inner p { font-size: 17px; color: #424245; margin-bottom: 25px; }
+
+        @media (max-width: 768px) { 
+            .hero h1 { font-size: 34px; } 
+            .hero p { font-size: 18px; }
+            .blog-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+
+<section class="hero">
+    <h1>Blog</h1>
+    <p>Simple guides and tutorials for the tools I've built. Learn how to use them and get more done.</p>
+</section>
+
+<div class="toolbar">
+    <div class="search-wrapper">
+        <span class="material-symbols-outlined" style="color:var(--text-sub)">search</span>
+        <input type="text" id="blogSearch" class="search-input" placeholder="Search articles..." onkeyup="searchBlog()">
+    </div>
+
+    <div class="tab-list">
+        <button class="tab-btn active" onclick="filterBlog('all', this)">All Articles</button>
+        <button class="tab-btn" onclick="filterBlog('pdf', this)">PDF Guides</button>
+        <button class="tab-btn" onclick="filterBlog('img', this)">Image Guide</button>
+        <button class="tab-btn" onclick="filterBlog('finance', this)">Finance Tips</button>
+        <button class="tab-btn" onclick="filterBlog('file', this)">File Guide</button>
+        <button class="tab-btn" onclick="filterBlog('code', this)">Code Guide</button>
+        <button class="tab-btn" onclick="filterBlog('time', this)">Time & Date Guide</button>
+        <button class="tab-btn" onclick="filterBlog('unit', this)">Unit Guide</button>
+        <button class="tab-btn" onclick="filterBlog('uti', this)">Utilities</button>
+    </div>
+</div>
+
+<main class="blog-grid" id="blogGrid">
+
+    <a href="https://jkmedit.in/blog/pdf-tools/mergepdf" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/merge-pdf-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">Merge PDF</span>
+            <h3>How to merge PDF files without losing quality</h3>
+            <p>Email attachment limits? Here's how to combine your PDFs while keeping the text and images looking sharp.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+<a href="https://jkmedit.in/blog/pdf-tools/splitpdf" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/split-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">Split PDF</span>
+            <h3>How to split PDF files</h3>
+            <p>Need to separate pages from your PDF? Here's a quick guide to split them easily without signing up.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+<a href="https://jkmedit.in/blog/pdf-tools/compresspdf" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/compress-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">Compress PDF</span>
+            <h3>How to compress PDF files</h3>
+            <p>PDF too big to email? Here's how to shrink it down without making the text blurry.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+<a href="https://jkmedit.in/blog/pdf-tools/watermarkpdf" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/watermark-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">Add Watermark</span>
+            <h3>How to add watermarks to PDFs</h3>
+            <p>Want to protect your documents or add your logo? Here's how to add watermarks to your PDFs.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+<a href="https://jkmedit.in/blog/pdf-tools/viewpdf" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/view-pdf-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">View PDF</span>
+            <h3>How to view PDF files online</h3>
+            <p>Just need to open a PDF? You can read it right here in your browser without downloading anything.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+<a href="https://jkmedit.in/blog/pdf-tools/pdfjpg" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/pdf-to-jpg-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">PDF to JPG</span>
+            <h3>How to convert PDF to JPG</h3>
+            <p>Need to turn your PDF pages into images? Here's how to convert them to JPG format.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+<a href="https://jkmedit.in/blog/pdf-tools/jpgpdf" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/jpg-to-pdf-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">JPG to PDF</span>
+            <h3>How to convert JPG to PDF</h3>
+            <p>Got images you need as a PDF? Here's how to combine your JPGs into a single document.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+<a href="https://jkmedit.in/blog/pdf-tools/darkpdf" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/dark-mode-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">Dark Mode</span>
+            <h3>Why dark mode matters</h3>
+            <p>Reading a long PDF can be tough on your eyes. Dark mode helps reduce eye strain.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+<a href="https://jkmedit.in/blog/pdf-tools/pdfauto" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/pdf-auto-scroll-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">Auto Scroll</span>
+            <h3>PDF auto scroll for hands-free reading</h3>
+            <p>Reading a long document? Auto scroll lets you read without constantly scrolling manually.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+<a href="https://jkmedit.in/blog/pdf-tools/pdfnotepad" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/pdf-notepad-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">PDF Notes</span>
+            <h3>How to take notes on PDFs</h3>
+            <p>Need to add notes to your PDF? Here's how to annotate directly on the document.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+<a href="https://jkmedit.in/blog/pdf-tools/addpagenumber" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/add-page-number-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">Page Numbers</span>
+            <h3>How to add page numbers to PDFs</h3>
+            <p>Long document without page numbers? Here's how to add them automatically.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+<a href="https://jkmedit.in/blog/pdf-tools/rotatepdf" class="blog-card" data-cat="pdf">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <img src="pdf-tools/assets/rotate-pdf-hero.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">Rotate PDF</span>
+            <h3>How to rotate PDF pages</h3>
+            <p>PDF pages sideways? Here's how to fix the orientation and get them straight.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 16, 2026
+                </div>
+                <div>10 min read</div>
+            </div>
+        </div>
+    </a>
+
+
+
+
+    <a href="https://jkmedit.in/blog/utilities/chat" class="blog-card" data-cat="uti">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">code_blocks</span>
+            <img src="utilities/assets/chat1.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">Utilities</span>
+            <h3>Peer-to-peer chat</h3>
+            <p>Direct messaging without servers. Private and simple.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 12, 2026
+                </div>
+                <div>5 min read</div>
+            </div>
+        </div>
+    </a>
+
+
+ <a href="https://jkmedit.in/blog/utilities/screen" class="blog-card" data-cat="uti">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">code_blocks</span>
+            <img src="utilities/assets/sr1.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">Utilities</span>
+            <h3>Screen recorder</h3>
+            <p>Need to record your screen? Do it right from your browser - no software needed.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 12, 2026
+                </div>
+                <div>5 min read</div>
+            </div>
+        </div>
+    </a>
+
+
+ <a href="https://jkmedit.in/blog/utilities/yt" class="blog-card" data-cat="uti">
+        <div class="blog-thumb">
+            <span class="material-symbols-outlined">code_blocks</span>
+            <img src="utilities/assets/yt1.webp" alt="Blog Title" loading="lazy" width="340" height="200" onerror="this.style.display='none'">
+        </div>
+        <div class="blog-content">
+            <span class="category-badge">Utilities</span>
+            <h3>YouTube to MP3</h3>
+            <p>Extract audio from YouTube videos. Simple and fast.</p>
+            <div class="blog-meta">
+                <div class="meta-left">
+                    <span class="material-symbols-outlined">calendar_today</span> May 12, 2026
+                </div>
+                <div>5 min read</div>
+            </div>
+        </div>
+    </a>
+
+
+
+
+</main>
+
+<div class="load-more-container">
+    <button id="loadMoreBtn" onclick="loadMoreArticles()">Load More Articles</button>
+</div>
+
+<article class="seo-container">
+    <div class="seo-inner">
+        <h2>All-in-One Online Tools Platform for Every Day Digital Work</h2>
+        <p>Digital files and online work have a vital place in our life. From <a href="https://jkmedit.in/blog/pdf-tools/mergepdf">PDF managing</a>, and <a href="https://jkmedit.in/blog/pdf-tools/pdfjpg">image converting</a> to creating finance record and all productivity task, we needed multiple software or even web to do simple day to day work. JKMEDIT was developed to bring all Virtual Tools in one place to serve our day to day work.</p>
+        
+        <p>No Matter you are a student preparing your assignments, a professional worker, a freelancer who do assignments for his clients, or a business owner who has to do business record, it is all about your day to day work and the tools help you manage your work by providing an all in one tool set to make your digital work faster, be easier and more productive. Rather than downloading large applications and interacting with complex interfaces, users need to use practical in-browser tools from a single platform accessible from any device.</p>
+
+        <h2>PDF Simple utilities to make your work quicker</h2>
+        <p>PDF is widely used to store official documents, presentations and report. <a href="https://jkmedit.in/blog/pdf-tools/mergepdf">Combining</a>, <a href="https://jkmedit.in/blog/pdf-tools/splitpdf">splitting</a> we have to save hours of work which makes pdf work time consuming. In the meantime applying more complexity than required to save the work faster. Here at JKMEDIT we provide an excellent collection of <a href="https://jkmedit.in/blog/pdf-tools/compresspdf">pdf utilities</a> to simplify the work in just a few clicks without much technical knowledge.</p>
+        
+        <p>You can conveniently <a href="https://jkmedit.in/blog/pdf-tools/mergepdf">combine numerous PDF files into one</a>, <a href="https://jkmedit.in/blog/pdf-tools/compresspdf">compress large PDF documents</a> for easy sharing, <a href="https://jkmedit.in/blog/pdf-tools/splitpdf">split long PDF into sections</a>, and <a href="https://jkmedit.in/blog/pdf-tools/watermarkpdf">add watermarks for branding</a> and more, all from the browser. All the tools come with simple clear interfaces for you to quickly and easily accomplish what you need, while documents keep their formatting and quality intact.</p>
+
+        <h2>Efficient Image Format Conversion and Optimization Tools</h2>
+        <p>If you need to generate optimized image formats for a website, social networks or any digital projects, you can use JKMEDIT <a href="https://jkmedit.in/blog/pdf-tools/pdfjpg">image tools</a> to quickly convert, compress and optimize images without any additional editing effort.</p>
+        
+        <p>Be it <a href="https://jkmedit.in/blog/pdf-tools/pdfjpg">converting JPG to PNG</a>, <a href="https://jkmedit.in/blog/pdf-tools/jpgpdf">PNG to JPG</a>, minimizing image file size, or getting images ready for use on websites, reports exactly on what they should do. Our tools are compatible with both desktop and mobile devices, so you can work on them from wherever you are.</p>
+
+        <h2>Finance and Productivity Tools for Everyday Use</h2>
+        <p>Beyond document and image utilities, JKMEDIT also offers a variety of practical finance and productivity utilities for personal, freelancer, and small business use. An assortment of browser-based tools that come online to simplify calculations, record keeping and business processes.</p>
+        
+        <p><a href="https://jkmedit.in/tools/finance/ledger">Digital ledger management</a> and expense tracking, <a href="https://jkmedit.in/tools/finance/invoicemaker">financial calculators</a> and other business related tools and utilities, designed to cut down on manual work and improve workflow.</p>
+
+        <p>By following this lightweight, easy-to-use design, JKMEDIT strives to make digital management for everyday life less of a chore for users fiscal experience.</p>
+
+        <h2>A Rapid, Seamless and Simple Experience</h2>
+        <p>The ability to use JKMEDIT on a range of desktop, tablet and smartphones is a priority for the platform, in addition to usability. Without requiring software installation or profile creation on most utilities, users should be able to easily navigate their path to success.</p>
+        
+        <p>Using useful tools, be it <a href="https://jkmedit.in/blog/pdf-tools/mergepdf">quick merge operations to complete PDF files</a> or a complete actionable workflow for daily business tasks, we believe synergy and trust is achieved through convenience.</p>
+
+        <h2>Growing Digital Utility Platform</h2>
+        <p>As the digital world continues to grow, JKMEDIT continues to add more and more tools and educational content. In addition, JKMEDIT provides information and tutorials to help users learn more about file management, document flow, image optimization, and more.</p>
+        
+        <p>Combining the best online tools with good educational resources and site architecture, JKMEDIT is building their planet into a go-to place for all things digital utilities. JKMEDIT can help users to get things done in the present, while also growing to meet future productivity and workflow needs.</p>
+    </div>
+</article>
+
+<div id="footer-placeholder"></div>
+
+<script>
+    let visibleCount = 6;
+    const articlesPerPage = 6;
+    let currentFilter = 'all';
+    
+    // Initialize - hide articles beyond initial count
+    document.addEventListener('DOMContentLoaded', function() {
+        const allArticles = document.querySelectorAll('.blog-card');
+        allArticles.forEach((article, index) => {
+            if (index >= visibleCount) {
+                article.classList.add('hidden');
+            }
+        });
+        
+        // Hide load more button if all articles are already visible
+        if (allArticles.length <= visibleCount) {
+            document.getElementById('loadMoreBtn').style.display = 'none';
+        }
+    });
+    
+    function loadMoreArticles() {
+        const hiddenArticles = document.querySelectorAll('.blog-card.hidden');
+        let newlyVisible = 0;
+        
+        hiddenArticles.forEach((article, index) => {
+            if (newlyVisible < articlesPerPage) {
+                if (currentFilter === 'all' || article.dataset.cat === currentFilter) {
+                    article.classList.remove('hidden');
+                    newlyVisible++;
+                }
+            }
+        });
+        
+        visibleCount += newlyVisible;
+        
+        // Hide button if no more hidden articles that match filter
+        const remainingHidden = document.querySelectorAll('.blog-card.hidden');
+        let matchingHidden = 0;
+        remainingHidden.forEach(article => {
+            if (currentFilter === 'all' || article.dataset.cat === currentFilter) {
+                matchingHidden++;
+            }
+        });
+        
+        if (matchingHidden === 0) {
+            document.getElementById('loadMoreBtn').style.display = 'none';
+        }
+    }
+    
+    // Blog Search Functionality
+    function searchBlog() {
+        let q = document.getElementById('blogSearch').value.toLowerCase();
+        document.querySelectorAll('.blog-card').forEach(c => {
+            let title = c.querySelector('h3').innerText.toLowerCase();
+            let desc = c.querySelector('p').innerText.toLowerCase();
+            if (title.includes(q) || desc.includes(q)) {
+                c.classList.remove('hidden');
+                c.style.display = "flex";
+            } else {
+                c.style.display = "none";
+            }
+        });
+        
+        // Show all articles when searching
+        if (q.length > 0) {
+            document.getElementById('loadMoreBtn').style.display = 'none';
+        } else {
+            filterBlog(currentFilter, document.querySelector('.tab-btn.active'));
+        }
+    }
+
+    // Blog Category Filter Functionality
+    function filterBlog(cat, btn) {
+        currentFilter = cat;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        let visibleIndex = 0;
+        document.querySelectorAll('.blog-card').forEach(c => {
+            if (cat === 'all' || c.dataset.cat === cat) {
+                if (visibleIndex < visibleCount) {
+                    c.classList.remove('hidden');
+                    c.style.display = "flex";
+                    visibleIndex++;
+                } else {
+                    c.classList.add('hidden');
+                    c.style.display = "none";
+                }
+            } else {
+                c.classList.add('hidden');
+                c.style.display = "none";
+            }
+        });
+        
+        // Check if load more button should be shown
+        let totalMatching = cat === 'all' ? document.querySelectorAll('.blog-card').length : document.querySelectorAll(`.blog-card[data-cat="${cat}"]`).length;
+        
+        if (totalMatching <= visibleCount) {
+            document.getElementById('loadMoreBtn').style.display = 'none';
+        } else {
+            document.getElementById('loadMoreBtn').style.display = 'inline-block';
+        }
+    }
+
+    // Initialize fetching of Dynamic Header and Footer safely
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // Fetch Header
+        fetch('')')
+            .then(response => {
+                if (!response.ok) throw new Error("Header load failed");
+                return response.text();
+            })
+            .then(data => {
+                const headerPlaceholder = document.getElementById('header-placeholder');
+                headerPlaceholder.insertAdjacentHTML('afterend', data);
+                headerPlaceholder.remove();
+                
+                // Re-bind Mobile Toggle Logic after header loads
+                const mobileToggle = document.querySelector('.mobile-toggle');
+                const navMenu = document.querySelector('.nav-menu');
+                if (mobileToggle && navMenu) {
+                    mobileToggle.addEventListener('click', () => {
+                        navMenu.classList.toggle('active');
+                        mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
+                    });
+                }
+                
+                // Re-bind Mega Menu Mobile Accordion Logic
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    const link = item.querySelector('.nav-link');
+                    const hasDropdown = item.querySelector('.mega-menu');
+                    
+                    if (link) {
+                        link.addEventListener('click', (e) => {
+                            if (window.innerWidth <= 1024) {
+                                if (hasDropdown) {
+                                    e.preventDefault(); 
+                                    e.stopPropagation();
+                                    navItems.forEach(otherItem => {
+                                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                                            otherItem.classList.remove('active');
+                                        }
+                                    });
+                                    item.classList.toggle('active');
+                                } else {
+                                    window.location.href = link.href;
+                                }
+                            }
+                        });
+                    }
+                });
+            })
+            .catch(err => console.log('Error loading header:', err));
+
+        // Fetch Footer
+        fetch('')')
+            .then(response => {
+                if (!response.ok) throw new Error("Footer load failed");
+                return response.text();
+            })
+            .then(data => {
+                const footerPlaceholder = document.getElementById('footer-placeholder');
+                footerPlaceholder.insertAdjacentHTML('afterend', data);
+                footerPlaceholder.remove();
+                
+                const yearElement = document.getElementById('auto-year');
+                if (yearElement) {
+                    yearElement.textContent = new Date().getFullYear();
+                }
+            })
+            .catch(err => console.log('Error loading footer:', err));
+    });
+</script>
+
+    <script src="/assets/cookie-consent.js" async></script>
+</body>
+</html>
+
+
+
