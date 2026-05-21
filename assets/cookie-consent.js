@@ -88,24 +88,26 @@
     }
 
     #${bannerId} .jkm-cookie-box {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-        padding: 12px;
-        border-radius: 12px;
-    }
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 10px 12px;
+    border-radius: 12px;
+}
 
     #${bannerId} .jkm-cookie-copy {
-        font-size: 12px;
-        line-height: 1.35;
-        margin: 0;
-    }
+    font-size: 12px;
+    line-height: 1.3;
+    margin: 0;
+    padding: 0;
+}
 
     #${bannerId} .jkm-cookie-actions {
-        flex-direction: column;
-        gap: 6px;
-        width: 100%;
-    }
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    margin-top: 2px;
+}
 
     #${bannerId} .jkm-cookie-button {
         width: 100%;
