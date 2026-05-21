@@ -12,29 +12,30 @@
         const style = document.createElement('style');
         style.textContent = `
             #${bannerId} {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: 99999;
-                display: none;
-                justify-content: center;
-                align-items: center;
-                padding: 14px 16px;
-                background: rgba(18, 25, 40, 0.98);
-                color: #f3f4f6;
-                backdrop-filter: blur(12px);
-                box-shadow: 0 -8px 30px rgba(0,0,0,0.18);
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            }
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    z-index: 99999;
+    display: none;
+    justify-content: center;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
             #${bannerId} .jkm-cookie-box {
-                width: min(1100px, 100%);
-                display: flex;
-                flex-wrap: wrap;
-                gap: 14px;
-                align-items: center;
-                justify-content: space-between;
-            }
+    width: 100%;
+    max-width: 1100px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(18, 25, 40, 0.98);
+    color: #f3f4f6;
+    padding: 12px 14px;
+    border-radius: 12px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 -8px 30px rgba(0,0,0,0.18);
+}
             #${bannerId} .jkm-cookie-copy {
                 flex: 1 1 320px;
                 min-width: 260px;
@@ -88,30 +89,32 @@
     }
 
     #${bannerId} .jkm-cookie-box {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 4px;
-    padding: 10px 12px;
-    border-radius: 12px;
-}
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        padding: 10px 12px;
+        border-radius: 12px;
+    }
 
     #${bannerId} .jkm-cookie-copy {
-    font-size: 12px;
-    line-height: 1.3;
-    margin: 0;
-    padding: 0;
-}
+        font-size: 12px;
+        line-height: 1.3;
+        margin: 0;
+        padding: 0;
+        min-width: auto;
+    }
 
     #${bannerId} .jkm-cookie-actions {
-    flex-direction: column;
-    gap: 4px;
-    width: 100%;
-    margin-top: 2px;
-}
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        width: 100%;
+        margin-top: 0;
+    }
 
     #${bannerId} .jkm-cookie-button {
         width: 100%;
-        padding: 9px 12px;
+        padding: 8px 10px;
         font-size: 12px;
         min-width: auto;
     }
@@ -125,9 +128,7 @@
             <div class="jkm-cookie-box">
                 <div class="jkm-cookie-copy">
                     <strong>JKM Edit uses cookies to keep this site free and working.</strong> We use essential cookies plus analytics and ads cookies only after you accept. Your file edits remain private and are processed in your browser.
-                    <a href="https://jkmedit.in/help/cookie.html" target="_blank" rel="noopener noreferrer">Cookie Policy</a>
-&nbsp;|&nbsp;
-<a href="https://jkmedit.in/help/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                    <br><a href="https://jkmedit.in/help/cookie.html" target="_blank" rel="noopener noreferrer">Read our Cookie Policy</a>.
                 </div>
                 <div class="jkm-cookie-actions">
                     <button type="button" class="jkm-cookie-button jkm-cookie-reject">Reject Non-Essential</button>
