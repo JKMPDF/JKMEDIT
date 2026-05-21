@@ -93,7 +93,7 @@
             <div class="jkm-cookie-box">
                 <div class="jkm-cookie-copy">
                     <strong>JKM Edit uses cookies to keep this site free and working.</strong> We use essential cookies plus analytics and ads cookies only after you accept. Your file edits remain private and are processed in your browser.
-                    <br><a href="https://jkmedit.in/help/cookie.html" target="_blank" rel="noopener noreferrer">Read our Cookie Policy</a>.<br><a href="https://jkmedit.in/help/privacy.html" target="_blank" rel="noopener noreferrer">Read our Policy & policy</a>
+                    <a href="https://jkmedit.in/help/cookie.html" target="_blank" rel="noopener noreferrer">Cookie Policy</a>.<a href="https://jkmedit.in/help/privacy.html" target="_blank" rel="noopener noreferrer">Privacy & policy</a>
                 </div>
                 <div class="jkm-cookie-actions">
                     <button type="button" class="jkm-cookie-button jkm-cookie-reject">Reject Non-Essential</button>
