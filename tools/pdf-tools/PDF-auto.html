@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang='en' data-theme='corporate-blue'>
 <head>
@@ -129,7 +128,6 @@ html
 
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
-        /* SEO Content */
         .seo-content {
             position: relative; z-index: 1 !important; width: 92%; max-width: 900px; margin: 3rem auto; padding: 2.5rem;
             background: var(--surface-color); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
@@ -148,19 +146,16 @@ html
             .label-text { display: none; }
             .seo-content { padding: 1.5rem; margin: 2rem auto; border-radius: 8px; }
         }
-/* ---- PROFESSIONAL SQUARE TOOL BOXES ---- */
 .related-sections {
     padding: 3rem 1rem;
-    /* Optional: If your page background is white, you can leave this transparent. 
-       The image looks like it has a very faint grey background (#f8fafc or similar). */
 }
 
 .related-sections h3 {
     font-size: 1.75rem;
-    font-weight: 800; /* Bolder text to match image */
+    font-weight: 800;
     text-align: center;
     margin-bottom: 2.5rem;
-    color: #0f172a; /* Deep dark blue/black */
+    color: #0f172a;
 }
 
 .swipe-container {
@@ -168,31 +163,29 @@ html
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     gap: 1.5rem;
-    padding-bottom: 2rem; /* Space for the scrollbar */
+    padding-bottom: 2rem;
     max-width: 1200px;
-    margin: 0 auto; /* Centers the whole row on large screens */
+    margin: 0 auto;
     -webkit-overflow-scrolling: touch;
 }
 
-/* Custom Scrollbar styled like the image */
 .swipe-container::-webkit-scrollbar {
     height: 8px;
 }
 .swipe-container::-webkit-scrollbar-track {
-    background: #e2e8f0; /* Light grey track */
+    background: #e2e8f0;
     border-radius: 10px;
 }
 .swipe-container::-webkit-scrollbar-thumb {
-    background: #c1d5e1; /* Slightly darker thumb */
+    background: #c1d5e1;
     border-radius: 10px;
 }
 .swipe-container::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
 
-/* The Cards */
 .tool-box {
-    min-width: 175px; /* Box dimensions */
+    min-width: 175px;
     height: 185px;
     scroll-snap-align: start;
     flex: 0 0 auto;
@@ -201,25 +194,24 @@ html
     align-items: center;
     justify-content: center;
     background: #ffffff;
-    border: 1px solid #f1f5f9; /* Very subtle border */
-    border-radius: 16px; /* Smooth rounded corners */
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Soft shadow */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .tool-box:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Lifts up on hover */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     transform: translateY(-5px);
 }
 
-/* The Light Blue Icon Background */
 .tool-icon {
     width: 60px;
     height: 60px;
-    background-color: #eff6ff; /* Very light blue */
-    color: #2563eb; /* Primary blue for the SVG */
-    border-radius: 16px; /* Squircle shape */
+    background-color: #eff6ff;
+    color: #2563eb;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -228,7 +220,7 @@ html
 }
 
 .tool-box:hover .tool-icon {
-    background-color: #dbeafe; /* Slightly darker blue on hover */
+    background-color: #dbeafe;
 }
 
 .tool-icon svg {
@@ -236,13 +228,30 @@ html
     height: 28px;
 }
 
-/* The Title */
 .tool-box h4 {
     margin: 0;
     font-size: 1.05rem;
-    font-weight: 700; /* Bold font matching the screenshot */
+    font-weight: 700;
     text-align: center;
     color: #1e293b;
+}
+
+.local-badge {
+    display: block;
+    text-align: left;
+    align-items: center;
+    gap: 8px;
+    background: #10b981;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    width: fit-content;
+}
+.local-badge i {
+    font-size: 0.9rem;
 }
     </style>
 </head>
@@ -257,7 +266,10 @@ html
                 <h1>PDF Auto Scroll (Teleprompter)</h1>
                 <p>Read PDFs seamlessly with customizable, hands-free auto-scrolling.</p>
             </div>
-            
+            <div class="local-badge">
+                <i class="fa-solid fa-shield-halved"></i>
+                Files processed locally - No server upload
+            </div>
             <input type="file" id="file-input" class="hidden" accept="application/pdf"/>
             <div id="dropzone">
                 <i class="fa-solid fa-scroll"></i>
@@ -286,47 +298,78 @@ html
     </main>
 
     <article class="seo-content" id="seo-section">
-        <h2>Why the PDF auto scroll is About to Become Your Favorite Utility</h2>
-        <p>There is a weird paradox on the internet today. We have more computing power than ever before, yet doing a basic task often feels harder than it did ten years ago. Why is it so difficult to just find a PDF auto scroll that works exactly as advertised? No fluff, no hidden paywalls, just a straight-up utility that respects your time. We built this specific tool to cut through the noise. Whether you're a developer knee-deep in code, a student rushing an assignment, or just trying to organize your personal files, this is designed to be the only bookmark you need for this job.</p>
+        <h2>Editorial</h2>
+        <p>Reading is not a stationary activity. You are not. Your fingers are not. They are twitching on the mouse wheel, the swiping hands are moving without rest over glass screens, your wrists are bouncing up and down too, pushing a certain amount of content up one more inch in the digital world. This little micro-friction distracts your attention, it makes reading tiring, it leads you out of the comfort zone, especially while reading or reading into a text. JKM Edit offers the solution to this minor ergonomic problem in form of PDF Auto Scroll. <a href="https://jkmedit.in/" style="color: var(--primary-color); text-decoration: none;">https://jkmedit.in/</a>. It is a good writer tool which can increase the speed and the concentration in reading. It helps the reader to read more comfortably, faster and without disturbances. So, it breaks the cage on reading.</p>
         
-        <h3>The Frustration We're Solving</h3>
-        <p>A while back, while putting together jkmedit.in, the vision was simple: build the stuff we actually wanted to use ourselves. I was tired of opening a supposedly 'free' tool only to be hit with a watermark or a strict file-size limit at the very last second. Building the PDF auto scroll was personal. We wanted something that was genuinely useful, incredibly fast, and didn't treat the user like a product to be monetized. It's built by developers who understand the value of a smooth, uninterrupted workflow.</p>
-        <p>PDFs are amazing for keeping things formatted, but man, they can be an absolute nightmare to edit. You try to change one little thing and suddenly the whole document breaks, or you're prompted to buy a premium license. That's exactly the headache we're bypassing here.</p>
+        <div id="content-hidden" style="display: none;">
+            <p>To talk about the value of Auto Scroll we first have to think about the interruption of Manual Scrolling. While you're reading a long, engrossing report, or dense, academically rigorous paper you're giving your brain its full attention to process the information. But every few seconds you have to consciously move that attention away from the information to snake around to your hand: "scroll down?" Even though they're momentary and minor, they're happening a thousand of times over and over again in a 50 page document, and the disruption of your focus prevents you from fully retaining the information or absorbing the complex ideas.</p>
+            <p>The <strong>PDF Auto Scroll</strong> reliefs that cognitive overload. Now the page scrolls itself, giving text a steady flow past the reader. Your hands may now rest on your lap, or even if you're feeling practical, you have that free hand to take notes. And as readers become entrained in the continuous flow there exists the great possibility of entering a "flow state", experiencing focused concentration and a distorted perception of time. By eliminating the barrier to the page, JKM Edit allows the reader to simply absorb the world contained within the document.</p>
+            
+            <h3>Ergonomics and Health: Hands free</h3>
+            <p>The scrolling binge. The modern age murder. The creeping consumption of Repetitive Strain Injury (RSI), carpal tunnel syndrome, and "text neck". The chronic disease of a generation induced by poor posture and an unhealthy relationship with input devices. The never ending clicking, dragging, and swiping to get through One Giant PDF. A flurry with knowledge intake which is supposed to be enlightening. Turns out, in order to get through all those legal contracts, technical manuals, research papers, and emails, you must scroll.</p>
+            <p>But don't you worry, dear reader, JKM Edit's PDF Auto Scroll is a smart tool. In the name of ergonomics we should all recline in our chairs far away from our desks and mice. Let's keep our distance from our screens so it matches our eyesight. Give our necks a bit of talk time and let them relax as we lean back. Read. But that's all painless for a WPA summer worker. That becomes much more fascinating if you're recovering with a known wrist injury and struggle with problems of motor control disabilities. If automating the scrolling experience can give some people equal access to read longer documents, then what's more important to do, than, to make scrolling a more relaxed activity. And then perhaps also an even more easy, passive activity.</p>
+            
+            <h3>The Teleprompter Effect: Speed and Retention</h3>
+            <p>Have you ever watched a reporter or a politician? They read from a teleprompter that scrolls forever, and machines have to keep pace with these awesome senators! And the <strong>PDF Auto Scroll</strong> tool uses this very same concept but now for the average reader. We tend to read slow difficult sentences and our mind wanders at unexpected moments when reading easy sentences. Hence, we have an uneven reading flow and attention.</p>
+            <p>If you set the Auto Scroll to a comfortable speed this subtly forces you to your own discipline. The relentless movement of the text drives out "regression", the awful habit of unknowingly reading threads. Your eyes must keep up. Your speed of reading picks up if you make use of this trick over long periods of time. A student over notes or professional reading minutes from a meeting would benefit greatly from this productivity aid. The momentum of the reading keeps you. You get thru the weeds and find the meat. Your eye is actively hunting the next information dump.</p>
+            
+            <h3>How Multitasking Persists in the Modern World</h3>
+            <p>What's the truth about modern apparatus? We don't usually do one thing at a time. We're probably eating lunch while reading industry news while getting in shape on a stationary bike. Greasy fingers from lunch scrolling a PDF or scrolling while you're trying to balance on a treadmill is just... disgusting.</p>
+            <p>The PDF Auto Scroll feature makes a truly hands-free, multi-tasker environment. Think of following along a digital recipe while you are cooking. When Auto Scroll is enabled you don't have to peel the screen of dough-covered fingers as the recipe progresses every time you turn. Imagine, yes you read that right, listening to a document through a text-to-speech app while the text scrolls in real time on the screen (for those with accessibility documents). This is the next evolution for the PDF format. You read out of your desk and into your everyday life. JKM Edit knows that you don't always sit in an office chair and the Auto Scroll tool can help you navigate the chaos and mobile environment of the 21st century.</p>
+            
+            <h3>Customizable Control for Every Reader</h3>
+            <p>Some people are readers, some people are not. Some documents warrant a slow crawl. Heavy scientific papers ought not to be rushed. Lighthearted newsletters may be breezed through. The real advantage of the JKM Edit PDF Auto Scroll tool is that it is highly customizable. It does not offer just one scroll speed setting to honour every document.</p>
+            <p>I can set the PDF Auto Scroll speed I need whether I am a fast-reading person with lighthearted matter, or a slow-paced reader who must comprehend a dense scholarly article. Control is important. A scrolling text that scrolls too fast makes one anxious. A scrolling text that scrolls too slowly creates boredom. JKM Edit gives you control and lets you find that "Goldilocks" spot where the scrolling speed of the PDF text is just right for the speed at which your brain can absorb it. And, I like the fact that it is so easy to pause. No matter how fast the scrolling speed, I can click or tap to pause, and click or tap to resume where I left off. The JKM Edit PDF Auto Scroll is a technology that works for the user, and not vice versa.</p>
+            
+            <h3>Accessibility and inclusive</h3>
+            <p>Digital accessibility is the provision of information to everyone regardless of physical abilities. For persons with limited dexterity or a physical amphibious tremor, the musclular effort required to drag a scroll bar or click a mouse wheel is one insurmountable barrier. PDF readers become completely useless.</p>
+            <p><strong>PDF Auto Scroll is a marvelous way to enable access for users with limited motor control.</strong> The user is relieved of the need for fine motor controls and can focus on everything else. A person that cannot use a mouse is still able to read an entire document with just a simple "start scroll" and the document will continue scrolling all the way. With a key combination that lists the document and an adaptive switch that stops the scroll, the PDF for everyone has been unrolled. We must all support JKM Edit's proposal to tinker with offering this key accessibility tool for free. Remember, no tool should be for sale right behind the disappointing scanning paywall.</p>
+            
+            <h3>Conclusion</h3>
+            <p>From a library of awesome PDF options, if you'd need to bet on one you'd say the PDF Auto Scroll feature was the one we needed? It doesn't directly change the PDF? content. It changes how we view it. It carries the weight of reading the PDF from a scroll across the content to a smooth moving stream in front of you. Whether you're a speed reader looking to increase your words per minute when reading or a graphic designer who hates wrist pain scrolling or a student who would like is reading be more focused or simply want to eat sandwich and read simultaneously your can use the PDF Auto Scroll feature that can be customized to your needs. The great people from JKM Edit found the friction point in digital reading and smoothed it with this wonderful easy to use feature. One click <a href="https://jkmedit.in/tools/pdf-tools/index.html" style="color: var(--primary-color); text-decoration: none;">https://jkmedit.in/tools/pdf-tools/index.html</a> and the new experience and the bliss of hands-free and uninterrupted reading. That is what beauty is when you can live with technology without the price of our health or even the joy of reading.</p>
+            
+            <hr style="margin: 2rem 0; border: none; border-top: 1px solid #ddd;">
+            
+            <h3>Frequently Asked Questions (FAQs)</h3>
+            <p><strong>Q1: Is PDF Auto Scroll tool on JKM Edit free or is it a paid subscription service?</strong><br>
+            A: Export PDF to Auto Scroll is a free feature. Read any PDF document using Auto Scroll for FREE. No subscription or any other cost is required.</p>
+            
+            <p><strong>Q2: Can I control speed of scrolling?</strong><br>
+            A: Yes, in Auto Scroll we have a feature that controls the speed of scrolling. That is, you can scroll down at a faster or slower speed as your preference and comfort in real time.</p>
+            
+            <p><strong>Q3: Is Auto Scroll tool on mobile devices and so on?</strong><br>
+            A: Yes, it is on every devices of the user. You can simply read by clicking on the simpler touchscreen. It is very helpful for Intercom, tablet, and so on.</p>
+            
+            <p><strong>Q4: Will Auto Scroll tool work if linked to the support Text-to-Speech (TTS) program?</strong><br>
+            A: We cannot presume a TTS program will be linked to an Auto scroll tool in a single PDF document. However, we can use two tools together, for example, you can set Auto Scroll rate at an approximate speed to your audio supported by the TTS program. This could be a "karaoke-style" process which enables you to stay on the right track and awareness.</p>
+            
+            <p><strong>Q5: Pause scroll if I need to re-read a part?</strong><br>
+            It's easy to pause. There is always a couple of easy-to-hit pause/stop button in the interface, you can instantly stop the motion if you need to go backward, re-read a part, or take some notes, you can continue whenever you're ready.</p>
+            
+            <p><strong>Q6: Will this help me save my laptop battery?</strong><br>
+            Probably. Auto Scroll saves a little battery because it reduces your touchpad/mouse usage. But the battery drain is from the screen anyway because the screen will stay on.</p>
+            
+            <p><strong>Q7: Can I use this on multi-column PDFs like magazines?</strong><br>
+            Sure. But you may want to go slower on multi-columns because you'll have to give your eyes time to jump back to the start of the line, otherwise they will be lost.</p>
+        </div>
         
-        <h3>How the PDF auto scroll Actually Works (Without the Jargon)</h3>
-        <p>So, what's actually happening when you use the PDF auto scroll? Instead of taking your data and sending it off to some mysterious server halfway across the world, we leverage the power of your own web browser. Think about it. Your computer or phone is incredibly powerful. By processing things locally whenever possible, we cut down on wait times drastically. It also means your stuff stays yours. Privacy isn't just a buzzword for us; it's a foundational rule. You upload, you tweak the settings, and boom—it's done. No lingering files on our end.</p>
-        <p>Speed is everything. To make the PDF auto scroll as fast as humanly possible, we got rid of unnecessary database calls. Everything is streamlined. When you hit that execute button, the scripts go to work instantly. We also implemented strict output rules. For instance, if you're dealing with developer or SEO tools, we ensure things like trailing slashes are handled correctly, and duplicates are merged or removed flawlessly. It's these tiny, granular details that separate a cheap script from a professional-grade utility.</p>
-        
-        <h3>Real-World Scenarios: Who is this for?</h3>
-        <p>I get asked a lot about who actually uses these things day-to-day. It really spans the board, but here are the most common situations:</p>
-        <ul><li><strong>The Late-Night Freelancer:</strong> You're on a tight deadline, the client needs the file <em>now</em>, and you don't have time to open heavy software. Click, process, send.</li><li><strong>The Small Business Owner:</strong> You don't need a $500 software suite to do basic administrative tasks. This tool handles the daily grind for free.</li><li><strong>The Code Ninja:</strong> When you just need to format, convert, or clean up data quickly before pushing it to production.</li></ul>
-        
-        <h3>Common Mistakes People Make (And How to Avoid Them)</h3>
-        <p>Before you dive in, let me save you a little bit of grief. One of the most common mistakes I see people make when looking for a PDF auto scroll is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring the initial file format. Always double-check what you are uploading. While our tool handles errors gracefully, garbage in still equals garbage out. Take a quick second to ensure your initial data or file is exactly what you want to work with. Lastly, don't forget to check your downloads folder! I can't tell you how many times I've processed something, got distracted, and then processed it again because I thought it didn't save. The PDF auto scroll works so fast that sometimes you might miss the download prompt if you blink!</p>
-        
-        <h3>The Bigger Picture: Workflow and Efficiency</h3>
-        <p>Honestly, adopting tools like this changes your entire workflow. You stop seeing these little conversions and edits as 'chores' and start seeing them as just another seamless part of your day. It’s about reducing friction. Every time you have to stop what you're doing, open a new program, wait for it to load, find the file, and export it, you lose your flow state. The PDF auto scroll is designed to keep you in the zone. You open a tab, get it done in three seconds, and jump right back into your actual work. That kind of micro-efficiency really adds up over a week, a month, or a year.</p>
-        <p>Let's also touch on the future. The web is constantly changing. Browsers are getting more powerful, and what we can do inside a web page today would have seemed like magic five years ago. We are actively maintaining and tweaking the PDF auto scroll. We don't just launch it and forget it. As new web standards roll out, we update the engine under the hood. So, while it works perfectly today, you can trust that it's only going to get faster and more capable as time goes on.</p>
-        
-        <h3>A Quick Pro-Tip Before You Go</h3>
-        <p>One thing I always tell people when they start using the PDF auto scroll heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to push the tool to its limits, test out different inputs, and see how fast it can actually process your data. The architecture is robust enough to handle it, so put it to the test!</p>
-
-        <h3>Frequently Asked Questions about the PDF auto scroll</h3>
-        <p><strong>Is my data safe when using this tool?</strong><br>
-        Absolutely. As I mentioned earlier, we prioritize client-side processing. This means your files and inputs are handled right there in your browser. We aren't interested in harvesting your data or storing your files on our servers. It's safer, faster, and infinitely more private.</p>
-        
-        <p><strong>Do I need to create an account to use it?</strong><br>
-        No way. I can't stand when a website makes you jump through a five-minute registration process just to convert a file or calculate a number. The PDF auto scroll on jkmedit.in is completely open. Just load the page and get to work.</p>
-        
-        <p><strong>Will it work on my phone?</strong><br>
-        Yes! We spent a lot of time ensuring the user interface is completely responsive. Because we use absolute positioning logic and a clean, mobile-first design philosophy, all the buttons and inputs will scale perfectly to your smartphone or tablet screen. You can literally get work done while waiting in line for coffee.</p>
-        
-        <p><strong>Why is this free? What's the catch?</strong><br>
-        There is no catch. We built jkmedit.in as a passion project to house the tools we use ourselves. By keeping the site lightweight and optimized, our server costs are incredibly low. We believe in providing value upfront without tricking people into hidden subscriptions.</p>
-        
-        <h3>Final Thoughts</h3>
-        <p>So there you have it. A straightforward, no-nonsense breakdown of the PDF auto scroll. We built this because we needed it, and we're sharing it because we know how frustrating the alternatives can be. Take it for a test drive on jkmedit.in right now. I think you'll be genuinely surprised by just how snappy and intuitive it really is. Cheers to working smarter, not harder.</p>
+        <button id="read-more-btn" onclick="toggleReadMore()" style="background: var(--primary-color); color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; margin-top: 1rem;">Read More</button>
     </article>
+
+    <script>
+        function toggleReadMore() {
+            const hiddenContent = document.getElementById('content-hidden');
+            const btn = document.getElementById('read-more-btn');
+            
+            if (hiddenContent.style.display === 'none') {
+                hiddenContent.style.display = 'block';
+                btn.textContent = 'Read Less';
+            } else {
+                hiddenContent.style.display = 'none';
+                btn.textContent = 'Read More';
+            }
+        }
+    </script>
 
     <div id="viewer-stage" class="hidden">
         <div id="guide-line"></div>
@@ -341,7 +384,18 @@ html
                 <i class="fa-solid fa-gauge-high" style="color:#aaa"></i>
                 <div style="display:flex; flex-direction:column;">
                     <span class="label-text">Speed</span>
-                    <input type="range" id="speed-slider" min="1" max="100" value="20" title="Adjust Scroll Speed">
+                    <select id="speed-slider" style="width: 80px; padding: 5px; border-radius: 4px; border: 1px solid #ddd; font-size: 0.9rem;">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5" selected>5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
                 </div>
             </div>
 
@@ -475,33 +529,65 @@ html
         document.addEventListener('DOMContentLoaded', () => {
             fetch('https://jkmedit.in/header.html')
                 .then(response => response.text())
-                .then(data => { 
-                    document.getElementById('header-placeholder').innerHTML = data; 
-                    const mobileToggle = document.getElementById('mobileToggle');
-                    const navMenu = document.getElementById('navMenu');
-                    if(mobileToggle && navMenu) {
-                        mobileToggle.addEventListener('click', () => {
-                            navMenu.classList.toggle('active');
-                            mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
-                        });
-                    }
-                    const navItems = document.querySelectorAll('.nav-item');
-                    navItems.forEach(item => {
-                        const link = item.querySelector('.nav-link');
-                        if (link) {
-                            link.addEventListener('click', (e) => {
-                                if (window.innerWidth <= 1024) {
-                                    e.preventDefault(); 
-                                    navItems.forEach(otherItem => {
-                                        if (otherItem !== item && otherItem.classList.contains('active')) {
-                                            otherItem.classList.remove('active');
-                                        }
-                                    });
-                                    item.classList.toggle('active');
+                .then(data => {
+                    document.getElementById('header-placeholder').innerHTML = data;
+
+                    setTimeout(() => {
+                        let mobileToggle = document.getElementById('mobileToggle');
+                        const navMenu = document.getElementById('navMenu');
+
+                        if (!mobileToggle && navMenu) {
+                            mobileToggle = document.createElement('button');
+                            mobileToggle.id = 'mobileToggle';
+                            mobileToggle.setAttribute('aria-label', 'Toggle navigation menu');
+                            mobileToggle.innerHTML = '&#9776;';
+                            navMenu.parentNode.insertBefore(mobileToggle, navMenu);
+                        }
+
+                        if(mobileToggle && navMenu) {
+                            mobileToggle.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                navMenu.classList.toggle('active');
+                                mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
+                            });
+
+                            document.addEventListener('click', (e) => {
+                                if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && e.target !== mobileToggle) {
+                                    navMenu.classList.remove('active');
+                                    mobileToggle.innerHTML = '&#9776;';
                                 }
                             });
                         }
-                    });
+
+                        const navItems = document.querySelectorAll('.nav-item');
+                        navItems.forEach(item => {
+                            const link = item.querySelector('.nav-link');
+                            const hasDropdown = item.querySelector('.mega-menu');
+
+                            if (link) {
+                                link.addEventListener('click', (e) => {
+                                    if (window.innerWidth <= 1024) {
+                                        if (hasDropdown) {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            navItems.forEach(otherItem => {
+                                                if (otherItem !== item && otherItem.classList.contains('active')) {
+                                                    otherItem.classList.remove('active');
+                                                }
+                                            });
+                                            item.classList.toggle('active');
+                                        } else {
+                                            if (navMenu.classList.contains('active')) {
+                                                navMenu.classList.remove('active');
+                                                if(mobileToggle) mobileToggle.innerHTML = '&#9776;';
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }, 100);
                 })
                 .catch(error => console.error('Error loading header:', error));
 
@@ -600,8 +686,20 @@ html
 
         function autoScroll() {
             if (!isScrolling) return;
-            const rawVal = document.getElementById('speed-slider').value;
-            const speed = rawVal * 0.05; 
+            const rawVal = parseFloat(document.getElementById('speed-slider').value);
+            const speedMap = {
+                1: 0.4,
+                2: 0.55,
+                3: 0.8,
+                4: 1.0,
+                5: 1.5,
+                6: 2.8,
+                7: 2.0,
+                8: 3.0,
+                9: 4.0,
+                10: 5.0
+            };
+            const speed = speedMap[rawVal] || 2.0;
             window.scrollBy(0, speed);
             
             if ((window.innerHeight + window.scrollY) < document.body.offsetHeight) {

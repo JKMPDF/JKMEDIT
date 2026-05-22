@@ -1,4 +1,3 @@
-<html>
 <!DOCTYPE html>
 <html lang='en' data-theme='corporate-blue'>
 <head>
@@ -93,6 +92,8 @@
 
         .controls-area { flex: 1; min-width: 280px; display: flex; flex-direction: column; justify-content: center; gap: 1.5rem; }
         .info-box { background: #f0f7ff; border-left: 4px solid var(--primary-color); padding: 15px; border-radius: 4px; font-size: 0.95rem; color: #333; line-height: 1.6; }
+        .local-badge { display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; }
+        .local-badge i { font-size: 0.9rem; }
         .progress-container { width: 100%; background-color: #e9ecef; border-radius: 5px; height: 10px; overflow: hidden; margin-top: 10px; display: none; }
         .progress-bar { width: 0%; height: 100%; background: var(--gradient); transition: width 0.3s; }
         .progress-text { text-align: center; font-size: 0.85rem; margin-top: 5px; color: #666; display: none; font-weight: 600;}
@@ -112,7 +113,6 @@
        
         .ad-placeholder { max-width: 728px; width: 100%; height: 90px; background-color: #f0f0f0; border: 1px dashed #ccc; margin: 2rem auto; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.9rem; border-radius: 8px; }
 
-        /* SEO Content Section */
         .seo-content {
             position: relative; z-index: 1 !important; width: 92%; max-width: 900px; margin: 3rem auto; padding: 2.5rem;
             background: var(--surface-color); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
@@ -123,6 +123,26 @@
         .seo-content p { margin-bottom: 1.2rem; font-size: 1.05rem; }
         .seo-content ul { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: 1.05rem;}
         .seo-content li { margin-bottom: 0.5rem; }
+        .seo-content .collapsible-content { display: none; }
+        .seo-content .collapsible-content.show { display: block; }
+        .read-more-btn {
+            display: inline-block;
+            margin: 1.5rem 0 0 0;
+            padding: 12px 30px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .read-more-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
 
         @media (max-width: 768px) {
             body { padding-top: 60px; }
@@ -130,19 +150,16 @@
             .workspace { flex-direction: column; }
             .seo-content { padding: 1.5rem; margin: 2rem auto; border-radius: 8px; }
         }
-/* ---- PROFESSIONAL SQUARE TOOL BOXES ---- */
 .related-sections {
     padding: 3rem 1rem;
-    /* Optional: If your page background is white, you can leave this transparent. 
-       The image looks like it has a very faint grey background (#f8fafc or similar). */
 }
 
 .related-sections h3 {
     font-size: 1.75rem;
-    font-weight: 800; /* Bolder text to match image */
+    font-weight: 800;
     text-align: center;
     margin-bottom: 2.5rem;
-    color: #0f172a; /* Deep dark blue/black */
+    color: #0f172a;
 }
 
 .swipe-container {
@@ -150,31 +167,29 @@
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     gap: 1.5rem;
-    padding-bottom: 2rem; /* Space for the scrollbar */
+    padding-bottom: 2rem;
     max-width: 1200px;
-    margin: 0 auto; /* Centers the whole row on large screens */
+    margin: 0 auto;
     -webkit-overflow-scrolling: touch;
 }
 
-/* Custom Scrollbar styled like the image */
 .swipe-container::-webkit-scrollbar {
     height: 8px;
 }
 .swipe-container::-webkit-scrollbar-track {
-    background: #e2e8f0; /* Light grey track */
+    background: #e2e8f0;
     border-radius: 10px;
 }
 .swipe-container::-webkit-scrollbar-thumb {
-    background: #c1d5e1; /* Slightly darker thumb */
+    background: #c1d5e1;
     border-radius: 10px;
 }
 .swipe-container::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
 
-/* The Cards */
 .tool-box {
-    min-width: 175px; /* Box dimensions */
+    min-width: 175px;
     height: 185px;
     scroll-snap-align: start;
     flex: 0 0 auto;
@@ -183,25 +198,24 @@
     align-items: center;
     justify-content: center;
     background: #ffffff;
-    border: 1px solid #f1f5f9; /* Very subtle border */
-    border-radius: 16px; /* Smooth rounded corners */
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Soft shadow */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .tool-box:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Lifts up on hover */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     transform: translateY(-5px);
 }
 
-/* The Light Blue Icon Background */
 .tool-icon {
     width: 60px;
     height: 60px;
-    background-color: #eff6ff; /* Very light blue */
-    color: #2563eb; /* Primary blue for the SVG */
-    border-radius: 16px; /* Squircle shape */
+    background-color: #eff6ff;
+    color: #2563eb;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -210,7 +224,7 @@
 }
 
 .tool-box:hover .tool-icon {
-    background-color: #dbeafe; /* Slightly darker blue on hover */
+    background-color: #dbeafe;
 }
 
 .tool-icon svg {
@@ -218,11 +232,10 @@
     height: 28px;
 }
 
-/* The Title */
 .tool-box h4 {
     margin: 0;
     font-size: 1.05rem;
-    font-weight: 700; /* Bold font matching the screenshot */
+    font-weight: 700;
     text-align: center;
     color: #1e293b;
 }
@@ -237,6 +250,7 @@
         <div id="upload-stage">
             <div class='tool-header'>
                 <h1>Dark Mode PDF Converter</h1>
+                <div class='local-badge'><i class='fa-solid fa-shield-halved'></i> Files processed locally - No server upload</div>
                 <p>Invert colors to make your PDF easy to read at night.</p>
             </div>
             <input type="file" id="file-input" class="hidden" accept="application/pdf"/>
@@ -247,6 +261,7 @@
         </div>
 
         <div id="edit-stage" class="hidden">
+            <div class="local-badge"><i class='fa-solid fa-shield-halved'></i> Files processed locally - No server upload</div>
             <div class="workspace">
                 <div class="preview-area">
                     <div class="preview-label">Dark Mode Preview (Page 1)</div>
@@ -291,46 +306,61 @@
     </main>
 
     <article class="seo-content">
-        <h2>Why the Dark Mode is About to Become Your Favorite Utility</h2>
-        <p>If you've ever tried to manage your digital files in a rush, you already know the struggle. I remember a specific time when I urgently needed a Dark Mode right before a major deadline. I spent more time trying to find a website that didn't bombard me with pop-up ads than I did actually doing the work. That shared frustration is the whole reason we focus so heavily on clean, immediate utilities here. When you need to get something done, you should be able to just click, process, and move on with your day without jumping through hoops.</p>
+        <h2>Death of Yesteryear: Dark Mode in JKM Edit</h2>
+        <p>If you are as nostalgic about yesteryear as I am, you are vaguely aware of the sheer clunkiness of the early internet era. Back then, bright white backgrounds with black text were the default style of most digital interfaces. All of us generation and younger have since realized the point is that we now need to work at night or after sunset! We have been working, reading, commuting on the train on dark platform with not even enough light to get lit from the city, yet we still adhere to our default configurations. The problem with it is: this really makes our eyes hurt with a new kind of strain. But worry not, JKM Edit has finally gone with the dark mode that can be used for all of its PDF tools at https://jkmedit.in/. Let's face it, it is high time we go dark.</p>
         
-        <h3>The Frustration We're Solving</h3>
-        <p>A while back, while putting together jkmedit.in, the vision was simple: build the stuff we actually wanted to use ourselves. I was tired of opening a supposedly 'free' tool only to be hit with a watermark or a strict file-size limit at the very last second. Building the Dark Mode was personal. We wanted something that was genuinely useful, incredibly fast, and didn't treat the user like a product to be monetized. It's built by developers who understand the value of a smooth, uninterrupted workflow.</p>
-        <p>PDFs are amazing for keeping things formatted, but man, they can be an absolute nightmare to edit. You try to change one little thing and suddenly the whole document breaks, or you're prompted to buy a premium license. That's exactly the headache we're bypassing here.</p>
+        <div class="collapsible-content">
+        <h3>Eye Health: JKM Edit Dark Mode can reduce eye strain</h3>
+        <p>You probably already know that our screens can cause eye strain. There are many reasons to need dark mode. With JKM Edit Dark Mode reduces bright white space on your device, and improves your health risk of eye fatigue, headaches, and eye disease.</p>
+        <p>This is the most convincing physiological justification of why you should use dark mode. If you stare at the white screen for a long time, this will lead you to Computer Vision Syndrome (CVS) (digital eye strain). The brightness of the white background makes our pupil constrict and our eyes to work hard with focus. Over time we suffer from dry eyes, blurred vision, headaches and eye fatigue. For many people, the need to keep swiping on PDFs for hours, compressing, editing or reading, can cause a loss of productivity, as well as affect their quality of life.</p>
+        <p>Our eyes need a break. That's why JKM Edit's Dark Mode (which inverts a document's color scheme to a dark gray or black background with light type) can help put your screen's glow down to a minimum. Because by reducing how much light is being pushed forward, the contrast between the document and the ambient is reduced, creating considerably less eye-strain in low-light settings. While you're up at your desk, late at night, reviewing contracts or grading papers on a laptop in a darkened room, the stark brightness is a disruption of comfort and productivity. Instead of feeling like the screen is firing a sodium stroke at you, it's more like a reassuring, soothing matte glance. Above all, JKM Edit cares about your eyes looking great when your PDFs look great.</p>
         
-        <h3>How the Dark Mode Actually Works (Without the Jargon)</h3>
-        <p>Let's peek under the hood a bit. The beauty of this Dark Mode lies in how lightweight it is. We stripped away all the unnecessary bloat that usually slows these web apps down. By relying on clean, native web languages like Vanilla JavaScript and solid HTML structure, the tool responds instantly to your clicks. It feels less like a webpage and more like a native app installed directly on your machine. You shouldn't have to wait for a loading spinner every time you adjust a slider or change an input field.</p>
-        <p>Speed is everything. To make the Dark Mode as fast as humanly possible, we got rid of unnecessary database calls. Everything is streamlined. When you hit that execute button, the scripts go to work instantly. We also implemented strict output rules. For instance, if you're dealing with developer or SEO tools, we ensure things like trailing slashes are handled correctly, and duplicates are merged or removed flawlessly. It's these tiny, granular details that separate a cheap script from a professional-grade utility.</p>
+        <h3>Protecting our 24/7 Sleep Cycles</h3>
+        <p>Our biology is subject to circadian rhythms, our internal clocks that make sure our sleep-wake cycle runs mostly on whether we see light. The blue light from the white backgrounds of our everyday screens and other LED displays suppresses melatonin, the "it's time to sleep" hormone. In this "always-on" culture, it's normal to be checking a PDF or a web tool right before bed – enough that it's thought to be associated with insomnia and poor sleep.</p>
+        <p>The <strong>Dark Mode</strong> at JKM Edit is here for your sleep hygiene. Its relatively lower brightness and much lower blue output improves melatonin production. That way, you can upload and split a PDF, add a watermark, etc. without chemically tricking your brain into thinking it's the middle of the day. Essentially, it's critical for night-shift workers and students to understand that digital work isn't constrained to 9:00–5:00 P.M. and to provide them with an aesthetic setting that facilitates the ultimate human biological function of rest, even if they're still at work.</p>
         
-        <h3>Real-World Scenarios: Who is this for?</h3>
-        <p>I get asked a lot about who actually uses these things day-to-day. It really spans the board, but here are the most common situations:</p>
-        <ul><li><strong>Students and Academics:</strong> Perfect for organizing research, formatting papers, or managing data without needing the university computer lab.</li><li><strong>Digital Marketers:</strong> Streamlining assets and making sure everything is perfectly optimized for the web without waiting on the design team.</li><li><strong>Everyday Problem Solving:</strong> Just trying to get a quick task done for personal record keeping? This is your go-to.</li></ul>
+        <h3>Boost Concentration and Mental Resilience</h3>
+        <p>Always think beyond physical comfort, there is also a psychological component to it. Bright (super) white is just plain looking like clutter. There's so much on the screen fighting for attention with glare and high contrast and that just makes it noisy to look at. And it just adds to the cognitive load of trying to focus on the real words in the document. If the interface is aggressive of you put a lot more energy into your brain filtering out the ambient light.</p>
+        <p>If we switch to dark mode then a cocooning effect happens, the background is slacked out and the text and images of the pdf pop up with high contrast and condense glare as your eye is naturally attracted towards images and text that matter. One other important factor is that you can read for longer periods of time in "dark mode" without being mentally exhausted. In just the same way movie screen was designed to have high contrast and low glare, so as to immerse you into a cinematic environment and you can do "deep work". You can do very elaborate note taking here with the "PDF Note Pad" or do a profound analysis without having to find the flow state again after being visually exhausted with the "View PDF" tool.</p>
         
-        <h3>Common Mistakes People Make (And How to Avoid Them)</h3>
-        <p>Before you dive in, let me save you a little bit of grief. One of the most common mistakes I see people make when looking for a Dark Mode is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring the initial file format. Always double-check what you are uploading. While our tool handles errors gracefully, garbage in still equals garbage out. Take a quick second to ensure your initial data or file is exactly what you want to work with. Lastly, don't forget to check your downloads folder! I can't tell you how many times I've processed something, got distracted, and then processed it again because I thought it didn't save. The Dark Mode works so fast that sometimes you might miss the download prompt if you blink!</p>
+        <h3>Battery efficiency is the Green Advantage</h3>
+        <p>We live in a very mobile world. So when you want to be mobile you want your battery life to be long. Every single pixel on your screen, be it an LCD, OLED, AMOLED display consumes power. The difference is negligible on a traditional LCD display, but on phones, laptops with an OLED or AMOLED display it is dependent on the colors of the pixels. A black pixel is off, and this means zero power consumption; a white pixel is the maximum power consumption.</p>
+        <p>With JKM Edit's Dark Mode if you have an OLED display your battery life is literally extended forever now if you are out in the field and you are trying to compress pdf files or convert jpg to pdf and there's no charger for you out there a dark interface is a HUGE advantage less power is consumed more of your day. This is good not just for you but great for the planet less power consumption means you use up your power less often and a smaller carbon footprint over the life of the device. JKM Edit's use of Dark Mode is also an example of JKM Edit's stamp of approval for energy efficient and sustainable ways of using our power and our lives.</p>
         
-        <h3>The Bigger Picture: Workflow and Efficiency</h3>
-        <p>Another thing we really need to talk about is accessibility. Not everyone has a top-of-the-line MacBook Pro. Sometimes you're working on an older laptop or a budget tablet. Heavy web apps that rely on massive memory chunks will freeze those devices up. Because the Dark Mode is optimized at the code level, it runs incredibly smooth on virtually any device with a modern browser. We believe that professional-grade digital tools should be accessible to everyone, regardless of their hardware specs. It's a level playing field.</p>
-        <p>Honestly, adopting tools like this changes your entire workflow. You stop seeing these little conversions and edits as 'chores' and start seeing them as just another seamless part of your day. It’s about reducing friction. Every time you have to stop what you're doing, open a new program, wait for it to load, find the file, and export it, you lose your flow state. The Dark Mode is designed to keep you in the zone. You open a tab, get it done in three seconds, and jump right back into your actual work. That kind of micro-efficiency really adds up over a week, a month, or a year.</p>
+        <h3>Aesthetics and Modern Professionalism</h3>
+        <p>Never underestimate the power of style. Software is not what it used to be and neither is the expectation of its user. A white on white and unexciting website is a relic of a bygone era. Dark Mode is the standard for the latest and greatest hardware it looks good it looks sleek, it looks crazy.</p>
+        <p>When users are in Dark Mode, it shows them we are contemporary with current design trends. This aesthetic can have an impact on the mood and attitude of the user. Editing a document in a bright white interface may feel like something done on secondary priority, whereas users reap a more high-tech feel, when the interface is in Dark Mode. The browser window is not so bright, and the JKM Edit tools, your <strong>Rotate PDF</strong> or <strong>Split PDF</strong> buttons, feel significantly brighter for the user. Those who are design aware and discerning may choose another platform because JKM Edit lacks this attribute. JKM Edit is contemporary for the current standards.</p>
         
-        <h3>A Quick Pro-Tip Before You Go</h3>
-        <p>One thing I always tell people when they start using the Dark Mode heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to push the tool to its limits, test out different inputs, and see how fast it can actually process your data. The architecture is robust enough to handle it, so put it to the test!</p>
-
-        <h3>Frequently Asked Questions about the Dark Mode</h3>
-        <p><strong>Is my data safe when using this tool?</strong><br>
-        Absolutely. As I mentioned earlier, we prioritize client-side processing. This means your files and inputs are handled right there in your browser. We aren't interested in harvesting your data or storing your files on our servers. It's safer, faster, and infinitely more private.</p>
+        <h3>Accessibility and Inclusivity</h3>
+        <p>A level of digital accessibility is the practice of ensuring technology and digital content is usable by everyone regardless of physical limitations or disabilities. For individuals with sensitive light conditions, such as light sensitivity disorders, the standard white screen can be intolerable and aggravating.</p>
+        <p>Having a good Dark Mode will allow JKM Edit's PDF toolset to serve an even greater user base, ensuring light sensitive folks are able to use the same powerful document manipulation options - be it <strong>Add Watermarks</strong> or <strong>Merge Files</strong> - without discomfort. This is a key component of ethical web design, which ensures that people are not barred from a website because of their physical attributes and limitations. The fact that JKM Edit offers a Dark Mode demonstrates our entire team's commitment to creating inclusive web design that serves all.</p>
         
-        <p><strong>Do I need to create an account to use it?</strong><br>
-        No way. I can't stand when a website makes you jump through a five-minute registration process just to convert a file or calculate a number. The Dark Mode on jkmedit.in is completely open. Just load the page and get to work.</p>
+        <h3>Conclusion</h3>
+        <p>It's a feature that enhances health and wellness, research and design, branding and branding design. It's a feature that reduces eye strain, improves your sleep cycle. It's a feature that increases focus, extends your tablet or e-reader battery life. It's a feature that modernizes your senses, fuels your productivity. It's an accessibility feature that can open new doors to a fantastic network of customers. The integration of Dark Mode into the JKM Edit platform is no longer a feature you want, it's the feature you MUST have. Whether you're pulling an all-nighter to finish a project, reading important documents on your daily commute, or simply enjoy the lightning-fast speed of a dimmed interface; it's time you actually gave your eyes a break. Experience the JKM Edit PDF and Documents Converter Tool today! Check out the JKM Edit platform here: https://jkmedit.in/tools/pdf-tools/index.html</p>
         
-        <p><strong>Will it work on my phone?</strong><br>
-        Yes! We spent a lot of time ensuring the user interface is completely responsive. Because we use absolute positioning logic and a clean, mobile-first design philosophy, all the buttons and inputs will scale perfectly to your smartphone or tablet screen. You can literally get work done while waiting in line for coffee.</p>
+        <h3>Frequently Asked Questions</h3>
+        <p><strong>Q1: Is Dark Mode feature on JKM Edit for free?</strong><br>
+Dark mode feature is excellent for free. It is always an integrated interface option for sweet use of Dark mode, for maximum anywhere and anytime when you want to use any of the PDF tools.</p>
         
-        <p><strong>Why is this free? What's the catch?</strong><br>
-        There is no catch. We built jkmedit.in as a passion project to house the tools we use ourselves. By keeping the site lightweight and optimized, our server costs are incredibly low. We believe in providing value upfront without tricking people into hidden subscriptions.</p>
+        <p><strong>Q2: How will I use Dark Mode on our website?</strong><br>
+It's usually a first switch (moon/sun icon) that you may find in any anywhere in the interface (header or corners). Usually it will immediately be filled in when you click it. Switch to Light Mode? Dark mode?</p>
         
-        <h3>Final Thoughts</h3>
-        <p>Wrapping things up, the Dark Mode isn't trying to reinvent the wheel—it's just trying to make the wheel roll a lot smoother. I highly recommend bookmarking this page. The next time you find yourself stuck needing this exact function, you won't have to go hunting through Google search results. Give it a spin, see how it feels, and enjoy getting your time back.</p>
+        <p><strong>Q3: Does this use Dark Mode save my battery on my mobile phone or laptops?</strong><br>
+Surely, when you are using any of the device with OLED/AMOLED (phones and laptops), the dark pixel uses less power that needs to glow up. So it certainly saves it from your side for sure.</p>
+        
+        <p><strong>Q4: If I print my PDF in Dark Mode, Will the PDF appear in new colors?</strong><br>
+No. Dark mode changes the interface of the website (toolbars, buttons, background). The PDF, after it has been processed and downloading or printed it will appear in the original colors, which are usually black / white.</p>
+        
+        <p><strong>Q5: Is it okay to use dark mode in a bright room?</strong><br>
+Yes. When it's dark, it is better dark mode. But most of us want dark mode anyway, regardless how lit the room is because it looks better as it looks like another-look better and less glare.</p>
+        
+        <p><strong>Q6: In reading for long, does dark mode is better?</strong><br>
+Yes. The better eye fatigue and glare leads to reading longer without fatigue. Not speed reading, but the speed reading with reading long is indefinitely improved.</p>
+        
+        <p><strong>Q7: Is dark mode better for you?</strong><br>
+Yes. The reduce Blue light and glare of bright background will alleviated and relieved (save from) pain and eyes hurt when look too long.</p>
+        </div>
+        <button class="read-more-btn" onclick="toggleReadMore()">Read More</button>
     </article>
 
 <section class="related-sections">
@@ -443,7 +473,8 @@
                     const navItems = document.querySelectorAll('.nav-item');
                     navItems.forEach(item => {
                         const link = item.querySelector('.nav-link');
-                        if (link) {
+                        const hasDropdown = item.querySelector('.mega-menu');
+                        if (link && hasDropdown) {
                             link.addEventListener('click', (e) => {
                                 if (window.innerWidth <= 1024) {
                                     e.preventDefault(); 
@@ -465,6 +496,11 @@
                 .then(data => document.getElementById('footer-placeholder').innerHTML = data)
                 .catch(error => console.error('Error loading footer:', error));
         });
+
+        function toggleReadMore() {
+            const content = document.querySelector('.collapsible-content');
+            content.classList.toggle('show');
+        }
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         const dropzone = document.getElementById('dropzone');

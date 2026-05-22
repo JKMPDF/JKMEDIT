@@ -1,16 +1,15 @@
-<html>
 <!DOCTYPE html>
-<html lang='en' data-theme='corporate-blue'>
+<html lang='en'>
 <head>
-    <meta charset='UTF-8'/>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=5.0' name='viewport'/>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=5.0'>
     <title>Add Page Numbers to PDF: Insert Custom Styling Free</title>
     <meta name="title" content="Add Page Numbers to PDF: Insert Custom Styling Free">
-    <meta name="description" content="Insert consecutive page numbers into your PDF files in seconds. Customize the exact position font style and starting digit with this fast online utility."/>
-    <meta name="author" content="JKM Edit"/>
+    <meta name="description" content="Insert consecutive page numbers into your PDF files in seconds. Customize the exact position font style and starting digit with this fast online utility.">
+    <meta name="author" content="JKM Edit">
     <meta name="keywords" content="add page numbers to pdf, insert page number pdf, number pdf pages, ilovepdf page numbers, sodapdf alternative, pdf pagination tool, add page numbers to pdf free, insert custom page numbers pdf, fast pdf page numbering, secure pdf page number tool, paginate pdf online, add numbers to pdf pages, pdf page counter, pdf numbering tool, add bates numbering, how to add page numbers to pdf, edit pdf page numbers, pdf page number formatter, insert pagination pdf, auto number pdf pages, add roman numerals to pdf, pdf page number insert, jkmedit pdf tools, no signup pdf page numbering, online pdf page editor, free online pdf tools, add page numbers to pdf mac, add page numbers to pdf windows, mobile friendly pdf numbering, pdf page number generator, insert footer page number pdf, add header page number pdf, customize pdf page numbers, pdf document pagination, number multiple pdf pages, batch add page numbers pdf">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
-    <link rel="canonical" href="https://jkmedit.in/tools/pdf-tools/add-page-number.html"/>
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://jkmedit.in/tools/pdf-tools/add-page-number.html">
     <link rel="icon" type="image/png" href="https://jkmedit.in/assets/jkm-edit-logo.png">
     <link rel="apple-touch-icon" href="https://jkmedit.in/assets/jkm-edit-logo.png">
     <meta name="theme-color" content="#ffffff">
@@ -27,42 +26,42 @@
     <meta property="twitter:image" content="https://jkmedit.in/assets/jkm-edit-logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'>
     <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"WebApplication","name":"Add Page Number to PDF - JKM Edit","url":"https://jkmedit.in/tools/pdf-tools/add-page-number.html","description":"Insert consecutive page numbers into your PDF files in seconds. Customize the exact position font style and starting digit with this fast online utility.","applicationCategory":"BrowserApplication","operatingSystem":"All","creator":{"@type":"Organization","name":"JKM Edit","url":"https://jkmedit.in"},"offers":{"@type":"Offer","price":"0.00","priceCurrency":"USD"}}
     </script>
-    
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
     <style>
-        :root { 
-            font-family: 'Poppins', sans-serif; 
-            --transition-speed: 0.3s; 
-            --primary-color: #0052cc; 
-            --secondary-color: #0747a6; 
-            --bg-color: #f4f5f7; 
-            --surface-color: #ffffff; 
-            --text-color: #172b4d; 
-            --accent-color: #ffab00; 
-            --gradient: linear-gradient(45deg, var(--primary-color), #0065ff); 
+        :root {
+            font-family: 'Poppins', sans-serif;
+            --primary-color: #0052cc;
+            --secondary-color: #0747a6;
+            --bg-color: #f4f5f7;
+            --surface-color: #ffffff;
+            --text-color: #172b4d;
             --border-color: #e1e4e8;
             --success-color: #28a745;
         }
-        
-        html, body { 
-            margin: 0; 
-            min-height: 100vh; 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            animation: fadeInPage 0.5s ease-in-out; 
-            padding-top: 70px;
+
+        html, body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-top: 80px;
             box-sizing: border-box;
         }
-        *, *::before, *::after { box-sizing: inherit; }
-        .hidden { display: none !important; }
 
-        /* --- BULLETPROOF HEADER FIX --- */
+        *, *::before, *::after {
+            box-sizing: inherit;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         #header-placeholder {
             position: fixed !important;
             top: 0 !important;
@@ -73,75 +72,238 @@
             display: block !important;
         }
 
-        /* --- MAIN CONTAINER --- */
-        .tool-container { 
-            position: relative; 
-            z-index: 1 !important; 
-            padding: 2rem 1.5rem; 
-            max-width: 900px; 
-            margin: auto; 
-        }
-        
-        .tool-content-wrapper { 
+        .tool-container {
             position: relative;
-            z-index: 1 !important;
-            background: var(--surface-color); 
-            padding: 2.5rem; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
-            text-align: center; 
+            z-index: 1;
+            padding: 2rem 1.5rem;
+            max-width: 900px;
+            margin: auto;
         }
 
-        .tool-header { text-align: center; margin-bottom: 2rem; }
-        .tool-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-color);}
-        .tool-header p { font-size: 1.1rem; color: #6c757d; }
-
-        /* Upload Area */
-        .upload-area { 
-            border: 3px dashed #ccc; border-radius: 12px; padding: 3rem; text-align: center; 
-            background: #f9fafc; cursor: pointer; transition: all 0.3s; 
+        .tool-content-wrapper {
+            position: relative;
+            z-index: 1;
+            background: var(--surface-color);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            pointer-events: auto;
         }
-        .upload-area:hover, .upload-area.drag-over { border-color: var(--primary-color); background-color: #f0f7ff; }
-        .upload-icon { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
-        .upload-area p { margin: 0; font-size: 1.1rem; font-weight: 600; }
-        #pdf-upload { display: none; }
 
-        /* Options Panel */
-        .options-panel { background: #f9fafc; padding: 2rem; border-radius: 8px; margin-top: 2rem; border: 1px solid var(--border-color); display: none; text-align: left;}
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
-        .option-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .option-group label { font-weight: 600; color: var(--text-color);}
-        .option-group select, .option-group input { padding: 0.75rem; border-radius: 5px; border: 1px solid #ccc; font-family: 'Poppins', sans-serif; font-size: 1rem;}
-        
-        .process-button { 
-            display: inline-flex; justify-content: center; align-items: center; gap: 10px;
-            width: 100%; padding: 1rem; margin-top: 2rem; background: var(--gradient); 
-            color: white; border: none; border-radius: 8px; font-size: 1.2rem; font-weight: 700; 
-            cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; 
+        .tool-header {
+            text-align: center;
+            margin-bottom: 2rem;
         }
-        .process-button:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-        .process-button:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none;}
 
-        .file-info { margin-top: 1.5rem; text-align: center; font-weight: 600; display: none; color: var(--primary-color);}
-        .status-message { margin-top: 1.5rem; text-align: center; font-weight: 600; display: none; color: var(--secondary-color); font-size: 1.1rem;}
+        .tool-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
 
-        .download-section { text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee; display: none; }
-        .download-btn { display: inline-flex; align-items: center; gap: 10px; padding: 1rem 2.5rem; background: var(--success-color); color: white !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.2rem; transition: transform 0.2s ease; box-shadow: 0 4px 10px rgba(40,167,69,0.2);}
-        .download-btn:hover { transform: translateY(-3px); background: #218838; }
+        .tool-header p {
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
 
-        /* Navigation */
-        .navigation-buttons { display: flex; justify-content: center; gap: 1.5rem; margin-top: 3rem; flex-wrap: wrap; }
-        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2.5rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: all 0.2s; }
-        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
-        .btn-outline:hover { background: rgba(0, 82, 204, 0.05); }
-        .btn-fill { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
-        .btn-fill:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        .local-badge { display: block; text-align: left; align-items: center; gap: 8px; background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; width: fit-content; }
+        .local-badge i { font-size: 0.9rem; }
 
-        /* SEO Content Section */
+        .upload-area {
+            border: 3px dashed #ccc;
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            background: #f9fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+            pointer-events: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .upload-area:hover, .upload-area.drag-over {
+            border-color: var(--primary-color);
+            background-color: #f0f7ff;
+        }
+
+        .upload-icon {
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .upload-area p {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        #pdf-upload {
+            display: none;
+        }
+
+        .options-panel {
+            background: #f9fafc;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            border: 1px solid var(--border-color);
+            display: none;
+            text-align: left;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .option-group label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .option-group select, .option-group input {
+            padding: 0.75rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+        }
+
+        .process-button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 1rem;
+            margin-top: 2rem;
+            background: linear-gradient(45deg, var(--primary-color), #0065ff);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            pointer-events: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .process-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .process-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .file-info {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            color: var(--primary-color);
+        }
+
+        .status-message {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            display: none;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem 2.5rem;
+            background: var(--success-color);
+            color: white !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(40,167,69,0.2);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            background: #218838;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2.5rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 82, 204, 0.05);
+        }
+
+        .btn-fill {
+            background: linear-gradient(45deg, var(--primary-color), #0065ff);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-fill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+
         .seo-content {
             position: relative;
-            z-index: 1 !important;
-            width: 92%; 
+            z-index: 1;
+            width: 92%;
             max-width: 900px;
             margin: 3rem auto;
             padding: 2.5rem;
@@ -151,132 +313,208 @@
             color: #424245;
             line-height: 1.8;
             text-align: left;
-            overflow-wrap: break-word; 
+            overflow-wrap: break-word;
             word-wrap: break-word;
         }
+
         .seo-content h2, .seo-content h3 {
             color: var(--text-color);
             margin-top: 2rem;
             font-weight: 700;
         }
-        .seo-content h2:first-child { margin-top: 0; }
-        .seo-content p { margin-bottom: 1.2rem; font-size: 1.05rem; }
-        .seo-content ul { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: 1.05rem;}
-        .seo-content li { margin-bottom: 0.5rem; }
 
-        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Mobile Viewport Fixes */
+        .seo-content h2:first-child {
+            margin-top: 0;
+        }
+
+        .seo-content p {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+        }
+
+        .seo-content ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        .seo-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .load-more-btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 1rem;
+        }
+
+        .load-more-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .content-hidden {
+            display: none;
+        }
+
+        /* Restored Tool List Styling */
+        .related-sections {
+            padding: 3rem 1rem;
+            display: block !important;
+            clear: both;
+            width: 100%;
+        }
+
+        .related-sections h3 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            color: #0f172a;
+        }
+
+        .swipe-container {
+            display: flex !important;
+            overflow-x: auto !important;
+            scroll-snap-type: x mandatory;
+            gap: 1.5rem;
+            padding-bottom: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            -webkit-overflow-scrolling: touch;
+            visibility: visible !important;
+        }
+
+        .swipe-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .swipe-container::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .swipe-container::-webkit-scrollbar-thumb {
+            background: #c1d5e1;
+            border-radius: 10px;
+        }
+
+        .swipe-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .tool-box {
+            min-width: 175px;
+            height: 185px;
+            scroll-snap-align: start;
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            border-radius: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .tool-box:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #eff6ff;
+            color: #2563eb;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .tool-box:hover .tool-icon {
+            background-color: #dbeafe;
+        }
+
+        .tool-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .tool-box h4 {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-align: center;
+            color: #1e293b;
+        }
+
         @media (max-width: 768px) {
-            body { padding-top: 60px; }
-            .tool-container { padding: 2rem 1.5rem; }
-            .options-grid { grid-template-columns: 1fr; gap: 1rem; }
-            .bottom-nav { flex-direction: column; align-items: center; }
-            .nav-btn { width: 100%; justify-content: center; }
-            
-            .seo-content { 
-                width: 92%; 
-                padding: 1.5rem; 
-                margin: 2rem auto; 
-                border-radius: 8px; 
+            body {
+                padding-top: 60px;
+            }
+            .tool-container {
+                padding: 2rem 1rem;
+            }
+            .options-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .bottom-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .seo-content {
+                width: 92%;
+                padding: 1.5rem;
+                margin: 2rem auto;
+                border-radius: 8px;
+            }
+            .tool-content-wrapper {
+                padding: 1.5rem;
+            }
+            .tool-header h1 {
+                font-size: 1.8rem;
+            }
+            .upload-area {
+                padding: 2rem 1rem;
+            }
+            .related-sections {
+                display: block !important;
+                visibility: visible !important;
+                position: relative !important;
+                z-index: 1 !important;
+                overflow: visible !important;
+            }
+            .swipe-container {
+                display: flex !important;
+                visibility: visible !important;
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            .tool-box {
+                min-width: 160px;
+                height: 175px;
             }
         }
-/* ---- PROFESSIONAL SQUARE TOOL BOXES ---- */
-.related-sections {
-    padding: 3rem 1rem;
-    /* Optional: If your page background is white, you can leave this transparent. 
-       The image looks like it has a very faint grey background (#f8fafc or similar). */
-}
-
-.related-sections h3 {
-    font-size: 1.75rem;
-    font-weight: 800; /* Bolder text to match image */
-    text-align: center;
-    margin-bottom: 2.5rem;
-    color: #0f172a; /* Deep dark blue/black */
-}
-
-.swipe-container {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 1.5rem;
-    padding-bottom: 2rem; /* Space for the scrollbar */
-    max-width: 1200px;
-    margin: 0 auto; /* Centers the whole row on large screens */
-    -webkit-overflow-scrolling: touch;
-}
-
-/* Custom Scrollbar styled like the image */
-.swipe-container::-webkit-scrollbar {
-    height: 8px;
-}
-.swipe-container::-webkit-scrollbar-track {
-    background: #e2e8f0; /* Light grey track */
-    border-radius: 10px;
-}
-.swipe-container::-webkit-scrollbar-thumb {
-    background: #c1d5e1; /* Slightly darker thumb */
-    border-radius: 10px;
-}
-.swipe-container::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
-
-/* The Cards */
-.tool-box {
-    min-width: 175px; /* Box dimensions */
-    height: 185px;
-    scroll-snap-align: start;
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #ffffff;
-    border: 1px solid #f1f5f9; /* Very subtle border */
-    border-radius: 16px; /* Smooth rounded corners */
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Soft shadow */
-}
-
-.tool-box:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Lifts up on hover */
-    transform: translateY(-5px);
-}
-
-/* The Light Blue Icon Background */
-.tool-icon {
-    width: 60px;
-    height: 60px;
-    background-color: #eff6ff; /* Very light blue */
-    color: #2563eb; /* Primary blue for the SVG */
-    border-radius: 16px; /* Squircle shape */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.25rem;
-    transition: background-color 0.3s ease;
-}
-
-.tool-box:hover .tool-icon {
-    background-color: #dbeafe; /* Slightly darker blue on hover */
-}
-
-.tool-icon svg {
-    width: 28px;
-    height: 28px;
-}
-
-/* The Title */
-.tool-box h4 {
-    margin: 0;
-    font-size: 1.05rem;
-    font-weight: 700; /* Bold font matching the screenshot */
-    text-align: center;
-    color: #1e293b;
-}
     </style>
 </head>
 <body>
@@ -286,6 +524,7 @@
     <main class='tool-container'>
         <div class='tool-header'>
             <h1>Add Page Numbers to PDF</h1>
+            <div class='local-badge'><i class='fa-solid fa-shield-halved'></i> Files processed locally - No server upload</div>
             <p>Automatically number your PDF pages. Choose position, font, and starting page.</p>
         </div>
 
@@ -323,7 +562,7 @@
                         </select>
                     </div>
                     <div class="option-group">
-                        <label for="start-page">Start Numbering From Page</label>
+                        <label for="start-page">Starting Digit</label>
                         <input type="number" id="start-page" value="1" min="1">
                     </div>
                     <div class="option-group">
@@ -354,43 +593,61 @@
     </main>
 
     <article class="seo-content">
-        <h2>Why the Add Page Number is About to Become Your Favorite Utility</h2>
-        <p>Let's be completely honest for a second. We've all been sitting at our desks, staring at a screen, just trying to get one simple task done. You just need to use a Add Page Number, but every software you find wants you to download some massive installation package, sign up for a newsletter, or pay a ridiculous subscription fee. It's frustrating, right? That's exactly why having a reliable, instant solution right in your browser is an absolute lifesaver. You don't have time to waste fighting with clunky interfaces when you have real work to do.</p>
-        
-        <h3>The Frustration We're Solving</h3>
-        <p>When designing the interface for the Add Page Number, I had a very specific look in mind. I hate cluttered dashboards. They give me a headache. So, we went with a super clean, Corporate Blue theme. We used Apple-style typography—specifically the San Francisco font family—because it’s just so incredibly easy to read. Add a little bit of modern glassmorphism to the UI, and you get an interface that isn't just functional, it actually feels good to look at. You can stare at this screen for hours without getting eye fatigue, which is a big deal if you're working late nights.</p>
-        <p>PDFs are amazing for keeping things formatted, but man, they can be an absolute nightmare to edit. You try to change one little thing and suddenly the whole document breaks, or you're prompted to buy a premium license. That's exactly the headache we're bypassing here.</p>
-        
-        <h3>How the Add Page Number Actually Works (Without the Jargon)</h3>
-        <p>So, what's actually happening when you use the Add Page Number? Instead of taking your data and sending it off to some mysterious server halfway across the world, we leverage the power of your own web browser. Think about it. Your computer or phone is incredibly powerful. By processing things locally whenever possible, we cut down on wait times drastically. It also means your stuff stays yours. Privacy isn't just a buzzword for us; it's a foundational rule. You upload, you tweak the settings, and boom—it's done. No lingering files on our end.</p>
-        <p>Speed is everything. To make the Add Page Number as fast as humanly possible, we got rid of unnecessary database calls. Everything is streamlined. When you hit that execute button, the scripts go to work instantly. We also implemented strict output rules. For instance, if you're dealing with developer or SEO tools, we ensure things like trailing slashes are handled correctly, and duplicates are merged or removed flawlessly. It's these tiny, granular details that separate a cheap script from a professional-grade utility.</p>
-        
-        <h3>Real-World Scenarios: Who is this for?</h3>
-        <p>I get asked a lot about who actually uses these things day-to-day. It really spans the board, but here are the most common situations:</p>
-        <ul>
-            <li><strong>The Late-Night Freelancer:</strong> You're on a tight deadline, the client needs the file <em>now</em>, and you don't have time to open heavy software. Click, process, send.</li>
-            <li><strong>The Small Business Owner:</strong> You don't need a $500 software suite to do basic administrative tasks. This tool handles the daily grind for free.</li>
-            <li><strong>The Code Ninja:</strong> When you just need to format, convert, or clean up data quickly before pushing it to production.</li>
-        </ul>
-        
-        <h3>Common Mistakes People Make (And How to Avoid Them)</h3>
-        <p>Before you dive in, let me save you a little bit of grief. One of the most common mistakes I see people make when looking for a Add Page Number is trusting random sites that demand your email address before giving you the file back. Never do that. Your inbox will be flooded with spam before the day is over. Another issue is ignoring the initial file format. Always double-check what you are uploading. While our tool handles errors gracefully, garbage in still equals garbage out. Take a quick second to ensure your initial data or file is exactly what you want to work with. Lastly, don't forget to check your downloads folder! I can't tell you how many times I've processed something, got distracted, and then processed it again because I thought it didn't save. The Add Page Number works so fast that sometimes you might miss the download prompt if you blink!</p>
-        
-        <h3>The Bigger Picture: Workflow and Efficiency</h3>
-        <p>Another thing we really need to talk about is accessibility. Not everyone has a top-of-the-line MacBook Pro. Sometimes you're working on an older laptop or a budget tablet. Heavy web apps that rely on massive memory chunks will freeze those devices up. Because the Add Page Number is optimized at the code level, it runs incredibly smooth on virtually any device with a modern browser. We believe that professional-grade digital tools should be accessible to everyone, regardless of their hardware specs. It's a level playing field.</p>
-        <p>Honestly, adopting tools like this changes your entire workflow. You stop seeing these little conversions and edits as 'chores' and start seeing them as just another seamless part of your day. It’s about reducing friction. Every time you have to stop what you're doing, open a new program, wait for it to load, find the file, and export it, you lose your flow state. The Add Page Number is designed to keep you in the zone. You open a tab, get it done in three seconds, and jump right back into your actual work. That kind of micro-efficiency really adds up over a week, a month, or a year.</p>
-        
-        <h3>A Quick Pro-Tip Before You Go</h3>
-        <p>One thing I always tell people when they start using the Add Page Number heavily is to integrate it into your muscle memory. Try keeping a dedicated browser window open just for your jkmedit utilities. When you treat the browser like your actual operating system, you start finding incredible shortcuts. Don't be afraid to push the tool to its limits, test out different inputs, and see how fast it can actually process your data. The architecture is robust enough to handle it, so put it to the test!</p>
-        
-        <h3>Frequently Asked Questions about the Add Page Number</h3>
-        <p><strong>Is my data safe when using this tool?</strong><br> Absolutely. As I mentioned earlier, we prioritize client-side processing. This means your files and inputs are handled right there in your browser. We aren't interested in harvesting your data or storing your files on our servers. It's safer, faster, and infinitely more private.</p>
-        <p><strong>Do I need to create an account to use it?</strong><br> No way. I can't stand when a website makes you jump through a five-minute registration process just to convert a file or calculate a number. The Add Page Number on jkmedit.in is completely open. Just load the page and get to work.</p>
-        <p><strong>Will it work on my phone?</strong><br> Yes! We spent a lot of time ensuring the user interface is completely responsive. Because we use absolute positioning logic and a clean, mobile-first design philosophy, all the buttons and inputs will scale perfectly to your smartphone or tablet screen. You can literally get work done while waiting in line for coffee.</p>
-        <p><strong>Why is this free? What's the catch?</strong><br> There is no catch. We built jkmedit.in as a passion project to house the tools we use ourselves. By keeping the site lightweight and optimized, our server costs are incredibly low. We believe in providing value upfront without tricking people into hidden subscriptions.</p>
-        
-        <h3>Final Thoughts</h3>
-        <p>Wrapping things up, the Add Page Number isn't trying to reinvent the wheel—it's just trying to make the wheel roll a lot smoother. I highly recommend bookmarking this page. The next time you find yourself stuck needing this exact function, you won't have to go hunting through Google search results. Give it a spin, see how it feels, and enjoy getting your time back.</p>
+        <h2>The Architecture of Order: Mastering Document Structure with JKM Edit's Add Page Number Tool</h2>
+        <p>In the unbounded realm of digital swarms and streams, organization is the compass that keeps us from losing our sense of direction. Think about reading a book in a more tacked-on, physical sense. If the book was not page-numbered, you would be puzzled at the lack of reference ability, uncertain as to how far along your read you were. You could not effectively share a quote with a party, and if you had to put the book back in your backpack, you may be left scrambling as you put each page in a messed-up, nightmarish order. This analogy holds great weight in the digital space with files and slides waiting to be shared, printed, or shared in a meeting. Introducing the Portable Document Format (PDF) to the world. The world has paid much attention to the elegance of a nicely formatted PDF, but what happens if this PDF was not page-numbered? Disable this fundamental part of the structure and you've turned a PDF into a chaotic mess without any sense of where you may be in your document. The Add Page Number tool by JKM Edit, (visit Online: https://jkmedit.in/) is an essential part of turning a string of pages in a PDF into a structured and professional document, helping you to maintain your sense of order in a chaotic world and allowing the reader to easily navigate through.</p>
+
+        <div id="full-content" class="content-hidden">
+            <h3>The Base of Credibility and Professionalism</h3>
+            <p>The absence of page numbers is a subtle but sign of lack of professionalism. You work in business, academia or the law? You're in a world where details matter. A document that you send arrives without page numbers. Did they build it from scratch just now? It's like a document was assembled by a one-man shop. And, it may make the content less authoritative. The document, on the other hand, has clean, aligned page numbers. You're sending them something done and finished. When they see that, they'll know, "Yes, you done with that. This is some serious stuff."</p>
+
+            <p>Having a single tool for adding page numbers is essential for students and researchers alike. For universities and academic journals, there are precise specifications for how a thesis, dissertation, or paper must be formatted. Often this includes the exact placement of page numbers: body text at bottom centre, preface at the top right, or introduction in Roman numerals. A single error in village formatting standards can lead to a paper being rejected or graded down. Students benefit from the Add Page Number tool as it will enable them to achieve these exacting requirements without having to master advanced word processing software. It provides them the means to produce high-quality academic work that is as polished as it is brilliant. Page numbers are not just a decorative touch in legal documents – it's a requirement for court filings. This standard ensures that everyone is literally "on the same page."</p>
+
+            <h3>Organizing the Chaos of Merged Documents</h3>
+            <p>One of the most ubiquitous office admin tasks is the merge of files. A report to your boss might be a cover letter created in Word, financial tables from Excel, charts from your design program, and scanned contracts. When you combine all of these into a single PDF the page numbers will most certainly not match – you'll have three pages starting at "Page 1," or in the worst case, no numbers at all. The resulting report is label-challenged in the worst possible way and not helpful to anyone looking at the shaky documentation and trying to bring up the main issue.</p>
+
+            <p>Businesses like to create a busy "project proposal" packet or "board meeting" packet, and then try to make it all readable and organized for the "officers." This is a daunting task which can quickly become a nightmare if all the page numbers got messed up. Fortunately, with JKM Edit's Add Page Number feature, you can still save the day (and make the next meeting a comfortable one). JKM Edit allows you to re-index a merged file easily, by wiping out unneeded confusion and labeling everything in crisp order from the very beginning.</p>
+
+            <p>Each time you merge more files into a professional report and re-number the pages, you are creating a well-structured document where colleagues can refer to "Section 4, starting on page 12," and they can know without a doubt that they are looking at the exact same number.</p>
+
+            <h3>The Temptation of Manual Pagination</h3>
+            <p>To understand the benefits afforded by the JKM Edit tool, one needs to first understand the alternative. Adding page numbers to a PDF is technically difficult. Most people will either use a long-standing hack to go to "header and footer" menu options within their "standard" PDF editor and fiddle with the settings. Or they will go to that old and disgusting "typewriter" tool and meticulously type the number "1" on the first page and then "2" on the second page, and so on. A tedious and error-prone task that can result in chaotic and massive frustration, not to mention the headache of renumbering everything as slowly as possible after the deletion of a page.</p>
+
+            <p>Those with a bit of cash in their pockets can purchase the "best in the business" tools such as Adobe Acrobat, but this is a clunky (and subscription-based) alternative. If you are lucky you have a high-end tool. You are not so lucky if you are not. For those with free PDF editing available, the ability to number pages is often entirely absent. What is nice about JKM Edit is that it eliminates that technical hurdle. Where you define the starting point and the location of the sequence, it handles the logic. No more math headaches. No skipped numbers. No repeats. No more time "wasted" on physically typing numbers in a margin. No more headaches trying to correct your numbers. Instead, you can enjoy a clean "0:00" start and focus on the actual content of your PDF, not the formatting of your margins.</p>
+
+            <h3>Customization: Set Numbers to Your Style</h3>
+            <p>Not all documents - and they're page numbers - are equal. A minimalist artistic portfolio might call for discreet little numbers in the bottom corner. A formal government tender might call for huge bold numbers at the top for quick reference in a review meeting. Add Page Number on JKM Edit gives you a considerable amount of control over this, which is a nice surprise for a tool free at the click of a button.</p>
+
+            <p>In general, the client can usually control the direction of the numbers (top left, top center, top right, bottom left…etc) to suit the page layout. You don't want to have the page number hiding important text, or graphics. A further customization the tool usually offers, is control of font and size. So if your document is in Times New Roman, you can keep it consistent by doing the same for the page numbers. If you are in a modern Sans-Serif, you may well want this for your page numbers too. The purpose of the ability to customize the page numbers really is to keep them from feeling like an afterthought.</p>
+
+            <h3>Facilitating discussion and collaboration</h3>
+            <p>Think back to the last time you were on a conference call to discuss a shared document. How did the conversation go: "Ok, go to the section about the budget…it's near the end…could be the fourth page from the back?" That way of navigating documents wastes time and creates frustration. Without page numbers, collaboration is a drag.</p>
+
+            <p>When you add page numbers to your document, you give your collaborators a map. One with precision. "Turn to page 14." That's an instruction you can carry out in two seconds. And it's always worth the time it takes to add. That instruction is crucial to effective meetings. It lets participants focus on the content of the document rather than the physical location of each word. And that precision is critical for keeping multiple versions separate. If a document reviewer notices a typo in an email, they can write "Typo on page 8" and the document creator knows where to look. In the world we live in, where time counts in dollars and cents, the navigational help that page numbers provide pays for itself in saved man hours.</p>
+
+            <h3>Print-ready precision: Making your document ready for the real world</h3>
+            <p>Despite our efforts to make a paperless world, we still print. We print contracts to sign, stabbooks, bind manuals and print reports to discuss in meetings. Whenever a document is papered up, it loses the "search" feature of the computer. Imagine dropping a stack of 50 printed pages on the floor that don't even have page numbers–you're in disaster.</p>
+
+            <p>Enter the Add Page Number tool–your insurance policy against paper clutter. When your document hits the paper, it still knows its place. This is especially important when the offer is to bind the document (spiral binding, stapling etc.). Page numbers make it easy to confirm that a page didn't get lost in the stampede. Page numbers allow you to jump to a section of the physical document as easily as you would on the screen. JKM Edit delivers your document not just ready for screen consumption, but ready for paper and ink consumption as well.</p>
+
+            <h3>Part of the JKM Edit Ecosystem</h3>
+            <p>The real power of the Add Page Number tool is shown when used in combination with the other tools of <a href="/tools/pdf-tools/index.html">https://jkmedit.in/tools/pdf-tools/index.html</a>. It is often the finishing touch of a documents assembly line.</p>
+
+            <p>For example, let's say a user used the Split PDF tool to pull out the chapters, and the JPG to PDF tool to scan in some handwritten notes, and then used the Merge function, to pull them all together. The final necessary step in this assembly line is to add page numbers to this new creation so that it looks like a book. Because all of these tools are in one place, the user can now do the entire workflow without having to upload files to different third parties. It saves time, reduces the risk of file handling errors, and makes the entire creation and production process simpler and quicker. Even more importantly, it transforms JKM Edit from a toolbox into an entire documents production suite in one place.</p>
+
+            <h3>Conclusion</h3>
+            <p>In conclusion, page numbers are the backbone of your document. They may be invisible but without them, your document will be lacking in both structure and professionalism. The Add Page Number tool from JKM Edit help you with this complex, tedious formatting task and make it as quick as a click and go. It will help you reestablish order in your merged file, meet legal and academic standards and assist in collaboration. Whether you are an admin updating a meeting packet, a student submitting a thesis, or a lawyer finalizing a contract, documents with page numbers help you organize your thoughts and communicate them more efficiently. Check out JKM Edit today and experience the benefits of structured documents.</p>
+
+            <h3>FAQs</h3>
+            <p><strong>Q1: Is the Add Page Number tool on JKM Edit free?</strong><br> Yes, this tool is free! Add page numbers to your document without a subscription or other hidden fees.</p>
+            <p><strong>Q2: Can I change the location of the page numbers on a page?</strong><br> Yes, you have control over this. Generally, you can put the numbers at the top of the page or at the bottom, aligned either to the left, right or centered.</p>
+            <p><strong>Q3: Is it possible through this tool to change the font style and a size of the added numbers?</strong><br> Yes, you can. This is basically what you have control over when you insert numbers.</p>
+            <p><strong>Q4: Will the tool work properly if the PDF already has numbers on it?</strong><br> Yes, but bear in mind that if you have numbers on it already, they will be reset or overwritten. So, the best case would be a PDF with no numbers, or in a place where there aren't any numbers. Another case would be if you used this to add numbers to a PDF from several PDF's you merged together</p>
+            <p><strong>Q5: Is it possible to start the numberisation at a specific number?</strong><br> It can usually be set from whatever number you want. For instance, if you have a title page, you can start numberisation from page 1 from the second page onwards. (or third page of the PDF)</p>
+            <p><strong>Q6: is it safe to upload documents to add page numbers?</strong><br> Yes! At JKM Edit your privacy is our priority. Files are upload securely over an encrypted connection and are not stored on our servers. Your information is yours and yours alone.</p>
+            <p><strong>Q7: is this available on my phone?</strong><br> Yes! The add page number tool is responsive and mobile compatible. You can upload a PDF from your phone, add the page numbers, and instantly download the finished PDF to your phone.</p>
+        </div>
+
+        <button id="load-more-btn" class="load-more-btn">Read More</button>
     </article>
 
 <section class="related-sections">
@@ -487,76 +744,153 @@
     <div id="footer-placeholder"></div>
 
     <script>
-        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        document.addEventListener('DOMContentLoaded', function() {
+            var uploadArea = document.getElementById('upload-area');
+            var pdfUpload = document.getElementById('pdf-upload');
+            var fileInfo = document.getElementById('file-info');
+            var optionsPanel = document.getElementById('options-panel');
+            var processButton = document.getElementById('process-button');
+            var statusMessage = document.getElementById('status-message');
+            var downloadSection = document.getElementById('download-section');
+            var downloadBtn = document.getElementById('download-btn');
+            var loadMoreBtn = document.getElementById('load-more-btn');
+            var fullContent = document.getElementById('full-content');
+            var uploadedFile = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
+            if (loadMoreBtn && fullContent) {
+                loadMoreBtn.addEventListener('click', function() {
+                    fullContent.classList.remove('content-hidden');
+                    loadMoreBtn.style.display = 'none';
+                });
+            }
+
+            // Fixed Mobile Header Toggle Loader
             fetch('https://jkmedit.in/header.html')
-                .then(response => response.text())
-                .then(data => { 
-                    document.getElementById('header-placeholder').innerHTML = data; 
-                    const mobileToggle = document.getElementById('mobileToggle');
-                    const navMenu = document.getElementById('navMenu');
-                    if(mobileToggle && navMenu) {
-                        mobileToggle.addEventListener('click', () => {
-                            navMenu.classList.toggle('active');
-                            mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
-                        });
-                    }
-                    const navItems = document.querySelectorAll('.nav-item');
-                    navItems.forEach(item => {
-                        const link = item.querySelector('.nav-link');
-                        if (link) {
-                            link.addEventListener('click', (e) => {
-                                if (window.innerWidth <= 1024) {
-                                    e.preventDefault(); 
-                                    navItems.forEach(otherItem => {
-                                        if (otherItem !== item && otherItem.classList.contains('active')) {
-                                            otherItem.classList.remove('active');
-                                        }
-                                    });
-                                    item.classList.toggle('active');
+                .then(function(response) { return response.text(); })
+                .then(function(data) {
+                    document.getElementById('header-placeholder').innerHTML = data;
+                    // Attempt to find toggle elements after injection with retry
+                    function initToggle(retryCount) {
+                        var mobileToggle = document.getElementById('mobileToggle') || document.querySelector('.mobile-toggle');
+                        var navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
+                        if (mobileToggle && navMenu) {
+                            mobileToggle.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                navMenu.classList.toggle('active');
+                                if (mobileToggle.innerHTML) {
+                                    mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
                                 }
                             });
+                            // Also try touchstart for mobile
+                            mobileToggle.addEventListener('touchstart', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                navMenu.classList.toggle('active');
+                                if (mobileToggle.innerHTML) {
+                                    mobileToggle.innerHTML = navMenu.classList.contains('active') ? '&#10005;' : '&#9776;';
+                                }
+                            });
+                        } else if (retryCount < 10) {
+                            setTimeout(function() { initToggle(retryCount + 1); }, 100);
                         }
-                    });
+                    }
+                    initToggle(0);
+
+                    // Initialize mobile accordion for Tools dropdown
+                    function initAccordion(retryCount) {
+                        var navItems = document.querySelectorAll('.nav-item');
+                        if (navItems.length > 0) {
+                            navItems.forEach(function(item) {
+                                var link = item.querySelector('.nav-link');
+                                var hasDropdown = item.querySelector('.mega-menu');
+                                
+                                if (link && hasDropdown) {
+                                    link.addEventListener('click', function(e) {
+                                        if (window.innerWidth <= 1024) {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            
+                                            // Close other open accordions
+                                            navItems.forEach(function(otherItem) {
+                                                if (otherItem !== item && otherItem.classList.contains('active')) {
+                                                    otherItem.classList.remove('active');
+                                                }
+                                            });
+                                            
+                                            // Toggle the clicked one
+                                            item.classList.toggle('active');
+                                        }
+                                    });
+                                    
+                                    link.addEventListener('touchstart', function(e) {
+                                        if (window.innerWidth <= 1024) {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            
+                                            // Close other open accordions
+                                            navItems.forEach(function(otherItem) {
+                                                if (otherItem !== item && otherItem.classList.contains('active')) {
+                                                    otherItem.classList.remove('active');
+                                                }
+                                            });
+                                            
+                                            // Toggle the clicked one
+                                            item.classList.toggle('active');
+                                        }
+                                    });
+                                }
+                            });
+                        } else if (retryCount < 10) {
+                            setTimeout(function() { initAccordion(retryCount + 1); }, 100);
+                        }
+                    }
+                    initAccordion(0);
                 })
-                .catch(error => console.error('Error loading header:', error));
+                .catch(function(error) { console.error('Error loading header:', error); });
 
             fetch('https://jkmedit.in/footer.html')
-                .then(response => response.text())
-                .then(data => document.getElementById('footer-placeholder').innerHTML = data)
-                .catch(error => console.error('Error loading footer:', error));
+                .then(function(response) { return response.text(); })
+                .then(function(data) { document.getElementById('footer-placeholder').innerHTML = data; })
+                .catch(function(error) { console.error('Error loading footer:', error); });
 
-            const uploadArea = document.getElementById('upload-area');
-            const pdfUpload = document.getElementById('pdf-upload');
-            const fileInfo = document.getElementById('file-info');
-            const optionsPanel = document.getElementById('options-panel');
-            const processButton = document.getElementById('process-button');
-            const statusMessage = document.getElementById('status-message');
-            const downloadSection = document.getElementById('download-section');
-            const downloadBtn = document.getElementById('download-btn');
+            if (uploadArea) {
+                uploadArea.addEventListener('click', function() {
+                    pdfUpload.click();
+                });
+                uploadArea.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    pdfUpload.click();
+                });
+                uploadArea.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.add('drag-over');
+                });
+                uploadArea.addEventListener('dragleave', function() {
+                    uploadArea.classList.remove('drag-over');
+                });
+                uploadArea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.remove('drag-over');
+                    if (e.dataTransfer.files.length > 0 && e.dataTransfer.files[0].type === 'application/pdf') {
+                        handleFile(e.dataTransfer.files[0]);
+                    } else {
+                        alert("Please select a valid PDF file.");
+                    }
+                });
+            }
 
-            let uploadedFile = null;
-
-            uploadArea.addEventListener('click', () => pdfUpload.click());
-            uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
-            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault(); uploadArea.classList.remove('drag-over');
-                if (e.dataTransfer.files.length > 0 && e.dataTransfer.files[0].type === 'application/pdf') {
-                    handleFile(e.dataTransfer.files[0]);
-                } else {
-                    alert("Please select a valid PDF file.");
-                }
-            });
-
-            pdfUpload.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) handleFile(e.target.files[0]);
-            });
+            if (pdfUpload) {
+                pdfUpload.addEventListener('change', function(e) {
+                    if (e.target.files.length > 0) {
+                        handleFile(e.target.files[0]);
+                    }
+                });
+            }
 
             function handleFile(file) {
                 uploadedFile = file;
-                fileInfo.innerHTML = `<i class="fa-solid fa-file-pdf"></i> Loaded: <strong>${file.name}</strong>`;
+                fileInfo.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Loaded: <strong>' + file.name + '</strong>';
                 fileInfo.style.display = 'block';
                 optionsPanel.style.display = 'block';
                 uploadArea.style.display = 'none';
@@ -565,52 +899,76 @@
 
             function getMarginValue(marginName) {
                 switch(marginName) {
-                    case 'small': return 20;
-                    case 'large': return 72;
+                    case 'small': return 10;
+                    case 'large': return 50;
                     case 'medium':
-                    default: return 40;
+                    default: return 25;
                 }
             }
 
-            processButton.addEventListener('click', async () => {
-                if (!uploadedFile) return;
+            async function processPDF() {
+                if (!uploadedFile) {
+                    alert('Please upload a PDF file first.');
+                    return;
+                }
+
+                if (typeof PDFLib === 'undefined') {
+                    alert('PDF library is not loaded. Please refresh the page.');
+                    return;
+                }
 
                 processButton.disabled = true;
-                statusMessage.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+                statusMessage.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
                 statusMessage.style.display = 'block';
 
                 try {
-                    const existingPdfBytes = await uploadedFile.arrayBuffer();
-                    const pdfDoc = await PDFDocument.load(existingPdfBytes);
-                    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-                    const pages = pdfDoc.getPages();
-                    
+                    const { PDFDocument, rgb, StandardFonts } = PDFLib;
                     const position = document.getElementById('position').value;
                     const margin = getMarginValue(document.getElementById('margin').value);
-                    const startPage = parseInt(document.getElementById('start-page').value, 10);
-                    const fontSize = parseInt(document.getElementById('font-size').value, 10);
+                    const startDigit = parseInt(document.getElementById('start-page').value, 10) || 1;
+                    const fontSize = parseInt(document.getElementById('font-size').value, 10) || 12;
+
+                    const existingPdfBytes = await uploadedFile.arrayBuffer();
+                    const pdfDoc = await PDFDocument.load(existingPdfBytes);
+                    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+                    const pages = pdfDoc.getPages();
 
                     for (let i = 0; i < pages.length; i++) {
-                        if (i + 1 >= startPage) {
-                            const { width, height } = pages[i].getSize();
-                            const pageNumberText = `${i + 1}`;
-                            const textWidth = font.widthOfTextAtSize(pageNumberText, fontSize);
-                            
-                            let x, y;
-                            
-                            if (position.startsWith('bottom')) y = margin;
-                            else y = height - margin - fontSize;
+                        const page = pages[i];
+                        const { width, height } = page.getSize();
+                        
+                        const displayNum = String(startDigit + i);
+                        const textWidth = helveticaFont.widthOfTextAtSize(displayNum, fontSize);
+                        
+                        let x, y;
 
-                            if (position.endsWith('left')) {
-                                x = margin;
-                            } else if (position.endsWith('right')) {
-                                x = width - margin - textWidth;
-                            } else { 
-                                x = (width - textWidth) / 2;
-                            }
-                            
-                            pages[i].drawText(pageNumberText, { x, y, size: fontSize, font, color: rgb(0, 0, 0) });
+                        // Vertical Positioning - Keep text at consistent distance from edge regardless of font size
+                        // PDF coordinate system: y=0 is bottom, y=height is top
+                        // Text draws from baseline, extends below baseline
+                        if (position.includes('bottom')) {
+                            // Bottom: baseline at margin from bottom edge
+                            y = margin;
+                        } else {
+                            // Top: baseline at height - margin from bottom edge
+                            y = height - margin;
                         }
+
+                        // Horizontal Positioning
+                        if (position.includes('left')) {
+                            x = margin;
+                        } else if (position.includes('right')) {
+                            x = width - margin - textWidth;
+                        } else {
+                            x = (width - textWidth) / 2;
+                        }
+
+                        page.drawText(displayNum, {
+                            x: x,
+                            y: y,
+                            size: fontSize,
+                            font: helveticaFont,
+                            color: rgb(0, 0, 0),
+                        });
                     }
 
                     const pdfBytes = await pdfDoc.save();
@@ -618,22 +976,25 @@
                     const url = URL.createObjectURL(blob);
                     
                     downloadBtn.href = url;
-                    downloadBtn.download = `numbered_${uploadedFile.name}`;
+                    downloadBtn.download = 'numbered_' + uploadedFile.name;
                     statusMessage.style.display = 'none';
                     optionsPanel.style.display = 'none';
                     downloadSection.style.display = 'block';
-                    
+
                 } catch (error) {
                     console.error(error);
-                    alert('An error occurred while processing the PDF.');
+                    alert('An error occurred while processing the PDF: ' + error.message);
                     statusMessage.style.display = 'none';
                 } finally {
                     processButton.disabled = false;
                 }
-            });
+            }
+
+            if (processButton) {
+                processButton.addEventListener('click', processPDF);
+            }
         });
     </script>
     <script src="/assets/cookie-consent.js" async></script>
 </body>
 </html>
-
