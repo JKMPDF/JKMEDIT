@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | JKM Edit</title>
+    <!-- Fallback redirect if JS is disabled -->
+    <meta http-equiv="refresh" content="6;url=https://jkmedit.in/">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #0052cc;
+            --secondary-color: #0747a6;
+            --bg-color: #f4f5f7;
+            --text-color: #172b4d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            max-width: 500px;
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .error-icon {
+            font-size: 5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            font-size: 6rem;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            color: #6b778c;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .redirect-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        #countdown {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(45deg, var(--primary-color), #0065ff);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 82, 204, 0.2);
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 82, 204, 0.3);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .error-container { padding: 2rem 1.5rem; }
+            h1 { font-size: 4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="error-container">
+        <div class="error-icon">
+            <i class="fa-solid fa-compass-drafting"></i>
+        </div>
+        <h1>404</h1>
+        <h2>Page Not Found</h2>
+        <p>Sorry, the page you are looking for doesn't exist or has been moved.</p>
+        
+        <div class="redirect-text">
+            Redirecting to JKM Edit home in <span id="countdown">5</span>s...
+        </div>
+
+        <a href="https://jkmedit.in/" class="home-btn">
+            <i class="fa-solid fa-house"></i> Go to Homepage
+        </a>
+    </div>
+
+    <script>
+        let seconds = 5;
+        const countdownEl = document.getElementById('countdown');
+
+        const timer = setInterval(() => {
+            seconds--;
+            if (countdownEl) countdownEl.textContent = seconds;
+            
+            if (seconds <= 0) {
+                clearInterval(timer);
+                window.location.href = 'https://jkmedit.in/';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
