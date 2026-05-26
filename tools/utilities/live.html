@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Auto-Music Dashboard</title>
+    <style>
+        body { margin: 0; background: #050505; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
+        #start-btn { padding: 20px 60px; font-size: 1.5rem; background: #ff0000; color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; }
+        #dashboard { text-align: center; display: none; }
+        .counter-box { background: #111; padding: 50px; border-radius: 40px; border: 1px solid #222; width: 350px; }
+        #user-count { font-size: 6rem; font-weight: 900; color: #00ff88; display: block; line-height: 1; }
+        #song-title { color: #888; margin-top: 20px; font-size: 0.9rem; font-style: italic; }
+        #status-tag { color: #ffcc00; font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; }
+        #yt-player { position: absolute; top: -9999px; }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <h1 style="margin-bottom: 20px;">Live Auto-Radio</h1>
+        <button id="start-btn" onclick="startApp()">LISTEN NOW</button>
+    </div>
+
+    <div id="dashboard">
+        <div class="counter-box">
+            <div id="status-tag">Initializing...</div>
+            <span id="user-count">0</span>
+            <div style="letter-spacing: 3px; color: #555;">LIVE LISTENERS</div>
+            <div id="song-title">Searching for music...</div>
+        </div>
+    </div>
+
+    <div id="yt-player"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // --- 1. CONFIGURATION ---
+        const YT_API_KEY = "AIzaSyDp6T5sKLYl04NAsSNdS8Ky_YDi5ryiM-k"; // Paste your YouTube API Key here
+        
+        const firebaseConfig = {
+            apiKey: "YOUR_FIREBASE_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            appId: "YOUR_APP_ID"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // --- 2. AUTOMATIC SEARCH LOGIC ---
+        async function fetchAutoPlaylist() {
+            const h = new Date().getHours();
+            const m = new Date().getMinutes();
+            const time = h + (m / 60);
+
+            let searchQuery = "";
+            let modeName = "";
+
+            // Logic: 
+            // 4-8 AM & 5:30-8 PM = Bhajan
+            // Rest = Bollywood
+            if ((time >= 4 && time < 8) || (time >= 17.5 && time < 20)) {
+                searchQuery = "latest morning hindi bhajan aarti";
+                modeName = "🌅 SPIRITUAL MODE";
+            } else {
+                searchQuery = "popular hindi bollywood songs 2024 2025";
+                modeName = "🎵 BOLLYWOOD MODE";
+            }
+
+            document.getElementById('status-tag').innerText = modeName;
+
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&type=video&videoEmbeddable=true&maxResults=10&key=${YT_API_KEY}`);
+                const data = await response.json();
+                const randomVideo = data.items[Math.floor(Math.random() * data.items.length)];
+                
+                document.getElementById('song-title').innerText = "Playing: " + randomVideo.snippet.title;
+                return randomVideo.id.videoId;
+            } catch (error) {
+                console.error("API Error:", error);
+                return "jfKfPfyJRdk"; // Fallback Lo-fi song if API fails
+            }
+        }
+
+        // --- 3. YOUTUBE PLAYER ---
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+
+        let player;
+        async function onYouTubeIframeAPIReady() {
+            const firstVideoId = await fetchAutoPlaylist();
+            player = new YT.Player('yt-player', {
+                height: '0', width: '0',
+                videoId: firstVideoId,
+                playerVars: { 'autoplay': 1 },
+                events: {
+                    'onStateChange': async (event) => {
+                        if (event.data === YT.PlayerState.ENDED) {
+                            const nextId = await fetchAutoPlaylist();
+                            player.loadVideoById(nextId);
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- 4. START APP ---
+        function startApp() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            if (player) player.playVideo();
+            setupLiveCounter();
+        }
+
+        // --- 5. LIVE COUNTER ---
+        function setupLiveCounter() {
+            const countRef = db.ref('online_count');
+            const myPresence = countRef.push(true);
+            myPresence.onDisconnect().remove();
+            countRef.on('value', (snap) => {
+                document.getElementById('user-count').innerText = snap.numChildren();
+            });
+        }
+    </script>
+</body>
+</html>
