@@ -1,8 +1,17 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=5.0' name='viewport'/>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGWM57WKH7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MGWM57WKH7');
+    </script>
     <title>Bank Statement Analyzer: Track Income & Spending Fast</title>
     <meta name="title" content="Bank Statement Analyzer: Track Income & Spending Fast">
     <meta name="description" content="Securely upload and deeply analyze your bank statements. Intelligently categorize your monthly spending track your income and generate financial health data."/>
@@ -74,16 +83,16 @@
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
 
-    <!-- HEADER -->
+    
     <header class="relative bg-white border-b border-gray-200 px-6 py-3 flex justify-between items-center shadow-sm z-20">
         
-        <!-- LEFT SIDE: Logo + JKM Edit -->
+        
         <div class="flex items-center gap-3 z-10">
-            <!-- Logo from assets folder -->
+            
             <img src="assets/jkm-edit-logo.png" alt="Logo" class="h-10 w-auto object-contain" 
                  onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='block'">
             
-            <!-- Fallback Icon (shows if image is missing) -->
+            
             <div id="fallback-icon" class="bg-indigo-600 text-white p-2 rounded-lg hidden">
                 <i class="ph ph-bank text-xl"></i>
             </div>
@@ -96,12 +105,12 @@
 
         </div>
 
-        <!-- MIDDLE: BANK Analysis (Centered) -->
+        
         <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <h2 class="text-2xl font-extrabold text-indigo-700 tracking-tight uppercase">BANK Analysis</h2>
         </div>
 
-        <!-- RIGHT SIDE: Action Buttons -->
+        
         <div class="flex gap-3 z-10">
             <button onclick="downloadTemplate()" class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                 <i class="ph ph-file-xls mr-2"></i>Template
@@ -116,10 +125,10 @@
         </div>
     </header>
 
-    <!-- MAIN LAYOUT -->
+    
     <div class="flex flex-1 overflow-hidden">
         
-        <!-- SIDEBAR -->
+        
         <aside class="w-64 bg-white border-r border-gray-200 p-6 flex flex-col gap-6">
             <div>
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Inflow (Credit)</p>
@@ -142,10 +151,10 @@
             </div>
         </aside>
 
-        <!-- CONTENT -->
+        
         <main class="flex-1 flex flex-col bg-gray-50">
             
-            <!-- SEO INTRO -->
+            
             <section id="seo-intro" class="px-6 py-6 bg-white border-b border-gray-200">
                 <div class="max-w-4xl mx-auto text-gray-800">
                     <h3 class="text-xl font-bold mb-2">Bank Statement Analyzer — Fast, Private, Accurate</h3>
@@ -161,7 +170,7 @@
                 </div>
             </section>
 
-            <!-- TOOLBAR -->
+            
             <div id="toolbar" class="hidden px-6 py-4 flex gap-4 items-center border-b border-gray-200 bg-white">
                 <div class="relative flex-1 max-w-md">
                     <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
@@ -171,18 +180,18 @@
                 
                 <div class="h-8 w-px bg-gray-300 mx-2"></div>
                 
-                <!-- NEW: Add to Existing Group Button -->
+                
                 <button onclick="openAddToGroupModal()" class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
                     <i class="ph ph-plus-circle"></i> Add to Existing
                 </button>
 
-                <!-- Merge New Button -->
+                
                 <button onclick="mergeSelected()" class="flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 font-medium rounded-lg hover:bg-indigo-200 transition">
                     <i class="ph ph-arrows-merge"></i> Merge New Group
                 </button>
             </div>
 
-            <!-- TABLE -->
+            
             <div class="flex-1 overflow-y-auto p-6">
                 <div id="emptyState" class="flex flex-col items-center justify-center h-full text-gray-400">
                     <i class="ph ph-table text-6xl mb-4 text-gray-300"></i>
@@ -209,14 +218,14 @@
         </main>
     </div>
 
-    <!-- MODAL: Add to Existing Group -->
+    
     <div id="groupSelectionModal" class="modal-overlay">
         <div class="modal-box">
             <h2 class="text-xl font-bold mb-4">Select Target Group</h2>
             <p class="text-gray-600 mb-4 text-sm">Choose an existing group to move the selected items into:</p>
             
             <select id="groupSelectDropdown" class="w-full p-2 border border-gray-300 rounded-lg mb-6 bg-white">
-                <!-- Options populated by JS -->
+                
             </select>
 
             <div class="flex justify-end gap-3">

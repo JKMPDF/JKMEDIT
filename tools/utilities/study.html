@@ -1,8 +1,17 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" x-data="studyOS()" x-init="init()" :class="darkMode ? 'dark' : ''">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGWM57WKH7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MGWM57WKH7');
+    </script>
     <title>Titan OS | The Ultimate Study Architect</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -30,7 +39,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-darkbg text-slate-900 dark:text-slate-100 min-h-screen pb-20 md:pb-0 md:pl-20">
 
-    <!-- DESKTOP SIDEBAR -->
+    
     <aside class="fixed left-0 top-0 h-screen w-20 bg-slate-900 hidden md:flex flex-col items-center py-8 z-50">
         <div class="mb-10 text-primary font-black text-2xl">T</div>
         <div class="flex flex-col gap-8 flex-1">
@@ -44,7 +53,7 @@
         <button @click="darkMode = !darkMode" class="text-slate-400 hover:text-yellow-400 transition mb-4"><i :class="darkMode ? 'fa-sun' : 'fa-moon'" class="fas"></i></button>
     </aside>
 
-    <!-- MOBILE BOTTOM NAV -->
+    
     <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-darkcard border-t dark:border-slate-800 flex md:hidden justify-around items-center py-3 z-[100] shadow-2xl">
         <button @click="view = 'dash'" :class="view === 'dash' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-home text-xl"></i></button>
         <button @click="view = 'library'" :class="view === 'library' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-book text-xl"></i></button>
@@ -55,7 +64,7 @@
 
     <main class="p-4 md:p-8 max-w-7xl mx-auto">
         
-        <!-- VIEW: DASHBOARD -->
+        
         <div x-show="view === 'dash'" x-transition x-cloak class="space-y-6">
             <header class="flex justify-between items-center mb-8">
                 <div>
@@ -96,7 +105,7 @@
                 </div>
             </div>
 
-            <!-- LO-FI FOCUS TOOL -->
+            
             <div class="bg-white dark:bg-darkcard p-4 rounded-[2rem] border dark:border-slate-800 flex items-center gap-4 overflow-x-auto no-scrollbar">
                 <span class="text-[10px] font-black text-slate-400 uppercase ml-2">Focus Sound:</span>
                 <template x-for="sound in sounds">
@@ -141,7 +150,7 @@
             </div>
         </div>
 
-        <!-- VIEW: LIBRARY -->
+        
         <div x-show="view === 'library'" x-transition x-cloak class="space-y-8">
             <div class="flex justify-between items-center">
                 <h2 class="text-3xl font-black">Library</h2>
@@ -162,7 +171,7 @@
             </div>
         </div>
 
-        <!-- VIEW: SUBJECT DETAIL (WORKSPACE) -->
+        
         <div x-show="view === 'subjectDetail'" x-transition x-cloak class="h-[calc(100vh-160px)] -mx-4 md:-mx-8 border-y dark:border-slate-800 bg-white dark:bg-darkcard flex overflow-hidden">
             <div class="w-full md:w-80 border-r dark:border-slate-800 flex flex-col" :class="activeChapter ? 'mobile-hide' : ''">
                 <div class="p-4 flex justify-between items-center border-b dark:border-slate-800">
@@ -236,7 +245,7 @@
             </div>
         </div>
 
-        <!-- VIEW: FOCUS TIMER -->
+        
         <div x-show="view === 'focus'" x-transition x-cloak class="max-w-xl mx-auto py-20 text-center">
             <div class="bg-white dark:bg-darkcard p-12 rounded-[4rem] border dark:border-slate-800 shadow-2xl">
                 <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-10">Focus Session</p>
@@ -258,7 +267,7 @@
 
     </main>
 
-    <!-- MODAL: ADD SUBJECT -->
+    
     <div x-cloak x-show="showAddSubject" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
         <div @click="showAddSubject = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
         <div class="relative bg-white dark:bg-darkcard p-8 rounded-[3rem] w-full max-w-md shadow-2xl">
