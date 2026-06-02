@@ -97,9 +97,13 @@
 
             <header class="flex justify-between items-center">
                 <h1 class="text-3xl font-black">Dashboard</h1>
-                <div x-show="useCloud" class="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-full">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full" :class="syncing ? 'animate-ping' : ''"></span> 
-                    <span x-text="syncing ? 'Syncing...' : 'Live Cloud'"></span>
+                <div x-show="useCloud" class="flex flex-col items-end">
+                    <div class="flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase"
+                         :class="syncing ? 'bg-amber-50 text-amber-500' : 'bg-emerald-50 text-emerald-500'">
+                        <span class="w-2 h-2 rounded-full" :class="syncing ? 'bg-amber-500 animate-ping' : 'bg-emerald-500'"></span> 
+                        <span x-text="syncing ? 'Uploading Changes...' : 'Cloud Synced'"></span>
+                    </div>
+                    <span class="text-[8px] font-bold opacity-40 uppercase mr-1 mt-1" x-text="'Last: ' + lastSyncTime"></span>
                 </div>
             </header>
 
@@ -201,7 +205,7 @@
                 <button @click="activeChapter = null; stopAudio(); forceSync();" class="md:hidden text-primary font-bold text-sm mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back to Chapters</button>
                 <div class="max-w-4xl mx-auto space-y-6 pb-20">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <input type="text" x-model="activeChapter.title" @change="forceSync()" class="bg-transparent border-none text-3xl font-black focus:ring-0 p-0 w-full">
+                        <input type="text" x-model="activeChapter.title" @input="debounceSync()" class="bg-transparent border-none text-3xl font-black focus:ring-0 p-0 w-full">
                         <div class="flex items-center gap-4">
                             <div class="flex items-center bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
                                 <input type="number" x-model="activeChapter.hours" @change="forceSync()" class="w-10 bg-transparent border-none text-sm font-black p-0 focus:ring-0">
@@ -258,7 +262,7 @@
 
                     <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
                         <h4 class="font-bold mb-4">Notes</h4>
-                        <textarea x-model="activeChapter.notes" @change="forceSync()" class="w-full h-40 bg-transparent border-none text-sm focus:ring-0 resize-none leading-relaxed" placeholder="Type chapter details..."></textarea>
+                        <textarea x-model="activeChapter.notes" @input="debounceSync()" class="w-full h-40 bg-transparent border-none text-sm focus:ring-0 resize-none leading-relaxed" placeholder="Type chapter details..."></textarea>
                     </div>
 
                     <!-- ACTIVE RECALL WITH URL -->
@@ -269,12 +273,12 @@
                                 <div class="space-y-2 border-b dark:border-slate-800 pb-4">
                                     <div class="flex gap-2 items-center">
                                         <input type="checkbox" x-model="q.done" @change="forceSync()" class="rounded-full text-secondary">
-                                        <input type="text" x-model="q.text" @change="forceSync()" placeholder="Question text..." class="flex-1 bg-transparent border-none text-sm font-bold focus:ring-0">
+                                        <input type="text" x-model="q.text" @input="debounceSync()" placeholder="Question text..." class="flex-1 bg-transparent border-none text-sm font-bold focus:ring-0">
                                         <button @click="activeChapter.questions.splice(qIdx, 1); forceSync();" class="text-red-300"><i class="fas fa-times"></i></button>
                                     </div>
                                     <div class="flex items-center gap-2 pl-6 bg-slate-50 dark:bg-slate-900 rounded-xl p-2">
                                         <i class="fas fa-link text-[10px] opacity-30"></i>
-                                        <input type="text" x-model="q.url" @change="forceSync()" placeholder="Reference URL (optional)..." class="flex-1 bg-transparent border-none text-[10px] focus:ring-0 italic">
+                                        <input type="text" x-model="q.url" @input="debounceSync()" placeholder="Reference URL (optional)..." class="flex-1 bg-transparent border-none text-[10px] focus:ring-0 italic">
                                         <template x-if="q.url">
                                             <a :href="q.url" target="_blank" class="text-primary text-[10px] font-black uppercase mr-2 underline">Visit</a>
                                         </template>
@@ -361,7 +365,7 @@
                 appStarted: false,
                 loading: false,
                 syncing: false,
-                needsSync: false, // New flag for sync queueing
+                lastSyncTime: 'Never',
                 useCloud: false,
                 darkMode: false,
                 subjects: [],
@@ -379,6 +383,7 @@
                 isRecording: false,
                 mediaRecorder: null,
                 audioChunks: [],
+                syncTimeout: null,
                 
                 audioInstance: null,
                 audioPlaying: false,
@@ -396,16 +401,16 @@
                     const cloudPref = localStorage.getItem('use_cloud_sync');
                     if (cloudPref === 'true') this.startWithBackup(false);
 
-                    window.onbeforeunload = (e) => {
-                        e.preventDefault();
-                        return e.returnValue = "Unsaved changes.";
-                    };
-
                     window.onpopstate = (e) => {
                         if (this.activeChapter) { this.activeChapter = null; this.stopAudio(); }
                         else if (this.view !== 'dash') { this.view = 'dash'; }
                     };
                     history.pushState({view: 'dash'}, "");
+                },
+
+                debounceSync() {
+                    if (this.syncTimeout) clearTimeout(this.syncTimeout);
+                    this.syncTimeout = setTimeout(() => this.forceSync(), 2000);
                 },
 
                 forceSync() {
@@ -464,7 +469,6 @@
                     if (!this.newSub.name) return;
                     this.subjects.push({ id: Date.now(), name: this.newSub.name, chapters: [] });
                     this.newSub.name = ''; this.showAddSubject = false;
-                    this.forceSync();
                 },
                 deleteSubject(idx) { if(confirm('Delete subject?')) { this.subjects.splice(idx, 1); this.forceSync(); } },
                 openSubject(sub) { this.activeSubject = sub; this.view = 'subjectDetail'; this.activeChapter = null; history.pushState({view:'subjectDetail'}, ""); },
@@ -533,68 +537,60 @@
                 logout() { localStorage.setItem('use_cloud_sync', 'false'); location.reload(); },
                 
                 async initializeCloudSync() {
-                    await new Promise(r => gapi.load('client', r));
-                    const headers = { Authorization: `Bearer ${this.googleToken}` };
-                    const fQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='JKM Study' and mimeType='application/vnd.google-apps.folder' and trashed=false`, { headers });
-                    const fData = await fQuery.json();
-                    if (fData.files?.length > 0) this.driveFolderId = fData.files[0].id;
-                    else {
-                        const res = await fetch('https://www.googleapis.com/drive/v3/files', {
-                            method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ name: 'JKM Study', mimeType: 'application/vnd.google-apps.folder' })
-                        });
-                        const data = await res.json(); this.driveFolderId = data.id;
-                    }
-                    const bQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q='${this.driveFolderId}' in parents and trashed=false`, { headers });
-                    const bData = await bQuery.json();
-                    let mainFile = bData.files?.find(f => f.name === 'backup.json');
-                    if (mainFile) {
-                        this.driveFileId = mainFile.id;
-                        const cloudRes = await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFileId}?alt=media`, { headers });
-                        const cloudData = await cloudRes.json();
-                        if (cloudData && Array.isArray(cloudData)) this.subjects = cloudData;
-                    }
+                    try {
+                        await new Promise(r => gapi.load('client', r));
+                        const headers = { Authorization: `Bearer ${this.googleToken}` };
+                        const fQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='JKM Study' and mimeType='application/vnd.google-apps.folder' and trashed=false`, { headers });
+                        const fData = await fQuery.json();
+                        if (fData.files?.length > 0) this.driveFolderId = fData.files[0].id;
+                        else {
+                            const res = await fetch('https://www.googleapis.com/drive/v3/files', {
+                                method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name: 'JKM Study', mimeType: 'application/vnd.google-apps.folder' })
+                            });
+                            const data = await res.json(); this.driveFolderId = data.id;
+                        }
+                        const bQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q='${this.driveFolderId}' in parents and trashed=false`, { headers });
+                        const bData = await bQuery.json();
+                        let mainFile = bData.files?.find(f => f.name === 'backup.json');
+                        if (mainFile) {
+                            this.driveFileId = mainFile.id;
+                            const cloudRes = await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFileId}?alt=media`, { headers });
+                            const cloudData = await cloudRes.json();
+                            if (cloudData && Array.isArray(cloudData)) {
+                                this.subjects = cloudData;
+                                localStorage.setItem('titan_os_ultimate_final', JSON.stringify(this.subjects));
+                            }
+                        }
+                    } catch(e) { console.error("Cloud Init Failed", e); }
                 },
 
                 async syncToCloud() {
-                    if (!this.googleToken || !this.driveFolderId) return;
-                    
-                    // Queue logic: if already syncing, mark that we need another sync after
-                    if (this.syncing) {
-                        this.needsSync = true;
-                        return;
-                    }
-
+                    if (!this.googleToken || !this.driveFolderId || this.syncing) return;
                     this.syncing = true;
-                    this.needsSync = false;
-
-                    const metadata = { name: 'backup.json', parents: [this.driveFolderId] };
-                    const form = new FormData();
-                    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-                    form.append('file', new Blob([JSON.stringify(this.subjects)], { type: 'application/json' }));
-
-                    // Use PATCH if file exists, POST if not
-                    const url = this.driveFileId 
-                        ? `https://www.googleapis.com/upload/drive/v3/files/${this.driveFileId}?uploadType=multipart` 
-                        : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
                     
                     try {
-                        const response = await fetch(url, { 
+                        const metadata = { name: 'backup.json', parents: [this.driveFolderId] };
+                        const form = new FormData();
+                        form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+                        form.append('file', new Blob([JSON.stringify(this.subjects)], { type: 'application/json' }));
+                        
+                        const url = this.driveFileId 
+                            ? `https://www.googleapis.com/upload/drive/v3/files/${this.driveFileId}?uploadType=multipart` 
+                            : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
+                        
+                        const res = await fetch(url, { 
                             method: this.driveFileId ? 'PATCH' : 'POST', 
                             headers: { Authorization: `Bearer ${this.googleToken}` }, 
                             body: form 
                         });
-                        const data = await response.json();
-                        if (data.id) this.driveFileId = data.id;
-                    } catch (err) {
-                        console.error("Cloud sync failed:", err);
-                    } finally {
-                        this.syncing = false;
-                        // If a change occurred during sync, run it again to catch the latest state
-                        if (this.needsSync) {
-                            this.syncToCloud();
+                        const data = await res.json();
+                        if (data.id) {
+                            this.driveFileId = data.id;
+                            this.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                         }
-                    }
+                    } catch(e) { console.error("Sync error", e); }
+                    finally { this.syncing = false; }
                 },
 
                 async deleteAllData() {
@@ -615,7 +611,9 @@
                             reader.readAsDataURL(new Blob(this.audioChunks, { type: 'audio/webm' }));
                             reader.onloadend = () => {
                                 if(!this.activeChapter.recordings) this.activeChapter.recordings = [];
-                                this.activeChapter.recordings.push(reader.result); this.forceSync();
+                                this.activeChapter.recordings.push(reader.result);
+                                // Ensure we sync immediately after recording stops
+                                this.forceSync(); 
                             };
                         };
                         this.mediaRecorder.start(); this.isRecording = true;
@@ -642,7 +640,7 @@
                 formatSeconds(sec) { return `${Math.floor(sec/60)}:${Math.floor(sec%60).toString().padStart(2,'0')}`; },
                 deleteRecording(idx) { if(confirm("Delete?")) { if(this.currentAudioIdx === idx) this.stopAudio(); this.activeChapter.recordings.splice(idx, 1); this.forceSync(); } },
 
-                formatTime(sec) { return `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; },
+                formatTime(sec) { return `${Math.floor(sec/60)}:${((sec%60).toString()).padStart(2,'0')}`; },
                 toggleTimer() {
                     if (this.timerActive) { clearInterval(this.timerInterval); this.timerActive = false; } 
                     else {
