@@ -25,7 +25,6 @@
     </script>
     <style>
         [x-cloak] { display: none !important; }
-        /* Prevent Pull-to-Refresh */
         html, body { 
             overscroll-behavior-y: contain; 
             font-family: 'Plus Jakarta Sans', sans-serif; 
@@ -45,20 +44,20 @@
     <!-- SYNCING OVERLAY -->
     <div x-show="loading" class="fixed inset-0 z-[2000] bg-white dark:bg-darkbg flex flex-col items-center justify-center">
         <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-xs font-black uppercase tracking-widest opacity-50">JKM Cloud Syncing...</p>
+        <p class="text-xs font-black uppercase tracking-widest opacity-50">Updating Cloud Data...</p>
     </div>
 
     <!-- STARTUP SCREEN -->
     <div x-show="!appStarted && !loading" class="fixed inset-0 z-[1000] bg-white dark:bg-darkbg flex items-center justify-center p-6 text-center">
         <div class="max-w-md w-full space-y-8">
-            <h1 class="text-7xl font-black text-primary">JKM</h1>
-            <p class="text-slate-500 font-bold uppercase tracking-widest">Study Architect</p>
+            <h1 class="text-7xl font-black text-primary tracking-tighter">JKM</h1>
+            <p class="text-slate-500 font-bold uppercase tracking-widest text-sm">Study Architect</p>
             <div class="flex flex-col gap-4">
                 <button @click="startWithBackup(true)" class="p-6 bg-primary text-white rounded-3xl font-black shadow-xl hover:scale-105 transition">
                     <i class="fab fa-google mr-2"></i> Cloud Sync (Google Drive)
                 </button>
                 <button @click="startWithoutBackup()" class="p-6 bg-slate-100 dark:bg-darkcard rounded-3xl font-bold hover:bg-slate-200 transition">
-                    Local Mode (No Backup)
+                    Local Mode Only
                 </button>
             </div>
         </div>
@@ -92,28 +91,24 @@
             <header class="flex justify-between items-center">
                 <h1 class="text-3xl font-black">Dashboard</h1>
                 <div x-show="useCloud" class="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-full">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Cloud Connected
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> JKM Cloud Live
                 </div>
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Overall Progress</p>
+                <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 shadow-sm">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Completion</p>
                     <h2 class="text-3xl font-black text-primary" x-text="getGlobalProgress() + '%'"></h2>
                 </div>
-                <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Recall Power</p>
-                    <h2 class="text-3xl font-black text-secondary" x-text="getGlobalRevisionProgress() + '%'"></h2>
-                </div>
-                <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
+                <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 shadow-sm">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Study Streak</p>
                     <h2 class="text-3xl font-black" x-text="streak + ' Days 🔥'"></h2>
                 </div>
-                <div class="bg-primary p-6 rounded-[2rem] text-white shadow-xl">
-                    <p class="text-[10px] font-black opacity-70 uppercase tracking-widest mb-1">Hours Breakdown</p>
-                    <div class="flex flex-col">
-                        <h2 class="text-3xl font-black" x-text="getCompletedHours() + ' / ' + getTotalHours() + 'h'"></h2>
-                        <p class="text-[10px] mt-1 opacity-80 uppercase font-bold" x-text="'Progress: ' + Math.round((getCompletedHours()/getTotalHours())*100 || 0) + '%'"></p>
+                <div class="bg-primary p-6 rounded-[2rem] text-white shadow-xl md:col-span-2">
+                    <p class="text-[10px] font-black opacity-70 uppercase tracking-widest mb-1">Hours Logged</p>
+                    <div class="flex items-baseline gap-2">
+                        <h2 class="text-4xl font-black" x-text="getCompletedHours()"></h2>
+                        <span class="opacity-60 text-lg font-bold" x-text="'/ ' + getTotalHours() + ' Hours Total'"></span>
                     </div>
                 </div>
             </div>
@@ -145,7 +140,7 @@
                                     <p class="text-xs font-black" x-text="alert.chapter"></p>
                                     <p class="text-[9px] font-bold text-slate-500" x-text="alert.subject"></p>
                                 </div>
-                                <span class="text-[9px] font-black text-amber-700 uppercase">Review Due</span>
+                                <span class="text-[9px] font-black text-amber-700 uppercase">Due</span>
                             </div>
                         </template>
                     </div>
@@ -163,9 +158,9 @@
                 <template x-for="(sub, sIdx) in subjects" :key="sub.id">
                     <div @click="openSubject(sub)" class="bg-white dark:bg-darkcard p-6 rounded-[2.5rem] border dark:border-slate-800 hover:shadow-2xl transition-all cursor-pointer relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
-                        <button @click.stop="deleteSubject(sIdx)" class="absolute top-6 right-6 text-slate-300 hover:text-red-500"><i class="fas fa-trash-alt text-sm"></i></button>
+                        <button @click.stop="deleteSubject(sIdx)" class="absolute top-6 right-6 text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash-alt text-sm"></i></button>
                         <h3 class="text-xl font-black mb-1" x-text="sub.name"></h3>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6" x-text="sub.chapters.length + ' Chapters'"></p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" x-text="sub.chapters.length + ' Chapters'"></p>
                     </div>
                 </template>
             </div>
@@ -175,7 +170,7 @@
         <div x-show="view === 'subjectDetail'" x-transition x-cloak class="h-[calc(100vh-160px)] -mx-4 md:-mx-8 border-y dark:border-slate-800 bg-white dark:bg-darkcard flex overflow-hidden">
             <div class="w-full md:w-80 border-r dark:border-slate-800 flex flex-col" :class="activeChapter ? 'mobile-hide' : 'flex'">
                 <div class="p-4 flex justify-between items-center border-b dark:border-slate-800">
-                    <button @click="view = 'library'" class="text-slate-400 p-2"><i class="fas fa-chevron-left"></i></button>
+                    <button @click="view = 'library'; forceSync();" class="text-slate-400 p-2"><i class="fas fa-chevron-left"></i></button>
                     <span class="text-[10px] font-black uppercase" x-text="activeSubject?.name"></span>
                     <button @click="addChapter()" class="text-primary font-bold text-xl p-2">+</button>
                 </div>
@@ -190,58 +185,66 @@
             </div>
 
             <div x-show="activeChapter" class="flex-1 overflow-y-auto p-4 md:p-10 bg-slate-50/50 dark:bg-darkbg/30 relative" :class="activeChapter ? 'mobile-panel' : ''">
-                <button @click="activeChapter = null; stopAudio();" class="md:hidden text-primary font-bold text-sm mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back to Chapters</button>
+                <button @click="activeChapter = null; stopAudio(); forceSync();" class="md:hidden text-primary font-bold text-sm mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back to Chapters</button>
                 <div class="max-w-4xl mx-auto space-y-6">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <input type="text" x-model="activeChapter.title" class="bg-transparent border-none text-3xl font-black focus:ring-0 p-0 w-full">
+                        <input type="text" x-model="activeChapter.title" @change="forceSync()" class="bg-transparent border-none text-3xl font-black focus:ring-0 p-0 w-full">
                         <div class="flex items-center gap-4">
                             <div class="flex items-center bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
-                                <input type="number" x-model="activeChapter.hours" class="w-10 bg-transparent border-none text-sm font-black p-0 focus:ring-0">
+                                <input type="number" x-model="activeChapter.hours" @change="forceSync()" class="w-10 bg-transparent border-none text-sm font-black p-0 focus:ring-0">
                                 <span class="text-[10px] font-black uppercase opacity-40 ml-1">Hrs</span>
                             </div>
-                            <button @click="activeChapter.done = !activeChapter.done" :class="activeChapter.done ? 'bg-secondary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'" class="px-6 py-2 rounded-xl text-xs font-black uppercase">Done</button>
-                            <button @click="removeChapter()" class="text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash-alt"></i></button>
+                            <button @click="activeChapter.done = !activeChapter.done; forceSync();" :class="activeChapter.done ? 'bg-secondary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'" class="px-6 py-2 rounded-xl text-xs font-black uppercase">Done</button>
+                            <button @click="removeChapter()" class="text-slate-300 hover:text-red-500"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
 
-                    <!-- VOICE RECORDER + PLAYER -->
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 space-y-4">
+                    <!-- MULTIPLE VOICE RECORDERS -->
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 space-y-6">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-4">
-                                <button @click="isRecording ? stopRecording() : startRecording()" 
-                                        :class="isRecording ? 'bg-red-500 animate-pulse' : 'bg-primary shadow-lg shadow-indigo-200'" 
-                                        class="w-14 h-14 rounded-full text-white transition-all">
-                                    <i class="fas" :class="isRecording ? 'fa-stop' : 'fa-microphone text-xl'"></i>
-                                </button>
-                                <div>
-                                    <p class="text-xs font-black uppercase tracking-widest text-slate-400" x-text="isRecording ? 'Recording summary...' : 'Voice Summary'"></p>
-                                    <p x-show="isRecording" class="text-[10px] text-red-500 font-bold animate-pulse">Capturing Live Audio...</p>
-                                </div>
-                            </div>
-                            <button x-show="activeChapter.audioData" @click="deleteAudio()" class="text-red-400 hover:text-red-600 text-xs font-black uppercase"><i class="fas fa-trash mr-1"></i> Delete</button>
+                            <h4 class="text-xs font-black uppercase tracking-widest text-slate-400">Recordings</h4>
+                            <button @click="isRecording ? stopRecording() : startRecording()" 
+                                    :class="isRecording ? 'bg-red-500 animate-pulse' : 'bg-primary shadow-lg'" 
+                                    class="w-12 h-12 rounded-full text-white transition-all">
+                                <i class="fas" :class="isRecording ? 'fa-stop text-sm' : 'fa-microphone'"></i>
+                            </button>
                         </div>
 
-                        <!-- AUDIO PLAYER UI -->
-                        <div x-show="activeChapter.audioData" class="pt-4 border-t dark:border-slate-800">
-                            <div class="flex flex-col gap-2">
-                                <div class="flex items-center gap-4">
-                                    <button @click="toggleAudio(activeChapter.audioData)" class="text-primary text-2xl w-8">
-                                        <i class="fas" :class="audioPlaying ? 'fa-pause-circle' : 'fa-play-circle'"></i>
-                                    </button>
-                                    <input type="range" class="flex-1 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full appearance-none cursor-pointer"
-                                           min="0" :max="audioDuration" step="0.1" x-model="audioCurrentTime" @input="seekAudio($event.target.value)">
+                        <div class="space-y-3">
+                            <template x-for="(rec, idx) in activeChapter.recordings || []" :key="idx">
+                                <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl space-y-3 border dark:border-slate-800">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] font-black uppercase text-slate-400" x-text="'Clip #' + (idx + 1)"></span>
+                                        <button @click="deleteRecording(idx)" class="text-red-400 hover:text-red-600"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <button @click="toggleAudio(rec, idx)" class="text-primary text-2xl">
+                                            <i class="fas" :class="(audioPlaying && currentAudioIdx === idx) ? 'fa-pause-circle' : 'fa-play-circle'"></i>
+                                        </button>
+                                        <div class="flex-1">
+                                            <input type="range" class="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-full appearance-none"
+                                                   min="0" :max="audioDuration" step="0.1" 
+                                                   :value="currentAudioIdx === idx ? audioCurrentTime : 0"
+                                                   @input="currentAudioIdx === idx && seekAudio($event.target.value)">
+                                            <div class="flex justify-between text-[8px] font-bold mt-1 opacity-50 tabular-nums">
+                                                <span x-text="currentAudioIdx === idx ? formatSeconds(audioCurrentTime) : '0:00'"></span>
+                                                <span x-text="currentAudioIdx === idx ? formatSeconds(audioDuration) : '--:--'"></span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between text-[10px] font-black text-slate-400 tabular-nums">
-                                    <span x-text="formatSeconds(audioCurrentTime)"></span>
-                                    <span x-text="formatSeconds(audioDuration)"></span>
+                            </template>
+                            <template x-if="!activeChapter.recordings?.length">
+                                <div class="py-10 text-center border-2 border-dashed rounded-3xl opacity-30">
+                                    <i class="fas fa-microphone-slash text-2xl mb-2"></i>
+                                    <p class="text-[10px] font-black uppercase">No audio notes yet</p>
                                 </div>
-                            </div>
+                            </template>
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 shadow-sm">
-                        <h4 class="font-bold mb-4">Chapter Notes</h4>
-                        <textarea x-model="activeChapter.notes" class="w-full h-80 bg-transparent border-none text-sm focus:ring-0 resize-none leading-relaxed" placeholder="Write your chapter summary here..."></textarea>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
+                        <textarea x-model="activeChapter.notes" @change="forceSync()" class="w-full h-80 bg-transparent border-none text-sm focus:ring-0 resize-none leading-relaxed" placeholder="Detailed chapter notes..."></textarea>
                     </div>
                 </div>
             </div>
@@ -250,38 +253,34 @@
         <!-- SETTINGS -->
         <div x-show="view === 'settings'" x-transition x-cloak class="max-w-2xl mx-auto space-y-8 pb-10">
             <h2 class="text-3xl font-black">Settings</h2>
-            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 space-y-6">
-                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-cloud text-primary"></i> Cloud Sync</h3>
+            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
+                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-cloud text-primary"></i> Cloud Control</h3>
                 <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-between">
                     <div>
-                        <p class="font-bold text-sm">JKM Cloud Storage</p>
-                        <p class="text-xs text-slate-500" x-text="useCloud ? 'Account Linked' : 'Not Linked'"></p>
+                        <p class="font-bold text-sm">JKM Cloud Status</p>
+                        <p class="text-xs text-slate-500" x-text="useCloud ? 'Connected' : 'Disconnected'"></p>
                     </div>
                     <button @click="useCloud ? logout() : startWithBackup(true)" 
-                            :class="useCloud ? 'bg-red-100 text-red-500' : 'bg-primary text-white'"
+                            :class="useCloud ? 'bg-red-50 text-red-500' : 'bg-primary text-white'"
                             class="px-5 py-2 rounded-xl text-xs font-bold transition">
                         <span x-text="useCloud ? 'Logout' : 'Connect Drive'"></span>
                     </button>
                 </div>
             </div>
-
-            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 space-y-6">
-                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-file-excel text-green-500"></i> Excel Management</h3>
+            
+            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
+                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-file-excel text-green-500"></i> Data Management</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button @click="downloadTemplate()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left hover:bg-slate-100 transition">
+                    <button @click="downloadTemplate()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left">
                         <i class="fas fa-file-download text-primary mb-2 text-xl"></i>
-                        <p class="font-bold text-sm">Download Template</p>
+                        <p class="font-bold text-sm">Excel Template</p>
                     </button>
-                    <button @click="triggerImport()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left hover:bg-slate-100 transition">
+                    <button @click="triggerImport()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left">
                         <i class="fas fa-file-upload text-secondary mb-2 text-xl"></i>
                         <p class="font-bold text-sm">Import Excel</p>
                     </button>
                 </div>
-            </div>
-
-            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 space-y-6">
-                <h3 class="font-bold text-lg text-red-500">System</h3>
-                <button @click="deleteAllData()" class="w-full py-4 bg-red-500 text-white rounded-2xl text-xs font-bold hover:bg-red-600 transition">Erase All Local Storage</button>
+                <button @click="deleteAllData()" class="w-full py-4 bg-red-500 text-white rounded-2xl text-xs font-bold">Wipe Local Storage</button>
             </div>
         </div>
 
@@ -301,11 +300,11 @@
 
     <div x-cloak x-show="showAddSubject" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
         <div @click="showAddSubject = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
-        <div class="relative bg-white dark:bg-darkcard p-8 rounded-[3rem] w-full max-w-md shadow-2xl">
+        <div class="relative bg-white dark:bg-darkcard p-8 rounded-[3rem] w-full max-w-md shadow-2xl text-center">
             <h2 class="text-2xl font-black mb-8">New Subject</h2>
             <div class="space-y-4">
-                <input type="text" x-model="newSub.name" placeholder="Subject Name" class="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none font-bold">
-                <button @click="createSubject()" class="w-full py-5 bg-primary text-white rounded-3xl font-black shadow-xl">Initialize</button>
+                <input type="text" x-model="newSub.name" placeholder="Subject Title" class="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none font-bold border-none text-center">
+                <button @click="createSubject(); forceSync();" class="w-full py-5 bg-primary text-white rounded-3xl font-black shadow-xl">Start Subject</button>
             </div>
         </div>
     </div>
@@ -329,7 +328,6 @@
                 showAddSubject: false,
                 newSub: { name: '', budget: '' },
                 streak: 0,
-                examDate: '',
                 timerSeconds: 1500,
                 timerActive: false,
                 timerInterval: null,
@@ -340,12 +338,13 @@
                 mediaRecorder: null,
                 audioChunks: [],
                 
-                // Advanced Audio State
+                // Central Audio State
                 audioInstance: null,
                 audioPlaying: false,
+                currentAudioIdx: null,
                 audioDuration: 0,
                 audioCurrentTime: 0,
-                audioInterval: null,
+                audioTicker: null,
 
                 init() {
                     const saved = localStorage.getItem('titan_os_ultimate_final');
@@ -356,16 +355,10 @@
                     const cloudPref = localStorage.getItem('use_cloud_sync');
                     if (cloudPref === 'true') this.startWithBackup(false);
 
-                    this.$watch('subjects', () => {
-                        localStorage.setItem('titan_os_ultimate_final', JSON.stringify(this.subjects));
-                        localStorage.setItem('last_active', new Date().toDateString());
-                        if (this.useCloud) this.syncToCloud();
-                    });
-
                     // PREVENT RELOAD
                     window.onbeforeunload = (e) => {
                         e.preventDefault();
-                        return e.returnValue = "Unsaved study progress may be lost.";
+                        return e.returnValue = "Unsaved work will be lost.";
                     };
 
                     window.onpopstate = (e) => {
@@ -373,6 +366,12 @@
                         else if (this.view !== 'dash') { this.view = 'dash'; }
                     };
                     history.pushState({view: 'dash'}, "");
+                },
+
+                // FORCE CLOUD UPDATE
+                forceSync() {
+                    localStorage.setItem('titan_os_ultimate_final', JSON.stringify(this.subjects));
+                    if (this.useCloud) this.syncToCloud();
                 },
 
                 checkStreak() {
@@ -385,6 +384,7 @@
                         else this.streak = 1;
                     }
                     localStorage.setItem('streak_count', this.streak);
+                    localStorage.setItem('last_active', today);
                 },
 
                 // EXCEL
@@ -393,7 +393,7 @@
                     const ws = XLSX.utils.aoa_to_sheet(data);
                     const wb = XLSX.utils.book_new();
                     XLSX.utils.book_append_sheet(wb, ws, "Template");
-                    XLSX.writeFile(wb, "JKM_Study_Template.xlsx");
+                    XLSX.writeFile(wb, "JKM_Template.xlsx");
                 },
                 triggerImport() { document.getElementById('excelFile').click(); },
                 handleImport(e) {
@@ -408,11 +408,11 @@
                                 this.subjects.push(sub);
                             }
                             sub.chapters.push({
-                                id: Math.random(), title: r.Chapter || 'New Chapter', hours: parseFloat(r.Hours || 0), 
-                                done: false, revisions: 0, notes: r.Notes || '', lastRevised: new Date()
+                                id: Math.random(), title: r.Chapter || 'Chapter', hours: parseFloat(r.Hours || 0), 
+                                done: false, revisions: 0, notes: r.Notes || '', recordings: [], lastRevised: new Date()
                             });
                         });
-                        alert('Data merged.');
+                        this.forceSync();
                     };
                     reader.readAsBinaryString(e.target.files[0]);
                 },
@@ -420,65 +420,58 @@
                 createSubject() {
                     if (!this.newSub.name) return;
                     this.subjects.push({ id: Date.now(), name: this.newSub.name, chapters: [] });
-                    this.newSub = { name: '', budget: '' }; this.showAddSubject = false;
+                    this.newSub.name = ''; this.showAddSubject = false;
                 },
-                deleteSubject(idx) { if(confirm('Delete subject?')) this.subjects.splice(idx, 1); },
-                openSubject(sub) { 
-                    this.activeSubject = sub; this.view = 'subjectDetail'; 
-                    this.activeChapter = null; history.pushState({view:'subjectDetail'}, ""); 
-                },
+                deleteSubject(idx) { if(confirm('Delete subject?')) { this.subjects.splice(idx, 1); this.forceSync(); } },
+                openSubject(sub) { this.activeSubject = sub; this.view = 'subjectDetail'; this.activeChapter = null; history.pushState({view:'subjectDetail'}, ""); },
                 addChapter() {
-                    const ch = { id: Date.now(), title: 'New Chapter', hours: 0, done: false, revisions: 0, notes: '', lastRevised: new Date() };
+                    if(!this.activeSubject.chapters) this.activeSubject.chapters = [];
+                    const ch = { id: Date.now(), title: 'New Chapter', hours: 0, done: false, revisions: 0, notes: '', recordings: [], lastRevised: new Date() };
                     this.activeSubject.chapters.push(ch); this.activeChapter = ch;
+                    this.forceSync();
                 },
                 removeChapter() {
                     if(confirm('Delete?')) {
-                        const idx = this.activeSubject.chapters.indexOf(this.activeChapter);
-                        this.activeSubject.chapters.splice(idx, 1);
-                        this.activeChapter = null;
-                        this.stopAudio();
+                        this.activeSubject.chapters = this.activeSubject.chapters.filter(c => c.id !== this.activeChapter.id);
+                        this.activeChapter = null; this.stopAudio(); this.forceSync();
                     }
                 },
 
-                // ANALYTICS
+                // STATS
+                getTotalHours() {
+                    return this.subjects.reduce((sum, sub) => sum + sub.chapters.reduce((s, c) => s + parseFloat(c.hours || 0), 0), 0).toFixed(1);
+                },
+                getCompletedHours() {
+                    return this.subjects.reduce((sum, sub) => sum + sub.chapters.filter(c => c.done).reduce((s, c) => s + parseFloat(c.hours || 0), 0), 0).toFixed(1);
+                },
                 getGlobalProgress() {
-                    const total = this.subjects.reduce((a, b) => a + b.chapters.length, 0);
+                    const total = this.subjects.reduce((a, b) => a + (b.chapters?.length || 0), 0);
                     if (!total) return 0;
                     const done = this.subjects.reduce((a, b) => a + b.chapters.filter(c => c.done).length, 0);
                     return Math.round((done / total) * 100);
                 },
                 getGlobalRevisionProgress() {
                     let chapters = 0; let points = 0;
-                    this.subjects.forEach(s => s.chapters.forEach(c => { chapters++; points += c.revisions; }));
+                    this.subjects.forEach(s => s.chapters?.forEach(c => { chapters++; points += (c.revisions || 0); }));
                     return chapters ? Math.round((points / (chapters * 5)) * 100) : 0;
                 },
-                getTotalHours() {
-                    return this.subjects.reduce((sum, sub) => {
-                        return sum + sub.chapters.reduce((s, c) => s + parseFloat(c.hours || 0), 0);
-                    }, 0).toFixed(1);
-                },
-                getCompletedHours() {
-                    return this.subjects.reduce((sum, sub) => {
-                        return sum + sub.chapters.filter(c => c.done).reduce((s, c) => s + parseFloat(c.hours || 0), 0);
-                    }, 0).toFixed(1);
-                },
                 getSubjectProgress(sub) {
-                    if (!sub.chapters.length) return 0;
+                    if (!sub.chapters?.length) return 0;
                     return Math.round((sub.chapters.filter(c => c.done).length / sub.chapters.length) * 100);
                 },
                 getRevisionAlerts() {
                     const alerts = [];
-                    this.subjects.forEach(s => s.chapters.forEach(c => {
+                    this.subjects.forEach(s => s.chapters?.forEach(c => {
                         const diff = (new Date() - new Date(c.lastRevised)) / (1000*60*60*24);
                         if (diff > 3 && !c.done) alerts.push({ subject: s.name, chapter: c.title });
                     }));
                     return alerts.slice(0, 5);
                 },
 
-                // CLOUD
+                // JKM CLOUD
                 async startWithBackup(interactive = true) {
                     this.loading = true;
-                    const safety = setTimeout(() => { if (!this.appStarted) this.loading = false; }, 8000);
+                    const safety = setTimeout(() => { if (!this.appStarted) this.loading = false; }, 10000);
 
                     const client = google.accounts.oauth2.initTokenClient({
                         client_id: CLIENT_ID, scope: SCOPES,
@@ -493,18 +486,10 @@
                             localStorage.setItem('use_cloud_sync', 'true');
                         },
                     });
-                    
                     interactive ? client.requestAccessToken() : client.requestAccessToken({ prompt: 'none' });
                 },
-                startWithoutBackup() {
-                    this.appStarted = true;
-                    localStorage.setItem('use_cloud_sync', 'false');
-                },
-                logout() {
-                    localStorage.setItem('use_cloud_sync', 'false');
-                    this.useCloud = false;
-                    location.reload();
-                },
+                startWithoutBackup() { this.appStarted = true; localStorage.setItem('use_cloud_sync', 'false'); },
+                logout() { localStorage.setItem('use_cloud_sync', 'false'); location.reload(); },
                 async initializeCloudSync() {
                     await new Promise(r => gapi.load('client', r));
                     const headers = { Authorization: `Bearer ${this.googleToken}` };
@@ -521,11 +506,11 @@
                         this.driveFolderId = folder.id;
                     }
 
-                    // Strict check for ONE backup file
-                    const bQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='backup.json' and '${this.driveFolderId}' in parents and trashed=false`, { headers });
+                    // Find THE backup file
+                    const bQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='backup.json' and '${this.driveFolderId}' in parents and trashed=false&orderBy=modifiedTime desc`, { headers });
                     const bData = await bQuery.json();
                     if (bData.files?.length > 0) {
-                        this.driveFileId = bData.files[0].id; // Only use the first one
+                        this.driveFileId = bData.files[0].id; 
                         const cloudFile = await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFileId}?alt=media`, { headers });
                         const cloudSubjects = await cloudFile.json();
                         if (cloudSubjects) this.subjects = cloudSubjects;
@@ -539,11 +524,10 @@
                     form.append('file', new Blob([JSON.stringify(this.subjects)], { type: 'application/json' }));
                     const url = this.driveFileId ? `https://www.googleapis.com/upload/drive/v3/files/${this.driveFileId}?uploadType=multipart` : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
                     fetch(url, { method: this.driveFileId ? 'PATCH' : 'POST', headers: { Authorization: `Bearer ${this.googleToken}` }, body: form })
-                    .then(res => res.json())
-                    .then(data => { if (data.id) this.driveFileId = data.id; });
+                    .then(res => res.json()).then(data => { if (data.id) this.driveFileId = data.id; });
                 },
 
-                // ADVANCED AUDIO
+                // AUDIO RECORDING (MULTIPLE)
                 async startRecording() {
                     try {
                         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -555,83 +539,62 @@
                             const reader = new FileReader();
                             reader.readAsDataURL(blob);
                             reader.onloadend = () => {
-                                this.activeChapter.audioData = reader.result;
-                                this.subjects = JSON.parse(JSON.stringify(this.subjects));
+                                if(!this.activeChapter.recordings) this.activeChapter.recordings = [];
+                                this.activeChapter.recordings.push(reader.result);
+                                this.forceSync();
                             };
                         };
                         this.mediaRecorder.start();
                         this.isRecording = true;
-                    } catch (e) { alert('Mic access denied.'); }
+                    } catch (e) { alert('Mic error.'); }
                 },
                 stopRecording() { if(this.mediaRecorder) { this.mediaRecorder.stop(); this.isRecording = false; } },
                 
-                toggleAudio(base64) {
-                    if (this.audioPlaying) {
+                toggleAudio(base64, idx) {
+                    if (this.audioPlaying && this.currentAudioIdx === idx) {
                         this.pauseAudio();
                     } else {
-                        if (!this.audioInstance || this.audioInstance.src !== base64) {
-                            this.stopAudio();
-                            this.audioInstance = new Audio(base64);
-                            this.audioInstance.onloadedmetadata = () => this.audioDuration = this.audioInstance.duration;
-                            this.audioInstance.onended = () => this.stopAudio();
-                        }
+                        if (this.audioInstance) this.stopAudio();
+                        this.currentAudioIdx = idx;
+                        this.audioInstance = new Audio(base64);
+                        this.audioInstance.onloadedmetadata = () => this.audioDuration = this.audioInstance.duration;
+                        this.audioInstance.onended = () => this.stopAudio();
                         this.audioInstance.play();
                         this.audioPlaying = true;
-                        this.audioInterval = setInterval(() => {
-                            this.audioCurrentTime = this.audioInstance.currentTime;
-                        }, 100);
+                        this.audioTicker = setInterval(() => this.audioCurrentTime = this.audioInstance.currentTime, 100);
                     }
                 },
-                pauseAudio() {
-                    if (this.audioInstance) this.audioInstance.pause();
-                    this.audioPlaying = false;
-                    clearInterval(this.audioInterval);
-                },
+                pauseAudio() { if(this.audioInstance) this.audioInstance.pause(); this.audioPlaying = false; clearInterval(this.audioTicker); },
                 stopAudio() {
-                    if (this.audioInstance) {
-                        this.audioInstance.pause();
-                        this.audioInstance = null;
-                    }
-                    this.audioPlaying = false;
-                    this.audioCurrentTime = 0;
-                    this.audioDuration = 0;
-                    clearInterval(this.audioInterval);
+                    if(this.audioInstance) { this.audioInstance.pause(); this.audioInstance = null; }
+                    this.audioPlaying = false; this.currentAudioIdx = null;
+                    this.audioCurrentTime = 0; this.audioDuration = 0;
+                    clearInterval(this.audioTicker);
                 },
-                seekAudio(val) {
-                    if (this.audioInstance) {
-                        this.audioInstance.currentTime = val;
-                        this.audioCurrentTime = val;
-                    }
-                },
-                formatSeconds(sec) {
-                    const m = Math.floor(sec / 60);
-                    const s = Math.floor(sec % 60);
-                    return `${m}:${s.toString().padStart(2, '0')}`;
-                },
-                deleteAudio() {
-                    if(confirm("Delete audio?")) {
-                        this.stopAudio();
-                        this.activeChapter.audioData = null;
-                        this.subjects = JSON.parse(JSON.stringify(this.subjects));
+                seekAudio(val) { if(this.audioInstance) { this.audioInstance.currentTime = val; this.audioCurrentTime = val; }},
+                formatSeconds(sec) { const m = Math.floor(sec/60); const s = Math.floor(sec%60); return `${m}:${s.toString().padStart(2,'0')}`; },
+                deleteRecording(idx) {
+                    if(confirm("Delete clip?")) {
+                        if(this.currentAudioIdx === idx) this.stopAudio();
+                        this.activeChapter.recordings.splice(idx, 1);
+                        this.forceSync();
                     }
                 },
 
-                // UTILS
-                formatTime(sec) { return `${Math.floor(sec / 60)}:${(sec % 60).toString().padStart(2, '0')}`; },
+                // TIMER
+                formatTime(sec) { return `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; },
                 toggleTimer() {
                     if (this.timerActive) { clearInterval(this.timerInterval); this.timerActive = false; } 
                     else {
                         this.timerActive = true;
                         this.timerInterval = setInterval(() => {
                             if (this.timerSeconds > 0) this.timerSeconds--;
-                            else { this.toggleTimer(); alert('Focus session ended.'); }
+                            else { this.toggleTimer(); alert('Focus ended.'); }
                         }, 1000);
                     }
                 },
                 resetTimer() { this.timerSeconds = 1500; this.timerActive = false; clearInterval(this.timerInterval); },
-                deleteAllData() {
-                    if (confirm('Erase EVERYTHING?')) { localStorage.clear(); this.subjects = []; location.reload(); }
-                }
+                deleteAllData() { if (confirm('Wipe everything?')) { localStorage.clear(); location.reload(); }}
             }
         }
     </script>
