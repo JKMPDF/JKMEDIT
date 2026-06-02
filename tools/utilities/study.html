@@ -37,8 +37,14 @@
 </head>
 <body class="bg-slate-50 dark:bg-darkbg text-slate-900 dark:text-slate-100 min-h-screen pb-20 md:pb-0 md:pl-20">
 
+    <!-- LOADING OVERLAY -->
+    <div x-show="loading" class="fixed inset-0 z-[2000] bg-white dark:bg-darkbg flex flex-col items-center justify-center">
+        <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-xs font-black uppercase tracking-widest opacity-50">Syncing with Cloud...</p>
+    </div>
+
     <!-- STARTUP SCREEN -->
-    <div x-show="!appStarted" class="fixed inset-0 z-[1000] bg-white dark:bg-darkbg flex items-center justify-center p-6 text-center">
+    <div x-show="!appStarted && !loading" class="fixed inset-0 z-[1000] bg-white dark:bg-darkbg flex items-center justify-center p-6 text-center">
         <div class="max-w-md w-full space-y-8">
             <h1 class="text-7xl font-black text-primary">JKM</h1>
             <p class="text-slate-500 font-bold uppercase tracking-widest">Study Architect</p>
@@ -46,7 +52,7 @@
                 <button @click="startWithBackup()" class="p-6 bg-primary text-white rounded-3xl font-black shadow-xl hover:scale-105 transition">
                     <i class="fab fa-google mr-2"></i> Cloud Sync (Google Drive)
                 </button>
-                <button @click="appStarted = true" class="p-6 bg-slate-100 dark:bg-darkcard rounded-3xl font-bold hover:bg-slate-200 transition">
+                <button @click="startWithoutBackup()" class="p-6 bg-slate-100 dark:bg-darkcard rounded-3xl font-bold hover:bg-slate-200 transition">
                     Continue Local Only
                 </button>
             </div>
@@ -202,8 +208,8 @@
                             <button @click="playAudio(activeChapter.audioData)" class="bg-indigo-50 dark:bg-indigo-900/20 text-primary px-4 py-2 rounded-full text-xs font-bold">
                                 <i class="fas fa-play mr-1"></i> Listen
                             </button>
-                            <button @click="deleteAudio()" class="text-red-400 hover:text-red-600 text-xs font-black uppercase tracking-tighter">
-                                <i class="fas fa-times-circle"></i>
+                            <button @click="deleteAudio()" class="text-red-400 hover:text-red-600 text-xs font-black uppercase">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
@@ -220,18 +226,17 @@
         <div x-show="view === 'settings'" x-transition x-cloak class="max-w-2xl mx-auto space-y-8 pb-10">
             <h2 class="text-3xl font-black">Settings</h2>
             
-            <!-- Cloud Sync Section -->
             <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
-                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-cloud text-primary"></i> Google Drive Sync</h3>
+                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-cloud text-primary"></i> Cloud Synchronization</h3>
                 <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-between">
                     <div>
-                        <p class="font-bold text-sm">Status</p>
-                        <p class="text-xs text-slate-500" x-text="useCloud ? 'Connected to Drive' : 'Disconnected'"></p>
+                        <p class="font-bold text-sm">Sync Preference</p>
+                        <p class="text-xs text-slate-500" x-text="useCloud ? 'Connected to Google Drive' : 'Local Storage Only'"></p>
                     </div>
-                    <button @click="startWithBackup()" :disabled="useCloud" 
-                            :class="useCloud ? 'bg-slate-200 text-slate-400' : 'bg-primary text-white'"
+                    <button @click="useCloud ? logout() : startWithBackup()" 
+                            :class="useCloud ? 'bg-red-100 text-red-500' : 'bg-primary text-white'"
                             class="px-5 py-2 rounded-xl text-xs font-bold transition">
-                        <span x-text="useCloud ? 'Sync Active' : 'Enable Sync'"></span>
+                        <span x-text="useCloud ? 'Logout & Disable' : 'Enable Sync'"></span>
                     </button>
                 </div>
             </div>
@@ -243,25 +248,19 @@
                     <button @click="downloadTemplate()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left hover:bg-slate-100 transition group">
                         <i class="fas fa-file-download text-primary mb-2 text-xl group-hover:scale-110 transition"></i>
                         <p class="font-bold text-sm">Download Template</p>
-                        <p class="text-[10px] text-slate-500">Get the standard Excel format</p>
                     </button>
                     <button @click="triggerImport()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left hover:bg-slate-100 transition group">
                         <i class="fas fa-file-upload text-secondary mb-2 text-xl group-hover:scale-110 transition"></i>
                         <p class="font-bold text-sm">Import Excel</p>
-                        <p class="text-[10px] text-slate-500">Upload and merge your data</p>
                     </button>
                 </div>
-                <button @click="exportData()" class="w-full py-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-black uppercase text-slate-400 hover:text-primary hover:border-primary transition">
-                    <i class="fas fa-download mr-2"></i> Export Data (JSON Backup)
-                </button>
             </div>
 
             <!-- Danger Zone -->
             <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
                 <h3 class="font-bold text-lg text-red-500">Danger Zone</h3>
                 <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 rounded-2xl">
-                    <p class="font-bold text-red-600 text-sm mb-1">Erase All Data</p>
-                    <p class="text-[10px] text-slate-500 mb-4">This will clear everything on this device and reset JKM Study.</p>
+                    <p class="font-bold text-red-600 text-sm mb-1">Delete All Data</p>
                     <button @click="deleteAllData()" class="px-5 py-2 bg-red-500 text-white rounded-xl text-xs font-bold hover:bg-red-600 transition">Delete Everything</button>
                 </div>
             </div>
@@ -281,7 +280,6 @@
         </div>
     </main>
 
-    <!-- NEW SUBJECT MODAL -->
     <div x-cloak x-show="showAddSubject" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
         <div @click="showAddSubject = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
         <div class="relative bg-white dark:bg-darkcard p-8 rounded-[3rem] w-full max-w-md shadow-2xl">
@@ -303,6 +301,7 @@
             return {
                 view: 'dash',
                 appStarted: false,
+                loading: false,
                 useCloud: false,
                 darkMode: false,
                 subjects: [],
@@ -334,6 +333,13 @@
                     if (saved) this.subjects = JSON.parse(saved);
                     this.checkStreak();
                     this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    
+                    // PERSISTENCE LOGIC
+                    const cloudPref = localStorage.getItem('use_cloud_sync');
+                    if (cloudPref === 'true') {
+                        this.startWithBackup();
+                    }
+
                     this.$watch('subjects', () => {
                         localStorage.setItem('titan_os_ultimate_final', JSON.stringify(this.subjects));
                         localStorage.setItem('last_active', new Date().toDateString());
@@ -384,7 +390,7 @@
                                 notes: r.Notes || '', questions: [], lastRevised: new Date()
                             });
                         });
-                        alert('Excel data merged successfully.');
+                        alert('Data merged.');
                     };
                     reader.readAsBinaryString(e.target.files[0]);
                 },
@@ -404,7 +410,7 @@
                     this.activeSubject.chapters.push(ch); this.activeChapter = ch;
                 },
                 removeChapter() {
-                    if(confirm('Delete chapter?')) {
+                    if(confirm('Delete?')) {
                         const idx = this.activeSubject.chapters.indexOf(this.activeChapter);
                         this.activeSubject.chapters.splice(idx, 1);
                         this.activeChapter = null;
@@ -414,12 +420,8 @@
                     ch.revisions = (ch.revisions === level) ? level - 1 : level;
                     ch.lastRevised = new Date();
                 },
-                toggleSound(sound) {
-                    const player = document.getElementById('audioPlayer');
-                    if (this.activeSound === sound.name) { player.pause(); this.activeSound = ''; }
-                    else { player.src = sound.url; player.play(); this.activeSound = sound.name; }
-                },
 
+                // ANALYTICS
                 getGlobalProgress() {
                     const total = this.subjects.reduce((a, b) => a + b.chapters.length, 0);
                     if (!total) return 0;
@@ -450,24 +452,39 @@
                     return alerts.slice(0, 5);
                 },
 
+                // CLOUD & PERSISTENCE
                 async startWithBackup() {
+                    this.loading = true;
                     const client = google.accounts.oauth2.initTokenClient({
                         client_id: CLIENT_ID, scope: SCOPES,
                         callback: async (res) => {
+                            if (res.error) { this.loading = false; return; }
                             this.googleToken = res.access_token;
                             await this.initializeCloudSync();
                             this.useCloud = true;
                             this.appStarted = true;
+                            this.loading = false;
+                            localStorage.setItem('use_cloud_sync', 'true');
                         },
                     });
-                    client.requestAccessToken();
+                    client.requestAccessToken({ prompt: this.appStarted ? '' : 'none' });
+                    // If silent fails, it'll prompt.
+                },
+                startWithoutBackup() {
+                    this.appStarted = true;
+                    localStorage.setItem('use_cloud_sync', 'false');
+                },
+                logout() {
+                    localStorage.setItem('use_cloud_sync', 'false');
+                    this.useCloud = false;
+                    location.reload();
                 },
                 async initializeCloudSync() {
                     await new Promise(r => gapi.load('client', r));
                     const headers = { Authorization: `Bearer ${this.googleToken}` };
-                    const fQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='JKM Study' and mimeType='application/vnd.google-apps.folder'`, { headers });
+                    const fQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='JKM Study' and mimeType='application/vnd.google-apps.folder' and trashed=false`, { headers });
                     const fData = await fQuery.json();
-                    if (fData.files.length > 0) this.driveFolderId = fData.files[0].id;
+                    if (fData.files && fData.files.length > 0) this.driveFolderId = fData.files[0].id;
                     else {
                         const createFolder = await fetch('https://www.googleapis.com/drive/v3/files', {
                             method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
@@ -476,13 +493,13 @@
                         const folder = await createFolder.json();
                         this.driveFolderId = folder.id;
                     }
-                    const bQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='backup.json' and '${this.driveFolderId}' in parents`, { headers });
+                    const bQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='backup.json' and '${this.driveFolderId}' in parents and trashed=false`, { headers });
                     const bData = await bQuery.json();
-                    if (bData.files.length > 0) {
+                    if (bData.files && bData.files.length > 0) {
                         this.driveFileId = bData.files[0].id;
                         const cloudFile = await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFileId}?alt=media`, { headers });
                         const cloudSubjects = await cloudFile.json();
-                        if (cloudSubjects && confirm('Cloud backup found. Overwrite local subjects?')) this.subjects = cloudSubjects;
+                        if (cloudSubjects) this.subjects = cloudSubjects;
                     }
                 },
                 async syncToCloud() {
@@ -492,9 +509,9 @@
                     form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
                     form.append('file', new Blob([JSON.stringify(this.subjects)], { type: 'application/json' }));
                     const url = this.driveFileId ? `https://www.googleapis.com/upload/drive/v3/files/${this.driveFileId}?uploadType=multipart` : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
-                    const res = await fetch(url, { method: this.driveFileId ? 'PATCH' : 'POST', headers: { Authorization: `Bearer ${this.googleToken}` }, body: form });
-                    const data = await res.json();
-                    if (data.id) this.driveFileId = data.id;
+                    fetch(url, { method: this.driveFileId ? 'PATCH' : 'POST', headers: { Authorization: `Bearer ${this.googleToken}` }, body: form })
+                    .then(res => res.json())
+                    .then(data => { if (data.id) this.driveFileId = data.id; });
                 },
 
                 // AUDIO LOGIC FIXED
@@ -510,48 +527,46 @@
                             reader.readAsDataURL(blob);
                             reader.onloadend = () => {
                                 this.activeChapter.audioData = reader.result;
-                                this.subjects = [...this.subjects]; 
+                                // Deep trigger sync
+                                this.subjects = JSON.parse(JSON.stringify(this.subjects)); 
                             };
                         };
                         this.mediaRecorder.start();
                         this.isRecording = true;
-                    } catch (e) { alert('Microphone access denied.'); }
+                    } catch (e) { alert('Mic access denied.'); }
                 },
                 stopRecording() { if(this.mediaRecorder) { this.mediaRecorder.stop(); this.isRecording = false; } },
                 playAudio(base64) {
                     const audio = new Audio(base64);
-                    audio.play().catch(e => alert("Could not play audio. Try recording again."));
+                    audio.play();
                 },
                 deleteAudio() {
-                    if(confirm("Delete this audio note?")) {
+                    if(confirm("Delete audio?")) {
                         this.activeChapter.audioData = null;
-                        this.subjects = [...this.subjects];
+                        this.subjects = JSON.parse(JSON.stringify(this.subjects));
                     }
                 },
 
+                // UTILS
                 formatTime(sec) { return `${Math.floor(sec / 60)}:${(sec % 60).toString().padStart(2, '0')}`; },
-                async toggleTimer() {
+                toggleTimer() {
                     if (this.timerActive) { clearInterval(this.timerInterval); this.timerActive = false; } 
                     else {
                         this.timerActive = true;
                         this.timerInterval = setInterval(() => {
                             if (this.timerSeconds > 0) this.timerSeconds--;
-                            else { this.toggleTimer(); alert('Focus session ended.'); }
+                            else { this.toggleTimer(); alert('Focus ended.'); }
                         }, 1000);
                     }
                 },
                 resetTimer() { this.timerSeconds = 1500; this.timerActive = false; clearInterval(this.timerInterval); },
                 deleteAllData() {
-                    if (confirm('Permanently delete all subjects and recordings?')) {
-                        localStorage.clear();
-                        this.subjects = [];
-                        location.reload();
-                    }
+                    if (confirm('Delete all?')) { localStorage.clear(); this.subjects = []; location.reload(); }
                 },
-                exportData() {
-                    const blob = new Blob([JSON.stringify(this.subjects)], { type: 'application/json' });
-                    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-                    a.download = `JKM_Data_Backup.json`; a.click();
+                toggleSound(sound) {
+                    const player = document.getElementById('audioPlayer');
+                    if (this.activeSound === sound.name) { player.pause(); this.activeSound = ''; }
+                    else { player.src = sound.url; player.play(); this.activeSound = sound.name; }
                 }
             }
         }
