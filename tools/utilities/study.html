@@ -40,7 +40,7 @@
     <!-- LOADING OVERLAY -->
     <div x-show="loading" class="fixed inset-0 z-[2000] bg-white dark:bg-darkbg flex flex-col items-center justify-center">
         <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-xs font-black uppercase tracking-widest opacity-50">Syncing with Cloud...</p>
+        <p class="text-xs font-black uppercase tracking-widest opacity-50">Connecting JKM Cloud...</p>
     </div>
 
     <!-- STARTUP SCREEN -->
@@ -49,11 +49,11 @@
             <h1 class="text-7xl font-black text-primary">JKM</h1>
             <p class="text-slate-500 font-bold uppercase tracking-widest">Study Architect</p>
             <div class="flex flex-col gap-4">
-                <button @click="startWithBackup()" class="p-6 bg-primary text-white rounded-3xl font-black shadow-xl hover:scale-105 transition">
+                <button @click="startWithBackup(true)" class="p-6 bg-primary text-white rounded-3xl font-black shadow-xl hover:scale-105 transition">
                     <i class="fab fa-google mr-2"></i> Cloud Sync (Google Drive)
                 </button>
                 <button @click="startWithoutBackup()" class="p-6 bg-slate-100 dark:bg-darkcard rounded-3xl font-bold hover:bg-slate-200 transition">
-                    Continue Local Only
+                    Local Mode (No Backup)
                 </button>
             </div>
         </div>
@@ -90,7 +90,7 @@
                     <p class="text-sm text-slate-500 font-bold" x-text="'Current Streak: ' + streak + ' Days 🔥'"></p>
                 </div>
                 <div x-show="useCloud" class="hidden md:flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-full">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Sync Active
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Cloud Active
                 </div>
             </header>
 
@@ -208,15 +208,13 @@
                             <button @click="playAudio(activeChapter.audioData)" class="bg-indigo-50 dark:bg-indigo-900/20 text-primary px-4 py-2 rounded-full text-xs font-bold">
                                 <i class="fas fa-play mr-1"></i> Listen
                             </button>
-                            <button @click="deleteAudio()" class="text-red-400 hover:text-red-600 text-xs font-black uppercase">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <button @click="deleteAudio()" class="text-red-400 hover:text-red-600 text-xs font-black uppercase"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
 
                     <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 shadow-sm">
                         <h4 class="font-bold mb-4">Chapter Notes</h4>
-                        <textarea x-model="activeChapter.notes" class="w-full h-80 bg-transparent border-none text-sm focus:ring-0 resize-none" placeholder="Enter notes..."></textarea>
+                        <textarea x-model="activeChapter.notes" class="w-full h-80 bg-transparent border-none text-sm focus:ring-0 resize-none" placeholder="Notes..."></textarea>
                     </div>
                 </div>
             </div>
@@ -227,30 +225,30 @@
             <h2 class="text-3xl font-black">Settings</h2>
             
             <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
-                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-cloud text-primary"></i> Cloud Synchronization</h3>
+                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-cloud text-primary"></i> Cloud Sync</h3>
                 <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-between">
                     <div>
-                        <p class="font-bold text-sm">Sync Preference</p>
-                        <p class="text-xs text-slate-500" x-text="useCloud ? 'Connected to Google Drive' : 'Local Storage Only'"></p>
+                        <p class="font-bold text-sm">Preference</p>
+                        <p class="text-xs text-slate-500" x-text="useCloud ? 'Connected to Google Drive' : 'Local Only'"></p>
                     </div>
-                    <button @click="useCloud ? logout() : startWithBackup()" 
+                    <button @click="useCloud ? logout() : startWithBackup(true)" 
                             :class="useCloud ? 'bg-red-100 text-red-500' : 'bg-primary text-white'"
                             class="px-5 py-2 rounded-xl text-xs font-bold transition">
-                        <span x-text="useCloud ? 'Logout & Disable' : 'Enable Sync'"></span>
+                        <span x-text="useCloud ? 'Logout & Switch to Local' : 'Connect Drive'"></span>
                     </button>
                 </div>
             </div>
 
             <!-- Excel Section -->
             <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
-                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-file-excel text-green-500"></i> Excel Data Tools</h3>
+                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-file-excel text-green-500"></i> Excel Tools</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <button @click="downloadTemplate()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left hover:bg-slate-100 transition group">
-                        <i class="fas fa-file-download text-primary mb-2 text-xl group-hover:scale-110 transition"></i>
+                        <i class="fas fa-file-download text-primary mb-2 text-xl"></i>
                         <p class="font-bold text-sm">Download Template</p>
                     </button>
                     <button @click="triggerImport()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left hover:bg-slate-100 transition group">
-                        <i class="fas fa-file-upload text-secondary mb-2 text-xl group-hover:scale-110 transition"></i>
+                        <i class="fas fa-file-upload text-secondary mb-2 text-xl"></i>
                         <p class="font-bold text-sm">Import Excel</p>
                     </button>
                 </div>
@@ -259,10 +257,7 @@
             <!-- Danger Zone -->
             <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
                 <h3 class="font-bold text-lg text-red-500">Danger Zone</h3>
-                <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 rounded-2xl">
-                    <p class="font-bold text-red-600 text-sm mb-1">Delete All Data</p>
-                    <button @click="deleteAllData()" class="px-5 py-2 bg-red-500 text-white rounded-xl text-xs font-bold hover:bg-red-600 transition">Delete Everything</button>
-                </div>
+                <button @click="deleteAllData()" class="w-full py-4 bg-red-500 text-white rounded-2xl text-xs font-bold transition hover:bg-red-600">Delete All Local Data</button>
             </div>
         </div>
 
@@ -316,12 +311,12 @@
                 timerSeconds: 1500,
                 timerActive: false,
                 timerInterval: null,
-                isRecording: false,
-                mediaRecorder: null,
-                audioChunks: [],
                 googleToken: null,
                 driveFolderId: null,
                 driveFileId: null,
+                isRecording: false,
+                mediaRecorder: null,
+                audioChunks: [],
 
                 sounds: [
                     { name: 'Lo-Fi', icon: 'fas fa-headphones', url: './assets/lofi.mp3' },
@@ -334,10 +329,11 @@
                     this.checkStreak();
                     this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
                     
-                    // PERSISTENCE LOGIC
+                    // PERSISTENT LOGIN HANDLING
                     const cloudPref = localStorage.getItem('use_cloud_sync');
                     if (cloudPref === 'true') {
-                        this.startWithBackup();
+                        // Silent attempt first
+                        this.startWithBackup(false);
                     }
 
                     this.$watch('subjects', () => {
@@ -365,12 +361,13 @@
                     localStorage.setItem('streak_count', this.streak);
                 },
 
+                // EXCEL TOOLS
                 downloadTemplate() {
                     const data = [['Subject', 'Chapter', 'Hours', 'Priority', 'Notes']];
                     const ws = XLSX.utils.aoa_to_sheet(data);
                     const wb = XLSX.utils.book_new();
                     XLSX.utils.book_append_sheet(wb, ws, "Template");
-                    XLSX.writeFile(wb, "JKM_Study_Template.xlsx");
+                    XLSX.writeFile(wb, "JKM_Template.xlsx");
                 },
                 triggerImport() { document.getElementById('excelFile').click(); },
                 handleImport(e) {
@@ -390,7 +387,7 @@
                                 notes: r.Notes || '', questions: [], lastRevised: new Date()
                             });
                         });
-                        alert('Data merged.');
+                        alert('Merged.');
                     };
                     reader.readAsBinaryString(e.target.files[0]);
                 },
@@ -452,12 +449,18 @@
                     return alerts.slice(0, 5);
                 },
 
-                // CLOUD & PERSISTENCE
-                async startWithBackup() {
+                // CLOUD & PERSISTENCE FIXED
+                async startWithBackup(interactive = true) {
                     this.loading = true;
+                    // Timeout safety
+                    const safety = setTimeout(() => { 
+                        if (!this.appStarted) { this.loading = false; }
+                    }, 5000);
+
                     const client = google.accounts.oauth2.initTokenClient({
                         client_id: CLIENT_ID, scope: SCOPES,
                         callback: async (res) => {
+                            clearTimeout(safety);
                             if (res.error) { this.loading = false; return; }
                             this.googleToken = res.access_token;
                             await this.initializeCloudSync();
@@ -467,8 +470,14 @@
                             localStorage.setItem('use_cloud_sync', 'true');
                         },
                     });
-                    client.requestAccessToken({ prompt: this.appStarted ? '' : 'none' });
-                    // If silent fails, it'll prompt.
+                    
+                    if (interactive) {
+                        client.requestAccessToken();
+                    } else {
+                        // Silent refresh attempt
+                        client.requestAccessToken({ prompt: 'none' });
+                        // If silent fails, it won't trigger callback, safety timeout handles it
+                    }
                 },
                 startWithoutBackup() {
                     this.appStarted = true;
@@ -514,7 +523,7 @@
                     .then(data => { if (data.id) this.driveFileId = data.id; });
                 },
 
-                // AUDIO LOGIC FIXED
+                // AUDIO FIXED
                 async startRecording() {
                     try {
                         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -526,28 +535,27 @@
                             const reader = new FileReader();
                             reader.readAsDataURL(blob);
                             reader.onloadend = () => {
+                                // Explicit deep update for Alpine/Sync
                                 this.activeChapter.audioData = reader.result;
-                                // Deep trigger sync
-                                this.subjects = JSON.parse(JSON.stringify(this.subjects)); 
+                                this.subjects = JSON.parse(JSON.stringify(this.subjects));
                             };
                         };
                         this.mediaRecorder.start();
                         this.isRecording = true;
-                    } catch (e) { alert('Mic access denied.'); }
+                    } catch (e) { alert('Mic blocked.'); }
                 },
                 stopRecording() { if(this.mediaRecorder) { this.mediaRecorder.stop(); this.isRecording = false; } },
                 playAudio(base64) {
                     const audio = new Audio(base64);
-                    audio.play();
+                    audio.play().catch(e => alert("Play error."));
                 },
                 deleteAudio() {
-                    if(confirm("Delete audio?")) {
+                    if(confirm("Delete?")) {
                         this.activeChapter.audioData = null;
                         this.subjects = JSON.parse(JSON.stringify(this.subjects));
                     }
                 },
 
-                // UTILS
                 formatTime(sec) { return `${Math.floor(sec / 60)}:${(sec % 60).toString().padStart(2, '0')}`; },
                 toggleTimer() {
                     if (this.timerActive) { clearInterval(this.timerInterval); this.timerActive = false; } 
@@ -562,11 +570,6 @@
                 resetTimer() { this.timerSeconds = 1500; this.timerActive = false; clearInterval(this.timerInterval); },
                 deleteAllData() {
                     if (confirm('Delete all?')) { localStorage.clear(); this.subjects = []; location.reload(); }
-                },
-                toggleSound(sound) {
-                    const player = document.getElementById('audioPlayer');
-                    if (this.activeSound === sound.name) { player.pause(); this.activeSound = ''; }
-                    else { player.src = sound.url; player.play(); this.activeSound = sound.name; }
                 }
             }
         }
