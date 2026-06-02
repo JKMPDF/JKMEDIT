@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿--- START OF FILE study.html ---
+
+<!DOCTYPE html>
 <html lang="en" x-data="studyOS()" x-init="init()" :class="darkMode ? 'dark' : ''">
 <head>
     <meta charset="UTF-8">
@@ -359,6 +361,7 @@
                 appStarted: false,
                 loading: false,
                 syncing: false,
+                needsSync: false, // New flag for sync queueing
                 useCloud: false,
                 darkMode: false,
                 subjects: [],
@@ -550,21 +553,48 @@
                         const cloudRes = await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFileId}?alt=media`, { headers });
                         const cloudData = await cloudRes.json();
                         if (cloudData && Array.isArray(cloudData)) this.subjects = cloudData;
-                        bData.files.forEach(f => { if(f.name !== 'backup.json') fetch(`https://www.googleapis.com/drive/v3/files/${f.id}`, { method: 'DELETE', headers }); });
                     }
                 },
 
                 async syncToCloud() {
-                    if (!this.googleToken || !this.driveFolderId || this.syncing) return;
+                    if (!this.googleToken || !this.driveFolderId) return;
+                    
+                    // Queue logic: if already syncing, mark that we need another sync after
+                    if (this.syncing) {
+                        this.needsSync = true;
+                        return;
+                    }
+
                     this.syncing = true;
+                    this.needsSync = false;
+
                     const metadata = { name: 'backup.json', parents: [this.driveFolderId] };
                     const form = new FormData();
                     form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
                     form.append('file', new Blob([JSON.stringify(this.subjects)], { type: 'application/json' }));
-                    const url = this.driveFileId ? `https://www.googleapis.com/upload/drive/v3/files/${this.driveFileId}?uploadType=multipart` : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
-                    fetch(url, { method: this.driveFileId ? 'PATCH' : 'POST', headers: { Authorization: `Bearer ${this.googleToken}` }, body: form })
-                    .then(res => res.json()).then(data => { if (data.id) this.driveFileId = data.id; this.syncing = false; })
-                    .catch(() => this.syncing = false);
+
+                    // Use PATCH if file exists, POST if not
+                    const url = this.driveFileId 
+                        ? `https://www.googleapis.com/upload/drive/v3/files/${this.driveFileId}?uploadType=multipart` 
+                        : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
+                    
+                    try {
+                        const response = await fetch(url, { 
+                            method: this.driveFileId ? 'PATCH' : 'POST', 
+                            headers: { Authorization: `Bearer ${this.googleToken}` }, 
+                            body: form 
+                        });
+                        const data = await response.json();
+                        if (data.id) this.driveFileId = data.id;
+                    } catch (err) {
+                        console.error("Cloud sync failed:", err);
+                    } finally {
+                        this.syncing = false;
+                        // If a change occurred during sync, run it again to catch the latest state
+                        if (this.needsSync) {
+                            this.syncToCloud();
+                        }
+                    }
                 },
 
                 async deleteAllData() {
