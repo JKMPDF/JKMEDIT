@@ -4,20 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGWM57WKH7"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-MGWM57WKH7');
-    </script>
-    <title>JKM Study | The Ultimate Study Architect</title>
+    <!-- External Scripts -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -32,48 +28,63 @@
         [x-cloak] { display: none !important; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
-        .dark .glass { background: rgba(15, 23, 42, 0.8); }
-        @media (max-width: 768px) { .mobile-hide { display: none; } }
+        @media (max-width: 768px) { 
+            .mobile-hide { display: none !important; } 
+            .mobile-panel { position: fixed; inset: 0; z-index: 150; background: white; overflow-y: auto; }
+            .dark .mobile-panel { background: #0f172a; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-darkbg text-slate-900 dark:text-slate-100 min-h-screen pb-20 md:pb-0 md:pl-20">
 
-    
-    <aside class="fixed left-0 top-0 h-screen w-20 bg-slate-900 hidden md:flex flex-col items-center py-8 z-50">
-        <div class="mb-10 text-primary font-black text-2xl">T</div>
+    <!-- STARTUP SCREEN -->
+    <div x-show="!appStarted" class="fixed inset-0 z-[1000] bg-white dark:bg-darkbg flex items-center justify-center p-6 text-center">
+        <div class="max-w-md w-full space-y-8">
+            <h1 class="text-7xl font-black text-primary">JKM</h1>
+            <p class="text-slate-500 font-bold uppercase tracking-widest">Study Architect</p>
+            <div class="flex flex-col gap-4">
+                <button @click="startWithBackup()" class="p-6 bg-primary text-white rounded-3xl font-black shadow-xl hover:scale-105 transition">
+                    <i class="fab fa-google mr-2"></i> Cloud Sync (Google Drive)
+                </button>
+                <button @click="appStarted = true" class="p-6 bg-slate-100 dark:bg-darkcard rounded-3xl font-bold hover:bg-slate-200 transition">
+                    Continue Local Only
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside x-show="appStarted" class="fixed left-0 top-0 h-screen w-20 bg-slate-900 hidden md:flex flex-col items-center py-8 z-50">
+        <div class="mb-10 text-primary font-black text-xl">JKM</div>
         <div class="flex flex-col gap-8 flex-1">
             <button @click="view = 'dash'" :class="view === 'dash' ? 'text-white' : 'text-slate-500'" class="hover:text-white transition"><i class="fas fa-home text-xl"></i></button>
             <button @click="view = 'library'" :class="view === 'library' ? 'text-white' : 'text-slate-500'" class="hover:text-white transition"><i class="fas fa-book text-xl"></i></button>
             <button @click="view = 'focus'" :class="view === 'focus' ? 'text-white' : 'text-slate-500'" class="hover:text-white transition"><i class="fas fa-stopwatch text-xl"></i></button>
-            <button @click="triggerImport()" title="Upload & Merge Excel" class="text-emerald-500 hover:scale-110 transition"><i class="fas fa-file-import text-xl"></i></button>
-            <button @click="downloadTemplate()" title="Download Template" class="text-slate-500 hover:text-white transition"><i class="fas fa-file-download text-xl"></i></button>
-            <button @click="exportData()" title="Backup Data (JSON)" class="text-slate-500 hover:text-white transition"><i class="fas fa-download text-xl"></i></button>
+            <button @click="view = 'settings'" :class="view === 'settings' ? 'text-white' : 'text-slate-500'" class="hover:text-white transition"><i class="fas fa-cog text-xl"></i></button>
         </div>
-        <button @click="darkMode = !darkMode" class="text-slate-400 hover:text-yellow-400 transition mb-4"><i :class="darkMode ? 'fa-sun' : 'fa-moon'" class="fas"></i></button>
+        <button @click="darkMode = !darkMode" class="text-slate-400 mb-4"><i :class="darkMode ? 'fa-sun' : 'fa-moon'" class="fas"></i></button>
     </aside>
 
-    
-    <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-darkcard border-t dark:border-slate-800 flex md:hidden justify-around items-center py-3 z-[100] shadow-2xl">
+    <!-- MOBILE NAV -->
+    <nav x-show="appStarted" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-darkcard border-t dark:border-slate-800 flex md:hidden justify-around items-center py-3 z-[100] shadow-2xl">
         <button @click="view = 'dash'" :class="view === 'dash' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-home text-xl"></i></button>
         <button @click="view = 'library'" :class="view === 'library' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-book text-xl"></i></button>
         <button @click="showAddSubject = true" class="bg-primary text-white w-12 h-12 rounded-full -mt-10 shadow-lg flex items-center justify-center border-4 border-slate-50 dark:border-darkbg"><i class="fas fa-plus"></i></button>
-        <button @click="view = 'focus'" :class="view === 'focus' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-stopwatch text-xl"></i></button>
+        <button @click="view = 'settings'" :class="view === 'settings' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-cog text-xl"></i></button>
         <button @click="darkMode = !darkMode"><i :class="darkMode ? 'fa-sun' : 'fa-moon'" class="fas text-xl"></i></button>
     </nav>
 
-    <main class="p-4 md:p-8 max-w-7xl mx-auto">
+    <main x-show="appStarted" class="p-4 md:p-8 max-w-7xl mx-auto">
         
-        
+        <!-- DASHBOARD -->
         <div x-show="view === 'dash'" x-transition x-cloak class="space-y-6">
             <header class="flex justify-between items-center mb-8">
                 <div>
                     <h1 class="text-3xl font-black">Dashboard</h1>
                     <p class="text-sm text-slate-500 font-bold" x-text="'Current Streak: ' + streak + ' Days 🔥'"></p>
                 </div>
-                <div class="hidden md:block text-right">
-                    <p class="text-[10px] font-black text-slate-400 uppercase">Exam Countdown</p>
-                    <input type="date" x-model="examDate" class="bg-transparent border-none p-0 text-red-500 font-bold focus:ring-0">
+                <div x-show="useCloud" class="hidden md:flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-full">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Sync Active
                 </div>
             </header>
 
@@ -81,17 +92,14 @@
                 <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 shadow-sm">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Track Position</p>
                     <h2 class="text-3xl font-black text-primary" x-text="getGlobalProgress() + '%'"></h2>
-                    <p class="text-[10px] text-slate-500 mt-2">Overall Completion</p>
                 </div>
                 <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 shadow-sm">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Revision Mastery</p>
                     <h2 class="text-3xl font-black text-secondary" x-text="getGlobalRevisionProgress() + '%'"></h2>
-                    <p class="text-[10px] text-slate-500 mt-2">Avg. Recall Strength</p>
                 </div>
                 <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 shadow-sm">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Hours Invested</p>
                     <h2 class="text-3xl font-black" x-text="getCompletedHours()"></h2>
-                    <p class="text-[10px] text-slate-500 mt-2" x-text="'Target: ' + getTotalHours() + 'h'"></p>
                 </div>
                 <div class="bg-indigo-600 p-6 rounded-[2rem] text-white shadow-xl">
                     <p class="text-[10px] font-black opacity-70 uppercase tracking-widest mb-1">Daily Goal</p>
@@ -99,23 +107,10 @@
                         <h2 class="text-3xl font-black" x-text="Math.round((getCompletedHoursToday() / dailyGoal) * 100) + '%'"></h2>
                         <input type="number" x-model="dailyGoal" class="w-12 bg-white/20 border-none rounded text-xs p-1 text-center font-bold">
                     </div>
-                    <div class="w-full bg-white/20 h-1.5 rounded-full mt-3 overflow-hidden">
-                        <div class="bg-white h-full" :style="`width: ${Math.min((getCompletedHoursToday()/dailyGoal)*100, 100)}%` text-indigo-600"></div>
-                    </div>
                 </div>
             </div>
 
-            
-            <div class="bg-white dark:bg-darkcard p-4 rounded-[2rem] border dark:border-slate-800 flex items-center gap-4 overflow-x-auto no-scrollbar">
-                <span class="text-[10px] font-black text-slate-400 uppercase ml-2">Focus Sound:</span>
-                <template x-for="sound in sounds">
-                    <button @click="toggleSound(sound)" :class="activeSound === sound.name ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'" class="px-4 py-2 rounded-full text-xs font-bold transition whitespace-nowrap">
-                        <i :class="sound.icon" class="mr-2"></i> <span x-text="sound.name"></span>
-                    </button>
-                </template>
-                <audio id="audioPlayer" loop></audio>
-            </div>
-
+            <!-- ANALYTICS & ALERTS -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10">
                 <div class="space-y-4">
                     <h3 class="text-xl font-black">Subject Analytics</h3>
@@ -142,7 +137,7 @@
                                     <p class="text-xs font-black" x-text="alert.chapter"></p>
                                     <p class="text-[9px] font-bold text-slate-500" x-text="alert.subject"></p>
                                 </div>
-                                <span class="text-[9px] font-black text-amber-700 uppercase">Review Required</span>
+                                <span class="text-[9px] font-black text-amber-700 uppercase">Review Due</span>
                             </div>
                         </template>
                     </div>
@@ -150,7 +145,7 @@
             </div>
         </div>
 
-        
+        <!-- LIBRARY -->
         <div x-show="view === 'library'" x-transition x-cloak class="space-y-8">
             <div class="flex justify-between items-center">
                 <h2 class="text-3xl font-black">Library</h2>
@@ -163,17 +158,14 @@
                         <button @click.stop="deleteSubject(sIdx)" class="absolute top-6 right-6 text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash-alt text-sm"></i></button>
                         <h3 class="text-xl font-black mb-1" x-text="sub.name"></h3>
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6" x-text="sub.chapters.length + ' Chapters'"></p>
-                        <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-primary h-full transition-all" :style="`width: ${getSubjectProgress(sub)}%` text-indigo-600"></div>
-                        </div>
                     </div>
                 </template>
             </div>
         </div>
 
-        
+        <!-- SUBJECT DETAIL -->
         <div x-show="view === 'subjectDetail'" x-transition x-cloak class="h-[calc(100vh-160px)] -mx-4 md:-mx-8 border-y dark:border-slate-800 bg-white dark:bg-darkcard flex overflow-hidden">
-            <div class="w-full md:w-80 border-r dark:border-slate-800 flex flex-col" :class="activeChapter ? 'mobile-hide' : ''">
+            <div class="w-full md:w-80 border-r dark:border-slate-800 flex flex-col" :class="activeChapter ? 'mobile-hide' : 'flex'">
                 <div class="p-4 flex justify-between items-center border-b dark:border-slate-800">
                     <button @click="view = 'library'" class="text-slate-400"><i class="fas fa-chevron-left"></i></button>
                     <span class="text-[10px] font-black uppercase" x-text="activeSubject?.name"></span>
@@ -181,100 +173,121 @@
                 </div>
                 <div class="flex-1 overflow-y-auto no-scrollbar">
                     <template x-for="chapter in activeSubject?.chapters" :key="chapter.id">
-                        <div @click="activeChapter = chapter" :class="activeChapter?.id === chapter.id ? 'bg-indigo-50 dark:bg-indigo-900/20 border-r-4 border-primary' : ''" class="p-4 border-b dark:border-slate-800 cursor-pointer hover:bg-slate-50 transition">
-                            <h4 class="font-bold text-sm truncate mb-2" x-text="chapter.title"></h4>
-                            <div class="flex gap-1">
-                                <template x-for="r in 5">
-                                    <div :class="chapter.revisions >= r ? 'bg-secondary' : 'bg-slate-200 dark:bg-slate-700'" class="h-1 flex-1 rounded-full"></div>
-                                </template>
-                            </div>
+                        <div @click="activeChapter = chapter" :class="activeChapter?.id === chapter.id ? 'bg-indigo-50 dark:bg-indigo-900/20 border-r-4 border-primary' : ''" class="p-4 border-b dark:border-slate-800 cursor-pointer transition">
+                            <h4 class="font-bold text-sm truncate" x-text="chapter.title"></h4>
                         </div>
                     </template>
                 </div>
             </div>
 
-            <div x-show="activeChapter" class="flex-1 overflow-y-auto p-4 md:p-10 bg-slate-50/50 dark:bg-darkbg/30 relative">
-                <button @click="activeChapter = null" class="md:hidden text-primary font-bold text-sm mb-6"><i class="fas fa-arrow-left"></i> Chapters</button>
+            <div x-show="activeChapter" class="flex-1 overflow-y-auto p-4 md:p-10 bg-slate-50/50 dark:bg-darkbg/30 relative" :class="activeChapter ? 'mobile-panel' : ''">
+                <button @click="activeChapter = null" class="md:hidden text-primary font-bold text-sm mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back</button>
                 <div class="max-w-4xl mx-auto space-y-6">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <input type="text" x-model="activeChapter.title" class="bg-transparent border-none text-3xl font-black focus:ring-0 p-0 w-full">
-                        <div class="flex gap-3">
-                            <button @click="activeChapter.done = !activeChapter.done" :class="activeChapter.done ? 'bg-secondary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'" class="px-6 py-2 rounded-xl text-xs font-black transition">DONE</button>
-                            <button @click="removeChapter()" class="text-slate-300 hover:text-red-500"><i class="fas fa-trash-alt"></i></button>
-                        </div>
+                        <button @click="removeChapter()" class="text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash-alt"></i></button>
                     </div>
-                    
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
-                        <div class="flex justify-between items-center mb-4">
-                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Mastery Level</p>
-                            <select x-model="activeChapter.priority" class="bg-transparent border-none text-[10px] font-black uppercase text-slate-400 p-0">
-                                <option value="low">Low Priority</option>
-                                <option value="medium">Medium Priority</option>
-                                <option value="high">High Priority</option>
-                            </select>
+
+                    <!-- VOICE RECORDER -->
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <button @click="isRecording ? stopRecording() : startRecording()" 
+                                    :class="isRecording ? 'bg-red-500 animate-pulse' : 'bg-primary'" 
+                                    class="w-12 h-12 rounded-full text-white shadow-lg transition">
+                                <i class="fas" :class="isRecording ? 'fa-stop' : 'fa-microphone'"></i>
+                            </button>
+                            <span class="text-xs font-black uppercase tracking-widest text-slate-400" x-text="isRecording ? 'Recording...' : 'Audio Note'"></span>
                         </div>
-                        <div class="flex gap-2">
-                            <template x-for="r in 5">
-                                <button @click="toggleRevision(activeChapter, r)" :class="activeChapter.revisions >= r ? 'bg-secondary' : 'bg-slate-100 dark:bg-slate-800'" class="h-4 flex-1 rounded-full transition-all"></button>
-                            </template>
+                        <div class="flex items-center gap-3" x-show="activeChapter.audioData">
+                            <button @click="playAudio(activeChapter.audioData)" class="bg-indigo-50 dark:bg-indigo-900/20 text-primary px-4 py-2 rounded-full text-xs font-bold">
+                                <i class="fas fa-play mr-1"></i> Listen
+                            </button>
+                            <button @click="deleteAudio()" class="text-red-400 hover:text-red-600 text-xs font-black uppercase tracking-tighter">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
-                            <h4 class="font-bold mb-4 flex justify-between">Notes <span class="text-xs text-primary" x-text="activeChapter.hours + 'h'"></span></h4>
-                            <textarea x-model="activeChapter.notes" class="w-full h-80 bg-transparent border-none text-sm leading-relaxed focus:ring-0 resize-none" placeholder="Notes..."></textarea>
-                        </div>
-                        <div class="space-y-6">
-                            <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
-                                <h4 class="font-bold mb-4">Active Recall</h4>
-                                <div class="space-y-2 max-h-64 overflow-y-auto no-scrollbar">
-                                    <template x-for="(q, qIdx) in activeChapter.questions" :key="qIdx">
-                                        <div class="flex gap-2 items-center">
-                                            <input type="checkbox" x-model="q.done" class="rounded-full text-secondary">
-                                            <input type="text" x-model="q.text" placeholder="Question..." class="flex-1 bg-transparent border-none text-xs p-0 focus:ring-0">
-                                            <button @click="activeChapter.questions.splice(qIdx, 1)" class="text-red-300"><i class="fas fa-times text-[10px]"></i></button>
-                                        </div>
-                                    </template>
-                                    <button @click="activeChapter.questions.push({text:'', done:false})" class="text-primary text-[10px] font-black">+ ADD Q</button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 shadow-sm">
+                        <h4 class="font-bold mb-4">Chapter Notes</h4>
+                        <textarea x-model="activeChapter.notes" class="w-full h-80 bg-transparent border-none text-sm focus:ring-0 resize-none" placeholder="Enter notes..."></textarea>
                     </div>
                 </div>
             </div>
         </div>
 
-        
+        <!-- SETTINGS -->
+        <div x-show="view === 'settings'" x-transition x-cloak class="max-w-2xl mx-auto space-y-8 pb-10">
+            <h2 class="text-3xl font-black">Settings</h2>
+            
+            <!-- Cloud Sync Section -->
+            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
+                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-cloud text-primary"></i> Google Drive Sync</h3>
+                <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <p class="font-bold text-sm">Status</p>
+                        <p class="text-xs text-slate-500" x-text="useCloud ? 'Connected to Drive' : 'Disconnected'"></p>
+                    </div>
+                    <button @click="startWithBackup()" :disabled="useCloud" 
+                            :class="useCloud ? 'bg-slate-200 text-slate-400' : 'bg-primary text-white'"
+                            class="px-5 py-2 rounded-xl text-xs font-bold transition">
+                        <span x-text="useCloud ? 'Sync Active' : 'Enable Sync'"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Excel Section -->
+            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
+                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-file-excel text-green-500"></i> Excel Data Tools</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button @click="downloadTemplate()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left hover:bg-slate-100 transition group">
+                        <i class="fas fa-file-download text-primary mb-2 text-xl group-hover:scale-110 transition"></i>
+                        <p class="font-bold text-sm">Download Template</p>
+                        <p class="text-[10px] text-slate-500">Get the standard Excel format</p>
+                    </button>
+                    <button @click="triggerImport()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left hover:bg-slate-100 transition group">
+                        <i class="fas fa-file-upload text-secondary mb-2 text-xl group-hover:scale-110 transition"></i>
+                        <p class="font-bold text-sm">Import Excel</p>
+                        <p class="text-[10px] text-slate-500">Upload and merge your data</p>
+                    </button>
+                </div>
+                <button @click="exportData()" class="w-full py-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-black uppercase text-slate-400 hover:text-primary hover:border-primary transition">
+                    <i class="fas fa-download mr-2"></i> Export Data (JSON Backup)
+                </button>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
+                <h3 class="font-bold text-lg text-red-500">Danger Zone</h3>
+                <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 rounded-2xl">
+                    <p class="font-bold text-red-600 text-sm mb-1">Erase All Data</p>
+                    <p class="text-[10px] text-slate-500 mb-4">This will clear everything on this device and reset JKM Study.</p>
+                    <button @click="deleteAllData()" class="px-5 py-2 bg-red-500 text-white rounded-xl text-xs font-bold hover:bg-red-600 transition">Delete Everything</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOCUS -->
         <div x-show="view === 'focus'" x-transition x-cloak class="max-w-xl mx-auto py-20 text-center">
             <div class="bg-white dark:bg-darkcard p-12 rounded-[4rem] border dark:border-slate-800 shadow-2xl">
-                <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-10">Focus Session</p>
                 <div class="text-8xl font-black text-primary mb-12 tabular-nums" x-text="formatTime(timerSeconds)"></div>
                 <div class="flex justify-center gap-6">
-                    <button @click="toggleTimer()" :class="timerActive ? 'bg-red-500 shadow-red-200' : 'bg-primary shadow-indigo-200'" class="w-20 h-20 rounded-full text-white text-2xl shadow-xl transition-all">
+                    <button @click="toggleTimer()" :class="timerActive ? 'bg-red-500' : 'bg-primary'" class="w-20 h-20 rounded-full text-white text-2xl shadow-xl transition-all">
                         <i class="fas" :class="timerActive ? 'fa-pause' : 'fa-play'"></i>
                     </button>
                     <button @click="resetTimer()" class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 text-2xl"><i class="fas fa-redo"></i></button>
                 </div>
-                <div class="mt-12 flex justify-center gap-4">
-                    <button @click="setTimer(25)" class="px-6 py-2 rounded-full border dark:border-slate-800 text-xs font-bold">25m</button>
-                    <button @click="setTimer(50)" class="px-6 py-2 rounded-full border dark:border-slate-800 text-xs font-bold">50m</button>
-                    <button @click="setTimer(5)" class="px-6 py-2 rounded-full border dark:border-slate-800 text-xs font-bold">Break</button>
-                </div>
-                <p x-show="timerActive" class="mt-8 text-[10px] text-emerald-500 font-bold uppercase animate-pulse">Stay Focused • Screen Locked Awake</p>
             </div>
         </div>
-
     </main>
 
-    
+    <!-- NEW SUBJECT MODAL -->
     <div x-cloak x-show="showAddSubject" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
         <div @click="showAddSubject = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
         <div class="relative bg-white dark:bg-darkcard p-8 rounded-[3rem] w-full max-w-md shadow-2xl">
             <h2 class="text-2xl font-black mb-8">New Subject</h2>
             <div class="space-y-4">
-                <input type="text" x-model="newSub.name" placeholder="Subject Name" class="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border-none focus:ring-2 focus:ring-primary outline-none font-bold">
-                <input type="number" x-model="newSub.budget" placeholder="Budgeted Hours" class="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border-none focus:ring-2 focus:ring-primary outline-none font-bold">
+                <input type="text" x-model="newSub.name" placeholder="Subject Name" class="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none font-bold">
                 <button @click="createSubject()" class="w-full py-5 bg-primary text-white rounded-3xl font-black shadow-xl">Initialize</button>
             </div>
         </div>
@@ -283,9 +296,14 @@
     <input type="file" id="excelFile" class="hidden" @change="handleImport">
 
     <script>
+        const CLIENT_ID = '994815938069-amhjk8t195flo04e73unb6d1bgrtpbep.apps.googleusercontent.com';
+        const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+
         function studyOS() {
             return {
                 view: 'dash',
+                appStarted: false,
+                useCloud: false,
                 darkMode: false,
                 subjects: [],
                 activeSubject: null,
@@ -299,10 +317,16 @@
                 timerSeconds: 1500,
                 timerActive: false,
                 timerInterval: null,
-                wakeLock: null,
+                isRecording: false,
+                mediaRecorder: null,
+                audioChunks: [],
+                googleToken: null,
+                driveFolderId: null,
+                driveFileId: null,
+
                 sounds: [
-                    { name: 'Lo-Fi', icon: 'fas fa-headphones', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
-                    { name: 'Rain', icon: 'fas fa-cloud-showers-heavy', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3' }
+                    { name: 'Lo-Fi', icon: 'fas fa-headphones', url: './assets/lofi.mp3' },
+                    { name: 'Rain', icon: 'fas fa-cloud-showers-heavy', url: './assets/rain.mp3' }
                 ],
 
                 init() {
@@ -313,7 +337,14 @@
                     this.$watch('subjects', () => {
                         localStorage.setItem('titan_os_ultimate_final', JSON.stringify(this.subjects));
                         localStorage.setItem('last_active', new Date().toDateString());
+                        if (this.useCloud) this.syncToCloud();
                     });
+
+                    window.onpopstate = (e) => {
+                        if (this.activeChapter) { this.activeChapter = null; }
+                        else if (this.view !== 'dash') { this.view = 'dash'; }
+                    };
+                    history.pushState({view: 'dash'}, "");
                 },
 
                 checkStreak() {
@@ -328,15 +359,13 @@
                     localStorage.setItem('streak_count', this.streak);
                 },
 
-                // EXCEL TEMPLATE & MERGE
                 downloadTemplate() {
-                    const data = [['Subject', 'Budget', 'Chapter', 'Hours', 'Priority', 'Notes']];
+                    const data = [['Subject', 'Chapter', 'Hours', 'Priority', 'Notes']];
                     const ws = XLSX.utils.aoa_to_sheet(data);
                     const wb = XLSX.utils.book_new();
                     XLSX.utils.book_append_sheet(wb, ws, "Template");
-                    XLSX.writeFile(wb, "Titan_OS_Template.xlsx");
+                    XLSX.writeFile(wb, "JKM_Study_Template.xlsx");
                 },
-
                 triggerImport() { document.getElementById('excelFile').click(); },
                 handleImport(e) {
                     const reader = new FileReader();
@@ -346,53 +375,30 @@
                         rows.forEach(r => {
                             let sub = this.subjects.find(s => s.name === r.Subject);
                             if (!sub) {
-                                sub = { id: Date.now() + Math.random(), name: r.Subject, totalBudget: r.Budget || 0, chapters: [] };
+                                sub = { id: Date.now() + Math.random(), name: r.Subject || 'Imported', chapters: [] };
                                 this.subjects.push(sub);
                             }
                             sub.chapters.push({
-                                id: Math.random(), title: r.Chapter, hours: r.Hours || 1, priority: r.Priority || 'medium', 
-                                done: false, revisions: 0, notes: r.Notes || '', questions: [], lastRevised: new Date()
+                                id: Math.random(), title: r.Chapter || 'New Chapter', hours: r.Hours || 1, 
+                                priority: r.Priority || 'medium', done: false, revisions: 0, 
+                                notes: r.Notes || '', questions: [], lastRevised: new Date()
                             });
                         });
-                        alert('Data merged successfully.');
+                        alert('Excel data merged successfully.');
                     };
                     reader.readAsBinaryString(e.target.files[0]);
                 },
 
-                // POMODORO WITH WAKE LOCK
-                async toggleTimer() {
-                    if (this.timerActive) {
-                        clearInterval(this.timerInterval);
-                        this.timerActive = false;
-                        if (this.wakeLock) { this.wakeLock.release(); this.wakeLock = null; }
-                    } else {
-                        this.timerActive = true;
-                        if ('wakeLock' in navigator) {
-                            try { this.wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
-                        }
-                        this.timerInterval = setInterval(() => {
-                            if (this.timerSeconds > 0) this.timerSeconds--;
-                            else { this.toggleTimer(); alert('Focus session complete!'); }
-                        }, 1000);
-                    }
-                },
-
-                resetTimer() { this.timerSeconds = 1500; if(this.timerActive) this.toggleTimer(); },
-                setTimer(m) { this.timerSeconds = m * 60; if(this.timerActive) this.toggleTimer(); },
-                formatTime(sec) {
-                    const m = Math.floor(sec / 60);
-                    const s = sec % 60;
-                    return `${m}:${s < 10 ? '0' : ''}${s}`;
-                },
-
-                // CORE LOGIC
                 createSubject() {
                     if (!this.newSub.name) return;
-                    this.subjects.push({ id: Date.now(), name: this.newSub.name, totalBudget: parseFloat(this.newSub.budget || 0), chapters: [] });
+                    this.subjects.push({ id: Date.now(), name: this.newSub.name, chapters: [] });
                     this.newSub = { name: '', budget: '' }; this.showAddSubject = false;
                 },
                 deleteSubject(idx) { if(confirm('Delete subject?')) this.subjects.splice(idx, 1); },
-                openSubject(sub) { this.activeSubject = sub; this.view = 'subjectDetail'; this.activeChapter = sub.chapters[0] || null; },
+                openSubject(sub) { 
+                    this.activeSubject = sub; this.view = 'subjectDetail'; 
+                    this.activeChapter = null; history.pushState({view:'subjectDetail'}, ""); 
+                },
                 addChapter() {
                     const ch = { id: Date.now(), title: 'New Chapter', hours: 1, priority: 'medium', done: false, revisions: 0, notes: '', questions: [], lastRevised: new Date() };
                     this.activeSubject.chapters.push(ch); this.activeChapter = ch;
@@ -401,7 +407,7 @@
                     if(confirm('Delete chapter?')) {
                         const idx = this.activeSubject.chapters.indexOf(this.activeChapter);
                         this.activeSubject.chapters.splice(idx, 1);
-                        this.activeChapter = this.activeSubject.chapters[0] || null;
+                        this.activeChapter = null;
                     }
                 },
                 toggleRevision(ch, level) {
@@ -414,11 +420,6 @@
                     else { player.src = sound.url; player.play(); this.activeSound = sound.name; }
                 },
 
-                // ANALYTICS
-                getSubjectProgress(sub) {
-                    if (!sub.chapters.length) return 0;
-                    return Math.round((sub.chapters.filter(c => c.done).length / sub.chapters.length) * 100);
-                },
                 getGlobalProgress() {
                     const total = this.subjects.reduce((a, b) => a + b.chapters.length, 0);
                     if (!total) return 0;
@@ -435,12 +436,11 @@
                     this.subjects.forEach(s => s.chapters.forEach(c => { if(c.done) h += parseFloat(c.hours || 0); }));
                     return h.toFixed(1);
                 },
-                getTotalHours() {
-                    let h = 0;
-                    this.subjects.forEach(s => s.chapters.forEach(c => h += parseFloat(c.hours || 0)));
-                    return h.toFixed(1);
-                },
                 getCompletedHoursToday() { return (this.getCompletedHours() % this.dailyGoal).toFixed(1); },
+                getSubjectProgress(sub) {
+                    if (!sub.chapters.length) return 0;
+                    return Math.round((sub.chapters.filter(c => c.done).length / sub.chapters.length) * 100);
+                },
                 getRevisionAlerts() {
                     const alerts = [];
                     this.subjects.forEach(s => s.chapters.forEach(c => {
@@ -449,10 +449,109 @@
                     }));
                     return alerts.slice(0, 5);
                 },
+
+                async startWithBackup() {
+                    const client = google.accounts.oauth2.initTokenClient({
+                        client_id: CLIENT_ID, scope: SCOPES,
+                        callback: async (res) => {
+                            this.googleToken = res.access_token;
+                            await this.initializeCloudSync();
+                            this.useCloud = true;
+                            this.appStarted = true;
+                        },
+                    });
+                    client.requestAccessToken();
+                },
+                async initializeCloudSync() {
+                    await new Promise(r => gapi.load('client', r));
+                    const headers = { Authorization: `Bearer ${this.googleToken}` };
+                    const fQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='JKM Study' and mimeType='application/vnd.google-apps.folder'`, { headers });
+                    const fData = await fQuery.json();
+                    if (fData.files.length > 0) this.driveFolderId = fData.files[0].id;
+                    else {
+                        const createFolder = await fetch('https://www.googleapis.com/drive/v3/files', {
+                            method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ name: 'JKM Study', mimeType: 'application/vnd.google-apps.folder' })
+                        });
+                        const folder = await createFolder.json();
+                        this.driveFolderId = folder.id;
+                    }
+                    const bQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='backup.json' and '${this.driveFolderId}' in parents`, { headers });
+                    const bData = await bQuery.json();
+                    if (bData.files.length > 0) {
+                        this.driveFileId = bData.files[0].id;
+                        const cloudFile = await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFileId}?alt=media`, { headers });
+                        const cloudSubjects = await cloudFile.json();
+                        if (cloudSubjects && confirm('Cloud backup found. Overwrite local subjects?')) this.subjects = cloudSubjects;
+                    }
+                },
+                async syncToCloud() {
+                    if (!this.googleToken || !this.driveFolderId) return;
+                    const metadata = { name: 'backup.json', parents: [this.driveFolderId] };
+                    const form = new FormData();
+                    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+                    form.append('file', new Blob([JSON.stringify(this.subjects)], { type: 'application/json' }));
+                    const url = this.driveFileId ? `https://www.googleapis.com/upload/drive/v3/files/${this.driveFileId}?uploadType=multipart` : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
+                    const res = await fetch(url, { method: this.driveFileId ? 'PATCH' : 'POST', headers: { Authorization: `Bearer ${this.googleToken}` }, body: form });
+                    const data = await res.json();
+                    if (data.id) this.driveFileId = data.id;
+                },
+
+                // AUDIO LOGIC FIXED
+                async startRecording() {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        this.mediaRecorder = new MediaRecorder(stream);
+                        this.audioChunks = [];
+                        this.mediaRecorder.ondataavailable = e => this.audioChunks.push(e.data);
+                        this.mediaRecorder.onstop = () => {
+                            const blob = new Blob(this.audioChunks, { type: 'audio/webm' });
+                            const reader = new FileReader();
+                            reader.readAsDataURL(blob);
+                            reader.onloadend = () => {
+                                this.activeChapter.audioData = reader.result;
+                                this.subjects = [...this.subjects]; 
+                            };
+                        };
+                        this.mediaRecorder.start();
+                        this.isRecording = true;
+                    } catch (e) { alert('Microphone access denied.'); }
+                },
+                stopRecording() { if(this.mediaRecorder) { this.mediaRecorder.stop(); this.isRecording = false; } },
+                playAudio(base64) {
+                    const audio = new Audio(base64);
+                    audio.play().catch(e => alert("Could not play audio. Try recording again."));
+                },
+                deleteAudio() {
+                    if(confirm("Delete this audio note?")) {
+                        this.activeChapter.audioData = null;
+                        this.subjects = [...this.subjects];
+                    }
+                },
+
+                formatTime(sec) { return `${Math.floor(sec / 60)}:${(sec % 60).toString().padStart(2, '0')}`; },
+                async toggleTimer() {
+                    if (this.timerActive) { clearInterval(this.timerInterval); this.timerActive = false; } 
+                    else {
+                        this.timerActive = true;
+                        this.timerInterval = setInterval(() => {
+                            if (this.timerSeconds > 0) this.timerSeconds--;
+                            else { this.toggleTimer(); alert('Focus session ended.'); }
+                        }, 1000);
+                    }
+                },
+                resetTimer() { this.timerSeconds = 1500; this.timerActive = false; clearInterval(this.timerInterval); },
+                deleteAllData() {
+                    if (confirm('Permanently delete all subjects and recordings?')) {
+                        localStorage.clear();
+                        this.subjects = [];
+                        location.reload();
+                    }
+                },
                 exportData() {
                     const blob = new Blob([JSON.stringify(this.subjects)], { type: 'application/json' });
                     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-                    a.download = `Titan_Backup_${new Date().toDateString()}.json`; a.click();
+                    a.download = `JKM_Data_Backup.json`; a.click();
                 }
             }
         }
