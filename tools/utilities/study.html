@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- Google Identity Services & API -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://apis.google.com/js/api.js" async defer></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -43,23 +41,23 @@
 </head>
 <body class="bg-slate-50 dark:bg-darkbg text-slate-900 dark:text-slate-100 min-h-screen pb-20 md:pb-0 md:pl-20">
 
-    <!-- SYNCING OVERLAY (Initial) -->
+    <!-- SYNCING OVERLAY -->
     <div x-show="loading" class="fixed inset-0 z-[2000] bg-white dark:bg-darkbg flex flex-col items-center justify-center">
         <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-xs font-black uppercase tracking-widest opacity-50">Connecting JKM Study Cloud...</p>
+        <p class="text-xs font-black uppercase tracking-widest opacity-50">JKM Cloud Syncing Data...</p>
     </div>
 
     <!-- STARTUP SCREEN -->
     <div x-show="!appStarted && !loading" class="fixed inset-0 z-[1000] bg-white dark:bg-darkbg flex items-center justify-center p-6 text-center">
         <div class="max-w-md w-full space-y-8">
             <h1 class="text-8xl font-black text-primary tracking-tighter">JKM</h1>
-            <p class="text-slate-500 font-bold uppercase tracking-widest">Architect Your Future</p>
+            <p class="text-slate-500 font-bold uppercase tracking-widest text-sm">The Study Architect</p>
             <div class="flex flex-col gap-4">
                 <button @click="startWithBackup(true)" class="p-6 bg-primary text-white rounded-3xl font-black shadow-xl hover:scale-105 transition">
-                    <i class="fab fa-google mr-2"></i> Cloud Sync Mode
+                    <i class="fab fa-google mr-2"></i> Cloud Sync (Google Drive)
                 </button>
-                <button @click="startWithoutBackup()" class="p-6 bg-slate-100 dark:bg-darkcard rounded-3xl font-bold transition">
-                    Offline Local Mode
+                <button @click="startWithoutBackup()" class="p-6 bg-slate-100 dark:bg-darkcard rounded-3xl font-bold hover:bg-slate-200 transition text-slate-600">
+                    Local Mode Only
                 </button>
             </div>
         </div>
@@ -91,39 +89,38 @@
         <!-- DASHBOARD -->
         <div x-show="view === 'dash'" x-transition x-cloak class="space-y-6">
             
-            <!-- SYNC PROGRESS BAR -->
             <div x-show="syncing" class="fixed top-0 left-0 right-0 h-1 bg-primary/20 z-[2000]">
                 <div class="h-full bg-primary animate-[shimmer_2s_infinite]" style="width: 100%"></div>
             </div>
 
             <header class="flex justify-between items-center">
-                <h1 class="text-3xl font-black">Dash</h1>
-                <div x-show="useCloud" class="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase">
-                    <i class="fas fa-cloud-upload-alt" :class="syncing ? 'animate-bounce' : ''"></i> 
-                    <span x-text="syncing ? 'Syncing...' : 'Cloud Verified'"></span>
+                <h1 class="text-3xl font-black">Dashboard</h1>
+                <div x-show="useCloud" class="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-full">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full" :class="syncing ? 'animate-ping' : ''"></span> 
+                    <span x-text="syncing ? 'Syncing...' : 'Live Cloud'"></span>
                 </div>
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
-                    <p class="text-[10px] font-black text-slate-400 uppercase mb-1">Completion</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Completion</p>
                     <h2 class="text-3xl font-black text-primary" x-text="getGlobalProgress() + '%'"></h2>
                 </div>
                 <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
-                    <p class="text-[10px] font-black text-slate-400 uppercase mb-1">Mastery</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Mastery Level</p>
                     <h2 class="text-3xl font-black text-secondary" x-text="getGlobalRevisionProgress() + '%'"></h2>
                 </div>
                 <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
-                    <p class="text-[10px] font-black text-slate-400 uppercase mb-1">Streak</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Study Streak</p>
                     <h2 class="text-3xl font-black" x-text="streak + ' Days 🔥'"></h2>
                 </div>
                 <div class="bg-primary p-6 rounded-[2rem] text-white shadow-xl">
-                    <p class="text-[10px] font-black opacity-70 uppercase mb-1">Hours Invested</p>
+                    <p class="text-[10px] font-black opacity-70 uppercase tracking-widest mb-1">Hours Invested</p>
                     <h2 class="text-3xl font-black" x-text="getCompletedHours() + ' / ' + getTotalHours() + 'h'"></h2>
                 </div>
             </div>
 
-            <!-- RESTORED ANALYTICS & ALERTS -->
+            <!-- ANALYTICS & ALERTS -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10">
                 <div class="space-y-4">
                     <h3 class="text-xl font-black">Subject Analytics</h3>
@@ -170,7 +167,7 @@
                         <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
                         <button @click.stop="deleteSubject(sIdx)" class="absolute top-6 right-6 text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash-alt text-sm"></i></button>
                         <h3 class="text-xl font-black mb-1" x-text="sub.name"></h3>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" x-text="sub.chapters.length + ' Chapters'"></p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" x-text="sub.chapters?.length + ' Chapters'"></p>
                     </div>
                 </template>
             </div>
@@ -178,7 +175,6 @@
 
         <!-- SUBJECT DETAIL -->
         <div x-show="view === 'subjectDetail'" x-transition x-cloak class="h-[calc(100vh-160px)] -mx-4 md:-mx-8 border-y dark:border-slate-800 bg-white dark:bg-darkcard flex overflow-hidden">
-            <!-- Sidebar -->
             <div class="w-full md:w-80 border-r dark:border-slate-800 flex flex-col" :class="activeChapter ? 'mobile-hide' : 'flex'">
                 <div class="p-4 flex justify-between items-center border-b dark:border-slate-800">
                     <button @click="view = 'library'; forceSync();" class="text-slate-400 p-2"><i class="fas fa-chevron-left"></i></button>
@@ -199,10 +195,9 @@
                 </div>
             </div>
 
-            <!-- Notes & Audio Panel -->
             <div x-show="activeChapter" class="flex-1 overflow-y-auto p-4 md:p-10 bg-slate-50/50 dark:bg-darkbg/30 relative" :class="activeChapter ? 'mobile-panel' : ''">
-                <button @click="activeChapter = null; stopAudio(); forceSync();" class="md:hidden text-primary font-bold text-sm mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back</button>
-                <div class="max-w-4xl mx-auto space-y-6">
+                <button @click="activeChapter = null; stopAudio(); forceSync();" class="md:hidden text-primary font-bold text-sm mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back to Chapters</button>
+                <div class="max-w-4xl mx-auto space-y-6 pb-20">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <input type="text" x-model="activeChapter.title" @change="forceSync()" class="bg-transparent border-none text-3xl font-black focus:ring-0 p-0 w-full">
                         <div class="flex items-center gap-4">
@@ -211,13 +206,12 @@
                                 <span class="text-[10px] font-black uppercase opacity-40 ml-1">Hrs</span>
                             </div>
                             <button @click="activeChapter.done = !activeChapter.done; forceSync();" :class="activeChapter.done ? 'bg-secondary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'" class="px-6 py-2 rounded-xl text-xs font-black uppercase">Done</button>
-                            <button @click="removeChapter()" class="text-slate-300 hover:text-red-500"><i class="fas fa-trash-alt"></i></button>
+                            <button @click="removeChapter()" class="text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
 
-                    <!-- REVISION DOTS (RESTORED) -->
                     <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Mastery Level</p>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Mastery Dots</p>
                         <div class="flex gap-2">
                             <template x-for="r in 5">
                                 <button @click="toggleRevision(activeChapter, r); forceSync();" 
@@ -227,14 +221,14 @@
                         </div>
                     </div>
 
-                    <!-- MULTIPLE AUDIO RECORDINGS -->
+                    <!-- AUDIO SECTION -->
                     <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 space-y-6">
                         <div class="flex items-center justify-between">
-                            <h4 class="text-xs font-black uppercase tracking-widest text-slate-400">Audio Summaries</h4>
+                            <h4 class="text-xs font-black uppercase tracking-widest text-slate-400">Recordings</h4>
                             <button @click="isRecording ? stopRecording() : startRecording()" 
                                     :class="isRecording ? 'bg-red-500 animate-pulse' : 'bg-primary'" 
                                     class="w-12 h-12 rounded-full text-white shadow-lg transition-all">
-                                <i class="fas" :class="isRecording ? 'fa-stop' : 'fa-microphone'"></i>
+                                <i class="fas" :class="isRecording ? 'fa-stop text-sm' : 'fa-microphone'"></i>
                             </button>
                         </div>
                         <div class="space-y-3">
@@ -242,7 +236,7 @@
                                 <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border dark:border-slate-800">
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-[10px] font-black uppercase text-slate-400" x-text="'Clip ' + (idx + 1)"></span>
-                                        <button @click="deleteRecording(idx)" class="text-red-400"><i class="fas fa-trash-alt"></i></button>
+                                        <button @click="deleteRecording(idx)" class="text-red-400"><i class="fas fa-trash-alt text-xs"></i></button>
                                     </div>
                                     <div class="flex items-center gap-4">
                                         <button @click="toggleAudio(rec, idx)" class="text-primary text-2xl">
@@ -260,47 +254,71 @@
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 shadow-sm">
-                        <textarea x-model="activeChapter.notes" @change="forceSync()" class="w-full h-80 bg-transparent border-none text-sm focus:ring-0 resize-none leading-relaxed" placeholder="Detailed chapter notes..."></textarea>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
+                        <h4 class="font-bold mb-4">Notes</h4>
+                        <textarea x-model="activeChapter.notes" @change="forceSync()" class="w-full h-40 bg-transparent border-none text-sm focus:ring-0 resize-none leading-relaxed" placeholder="Type chapter details..."></textarea>
+                    </div>
+
+                    <!-- ACTIVE RECALL WITH URL -->
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 space-y-4">
+                        <h4 class="font-bold">Active Recall</h4>
+                        <div class="space-y-4">
+                            <template x-for="(q, qIdx) in activeChapter.questions || []" :key="qIdx">
+                                <div class="space-y-2 border-b dark:border-slate-800 pb-4">
+                                    <div class="flex gap-2 items-center">
+                                        <input type="checkbox" x-model="q.done" @change="forceSync()" class="rounded-full text-secondary">
+                                        <input type="text" x-model="q.text" @change="forceSync()" placeholder="Question text..." class="flex-1 bg-transparent border-none text-sm font-bold focus:ring-0">
+                                        <button @click="activeChapter.questions.splice(qIdx, 1); forceSync();" class="text-red-300"><i class="fas fa-times"></i></button>
+                                    </div>
+                                    <div class="flex items-center gap-2 pl-6 bg-slate-50 dark:bg-slate-900 rounded-xl p-2">
+                                        <i class="fas fa-link text-[10px] opacity-30"></i>
+                                        <input type="text" x-model="q.url" @change="forceSync()" placeholder="Reference URL (optional)..." class="flex-1 bg-transparent border-none text-[10px] focus:ring-0 italic">
+                                        <template x-if="q.url">
+                                            <a :href="q.url" target="_blank" class="text-primary text-[10px] font-black uppercase mr-2 underline">Visit</a>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                            <button @click="activeChapter.questions.push({text:'', done:false, url:''}); forceSync();" class="text-primary text-[10px] font-black uppercase">+ Add Question & Link</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- SETTINGS -->
-        <div x-show="view === 'settings'" x-transition x-cloak class="max-w-2xl mx-auto space-y-8 pb-10">
+        <div x-show="view === 'settings'" x-transition x-cloak class="max-w-2xl mx-auto space-y-8 pb-20">
             <h2 class="text-3xl font-black">Settings</h2>
             
-            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 space-y-6">
-                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-cloud text-primary"></i> Sync Management</h3>
+            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
+                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-cloud text-primary"></i> Sync</h3>
                 <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-between">
                     <div>
-                        <p class="font-bold text-sm">JKM Live Backup</p>
-                        <p class="text-xs text-slate-500" x-text="useCloud ? 'Connected' : 'Local Only'"></p>
+                        <p class="font-bold text-sm">JKM Cloud Backup</p>
+                        <p class="text-xs text-slate-500" x-text="useCloud ? 'Account Synced' : 'Offline'"></p>
                     </div>
                     <button @click="useCloud ? logout() : startWithBackup(true)" 
                             :class="useCloud ? 'bg-red-50 text-red-500' : 'bg-primary text-white'"
-                            class="px-5 py-2 rounded-xl text-xs font-bold transition">
-                        <span x-text="useCloud ? 'Logout' : 'Enable Cloud'"></span>
+                            class="px-5 py-2 rounded-xl text-xs font-bold">
+                        <span x-text="useCloud ? 'Disconnect' : 'Enable Sync'"></span>
                     </button>
                 </div>
             </div>
             
-            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 space-y-6">
+            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
                 <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-file-excel text-green-500"></i> Excel Data</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <button @click="downloadTemplate()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left border dark:border-slate-800">
                         <i class="fas fa-file-download text-primary mb-2 text-xl"></i>
-                        <p class="font-bold text-sm">Download with Data</p>
-                        <p class="text-[10px] text-slate-500">Export current library to Excel</p>
+                        <p class="font-bold text-sm">Download Library</p>
+                        <p class="text-[10px] opacity-50 italic text-slate-500">Includes current subjects</p>
                     </button>
                     <button @click="triggerImport()" class="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left border dark:border-slate-800">
                         <i class="fas fa-file-upload text-secondary mb-2 text-xl"></i>
                         <p class="font-bold text-sm">Import Excel</p>
-                        <p class="text-[10px] text-slate-500">Merge external file</p>
                     </button>
                 </div>
-                <button @click="deleteAllData()" class="w-full py-4 bg-red-500 text-white rounded-2xl text-xs font-black uppercase hover:bg-red-600 transition">Delete Local & Cloud Data</button>
+                <button @click="deleteAllData()" class="w-full py-4 bg-red-500 text-white rounded-2xl text-xs font-black uppercase transition">Delete Everything (Local & Cloud)</button>
             </div>
         </div>
 
@@ -312,7 +330,7 @@
                     <button @click="toggleTimer()" :class="timerActive ? 'bg-red-500' : 'bg-primary'" class="w-20 h-20 rounded-full text-white text-2xl shadow-xl transition-all">
                         <i class="fas" :class="timerActive ? 'fa-pause' : 'fa-play'"></i>
                     </button>
-                    <button @click="resetTimer()" class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 text-2xl transition"><i class="fas fa-redo"></i></button>
+                    <button @click="resetTimer()" class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 text-2xl"><i class="fas fa-redo"></i></button>
                 </div>
             </div>
         </div>
@@ -323,7 +341,7 @@
         <div class="relative bg-white dark:bg-darkcard p-8 rounded-[3rem] w-full max-w-md shadow-2xl">
             <h2 class="text-2xl font-black mb-8">New Subject</h2>
             <div class="space-y-4">
-                <input type="text" x-model="newSub.name" placeholder="Subject Title" class="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none font-bold border-none text-center">
+                <input type="text" x-model="newSub.name" placeholder="Subject Title" class="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none font-bold border-none text-center shadow-inner">
                 <button @click="createSubject(); forceSync();" class="w-full py-5 bg-primary text-white rounded-3xl font-black shadow-xl">Initialize</button>
             </div>
         </div>
@@ -405,7 +423,6 @@
                     localStorage.setItem('last_active', today);
                 },
 
-                // EXCEL WITH DATA
                 downloadTemplate() {
                     const rows = [];
                     this.subjects.forEach(s => {
@@ -415,8 +432,8 @@
                     });
                     const ws = XLSX.utils.json_to_sheet(rows.length ? rows : [{ Subject: '', Chapter: '', Hours: 0, Notes: '' }]);
                     const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, "JKM_Data");
-                    XLSX.writeFile(wb, "JKM_Study_Data.xlsx");
+                    XLSX.utils.book_append_sheet(wb, ws, "JKM_Library");
+                    XLSX.writeFile(wb, "JKM_Current_Data.xlsx");
                 },
                 triggerImport() { document.getElementById('excelFile').click(); },
                 handleImport(e) {
@@ -432,7 +449,7 @@
                             }
                             sub.chapters.push({
                                 id: Math.random(), title: r.Chapter || 'New', hours: parseFloat(r.Hours || 0), 
-                                done: false, revisions: 0, notes: r.Notes || '', recordings: [], lastRevised: new Date()
+                                done: false, revisions: 0, notes: r.Notes || '', recordings: [], questions: [], lastRevised: new Date()
                             });
                         });
                         this.forceSync();
@@ -444,12 +461,13 @@
                     if (!this.newSub.name) return;
                     this.subjects.push({ id: Date.now(), name: this.newSub.name, chapters: [] });
                     this.newSub.name = ''; this.showAddSubject = false;
+                    this.forceSync();
                 },
-                deleteSubject(idx) { if(confirm('Delete?')) { this.subjects.splice(idx, 1); this.forceSync(); } },
+                deleteSubject(idx) { if(confirm('Delete subject?')) { this.subjects.splice(idx, 1); this.forceSync(); } },
                 openSubject(sub) { this.activeSubject = sub; this.view = 'subjectDetail'; this.activeChapter = null; history.pushState({view:'subjectDetail'}, ""); },
                 addChapter() {
                     if(!this.activeSubject.chapters) this.activeSubject.chapters = [];
-                    const ch = { id: Date.now(), title: 'New Chapter', hours: 0, done: false, revisions: 0, notes: '', recordings: [], lastRevised: new Date() };
+                    const ch = { id: Date.now(), title: 'New Chapter', hours: 0, done: false, revisions: 0, notes: '', recordings: [], questions: [], lastRevised: new Date() };
                     this.activeSubject.chapters.push(ch); this.activeChapter = ch;
                     this.forceSync();
                 },
@@ -462,9 +480,9 @@
                 toggleRevision(ch, level) {
                     ch.revisions = (ch.revisions === level) ? level - 1 : level;
                     ch.lastRevised = new Date();
+                    this.forceSync();
                 },
 
-                // ANALYTICS
                 getTotalHours() {
                     return this.subjects.reduce((sum, sub) => sum + sub.chapters.reduce((s, c) => s + parseFloat(c.hours || 0), 0), 0).toFixed(1);
                 },
@@ -492,23 +510,21 @@
                     return alerts.slice(0, 5);
                 },
 
-                // CLOUD WIPE & SYNC
                 async startWithBackup(interactive = true) {
                     this.loading = true;
+                    const safety = setTimeout(() => { if (!this.appStarted) this.loading = false; }, 10000);
                     const client = google.accounts.oauth2.initTokenClient({
                         client_id: CLIENT_ID, scope: SCOPES,
                         callback: async (res) => {
+                            clearTimeout(safety);
                             if (res.error) { this.loading = false; return; }
                             this.googleToken = res.access_token;
                             await this.initializeCloudSync();
-                            this.useCloud = true;
-                            this.appStarted = true;
-                            this.loading = false;
+                            this.useCloud = true; this.appStarted = true; this.loading = false;
                             localStorage.setItem('use_cloud_sync', 'true');
                         },
                     });
                     interactive ? client.requestAccessToken() : client.requestAccessToken({ prompt: 'none' });
-                    setTimeout(() => { if (!this.appStarted) this.loading = false; }, 8000);
                 },
                 startWithoutBackup() { this.appStarted = true; localStorage.setItem('use_cloud_sync', 'false'); },
                 logout() { localStorage.setItem('use_cloud_sync', 'false'); location.reload(); },
@@ -516,34 +532,25 @@
                 async initializeCloudSync() {
                     await new Promise(r => gapi.load('client', r));
                     const headers = { Authorization: `Bearer ${this.googleToken}` };
-                    
-                    // Folder Check
                     const fQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='JKM Study' and mimeType='application/vnd.google-apps.folder' and trashed=false`, { headers });
                     const fData = await fQuery.json();
-                    
                     if (fData.files?.length > 0) this.driveFolderId = fData.files[0].id;
                     else {
-                        const createFolder = await fetch('https://www.googleapis.com/drive/v3/files', {
+                        const res = await fetch('https://www.googleapis.com/drive/v3/files', {
                             method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
                             body: JSON.stringify({ name: 'JKM Study', mimeType: 'application/vnd.google-apps.folder' })
                         });
-                        const res = await createFolder.json();
-                        this.driveFolderId = res.id;
+                        const data = await res.json(); this.driveFolderId = data.id;
                     }
-
-                    // Strict File Search & Cleanup
                     const bQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q='${this.driveFolderId}' in parents and trashed=false`, { headers });
                     const bData = await bQuery.json();
-                    
                     let mainFile = bData.files?.find(f => f.name === 'backup.json');
                     if (mainFile) {
                         this.driveFileId = mainFile.id;
-                        const cloudFile = await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFileId}?alt=media`, { headers });
-                        this.subjects = await cloudFile.json();
-                        // Delete any extra junk files in JKM folder
-                        bData.files.forEach(async (f) => {
-                            if (f.id !== this.driveFileId) await fetch(`https://www.googleapis.com/drive/v3/files/${f.id}`, { method: 'DELETE', headers });
-                        });
+                        const cloudRes = await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFileId}?alt=media`, { headers });
+                        const cloudData = await cloudRes.json();
+                        if (cloudData && Array.isArray(cloudData)) this.subjects = cloudData;
+                        bData.files.forEach(f => { if(f.name !== 'backup.json') fetch(`https://www.googleapis.com/drive/v3/files/${f.id}`, { method: 'DELETE', headers }); });
                     }
                 },
 
@@ -554,7 +561,6 @@
                     const form = new FormData();
                     form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
                     form.append('file', new Blob([JSON.stringify(this.subjects)], { type: 'application/json' }));
-                    
                     const url = this.driveFileId ? `https://www.googleapis.com/upload/drive/v3/files/${this.driveFileId}?uploadType=multipart` : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
                     fetch(url, { method: this.driveFileId ? 'PATCH' : 'POST', headers: { Authorization: `Bearer ${this.googleToken}` }, body: form })
                     .then(res => res.json()).then(data => { if (data.id) this.driveFileId = data.id; this.syncing = false; })
@@ -562,18 +568,12 @@
                 },
 
                 async deleteAllData() {
-                    if (confirm('WARNING: This will erase all local data AND the JKM Study folder on your Google Drive. Proceed?')) {
-                        if (this.useCloud && this.driveFolderId) {
-                            await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFolderId}`, { 
-                                method: 'DELETE', headers: { Authorization: `Bearer ${this.googleToken}` } 
-                            });
-                        }
-                        localStorage.clear();
-                        location.reload();
+                    if (confirm('Erase all local data and JKM Study cloud folder?')) {
+                        if (this.useCloud && this.driveFolderId) await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFolderId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${this.googleToken}` } });
+                        localStorage.clear(); location.reload();
                     }
                 },
 
-                // AUDIO
                 async startRecording() {
                     try {
                         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -585,20 +585,18 @@
                             reader.readAsDataURL(new Blob(this.audioChunks, { type: 'audio/webm' }));
                             reader.onloadend = () => {
                                 if(!this.activeChapter.recordings) this.activeChapter.recordings = [];
-                                this.activeChapter.recordings.push(reader.result);
-                                this.forceSync();
+                                this.activeChapter.recordings.push(reader.result); this.forceSync();
                             };
                         };
                         this.mediaRecorder.start(); this.isRecording = true;
-                    } catch (e) { alert('Mic blocked.'); }
+                    } catch (e) { alert('Mic access error.'); }
                 },
                 stopRecording() { if(this.mediaRecorder) { this.mediaRecorder.stop(); this.isRecording = false; } },
                 toggleAudio(base64, idx) {
                     if (this.audioPlaying && this.currentAudioIdx === idx) this.pauseAudio();
                     else {
                         if (this.audioInstance) this.stopAudio();
-                        this.currentAudioIdx = idx;
-                        this.audioInstance = new Audio(base64);
+                        this.currentAudioIdx = idx; this.audioInstance = new Audio(base64);
                         this.audioInstance.onloadedmetadata = () => this.audioDuration = this.audioInstance.duration;
                         this.audioInstance.onended = () => this.stopAudio();
                         this.audioInstance.play(); this.audioPlaying = true;
@@ -611,15 +609,9 @@
                     this.audioPlaying = false; this.currentAudioIdx = null; this.audioCurrentTime = 0; clearInterval(this.audioTicker);
                 },
                 seekAudio(val) { if(this.audioInstance) { this.audioInstance.currentTime = val; this.audioCurrentTime = val; }},
-                formatSeconds(sec) { const m = Math.floor(sec/60); return `${m}:${Math.floor(sec%60).toString().padStart(2,'0')}`; },
-                deleteRecording(idx) {
-                    if(confirm("Delete clip?")) {
-                        if(this.currentAudioIdx === idx) this.stopAudio();
-                        this.activeChapter.recordings.splice(idx, 1); this.forceSync();
-                    }
-                },
+                formatSeconds(sec) { return `${Math.floor(sec/60)}:${Math.floor(sec%60).toString().padStart(2,'0')}`; },
+                deleteRecording(idx) { if(confirm("Delete?")) { if(this.currentAudioIdx === idx) this.stopAudio(); this.activeChapter.recordings.splice(idx, 1); this.forceSync(); } },
 
-                // UTILS
                 formatTime(sec) { return `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; },
                 toggleTimer() {
                     if (this.timerActive) { clearInterval(this.timerInterval); this.timerActive = false; } 
