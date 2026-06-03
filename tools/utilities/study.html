@@ -97,8 +97,7 @@
                 <h1 class="text-3xl font-black">Dashboard</h1>
                 <div x-show="useCloud" class="flex flex-col items-end">
                     <div class="flex items-center gap-2">
-                        <!-- MANUAL SYNC BUTTON -->
-                        <button @click="forceSync()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition active:scale-90" title="Sync Now">
+                        <button @click="forceSync(true)" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition active:scale-90" title="Sync Now">
                             <i class="fas fa-sync-alt text-xs transition-colors" :class="syncing ? 'animate-spin text-amber-500' : 'text-emerald-500'"></i>
                         </button>
                         <div class="flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase"
@@ -187,7 +186,7 @@
         <div x-show="view === 'subjectDetail'" x-transition x-cloak class="h-[calc(100vh-160px)] -mx-4 md:-mx-8 border-y dark:border-slate-800 bg-white dark:bg-darkcard flex overflow-hidden">
             <div class="w-full md:w-80 border-r dark:border-slate-800 flex flex-col" :class="activeChapter ? 'mobile-hide' : 'flex'">
                 <div class="p-4 flex justify-between items-center border-b dark:border-slate-800">
-                    <button @click="view = 'library'; forceSync();" class="text-slate-400 p-2"><i class="fas fa-chevron-left"></i></button>
+                    <button @click="view = 'library'; forceSync(true);" class="text-slate-400 p-2"><i class="fas fa-chevron-left"></i></button>
                     <span class="text-[10px] font-black uppercase" x-text="activeSubject?.name"></span>
                     <button @click="addChapter()" class="text-primary font-bold text-xl p-2">+</button>
                 </div>
@@ -206,16 +205,16 @@
             </div>
 
             <div x-show="activeChapter" class="flex-1 overflow-y-auto p-4 md:p-10 bg-slate-50/50 dark:bg-darkbg/30 relative" :class="activeChapter ? 'mobile-panel' : ''">
-                <button @click="activeChapter = null; stopAudio(); forceSync();" class="md:hidden text-primary font-bold text-sm mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back to Chapters</button>
+                <button @click="activeChapter = null; stopAudio(); forceSync(true);" class="md:hidden text-primary font-bold text-sm mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back to Chapters</button>
                 <div class="max-w-4xl mx-auto space-y-6 pb-20">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <input type="text" x-model="activeChapter.title" @change="forceSync()" class="bg-transparent border-none text-3xl font-black focus:ring-0 p-0 w-full">
+                        <input type="text" x-model="activeChapter.title" @input="forceSync()" class="bg-transparent border-none text-3xl font-black focus:ring-0 p-0 w-full">
                         <div class="flex items-center gap-4">
                             <div class="flex items-center bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
-                                <input type="number" x-model="activeChapter.hours" @change="forceSync()" class="w-10 bg-transparent border-none text-sm font-black p-0 focus:ring-0">
+                                <input type="number" x-model="activeChapter.hours" @input="forceSync()" class="w-10 bg-transparent border-none text-sm font-black p-0 focus:ring-0">
                                 <span class="text-[10px] font-black uppercase opacity-40 ml-1">Hrs</span>
                             </div>
-                            <button @click="activeChapter.done = !activeChapter.done; forceSync();" :class="activeChapter.done ? 'bg-secondary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'" class="px-6 py-2 rounded-xl text-xs font-black uppercase">Done</button>
+                            <button @click="activeChapter.done = !activeChapter.done; forceSync(true);" :class="activeChapter.done ? 'bg-secondary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'" class="px-6 py-2 rounded-xl text-xs font-black uppercase">Done</button>
                             <button @click="removeChapter()" class="text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
@@ -224,7 +223,7 @@
                         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Mastery Dots</p>
                         <div class="flex gap-2">
                             <template x-for="r in 5">
-                                <button @click="toggleRevision(activeChapter, r); forceSync();" 
+                                <button @click="toggleRevision(activeChapter, r); forceSync(true);" 
                                         :class="activeChapter.revisions >= r ? 'bg-secondary' : 'bg-slate-100 dark:bg-slate-800'" 
                                         class="h-4 flex-1 rounded-full transition-all border dark:border-slate-700"></button>
                             </template>
@@ -266,30 +265,30 @@
 
                     <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
                         <h4 class="font-bold mb-4">Notes</h4>
-                        <textarea x-model="activeChapter.notes" @change="forceSync()" class="w-full h-40 bg-transparent border-none text-sm focus:ring-0 resize-none leading-relaxed" placeholder="Type chapter details..."></textarea>
+                        <textarea x-model="activeChapter.notes" @input="forceSync()" class="w-full h-40 bg-transparent border-none text-sm focus:ring-0 resize-none leading-relaxed" placeholder="Type chapter details..."></textarea>
                     </div>
 
-                    <!-- ACTIVE RECALL WITH URL -->
+                    <!-- ACTIVE RECALL -->
                     <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 space-y-4">
                         <h4 class="font-bold">Active Recall</h4>
                         <div class="space-y-4">
                             <template x-for="(q, qIdx) in activeChapter.questions || []" :key="qIdx">
                                 <div class="space-y-2 border-b dark:border-slate-800 pb-4">
                                     <div class="flex gap-2 items-center">
-                                        <input type="checkbox" x-model="q.done" @change="forceSync()" class="rounded-full text-secondary">
-                                        <input type="text" x-model="q.text" @change="forceSync()" placeholder="Question text..." class="flex-1 bg-transparent border-none text-sm font-bold focus:ring-0">
-                                        <button @click="activeChapter.questions.splice(qIdx, 1); forceSync();" class="text-red-300"><i class="fas fa-times"></i></button>
+                                        <input type="checkbox" x-model="q.done" @change="forceSync(true)" class="rounded-full text-secondary">
+                                        <input type="text" x-model="q.text" @input="forceSync()" placeholder="Question text..." class="flex-1 bg-transparent border-none text-sm font-bold focus:ring-0">
+                                        <button @click="activeChapter.questions.splice(qIdx, 1); forceSync(true);" class="text-red-300"><i class="fas fa-times"></i></button>
                                     </div>
                                     <div class="flex items-center gap-2 pl-6 bg-slate-50 dark:bg-slate-900 rounded-xl p-2">
                                         <i class="fas fa-link text-[10px] opacity-30"></i>
-                                        <input type="text" x-model="q.url" @change="forceSync()" placeholder="Reference URL (optional)..." class="flex-1 bg-transparent border-none text-[10px] focus:ring-0 italic">
+                                        <input type="text" x-model="q.url" @input="forceSync()" placeholder="Reference URL (optional)..." class="flex-1 bg-transparent border-none text-[10px] focus:ring-0 italic">
                                         <template x-if="q.url">
                                             <a :href="q.url" target="_blank" class="text-primary text-[10px] font-black uppercase mr-2 underline">Visit</a>
                                         </template>
                                     </div>
                                 </div>
                             </template>
-                            <button @click="activeChapter.questions.push({text:'', done:false, url:''}); forceSync();" class="text-primary text-[10px] font-black uppercase">+ Add Question & Link</button>
+                            <button @click="activeChapter.questions.push({text:'', done:false, url:''}); forceSync(true);" class="text-primary text-[10px] font-black uppercase">+ Add Question & Link</button>
                         </div>
                     </div>
                 </div>
@@ -352,7 +351,7 @@
             <h2 class="text-2xl font-black mb-8">New Subject</h2>
             <div class="space-y-4">
                 <input type="text" x-model="newSub.name" placeholder="Subject Title" class="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none font-bold border-none text-center shadow-inner">
-                <button @click="createSubject(); forceSync();" class="w-full py-5 bg-primary text-white rounded-3xl font-black shadow-xl">Initialize</button>
+                <button @click="createSubject(); forceSync(true);" class="w-full py-5 bg-primary text-white rounded-3xl font-black shadow-xl">Initialize</button>
             </div>
         </div>
     </div>
@@ -370,6 +369,7 @@
                 loading: false,
                 syncing: false,
                 needsSync: false,
+                syncTimer: null,
                 lastSyncTime: 'Never',
                 useCloud: false,
                 darkMode: false,
@@ -388,7 +388,6 @@
                 isRecording: false,
                 mediaRecorder: null,
                 audioChunks: [],
-                
                 audioInstance: null,
                 audioPlaying: false,
                 currentAudioIdx: null,
@@ -412,9 +411,21 @@
                     history.pushState({view: 'dash'}, "");
                 },
 
-                forceSync() {
+                // UPDATED FORCESYNC WITH DEBOUNCING
+                forceSync(immediate = false) {
                     localStorage.setItem('titan_os_ultimate_final', JSON.stringify(this.subjects));
-                    if (this.useCloud) this.syncToCloud();
+                    if (!this.useCloud) return;
+
+                    if (this.syncTimer) clearTimeout(this.syncTimer);
+
+                    if (immediate) {
+                        this.syncToCloud();
+                    } else {
+                        // Wait 1.5 seconds after last change before hitting the Cloud API
+                        this.syncTimer = setTimeout(() => {
+                            this.syncToCloud();
+                        }, 1500);
+                    }
                 },
 
                 checkStreak() {
@@ -459,7 +470,7 @@
                                 done: false, revisions: 0, notes: r.Notes || '', recordings: [], questions: [], lastRevised: new Date()
                             });
                         });
-                        this.forceSync();
+                        this.forceSync(true);
                     };
                     reader.readAsBinaryString(e.target.files[0]);
                 },
@@ -468,26 +479,26 @@
                     if (!this.newSub.name) return;
                     this.subjects.push({ id: Date.now(), name: this.newSub.name, chapters: [] });
                     this.newSub.name = ''; this.showAddSubject = false;
-                    this.forceSync();
+                    this.forceSync(true);
                 },
-                deleteSubject(idx) { if(confirm('Delete subject?')) { this.subjects.splice(idx, 1); this.forceSync(); } },
+                deleteSubject(idx) { if(confirm('Delete subject?')) { this.subjects.splice(idx, 1); this.forceSync(true); } },
                 openSubject(sub) { this.activeSubject = sub; this.view = 'subjectDetail'; this.activeChapter = null; history.pushState({view:'subjectDetail'}, ""); },
                 addChapter() {
                     if(!this.activeSubject.chapters) this.activeSubject.chapters = [];
                     const ch = { id: Date.now(), title: 'New Chapter', hours: 0, done: false, revisions: 0, notes: '', recordings: [], questions: [], lastRevised: new Date() };
                     this.activeSubject.chapters.push(ch); this.activeChapter = ch;
-                    this.forceSync();
+                    this.forceSync(true);
                 },
                 removeChapter() {
                     if(confirm('Delete?')) {
                         this.activeSubject.chapters = this.activeSubject.chapters.filter(c => c.id !== this.activeChapter.id);
-                        this.activeChapter = null; this.stopAudio(); this.forceSync();
+                        this.activeChapter = null; this.stopAudio(); this.forceSync(true);
                     }
                 },
                 toggleRevision(ch, level) {
                     ch.revisions = (ch.revisions === level) ? level - 1 : level;
                     ch.lastRevised = new Date();
-                    this.forceSync();
+                    this.forceSync(true);
                 },
 
                 getTotalHours() {
@@ -563,6 +574,7 @@
                     }
                 },
 
+                // REWRITTEN ROBUST SYNC LOGIC
                 async syncToCloud() {
                     if (!this.googleToken || !this.driveFolderId) return;
                     if (this.syncing) {
@@ -574,20 +586,38 @@
                     this.needsSync = false;
                     
                     try {
-                        const metadata = { name: 'backup.json', parents: [this.driveFolderId] };
-                        const form = new FormData();
-                        form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-                        form.append('file', new Blob([JSON.stringify(this.subjects)], { type: 'application/json' }));
+                        const boundary = 'jkm_sync_boundary';
+                        const metadata = { 
+                            name: 'backup.json', 
+                            parents: [this.driveFolderId],
+                            mimeType: 'application/json' 
+                        };
                         
+                        // Constructing proper multipart body for large file uploads
+                        const delimiter = `\r\n--${boundary}\r\n`;
+                        const closeDelimiter = `\r\n--${boundary}--`;
+                        const body = 
+                            delimiter +
+                            'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+                            JSON.stringify(metadata) +
+                            delimiter +
+                            'Content-Type: application/json\r\n\r\n' +
+                            JSON.stringify(this.subjects) +
+                            closeDelimiter;
+
                         const url = this.driveFileId 
                             ? `https://www.googleapis.com/upload/drive/v3/files/${this.driveFileId}?uploadType=multipart` 
                             : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
                         
                         const res = await fetch(url, { 
                             method: this.driveFileId ? 'PATCH' : 'POST', 
-                            headers: { Authorization: `Bearer ${this.googleToken}` }, 
-                            body: form 
+                            headers: { 
+                                Authorization: `Bearer ${this.googleToken}`,
+                                'Content-Type': `multipart/related; boundary=${boundary}`
+                            }, 
+                            body: body 
                         });
+
                         const data = await res.json();
                         if (data.id) {
                             this.driveFileId = data.id;
@@ -619,7 +649,8 @@
                             reader.readAsDataURL(new Blob(this.audioChunks, { type: 'audio/webm' }));
                             reader.onloadend = () => {
                                 if(!this.activeChapter.recordings) this.activeChapter.recordings = [];
-                                this.activeChapter.recordings.push(reader.result); this.forceSync();
+                                this.activeChapter.recordings.push(reader.result); 
+                                this.forceSync(true); // Sync immediately after recording
                             };
                         };
                         this.mediaRecorder.start(); this.isRecording = true;
@@ -644,7 +675,7 @@
                 },
                 seekAudio(val) { if(this.audioInstance) { this.audioInstance.currentTime = val; this.audioCurrentTime = val; }},
                 formatSeconds(sec) { return `${Math.floor(sec/60)}:${Math.floor(sec%60).toString().padStart(2,'0')}`; },
-                deleteRecording(idx) { if(confirm("Delete?")) { if(this.currentAudioIdx === idx) this.stopAudio(); this.activeChapter.recordings.splice(idx, 1); this.forceSync(); } },
+                deleteRecording(idx) { if(confirm("Delete?")) { if(this.currentAudioIdx === idx) this.stopAudio(); this.activeChapter.recordings.splice(idx, 1); this.forceSync(true); } },
 
                 formatTime(sec) { return `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; },
                 toggleTimer() {
