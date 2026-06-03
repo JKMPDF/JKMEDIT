@@ -41,13 +41,11 @@
 </head>
 <body class="bg-slate-50 dark:bg-darkbg text-slate-900 dark:text-slate-100 min-h-screen pb-20 md:pb-0 md:pl-20">
 
-    <!-- SYNCING OVERLAY -->
     <div x-show="loading" class="fixed inset-0 z-[2000] bg-white dark:bg-darkbg flex flex-col items-center justify-center">
         <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
         <p class="text-xs font-black uppercase tracking-widest opacity-50">JKM Cloud Syncing Data...</p>
     </div>
 
-    <!-- STARTUP SCREEN -->
     <div x-show="!appStarted && !loading" class="fixed inset-0 z-[1000] bg-white dark:bg-darkbg flex items-center justify-center p-6 text-center">
         <div class="max-w-md w-full space-y-8">
             <h1 class="text-8xl font-black text-primary tracking-tighter">JKM</h1>
@@ -63,7 +61,6 @@
         </div>
     </div>
 
-    <!-- SIDEBAR -->
     <aside x-show="appStarted" class="fixed left-0 top-0 h-screen w-20 bg-slate-900 hidden md:flex flex-col items-center py-8 z-50">
         <div class="mb-10 text-primary font-black text-xl">JKM</div>
         <div class="flex flex-col gap-8 flex-1">
@@ -75,18 +72,16 @@
         <button @click="darkMode = !darkMode" class="text-slate-400 mb-4"><i :class="darkMode ? 'fa-sun' : 'fa-moon'" class="fas"></i></button>
     </aside>
 
-    <!-- MOBILE NAV -->
     <nav x-show="appStarted" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-darkcard border-t dark:border-slate-800 flex md:hidden justify-around items-center py-3 z-[100] shadow-2xl">
         <button @click="view = 'dash'" :class="view === 'dash' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-home text-xl"></i></button>
         <button @click="view = 'library'" :class="view === 'library' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-book text-xl"></i></button>
         <button @click="showAddSubject = true" class="bg-primary text-white w-12 h-12 rounded-full -mt-10 shadow-lg flex items-center justify-center border-4 border-slate-50 dark:border-darkbg"><i class="fas fa-plus"></i></button>
+        <button @click="view = 'focus'" :class="view === 'focus' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-stopwatch text-xl"></i></button>
         <button @click="view = 'settings'" :class="view === 'settings' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-cog text-xl"></i></button>
-        <button @click="darkMode = !darkMode"><i :class="darkMode ? 'fa-sun' : 'fa-moon'" class="fas text-xl"></i></button>
     </nav>
 
     <main x-show="appStarted" class="p-4 md:p-8 max-w-7xl mx-auto">
         
-        <!-- DASHBOARD -->
         <div x-show="view === 'dash'" x-transition x-cloak class="space-y-6">
             
             <div x-show="syncing" class="fixed top-0 left-0 right-0 h-1 bg-primary/20 z-[2000]">
@@ -129,14 +124,16 @@
                 </div>
             </div>
 
-            <!-- ANALYTICS -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10">
                 <div class="space-y-4">
                     <h3 class="text-xl font-black">Subject Analytics</h3>
                     <div class="bg-white dark:bg-darkcard p-6 rounded-[2.5rem] border dark:border-slate-800 h-64 overflow-y-auto no-scrollbar">
                         <template x-for="sub in subjects">
                             <div class="flex items-center justify-between mb-4 pb-4 border-b dark:border-slate-800 last:border-0">
-                                <span class="font-bold text-sm" x-text="sub.name"></span>
+                                <div>
+                                    <span class="font-bold text-sm block" x-text="sub.name"></span>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="getSubjectHoursCompleted(sub) + 'h / ' + getSubjectTotalHours(sub) + 'h'"></span>
+                                </div>
                                 <div class="flex gap-1">
                                     <template x-for="i in 5">
                                         <div class="w-4 h-1.5 rounded-full" :class="i <= (getSubjectProgress(sub)/20) ? 'bg-primary' : 'bg-slate-100 dark:bg-slate-800'"></div>
@@ -162,9 +159,15 @@
                     </div>
                 </div>
             </div>
+
+            <div class="md:hidden mt-8 mb-4">
+                <button @click="view = 'focus'" class="w-full p-5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3 transition active:scale-95">
+                    <i class="fas fa-stopwatch text-2xl"></i> Start Pomodoro Timer
+                </button>
+            </div>
+
         </div>
 
-        <!-- LIBRARY -->
         <div x-show="view === 'library'" x-transition x-cloak class="space-y-8">
             <div class="flex justify-between items-center">
                 <h2 class="text-3xl font-black">Library</h2>
@@ -182,7 +185,6 @@
             </div>
         </div>
 
-        <!-- SUBJECT DETAIL -->
         <div x-show="view === 'subjectDetail'" x-transition x-cloak class="h-[calc(100vh-160px)] -mx-4 md:-mx-8 border-y dark:border-slate-800 bg-white dark:bg-darkcard flex overflow-hidden">
             <div class="w-full md:w-80 border-r dark:border-slate-800 flex flex-col" :class="activeChapter ? 'mobile-hide' : 'flex'">
                 <div class="p-4 flex justify-between items-center border-b dark:border-slate-800">
@@ -230,7 +232,6 @@
                         </div>
                     </div>
 
-                    <!-- AUDIO SECTION -->
                     <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 space-y-6">
                         <div class="flex items-center justify-between">
                             <h4 class="text-xs font-black uppercase tracking-widest text-slate-400">Recordings</h4>
@@ -268,7 +269,6 @@
                         <textarea x-model="activeChapter.notes" @input="forceSync()" class="w-full h-40 bg-transparent border-none text-sm focus:ring-0 resize-none leading-relaxed" placeholder="Type chapter details..."></textarea>
                     </div>
 
-                    <!-- ACTIVE RECALL -->
                     <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800 space-y-4">
                         <h4 class="font-bold">Active Recall</h4>
                         <div class="space-y-4">
@@ -295,7 +295,6 @@
             </div>
         </div>
 
-        <!-- SETTINGS -->
         <div x-show="view === 'settings'" x-transition x-cloak class="max-w-2xl mx-auto space-y-8 pb-20">
             <h2 class="text-3xl font-black">Settings</h2>
             
@@ -331,7 +330,6 @@
             </div>
         </div>
 
-        <!-- FOCUS -->
         <div x-show="view === 'focus'" x-transition x-cloak class="max-w-xl mx-auto py-20 text-center">
             <div class="bg-white dark:bg-darkcard p-12 rounded-[4rem] border dark:border-slate-800 shadow-2xl">
                 <div class="text-8xl font-black text-primary mb-12 tabular-nums" x-text="formatTime(timerSeconds)"></div>
@@ -340,6 +338,14 @@
                         <i class="fas" :class="timerActive ? 'fa-pause' : 'fa-play'"></i>
                     </button>
                     <button @click="resetTimer()" class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 text-2xl"><i class="fas fa-redo"></i></button>
+                </div>
+
+                <div class="mt-12 flex items-center justify-center gap-4 border-t dark:border-slate-800 pt-8">
+                    <i class="fas fa-music text-slate-400"></i>
+                    <span class="font-bold text-sm text-slate-500 uppercase tracking-widest">Lo-Fi Music</span>
+                    <button @click="toggleMusic()" class="w-12 h-6 rounded-full relative transition-colors" :class="musicEnabled ? 'bg-secondary' : 'bg-slate-200 dark:bg-slate-700'">
+                        <div class="w-6 h-6 bg-white rounded-full shadow transform transition-transform absolute top-0 left-0" :class="musicEnabled ? 'translate-x-6' : 'translate-x-0'"></div>
+                    </button>
                 </div>
             </div>
         </div>
@@ -379,9 +385,15 @@
                 showAddSubject: false,
                 newSub: { name: '' },
                 streak: 0,
+                
+                // Timer & Focus State
                 timerSeconds: 1500,
                 timerActive: false,
                 timerInterval: null,
+                musicEnabled: false,
+                bgMusic: null,
+                wakeLock: null,
+
                 googleToken: null,
                 driveFolderId: null,
                 driveFileId: null,
@@ -403,6 +415,13 @@
                     
                     const cloudPref = localStorage.getItem('use_cloud_sync');
                     if (cloudPref === 'true') this.startWithBackup(false);
+
+                    // Re-request wake lock if visibility changes back to the app while timer is running
+                    document.addEventListener('visibilitychange', async () => {
+                        if (this.wakeLock !== null && document.visibilityState === 'visible' && this.timerActive) {
+                            this.requestWakeLock();
+                        }
+                    });
 
                     window.onpopstate = (e) => {
                         if (this.activeChapter) { this.activeChapter = null; this.stopAudio(); }
@@ -500,11 +519,20 @@
                     this.forceSync(true);
                 },
 
+                // Analytic Logic Helpers
                 getTotalHours() {
                     return this.subjects.reduce((sum, sub) => sum + sub.chapters.reduce((s, c) => s + parseFloat(c.hours || 0), 0), 0).toFixed(1);
                 },
                 getCompletedHours() {
                     return this.subjects.reduce((sum, sub) => sum + sub.chapters.filter(c => c.done).reduce((s, c) => s + parseFloat(c.hours || 0), 0), 0).toFixed(1);
+                },
+                getSubjectTotalHours(sub) {
+                    if (!sub || !sub.chapters) return '0.0';
+                    return sub.chapters.reduce((s, c) => s + parseFloat(c.hours || 0), 0).toFixed(1);
+                },
+                getSubjectHoursCompleted(sub) {
+                    if (!sub || !sub.chapters) return '0.0';
+                    return sub.chapters.filter(c => c.done).reduce((s, c) => s + parseFloat(c.hours || 0), 0).toFixed(1);
                 },
                 getGlobalProgress() {
                     const total = this.subjects.reduce((a, b) => a + (b.chapters?.length || 0), 0);
@@ -550,7 +578,6 @@
                     await new Promise(r => gapi.load('client', r));
                     const headers = { Authorization: `Bearer ${this.googleToken}` };
                     
-                    // 1. Find or Create Folder "JKM Study"
                     const fQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent("name='JKM Study' and mimeType='application/vnd.google-apps.folder' and trashed=false")}`, { headers });
                     const fData = await fQuery.json();
                     
@@ -565,7 +592,6 @@
                         this.driveFolderId = data.id;
                     }
                     
-                    // 2. Find Backup file inside that folder
                     const bQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(`'${this.driveFolderId}' in parents and name='backup.json' and trashed=false`)}`, { headers });
                     const bData = await bQuery.json();
                     
@@ -581,7 +607,6 @@
                     }
                 },
 
-                // ROBUST SYNC SYSTEM (Matches Ledger logic)
                 async syncToCloud() {
                     if (!this.googleToken || !this.driveFolderId) return;
                     if (this.syncing) {
@@ -595,7 +620,6 @@
                     try {
                         const boundary = 'jkm_multipart_boundary_' + Date.now();
                         
-                        // Metadata: ONLY include parents when creating (POST), not updating (PATCH)
                         const metadata = { 
                             name: 'backup.json', 
                             mimeType: 'application/json' 
@@ -604,7 +628,6 @@
                             metadata.parents = [this.driveFolderId];
                         }
 
-                        // Construct Multipart Body
                         const blob = new Blob([JSON.stringify(this.subjects)], { type: 'application/json' });
                         const delimiter = `\r\n--${boundary}\r\n`;
                         const closeDelimiter = `\r\n--${boundary}--`;
@@ -669,7 +692,7 @@
                             reader.onloadend = () => {
                                 if(!this.activeChapter.recordings) this.activeChapter.recordings = [];
                                 this.activeChapter.recordings.push(reader.result); 
-                                this.forceSync(true); // Sync immediately for audio
+                                this.forceSync(true); 
                             };
                         };
                         this.mediaRecorder.start(); this.isRecording = true;
@@ -696,15 +719,75 @@
                 formatSeconds(sec) { return `${Math.floor(sec/60)}:${Math.floor(sec%60).toString().padStart(2,'0')}`; },
                 deleteRecording(idx) { if(confirm("Delete?")) { if(this.currentAudioIdx === idx) this.stopAudio(); this.activeChapter.recordings.splice(idx, 1); this.forceSync(true); } },
 
-                formatTime(sec) { return `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; },
-                toggleTimer() {
-                    if (this.timerActive) { clearInterval(this.timerInterval); this.timerActive = false; } 
-                    else {
-                        this.timerActive = true;
-                        this.timerInterval = setInterval(() => { if (this.timerSeconds > 0) this.timerSeconds--; else this.toggleTimer(); }, 1000);
+                /* --- WAKE LOCK & BACKGROUND MUSIC --- */
+                initMusic() {
+                    if (!this.bgMusic) {
+                        this.bgMusic = new Audio('assets/music.mp3');
+                        this.bgMusic.loop = true;
+                        this.bgMusic.volume = 0.5; // Optional: keeps it from being too loud
                     }
                 },
-                resetTimer() { this.timerSeconds = 1500; this.timerActive = false; clearInterval(this.timerInterval); }
+
+                toggleMusic() {
+                    this.musicEnabled = !this.musicEnabled;
+                    this.initMusic();
+                    if (this.musicEnabled && this.timerActive) {
+                        this.bgMusic.play().catch(e => console.log("Audio play failed:", e));
+                    } else if (!this.musicEnabled && this.bgMusic) {
+                        this.bgMusic.pause();
+                    }
+                },
+
+                async requestWakeLock() {
+                    if ('wakeLock' in navigator) {
+                        try {
+                            this.wakeLock = await navigator.wakeLock.request('screen');
+                        } catch (err) {
+                            console.error(`Wake Lock error: ${err.name}, ${err.message}`);
+                        }
+                    }
+                },
+
+                releaseWakeLock() {
+                    if (this.wakeLock !== null) {
+                        this.wakeLock.release().then(() => {
+                            this.wakeLock = null;
+                        });
+                    }
+                },
+
+                formatTime(sec) { return `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; },
+                
+                toggleTimer() {
+                    this.initMusic();
+                    if (this.timerActive) { 
+                        clearInterval(this.timerInterval); 
+                        this.timerActive = false; 
+                        if (this.bgMusic) this.bgMusic.pause();
+                        this.releaseWakeLock();
+                    } 
+                    else {
+                        this.timerActive = true;
+                        if (this.musicEnabled) this.bgMusic.play().catch(e => console.log("Audio play failed", e));
+                        this.requestWakeLock();
+                        
+                        this.timerInterval = setInterval(() => { 
+                            if (this.timerSeconds > 0) this.timerSeconds--; 
+                            else this.toggleTimer(); 
+                        }, 1000);
+                    }
+                },
+                
+                resetTimer() { 
+                    this.timerSeconds = 1500; 
+                    this.timerActive = false; 
+                    clearInterval(this.timerInterval);
+                    if (this.bgMusic) { 
+                        this.bgMusic.pause(); 
+                        this.bgMusic.currentTime = 0; 
+                    }
+                    this.releaseWakeLock();
+                }
             }
         }
     </script>
