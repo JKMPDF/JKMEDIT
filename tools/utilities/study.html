@@ -32,9 +32,8 @@
             .mobile-panel { position: fixed; inset: 0; z-index: 150; background: white; overflow-y: auto; }
             .dark .mobile-panel { background: #0f172a; }
         }
-        input[type="range"] { accent-color: #6366f1; }
-        .alert-urgent { border-left: 4px solid #ef4444 !important; background: #fef2f2 !important; }
-        .dark .alert-urgent { background: #450a0a !important; }
+        .alert-urgent { border-left: 5px solid #ef4444 !important; background: #fef2f2 !important; color: #991b1b !important; }
+        .dark .alert-urgent { background: #450a0a !important; color: #fecaca !important; }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-darkbg text-slate-900 dark:text-slate-100 min-h-screen pb-20 md:pb-0 md:pl-20">
@@ -42,26 +41,26 @@
     <!-- SYNCING OVERLAY -->
     <div x-show="loading" class="fixed inset-0 z-[2000] bg-white dark:bg-darkbg flex flex-col items-center justify-center">
         <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-xs font-black uppercase tracking-widest opacity-50">JKM Cloud Syncing Data...</p>
+        <p class="text-xs font-black uppercase tracking-widest opacity-50">Syncing with JKM Cloud...</p>
     </div>
 
     <!-- STARTUP SCREEN -->
     <div x-show="!appStarted && !loading" class="fixed inset-0 z-[1000] bg-white dark:bg-darkbg flex items-center justify-center p-6 text-center">
         <div class="max-w-md w-full space-y-8">
             <h1 class="text-8xl font-black text-primary tracking-tighter">JKM</h1>
-            <p class="text-slate-500 font-bold uppercase tracking-widest text-sm">The Study Architect</p>
+            <p class="text-slate-500 font-bold uppercase tracking-widest text-sm">Study Command Center</p>
             <div class="flex flex-col gap-4">
                 <button @click="startWithBackup(true)" class="p-6 bg-primary text-white rounded-3xl font-black shadow-xl hover:scale-105 transition">
-                    <i class="fab fa-google mr-2"></i> Cloud Sync (Google Drive)
+                    <i class="fab fa-google mr-2"></i> Cloud Sync
                 </button>
                 <button @click="startWithoutBackup()" class="p-6 bg-slate-100 dark:bg-darkcard rounded-3xl font-bold hover:bg-slate-200 transition text-slate-600">
-                    Local Mode Only
+                    Local Access
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR (Desktop) -->
     <aside x-show="appStarted" class="fixed left-0 top-0 h-screen w-20 bg-slate-900 hidden md:flex flex-col items-center py-8 z-50">
         <div class="mb-10 text-primary font-black text-xl">JKM</div>
         <div class="flex flex-col gap-8 flex-1">
@@ -77,7 +76,7 @@
     <nav x-show="appStarted" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-darkcard border-t dark:border-slate-800 flex md:hidden justify-around items-center py-3 z-[100] shadow-2xl">
         <button @click="view = 'dash'" :class="view === 'dash' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-home text-xl"></i></button>
         <button @click="view = 'library'" :class="view === 'library' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-book text-xl"></i></button>
-        <button @click="showAddSubject = true" class="bg-primary text-white w-12 h-12 rounded-full -mt-10 shadow-lg flex items-center justify-center border-4 border-slate-50 dark:border-darkbg"><i class="fas fa-plus"></i></button>
+        <button @click="view = 'focus'" :class="view === 'focus' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-stopwatch text-xl"></i></button>
         <button @click="view = 'settings'" :class="view === 'settings' ? 'text-primary' : 'text-slate-400'"><i class="fas fa-cog text-xl"></i></button>
         <button @click="darkMode = !darkMode"><i :class="darkMode ? 'fa-sun' : 'fa-moon'" class="fas text-xl"></i></button>
     </nav>
@@ -87,85 +86,85 @@
         <!-- DASHBOARD -->
         <div x-show="view === 'dash'" x-transition x-cloak class="space-y-6">
             <header class="flex justify-between items-center">
-                <h1 class="text-3xl font-black">Dashboard</h1>
+                <h1 class="text-3xl font-black">Command Center</h1>
                 <div class="flex items-center gap-4">
-                    <div class="text-right mr-4">
-                        <p class="text-[10px] font-black uppercase opacity-40">Exam Date</p>
-                        <input type="date" x-model="examDate" @change="forceSync()" class="bg-transparent border-none p-0 text-sm font-black text-primary focus:ring-0">
+                    <div class="text-right">
+                        <p class="text-[9px] font-black uppercase opacity-40">Target Exam</p>
+                        <input type="date" x-model="examDate" @change="forceSync(true)" class="bg-transparent border-none p-0 text-sm font-black text-primary focus:ring-0">
                     </div>
-                    <button @click="forceSync(true)" class="p-2 bg-white dark:bg-darkcard rounded-full shadow-sm">
-                        <i class="fas fa-sync-alt text-xs" :class="syncing ? 'animate-spin text-amber-500' : 'text-emerald-500'"></i>
-                    </button>
                 </div>
             </header>
 
-            <!-- STUDY GOALS SECTION -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="col-span-1 md:col-span-2 bg-primary rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden">
                     <div class="relative z-10">
-                        <p class="text-xs font-black uppercase tracking-widest opacity-70 mb-2">Target Roadmap</p>
-                        <h2 class="text-4xl font-black mb-6" x-text="getDaysToExam() + ' Days Remaining'"></h2>
+                        <p class="text-xs font-black uppercase tracking-widest opacity-70 mb-2">Study Roadmap</p>
+                        <h2 class="text-4xl font-black mb-6" x-text="getDaysToExam() + ' Days Left'"></h2>
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-white/10 p-4 rounded-2xl">
-                                <p class="text-[10px] font-bold uppercase opacity-60">Daily Study Goal</p>
-                                <p class="text-2xl font-black" x-text="getDailyGoalHours() + ' Hours'"></p>
+                            <div class="bg-white/10 p-4 rounded-2xl backdrop-blur-md">
+                                <p class="text-[10px] font-bold uppercase opacity-60">Daily Goal</p>
+                                <p class="text-xl font-black" x-text="getDailyGoalHours() + ' Hrs'"></p>
                             </div>
-                            <div class="bg-white/10 p-4 rounded-2xl">
-                                <p class="text-[10px] font-bold uppercase opacity-60">Chapters to Finish</p>
-                                <p class="text-2xl font-black" x-text="getRemainingChapters()"></p>
+                            <div class="bg-white/10 p-4 rounded-2xl backdrop-blur-md">
+                                <p class="text-[10px] font-bold uppercase opacity-60">To Finish</p>
+                                <p class="text-xl font-black" x-text="getRemainingChapters() + ' Chapters'"></p>
                             </div>
                         </div>
                     </div>
-                    <i class="fas fa-calendar-check absolute -bottom-10 -right-10 text-[12rem] opacity-10"></i>
+                    <i class="fas fa-bullseye absolute -bottom-10 -right-10 text-[12rem] opacity-10"></i>
                 </div>
-                <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 flex flex-col justify-center text-center">
-                    <p class="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">Overall Mastery</p>
+                <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 flex flex-col justify-center text-center shadow-sm">
+                    <p class="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">Course Mastery</p>
                     <div class="text-6xl font-black text-secondary" x-text="getGlobalRevisionProgress() + '%'"></div>
-                    <p class="text-xs font-bold mt-2 opacity-50">Course Proficiency</p>
+                    <div class="mt-4 flex gap-1 justify-center">
+                        <template x-for="i in 5">
+                            <div :class="i <= (getGlobalRevisionProgress()/20) ? 'bg-secondary' : 'bg-slate-100 dark:bg-slate-800'" class="w-4 h-1.5 rounded-full"></div>
+                        </template>
+                    </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                <!-- PERFORMANCE -->
+                <!-- SUBJECT ANALYTICS -->
                 <div class="space-y-4">
-                    <h3 class="text-xl font-black">Performance</h3>
+                    <h3 class="text-xl font-black">Syllabus Completion</h3>
                     <div class="bg-white dark:bg-darkcard p-6 rounded-[2.5rem] border dark:border-slate-800 h-80 overflow-y-auto no-scrollbar">
                         <template x-for="sub in subjects">
                             <div class="mb-6 last:mb-0">
                                 <div class="flex justify-between items-end mb-2">
-                                    <span class="font-black text-sm uppercase tracking-tight" x-text="sub.name"></span>
-                                    <span class="text-[10px] font-bold text-primary" x-text="getSubjectProgress(sub) + '% Complete'"></span>
+                                    <span class="font-black text-xs uppercase" x-text="sub.name"></span>
+                                    <span class="text-[10px] font-bold text-primary" x-text="getSubjectProgress(sub) + '%'"></span>
                                 </div>
                                 <div class="bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
-                                    <div class="bg-primary h-full transition-all duration-700" :style="'width: ' + getSubjectProgress(sub) + '%'"></div>
+                                    <div class="bg-primary h-full transition-all duration-1000" :style="'width: ' + getSubjectProgress(sub) + '%'"></div>
                                 </div>
                             </div>
                         </template>
                     </div>
                 </div>
 
-                <!-- SMART REVISION ALERTS -->
+                <!-- REVISION ALERT LIST -->
                 <div class="space-y-4">
-                    <h3 class="text-xl font-black">Revision Alerts</h3>
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2.5rem] border dark:border-slate-800 h-80 overflow-y-auto no-scrollbar relative">
+                    <h3 class="text-xl font-black">Revision Pipeline</h3>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-[2.5rem] border dark:border-slate-800 h-80 overflow-y-auto no-scrollbar">
                         <template x-for="alert in getRevisionAlerts()">
-                            <div class="flex items-center gap-4 p-4 rounded-2xl mb-3 border dark:border-slate-800 transition-all duration-500"
-                                 :class="alert.isUrgent ? 'alert-urgent shadow-lg' : 'bg-slate-50 dark:bg-slate-900/50'"
-                                 x-show="!alert.hidden">
+                            <div class="flex items-center gap-4 p-4 rounded-2xl mb-3 border dark:border-slate-800 transition-all duration-300"
+                                 :class="alert.isUrgent ? 'alert-urgent shadow-lg' : 'bg-slate-50 dark:bg-slate-900/50'">
                                 <div class="flex-1">
-                                    <p class="text-xs font-black uppercase" x-text="alert.chapter"></p>
-                                    <p class="text-[10px] font-bold text-primary uppercase" x-text="alert.subject"></p>
+                                    <p class="text-[11px] font-black uppercase" x-text="alert.chapter"></p>
+                                    <p class="text-[9px] font-bold opacity-60 uppercase" x-text="alert.subject"></p>
                                 </div>
                                 
-                                <template x-if="alert.confirming">
-                                    <button @click="undoRevision(alert)" class="text-[10px] font-black bg-slate-800 text-white px-3 py-2 rounded-lg uppercase">Undo (30s)</button>
-                                </template>
-                                
-                                <template x-if="!alert.confirming">
-                                    <button @click="markAsRevised(alert)" class="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center shadow-md">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                </template>
+                                <div class="flex items-center gap-2">
+                                    <template x-if="alert.confirming">
+                                        <button @click="undoRevision(alert)" class="text-[9px] font-black bg-slate-900 text-white px-3 py-2 rounded-lg uppercase">Undo</button>
+                                    </template>
+                                    <template x-if="!alert.confirming">
+                                        <button @click="markAsRevised(alert)" class="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </template>
+                                </div>
                             </div>
                         </template>
                     </div>
@@ -182,19 +181,73 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <template x-for="(sub, sIdx) in subjects" :key="sub.id">
                     <div @click="openSubject(sub)" class="bg-white dark:bg-darkcard p-6 rounded-[2.5rem] border dark:border-slate-800 hover:shadow-2xl transition-all cursor-pointer relative overflow-hidden group">
-                        <div class="absolute top-0 left-0 w-1.5 h-full bg-primary group-hover:w-3 transition-all"></div>
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-primary"></div>
                         <button @click.stop="deleteSubject(sIdx)" class="absolute top-6 right-6 text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash-alt text-sm"></i></button>
-                        <h3 class="text-xl font-black mb-2 pr-8" x-text="sub.name"></h3>
-                        <div class="flex items-center justify-between">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="sub.chapters?.length + ' Chapters'"></span>
-                            <span class="text-[10px] font-black text-primary px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg" x-text="getSubjectProgress(sub) + '% Done'"></span>
+                        <h3 class="text-xl font-black mb-1" x-text="sub.name"></h3>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="sub.chapters?.length + ' Chapters'"></p>
+                        <div class="mt-4 bg-slate-50 dark:bg-slate-900 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-primary h-full" :style="'width: ' + getSubjectProgress(sub) + '%'"></div>
                         </div>
                     </div>
                 </template>
             </div>
         </div>
 
-        <!-- SUBJECT DETAIL -->
+        <!-- FOCUS (POMODORO) -->
+        <div x-show="view === 'focus'" x-transition x-cloak class="max-w-xl mx-auto py-10 md:py-20 text-center">
+            <div class="bg-white dark:bg-darkcard p-10 md:p-16 rounded-[4rem] border dark:border-slate-800 shadow-2xl">
+                <div class="text-7xl md:text-8xl font-black text-primary mb-10 tabular-nums tracking-tighter" x-text="formatTime(timerSeconds)"></div>
+                
+                <div class="flex flex-col items-center gap-8">
+                    <div class="flex justify-center gap-6">
+                        <button @click="toggleTimer()" :class="timerActive ? 'bg-red-500' : 'bg-primary'" class="w-20 h-20 rounded-full text-white text-2xl shadow-xl hover:scale-105 active:scale-95 transition-all">
+                            <i class="fas" :class="timerActive ? 'fa-pause' : 'fa-play'"></i>
+                        </button>
+                        <button @click="resetTimer()" class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 text-2xl"><i class="fas fa-redo"></i></button>
+                    </div>
+
+                    <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-900 px-6 py-3 rounded-full border dark:border-slate-800">
+                        <i class="fas fa-music text-xs opacity-50"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest">Study Music</span>
+                        <button @click="isMusicEnabled = !isMusicEnabled" :class="isMusicEnabled ? 'bg-secondary' : 'bg-slate-300'" class="w-10 h-5 rounded-full relative transition-colors">
+                            <div :class="isMusicEnabled ? 'translate-x-5' : 'translate-x-1'" class="absolute top-1 w-3 h-3 bg-white rounded-full transition-transform"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div x-show="view === 'settings'" x-transition x-cloak class="max-w-2xl mx-auto space-y-8 pb-20">
+            <h2 class="text-3xl font-black">Settings</h2>
+            
+            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 space-y-6 shadow-sm">
+                <h3 class="font-bold text-lg"><i class="fas fa-cloud text-primary mr-2"></i>Cloud Sync</h3>
+                <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-between">
+                    <p class="text-xs font-bold" x-text="useCloud ? 'Connected to Google Drive' : 'Local Storage Only'"></p>
+                    <button @click="useCloud ? logout() : startWithBackup(true)" class="px-5 py-2 bg-primary text-white rounded-xl text-[10px] font-black uppercase">
+                        <span x-text="useCloud ? 'Logout' : 'Connect'"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 space-y-6 shadow-sm">
+                <h3 class="font-bold text-lg"><i class="fas fa-file-excel text-secondary mr-2"></i>Data Management</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <button @click="downloadTemplate()" class="p-5 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left border dark:border-slate-800">
+                        <i class="fas fa-download text-primary mb-2"></i>
+                        <p class="font-black text-[10px] uppercase">Export Excel</p>
+                    </button>
+                    <button @click="triggerImport()" class="p-5 bg-slate-50 dark:bg-slate-900 rounded-2xl text-left border dark:border-slate-800">
+                        <i class="fas fa-upload text-secondary mb-2"></i>
+                        <p class="font-black text-[10px] uppercase">Import Excel</p>
+                    </button>
+                </div>
+                <button @click="deleteAllData()" class="w-full py-4 bg-red-500/10 text-red-500 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-red-500/20">Clear All Data</button>
+            </div>
+        </div>
+
+        <!-- SUBJECT DETAIL PANEL -->
         <div x-show="view === 'subjectDetail'" x-transition x-cloak class="h-[calc(100vh-160px)] -mx-4 md:-mx-8 border-y dark:border-slate-800 bg-white dark:bg-darkcard flex overflow-hidden">
             <div class="w-full md:w-80 border-r dark:border-slate-800 flex flex-col" :class="activeChapter ? 'mobile-hide' : 'flex'">
                 <div class="p-4 flex justify-between items-center border-b dark:border-slate-800">
@@ -206,78 +259,46 @@
                     <template x-for="chapter in activeSubject?.chapters" :key="chapter.id">
                         <div @click="activeChapter = chapter" :class="activeChapter?.id === chapter.id ? 'bg-indigo-50 dark:bg-indigo-900/20 border-r-4 border-primary' : ''" class="p-4 border-b dark:border-slate-800 cursor-pointer">
                             <h4 class="font-bold text-sm truncate" x-text="chapter.title"></h4>
-                            <div class="flex gap-0.5 mt-1">
-                                <template x-for="r in 5">
-                                    <div :class="chapter.revisions >= r ? 'bg-secondary' : 'bg-slate-200 dark:bg-slate-700'" class="h-1 flex-1 rounded-full"></div>
-                                </template>
-                            </div>
                         </div>
                     </template>
                 </div>
             </div>
 
             <div x-show="activeChapter" class="flex-1 overflow-y-auto p-4 md:p-10 bg-slate-50/50 dark:bg-darkbg/30 relative" :class="activeChapter ? 'mobile-panel' : ''">
-                <button @click="activeChapter = null; stopAudio(); forceSync(true);" class="md:hidden text-primary font-bold text-sm mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back to Chapters</button>
-                <div class="max-w-4xl mx-auto space-y-6 pb-20">
+                <button @click="activeChapter = null; forceSync(true);" class="md:hidden text-primary font-bold text-sm mb-6 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Chapters</button>
+                <div class="max-w-3xl mx-auto space-y-6 pb-20">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <input type="text" x-model="activeChapter.title" @input="forceSync()" class="bg-transparent border-none text-3xl font-black focus:ring-0 p-0 w-full">
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
-                                <input type="number" x-model="activeChapter.hours" @input="forceSync()" class="w-10 bg-transparent border-none text-sm font-black p-0 focus:ring-0">
-                                <span class="text-[10px] font-black uppercase opacity-40 ml-1">Hrs</span>
-                            </div>
-                            <button @click="activeChapter.done = !activeChapter.done; forceSync(true);" :class="activeChapter.done ? 'bg-secondary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'" class="px-6 py-2 rounded-xl text-xs font-black uppercase">Done</button>
-                            <button @click="removeChapter()" class="text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash-alt"></i></button>
+                        <div class="flex gap-2">
+                            <button @click="activeChapter.done = !activeChapter.done; forceSync(true);" :class="activeChapter.done ? 'bg-secondary text-white' : 'bg-slate-200 dark:bg-slate-700'" class="px-6 py-2 rounded-xl text-[10px] font-black uppercase">Done</button>
+                            <button @click="removeChapter()" class="text-red-400"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
                     <div class="bg-white dark:bg-darkcard p-6 rounded-[2rem] border dark:border-slate-800">
-                        <h4 class="font-bold mb-4">Notes</h4>
-                        <textarea x-model="activeChapter.notes" @input="forceSync()" class="w-full h-40 bg-transparent border-none text-sm focus:ring-0 resize-none leading-relaxed" placeholder="Type chapter details..."></textarea>
+                        <h4 class="font-bold mb-4">Chapter Notes</h4>
+                        <textarea x-model="activeChapter.notes" @input="forceSync()" class="w-full h-64 bg-transparent border-none text-sm focus:ring-0 resize-none leading-relaxed" placeholder="Write insights..."></textarea>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- SETTINGS -->
-        <div x-show="view === 'settings'" x-transition x-cloak class="max-w-2xl mx-auto space-y-8 pb-20">
-            <h2 class="text-3xl font-black">Settings</h2>
-            <div class="bg-white dark:bg-darkcard p-8 rounded-[2.5rem] border dark:border-slate-800 shadow-sm space-y-6">
-                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-cloud text-primary"></i> Sync</h3>
-                <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-between">
-                    <div>
-                        <p class="font-bold text-sm">JKM Cloud Backup</p>
-                        <p class="text-xs text-slate-500" x-text="useCloud ? 'Account Synced' : 'Offline'"></p>
-                    </div>
-                    <button @click="useCloud ? logout() : startWithBackup(true)" 
-                            :class="useCloud ? 'bg-red-50 text-red-500' : 'bg-primary text-white'"
-                            class="px-5 py-2 rounded-xl text-xs font-bold">
-                        <span x-text="useCloud ? 'Disconnect' : 'Enable Sync'"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- FOCUS -->
-        <div x-show="view === 'focus'" x-transition x-cloak class="max-w-xl mx-auto py-20 text-center">
-            <div class="bg-white dark:bg-darkcard p-12 rounded-[4rem] border dark:border-slate-800 shadow-2xl">
-                <div class="text-8xl font-black text-primary mb-12 tabular-nums" x-text="formatTime(timerSeconds)"></div>
-                <div class="flex justify-center gap-6">
-                    <button @click="toggleTimer()" :class="timerActive ? 'bg-red-500' : 'bg-primary'" class="w-20 h-20 rounded-full text-white text-2xl shadow-xl transition-all">
-                        <i class="fas" :class="timerActive ? 'fa-pause' : 'fa-play'"></i>
-                    </button>
-                    <button @click="resetTimer()" class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 text-2xl"><i class="fas fa-redo"></i></button>
-                </div>
-                <template x-if="timerActive">
-                    <p class="mt-8 text-[10px] font-black text-primary uppercase tracking-widest animate-pulse">Study Music Playing...</p>
-                </template>
             </div>
         </div>
     </main>
 
-    <!-- HIDDEN LOFI AUDIO -->
+    <!-- EXCEL FILE INPUT -->
+    <input type="file" id="excelFile" class="hidden" @change="handleImport">
+
+    <!-- HIDDEN RADIO -->
     <audio id="studyRadio" loop>
         <source src="https://stream.zeno.fm/f3v5u8p7u0huv" type="audio/mpeg">
     </audio>
+
+    <div x-cloak x-show="showAddSubject" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
+        <div @click="showAddSubject = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
+        <div class="relative bg-white dark:bg-darkcard p-8 rounded-[3rem] w-full max-w-md shadow-2xl">
+            <h2 class="text-2xl font-black mb-8">New Subject</h2>
+            <input type="text" x-model="newSub.name" placeholder="Title" class="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl outline-none font-bold mb-4">
+            <button @click="createSubject(); forceSync(true);" class="w-full py-5 bg-primary text-white rounded-3xl font-black shadow-xl">Initialize</button>
+        </div>
+    </div>
 
     <script>
         const CLIENT_ID = '994815938069-amhjk8t195flo04e73unb6d1bgrtpbep.apps.googleusercontent.com';
@@ -289,10 +310,8 @@
                 syncTimer: null, lastSyncTime: 'Never', useCloud: false, darkMode: false,
                 subjects: [], activeSubject: null, activeChapter: null, showAddSubject: false,
                 newSub: { name: '' }, streak: 0, timerSeconds: 1500, timerActive: false,
-                timerInterval: null, examDate: '', wakeLock: null,
+                timerInterval: null, examDate: '', wakeLock: null, isMusicEnabled: true,
                 googleToken: null, driveFolderId: null, driveFileId: null,
-                isRecording: false, mediaRecorder: null, audioChunks: [],
-                audioInstance: null, audioPlaying: false, currentAudioIdx: null, audioDuration: 0, audioCurrentTime: 0, audioTicker: null,
 
                 init() {
                     const saved = localStorage.getItem('titan_os_ultimate_final');
@@ -303,100 +322,99 @@
                     }
                     this.checkStreak();
                     this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    const cloudPref = localStorage.getItem('use_cloud_sync');
-                    if (cloudPref === 'true') this.startWithBackup(false);
+                    if (localStorage.getItem('use_cloud_sync') === 'true') this.startWithBackup(false);
                 },
 
-                // EXAM LOGIC
+                // EXCEL & DATA
+                downloadTemplate() {
+                    const rows = [];
+                    this.subjects.forEach(s => {
+                        if (!s.chapters?.length) rows.push({ Subject: s.name, Chapter: '', Notes: '' });
+                        else s.chapters.forEach(c => rows.push({ Subject: s.name, Chapter: c.title, Notes: c.notes }));
+                    });
+                    const ws = XLSX.utils.json_to_sheet(rows.length ? rows : [{ Subject: '', Chapter: '', Notes: '' }]);
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "StudyData");
+                    XLSX.writeFile(wb, "JKM_Study_Backup.xlsx");
+                },
+                triggerImport() { document.getElementById('excelFile').click(); },
+                handleImport(e) {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        const workbook = XLSX.read(evt.target.result, { type: 'binary' });
+                        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                        rows.forEach(r => {
+                            let sub = this.subjects.find(s => s.name === r.Subject);
+                            if (!sub) {
+                                sub = { id: Date.now() + Math.random(), name: r.Subject || 'New', chapters: [] };
+                                this.subjects.push(sub);
+                            }
+                            if (r.Chapter) sub.chapters.push({ id: Math.random(), title: r.Chapter, done: false, revisions: 0, notes: r.Notes || '', lastRevised: new Date().toISOString() });
+                        });
+                        this.forceSync(true);
+                    };
+                    reader.readAsBinaryString(e.target.files[0]);
+                },
+                async deleteAllData() {
+                    if (confirm('Delete everything?')) {
+                        if (this.useCloud && this.driveFolderId) await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFolderId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${this.googleToken}` } });
+                        localStorage.clear(); location.reload();
+                    }
+                },
+
+                // EXAM & REVISION
                 getDaysToExam() {
                     if (!this.examDate) return 0;
                     const diff = new Date(this.examDate) - new Date();
-                    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+                    return Math.max(0, Math.ceil(diff / 86400000));
                 },
-                getRemainingChapters() {
-                    return this.subjects.reduce((sum, s) => sum + (s.chapters?.filter(c => !c.done).length || 0), 0);
-                },
+                getRemainingChapters() { return this.subjects.reduce((a, s) => a + (s.chapters?.filter(c => !c.done).length || 0), 0); },
                 getDailyGoalHours() {
                     const days = this.getDaysToExam();
                     if (days <= 0) return 0;
-                    const remHours = this.subjects.reduce((sum, s) => sum + (s.chapters?.filter(c => !c.done).reduce((h, c) => h + parseFloat(c.hours || 0), 0) || 0), 0);
-                    return (remHours / days).toFixed(1);
+                    return (this.getRemainingChapters() / days).toFixed(1);
                 },
-
-                // REVISION SYSTEM
                 getRevisionAlerts() {
                     const alerts = [];
                     const now = new Date();
                     this.subjects.forEach(s => s.chapters?.forEach(c => {
-                        const lastRev = new Date(c.lastRevised || 0);
-                        const diffDays = (now - lastRev) / (1000 * 60 * 60 * 24);
-                        if (diffDays > 3 && !c.done) {
-                            alerts.push({
-                                subject: s.name,
-                                chapter: c.title,
-                                chapterId: c.id,
-                                isUrgent: diffDays > 4, // Becomes Urgent (Red) after 4 days
-                                confirming: false,
-                                hidden: false
-                            });
-                        }
+                        const diff = (now - new Date(c.lastRevised || 0)) / 86400000;
+                        if (diff > 3 && !c.done) alerts.push({ subject: s.name, chapter: c.title, chapterId: c.id, isUrgent: diff > 4, confirming: false });
                     }));
-                    return alerts.slice(0, 10);
+                    return alerts.slice(0, 8);
                 },
                 markAsRevised(alert) {
                     alert.confirming = true;
                     alert.timer = setTimeout(() => {
                         this.subjects.forEach(s => {
                             const ch = s.chapters.find(c => c.id === alert.chapterId);
-                            if (ch) {
-                                ch.revisions = Math.min(5, (ch.revisions || 0) + 1);
-                                ch.lastRevised = new Date().toISOString();
-                                alert.hidden = true;
-                                this.forceSync(true);
-                            }
+                            if (ch) { ch.revisions = Math.min(5, (ch.revisions || 0) + 1); ch.lastRevised = new Date().toISOString(); this.forceSync(true); }
                         });
-                    }, 30000); // 30 second delay
+                    }, 30000);
                 },
-                undoRevision(alert) {
-                    clearTimeout(alert.timer);
-                    alert.confirming = false;
-                },
+                undoRevision(alert) { clearTimeout(alert.timer); alert.confirming = false; },
 
-                // FOCUS SYSTEM
+                // TIMER & SCREEN
                 async toggleTimer() {
                     const radio = document.getElementById('studyRadio');
                     if (this.timerActive) {
-                        clearInterval(this.timerInterval);
-                        this.timerActive = false;
-                        radio.pause();
+                        clearInterval(this.timerInterval); this.timerActive = false; radio.pause();
                         if (this.wakeLock) { this.wakeLock.release(); this.wakeLock = null; }
                     } else {
                         this.timerActive = true;
-                        radio.play().catch(() => console.log("Music interaction required"));
-                        if ('wakeLock' in navigator) {
-                            try { this.wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
-                        }
-                        this.timerInterval = setInterval(() => {
-                            if (this.timerSeconds > 0) this.timerSeconds--;
-                            else this.toggleTimer();
-                        }, 1000);
+                        if (this.isMusicEnabled) radio.play().catch(() => {});
+                        if ('wakeLock' in navigator) { try { this.wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {} }
+                        this.timerInterval = setInterval(() => { this.timerSeconds > 0 ? this.timerSeconds-- : this.toggleTimer(); }, 1000);
                     }
                 },
+                resetTimer() { this.timerSeconds = 1500; this.timerActive = false; clearInterval(this.timerInterval); document.getElementById('studyRadio').pause(); },
 
+                // CORE LOGIC
                 forceSync(immediate = false) {
-                    const pkg = { subjects: this.subjects, examDate: this.examDate };
-                    localStorage.setItem('titan_os_ultimate_final', JSON.stringify(pkg));
+                    localStorage.setItem('titan_os_ultimate_final', JSON.stringify({ subjects: this.subjects, examDate: this.examDate }));
                     if (!this.useCloud) return;
                     if (this.syncTimer) clearTimeout(this.syncTimer);
-                    if (immediate) this.syncToCloud();
-                    else this.syncTimer = setTimeout(() => this.syncToCloud(), 2000);
-                },
-
-                // UTILITIES
-                getGlobalProgress() {
-                    const total = this.subjects.reduce((a, b) => a + (b.chapters?.length || 0), 0);
-                    if (total === 0) return 0;
-                    return Math.round((this.subjects.reduce((a, b) => a + (b.chapters?.filter(c => c.done).length || 0), 0) / total) * 100);
+                    immediate ? this.syncToCloud() : this.syncTimer = setTimeout(() => this.syncToCloud(), 2000);
                 },
                 getGlobalRevisionProgress() {
                     let chapters = 0, points = 0;
@@ -407,30 +425,23 @@
                     if (!sub.chapters?.length) return 0;
                     return Math.round((sub.chapters.filter(c => c.done).length / sub.chapters.length) * 100);
                 },
-                getTotalHours() { return this.subjects.reduce((sum, s) => sum + (s.chapters?.reduce((h, c) => h + parseFloat(c.hours || 0), 0) || 0), 0).toFixed(1); },
-                getCompletedHours() { return this.subjects.reduce((sum, s) => sum + (s.chapters?.filter(c => c.done).reduce((h, c) => h + parseFloat(c.hours || 0), 0) || 0), 0).toFixed(1); },
+                formatTime(sec) { return `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; },
                 checkStreak() {
-                    const last = localStorage.getItem('last_active');
-                    const today = new Date().toDateString();
+                    const last = localStorage.getItem('last_active'), today = new Date().toDateString();
                     if (last === today) this.streak = parseInt(localStorage.getItem('streak_count') || 1);
-                    else {
-                        const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-                        if (last === yesterday.toDateString()) this.streak = parseInt(localStorage.getItem('streak_count') || 0) + 1;
-                        else this.streak = 1;
-                    }
-                    localStorage.setItem('streak_count', this.streak);
-                    localStorage.setItem('last_active', today);
+                    else if (last === new Date(Date.now() - 86400000).toDateString()) this.streak = parseInt(localStorage.getItem('streak_count') || 0) + 1;
+                    else this.streak = 1;
+                    localStorage.setItem('streak_count', this.streak); localStorage.setItem('last_active', today);
                 },
 
-                // CLOUD LOGIC
+                // CLOUD
                 async startWithBackup(interactive = true) {
                     this.loading = true;
                     const client = google.accounts.oauth2.initTokenClient({
                         client_id: CLIENT_ID, scope: SCOPES,
                         callback: async (res) => {
                             if (res.error) { this.loading = false; return; }
-                            this.googleToken = res.access_token;
-                            await this.initializeCloudSync();
+                            this.googleToken = res.access_token; await this.initializeCloudSync();
                             this.useCloud = true; this.appStarted = true; this.loading = false;
                             localStorage.setItem('use_cloud_sync', 'true');
                         },
@@ -441,7 +452,7 @@
                 async initializeCloudSync() {
                     await new Promise(r => gapi.load('client', r));
                     const headers = { Authorization: `Bearer ${this.googleToken}` };
-                    const fQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent("name='JKM Study' and mimeType='application/vnd.google-apps.folder' and trashed=false")}`, { headers });
+                    const fQuery = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent("name='JKM Study' and mimeType='application/vnd.google-apps.folder'")}`, { headers });
                     const fData = await fQuery.json();
                     if (fData.files?.length > 0) this.driveFolderId = fData.files[0].id;
                     else {
@@ -452,54 +463,35 @@
                     const bData = await bQuery.json();
                     if (bData.files?.length > 0) {
                         this.driveFileId = bData.files[0].id;
-                        const cloudRes = await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFileId}?alt=media`, { headers });
-                        const cloudData = await cloudRes.json();
-                        if (cloudData) {
-                            this.subjects = cloudData.subjects || [];
-                            this.examDate = cloudData.examDate || '';
-                            localStorage.setItem('titan_os_ultimate_final', JSON.stringify(cloudData));
-                        }
+                        const cloudData = await (await fetch(`https://www.googleapis.com/drive/v3/files/${this.driveFileId}?alt=media`, { headers })).json();
+                        if (cloudData) { this.subjects = cloudData.subjects || []; this.examDate = cloudData.examDate || ''; }
                     }
                 },
                 async syncToCloud() {
                     if (!this.googleToken || !this.driveFolderId || this.syncing) return;
                     this.syncing = true;
                     try {
-                        const boundary = 'jkm_cloud_sync';
+                        const boundary = 'jkm_sync';
                         const pkg = { subjects: this.subjects, examDate: this.examDate };
                         const metadata = { name: 'backup.json', mimeType: 'application/json' };
                         if (!this.driveFileId) metadata.parents = [this.driveFolderId];
                         const body = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(pkg)}\r\n--${boundary}--`;
                         const url = this.driveFileId ? `https://www.googleapis.com/upload/drive/v3/files/${this.driveFileId}?uploadType=multipart` : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
-                        const res = await fetch(url, { method: this.driveFileId ? 'PATCH' : 'POST', headers: { Authorization: `Bearer ${this.googleToken}`, 'Content-Type': `multipart/related; boundary=${boundary}` }, body });
-                        const data = await res.json();
-                        if (data.id) { this.driveFileId = data.id; this.lastSyncTime = new Date().toLocaleTimeString(); }
+                        await fetch(url, { method: this.driveFileId ? 'PATCH' : 'POST', headers: { Authorization: `Bearer ${this.googleToken}`, 'Content-Type': `multipart/related; boundary=${boundary}` }, body });
+                        this.lastSyncTime = new Date().toLocaleTimeString();
                     } finally { this.syncing = false; }
                 },
 
-                // BASIC SUBJECT ACTIONS
-                createSubject() {
-                    if (!this.newSub.name) return;
-                    this.subjects.push({ id: Date.now(), name: this.newSub.name, chapters: [] });
-                    this.newSub.name = ''; this.showAddSubject = false;
-                    this.forceSync(true);
-                },
+                createSubject() { if (this.newSub.name) { this.subjects.push({ id: Date.now(), name: this.newSub.name, chapters: [] }); this.newSub.name = ''; this.showAddSubject = false; this.forceSync(true); } },
                 deleteSubject(idx) { if(confirm('Delete?')) { this.subjects.splice(idx, 1); this.forceSync(true); } },
                 openSubject(sub) { this.activeSubject = sub; this.view = 'subjectDetail'; this.activeChapter = null; },
-                addChapter() {
-                    if(!this.activeSubject.chapters) this.activeSubject.chapters = [];
-                    const ch = { id: Date.now(), title: 'New Chapter', hours: 0, done: false, revisions: 0, notes: '', lastRevised: new Date().toISOString() };
-                    this.activeSubject.chapters.push(ch); this.activeChapter = ch;
-                    this.forceSync(true);
+                addChapter() { 
+                    if (!this.activeSubject.chapters) this.activeSubject.chapters = [];
+                    const ch = { id: Date.now(), title: 'New Chapter', done: false, lastRevised: new Date().toISOString(), notes: '' };
+                    this.activeSubject.chapters.push(ch); this.activeChapter = ch; this.forceSync(true); 
                 },
-                removeChapter() {
-                    if(confirm('Delete?')) {
-                        this.activeSubject.chapters = this.activeSubject.chapters.filter(c => c.id !== this.activeChapter.id);
-                        this.activeChapter = null; this.forceSync(true);
-                    }
-                },
-                formatTime(sec) { return `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; },
-                resetTimer() { this.timerSeconds = 1500; this.timerActive = false; clearInterval(this.timerInterval); document.getElementById('studyRadio').pause(); }
+                removeChapter() { this.activeSubject.chapters = this.activeSubject.chapters.filter(c => c.id !== this.activeChapter.id); this.activeChapter = null; this.forceSync(true); },
+                logout() { localStorage.clear(); location.reload(); }
             }
         }
     </script>
