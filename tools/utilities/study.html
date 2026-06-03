@@ -97,6 +97,7 @@
                 <h1 class="text-3xl font-black">Dashboard</h1>
                 <div x-show="useCloud" class="flex flex-col items-end">
                     <div class="flex items-center gap-2">
+                        <!-- MANUAL SYNC BUTTON -->
                         <button @click="forceSync(true)" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition active:scale-90" title="Sync Now">
                             <i class="fas fa-sync-alt text-xs transition-colors" :class="syncing ? 'animate-spin text-amber-500' : 'text-emerald-500'"></i>
                         </button>
@@ -411,7 +412,6 @@
                     history.pushState({view: 'dash'}, "");
                 },
 
-                // UPDATED FORCESYNC WITH DEBOUNCING
                 forceSync(immediate = false) {
                     localStorage.setItem('titan_os_ultimate_final', JSON.stringify(this.subjects));
                     if (!this.useCloud) return;
@@ -421,10 +421,10 @@
                     if (immediate) {
                         this.syncToCloud();
                     } else {
-                        // Wait 1.5 seconds after last change before hitting the Cloud API
+                        // Debounce: Wait 2 seconds of inactivity before uploading large files (audio)
                         this.syncTimer = setTimeout(() => {
                             this.syncToCloud();
-                        }, 1500);
+                        }, 2000);
                     }
                 },
 
@@ -570,11 +570,11 @@
                         if (cloudData && Array.isArray(cloudData)) {
                             this.subjects = cloudData;
                             localStorage.setItem('titan_os_ultimate_final', JSON.stringify(this.subjects));
+                            this.lastSyncTime = 'Ready';
                         }
                     }
                 },
 
-                // REWRITTEN ROBUST SYNC LOGIC
                 async syncToCloud() {
                     if (!this.googleToken || !this.driveFolderId) return;
                     if (this.syncing) {
@@ -586,16 +586,21 @@
                     this.needsSync = false;
                     
                     try {
-                        const boundary = 'jkm_sync_boundary';
+                        const boundary = 'jkm_cloud_sync_boundary';
+                        
+                        // FIX: Remove 'parents' from metadata if updating (PATCH)
                         const metadata = { 
                             name: 'backup.json', 
-                            parents: [this.driveFolderId],
                             mimeType: 'application/json' 
                         };
-                        
-                        // Constructing proper multipart body for large file uploads
+                        if (!this.driveFileId) {
+                            metadata.parents = [this.driveFolderId];
+                        }
+
+                        // Robust Multipart Body Construction
                         const delimiter = `\r\n--${boundary}\r\n`;
                         const closeDelimiter = `\r\n--${boundary}--`;
+                        
                         const body = 
                             delimiter +
                             'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
@@ -618,15 +623,22 @@
                             body: body 
                         });
 
+                        if (!res.ok) {
+                            const errorData = await res.json();
+                            throw new Error(errorData.error.message);
+                        }
+
                         const data = await res.json();
                         if (data.id) {
                             this.driveFileId = data.id;
+                            // SUCCESS: Update the timestamp
                             this.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                         }
                     } catch(e) {
-                        console.error("Cloud Error:", e);
+                        console.error("Sync Failed:", e);
                     } finally {
                         this.syncing = false;
+                        // If user made changes during the upload, sync again
                         if (this.needsSync) this.syncToCloud();
                     }
                 },
@@ -650,7 +662,7 @@
                             reader.onloadend = () => {
                                 if(!this.activeChapter.recordings) this.activeChapter.recordings = [];
                                 this.activeChapter.recordings.push(reader.result); 
-                                this.forceSync(true); // Sync immediately after recording
+                                this.forceSync(true); // Immediate sync for audio
                             };
                         };
                         this.mediaRecorder.start(); this.isRecording = true;
