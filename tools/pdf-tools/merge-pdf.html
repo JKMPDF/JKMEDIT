@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang='en' data-theme='corporate-blue'>
 <head>
     <meta charset='UTF-8'/>
@@ -751,42 +751,89 @@
         }
 
         async function processPdf(compressionLevel) {
-            if (!PDFLib || !PDFLib.PDFDocument) {
+            // Fix 1: Properly check if window.PDFLib is defined rather than throwing a raw ReferenceError
+            if (typeof window.PDFLib === 'undefined' || !window.PDFLib.PDFDocument) {
                 throw new Error('PDF library not loaded. Please refresh the page and try again.');
             }
-            const { PDFDocument } = PDFLib;
+            
+            const { PDFDocument } = window.PDFLib;
             const selectedPages = allPages.filter(p => p.isSelected);
             if (selectedPages.length === 0) return null;
             const finalPdfDoc = await PDFDocument.create();
             
             if (compressionLevel === 0) {
-                const loadedPdfDocs = new Map();
+                // Fix 2: Group by fileId so we don't load 125 full PDF documents into memory simultaneously.
+                const pagesByFile = {};
+                selectedPages.forEach(p => {
+                    if (!pagesByFile[p.fileId]) pagesByFile[p.fileId] = [];
+                    pagesByFile[p.fileId].push(p);
+                });
+
+                const copiedPagesDict = {};
+                
+                for (const fileId in pagesByFile) {
+                    const pagesForFile = pagesByFile[fileId];
+                    const sourceDoc = await PDFDocument.load(fileDataStore[fileId].buffer);
+                    const indicesToCopy = pagesForFile.map(p => p.originalPageIndex);
+                    
+                    const copiedPages = await finalPdfDoc.copyPages(sourceDoc, indicesToCopy);
+                    
+                    pagesForFile.forEach((p, index) => {
+                        copiedPagesDict[p.id] = copiedPages[index];
+                    });
+                    // Letting sourceDoc naturally release from memory before continuing to the next batch
+                }
+
+                // Append in the correct final order based on user selection/re-ordering
                 for (const pageObj of selectedPages) {
-                    let sourceDoc = loadedPdfDocs.get(pageObj.fileId);
-                    if (!sourceDoc) { sourceDoc = await PDFDocument.load(fileDataStore[pageObj.fileId].buffer); loadedPdfDocs.set(pageObj.fileId, sourceDoc); }
-                    const [copiedPage] = await finalPdfDoc.copyPages(sourceDoc, [pageObj.originalPageIndex]);
-                    finalPdfDoc.addPage(copiedPage);
+                    if (copiedPagesDict[pageObj.id]) {
+                        finalPdfDoc.addPage(copiedPagesDict[pageObj.id]);
+                    }
                 }
             } else {
                 const quality = 1 - (compressionLevel / 100);
-                const loadedPdfJsDocs = new Map();
-                for (const pageObj of selectedPages) {
-                    let pdfJsDoc = loadedPdfJsDocs.get(pageObj.fileId);
-                    if (!pdfJsDoc) {
-                        pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(fileDataStore[pageObj.fileId].buffer.slice(0))}).promise;
-                        loadedPdfJsDocs.set(pageObj.fileId, pdfJsDoc);
+                
+                const pagesByFile = {};
+                selectedPages.forEach(p => {
+                    if (!pagesByFile[p.fileId]) pagesByFile[p.fileId] = [];
+                    pagesByFile[p.fileId].push(p);
+                });
+
+                const jpegImagesDict = {};
+                
+                for (const fileId in pagesByFile) {
+                    const pagesForFile = pagesByFile[fileId];
+                    const pdfJsDoc = await pdfjsLib.getDocument({data: new Uint8Array(fileDataStore[fileId].buffer.slice(0))}).promise;
+                    
+                    for (const pageObj of pagesForFile) {
+                        const page = await pdfJsDoc.getPage(pageObj.originalPageIndex + 1);
+                        const viewport = page.getViewport({ scale: 1.0 });
+                        const canvas = document.createElement('canvas');
+                        canvas.height = viewport.height; canvas.width = viewport.width;
+                        const context = canvas.getContext('2d');
+                        await page.render({ canvasContext: context, viewport: viewport }).promise;
+                        
+                        const dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.01, quality));
+                        
+                        if (dataUrl && dataUrl !== 'data:,') {
+                            jpegImagesDict[pageObj.id] = await finalPdfDoc.embedJpg(dataUrl);
+                        }
+                        
+                        // Force free memory for massive batches
+                        canvas.width = 0; canvas.height = 0; 
                     }
-                    const page = await pdfJsDoc.getPage(pageObj.originalPageIndex + 1);
-                    const viewport = page.getViewport({ scale: 1.0 });
-                    const canvas = document.createElement('canvas');
-                    canvas.height = viewport.height; canvas.width = viewport.width;
-                    const context = canvas.getContext('2d');
-                    await page.render({ canvasContext: context, viewport: viewport }).promise;
-                    const dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.01, quality));
-                    if (!dataUrl || dataUrl === 'data:,') continue;
-                    const jpegImage = await finalPdfDoc.embedJpg(dataUrl);
-                    const newPage = finalPdfDoc.addPage([jpegImage.width, jpegImage.height]);
-                    newPage.drawImage(jpegImage, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
+                    
+                    // Cleanup pdf.js memory to prevent tab crash
+                    await pdfJsDoc.destroy();
+                }
+
+                // Re-assemble in order
+                for (const pageObj of selectedPages) {
+                    const jpegImage = jpegImagesDict[pageObj.id];
+                    if (jpegImage) {
+                        const newPage = finalPdfDoc.addPage([jpegImage.width, jpegImage.height]);
+                        newPage.drawImage(jpegImage, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
+                    }
                 }
             }
             return await finalPdfDoc.save();
@@ -919,4 +966,3 @@
     <script src="/assets/cookie-consent.js" async></script>
 </body>
 </html>
-
