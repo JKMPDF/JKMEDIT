@@ -44,7 +44,7 @@
     <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap' rel='stylesheet'/>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
     
-    <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
     <style>
@@ -618,10 +618,14 @@
         const sizePreview = document.getElementById('size-preview');
         const originalSizeDisplay = document.getElementById('original-size-display');
         
-        if (typeof window.pdfjsLib === 'undefined') {
-            console.error('PDF.js library not loaded');
+        let pdfJsInstance = null;
+        if (typeof window.pdfjsLib !== 'undefined') pdfJsInstance = window.pdfjsLib;
+        else if (typeof pdfjsLib !== 'undefined') pdfJsInstance = pdfjsLib;
+
+        if (!pdfJsInstance) {
+            console.error('PDF.js library not loaded initially.');
         } else {
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
+            pdfJsInstance.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
         }
         
         let allPages = [], fileCounter = 0;
@@ -644,22 +648,21 @@
                     fileCounter++;
                     const fileId = fileCounter;
                     
-                    // We DO NOT store the arrayBuffer here anymore. We only store the file reference.
                     fileDataStore[fileId] = { file: file, size: file.size };
                     
-                    if (typeof window.pdfjsLib === 'undefined') {
+                    const pdfJs = typeof window.pdfjsLib !== 'undefined' ? window.pdfjsLib : (typeof pdfjsLib !== 'undefined' ? pdfjsLib : null);
+                    if (!pdfJs) {
                         throw new Error('PDF.js library not loaded properly.');
                     }
                     
                     const arrayBuffer = await file.arrayBuffer();
-                    const pdfJsDoc = await window.pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer)}).promise;
+                    const pdfJsDoc = await pdfJs.getDocument({data: new Uint8Array(arrayBuffer)}).promise;
                     const numPagesInFile = pdfJsDoc.numPages;
                     fileDataStore[fileId].pageCount = numPagesInFile;
                     
                     for (let i = 1; i <= numPagesInFile; i++) {
                         allPages.push({id: fileId + '-' + i, fileId: fileId, originalPageIndex: i - 1, pageLabel: 'F' + fileId + ', P' + i, isSelected: true});
                     }
-                    // Crucial: Free the document from memory immediately after getting page count
                     await pdfJsDoc.destroy();
                 }
             } catch (error) {
@@ -682,7 +685,6 @@
             if (!pagePreviewGrid) return;
             pagePreviewGrid.innerHTML = '';
             
-            // 1. Build the raw HTML layout first to maintain the user's exact ordered list
             const domMap = {};
             allPages.forEach(pageObj => {
                 const pageItem = document.createElement('div');
@@ -692,23 +694,23 @@
                 pageItem.draggable = true;
                 pageItem.innerHTML = `<canvas></canvas><div class="page-info">${pageObj.pageLabel}</div><i class="fa-solid fa-check page-tick-icon"></i>`;
                 pagePreviewGrid.appendChild(pageItem);
-                domMap[pageObj.id] = pageItem; // Store quick reference
+                domMap[pageObj.id] = pageItem;
             });
 
-            // 2. Group pages by fileId to prevent loading the same PDF repeatedly
             const pagesByFile = {};
             allPages.forEach(p => {
                 if(!pagesByFile[p.fileId]) pagesByFile[p.fileId] = [];
                 pagesByFile[p.fileId].push(p);
             });
 
-            // 3. Process thumbnails one file at a time, injecting them into the predefined HTML layout
+            const pdfJs = typeof window.pdfjsLib !== 'undefined' ? window.pdfjsLib : pdfjsLib;
+
             for (const fileId in pagesByFile) {
                 const fileInfo = fileDataStore[fileId];
                 if (!fileInfo) continue;
                 
                 const arrayBuffer = await fileInfo.file.arrayBuffer();
-                const pdfJsDoc = await window.pdfjsLib.getDocument({data: new Uint8Array(arrayBuffer)}).promise;
+                const pdfJsDoc = await pdfJs.getDocument({data: new Uint8Array(arrayBuffer)}).promise;
 
                 for (const pageObj of pagesByFile[fileId]) {
                     const targetDOM = domMap[pageObj.id];
@@ -720,10 +722,8 @@
                     canvas.width = viewport.width;
                     await page.render({canvasContext: canvas.getContext('2d'), viewport: viewport}).promise;
                     
-                    // Crucial: Clear canvas-level memory
                     page.cleanup();
                 }
-                // Crucial: Clear document-level memory before moving to the next file
                 await pdfJsDoc.destroy();
             }
         }
@@ -788,18 +788,34 @@
         }
 
         async function processPdf(compressionLevel) {
-            // Robust check to ensure library isn't blocked by AdBlock or network failure
-            if (typeof window.PDFLib === 'undefined' || !window.PDFLib.PDFDocument) {
-                throw new Error('PDF library is loading or blocked by ad-blocker. Please refresh the page and try again.');
+            let lib = typeof window.PDFLib !== 'undefined' ? window.PDFLib : (typeof PDFLib !== 'undefined' ? PDFLib : null);
+            
+            // Dynamic fallback injection if original CDN fails
+            if (!lib || !lib.PDFDocument) {
+                try {
+                    await new Promise((resolve, reject) => {
+                        const s = document.createElement('script');
+                        s.src = 'https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js';
+                        s.onload = resolve;
+                        s.onerror = reject;
+                        document.head.appendChild(s);
+                    });
+                    lib = typeof window.PDFLib !== 'undefined' ? window.PDFLib : (typeof PDFLib !== 'undefined' ? PDFLib : null);
+                } catch(e) {
+                    console.error("Fallback script load failed", e);
+                }
+            }
+
+            if (!lib || !lib.PDFDocument) {
+                throw new Error('PDF library is being blocked by a strict ad-blocker or network filter. Please disable shields and try again.');
             }
             
-            const { PDFDocument } = window.PDFLib;
+            const { PDFDocument } = lib;
             const selectedPages = allPages.filter(p => p.isSelected);
             if (selectedPages.length === 0) return null;
             const finalPdfDoc = await PDFDocument.create();
             
             if (compressionLevel === 0) {
-                // Group by fileId so we don't load 125 full PDF documents into memory simultaneously
                 const pagesByFile = {};
                 selectedPages.forEach(p => {
                     if (!pagesByFile[p.fileId]) pagesByFile[p.fileId] = [];
@@ -819,10 +835,8 @@
                     pagesForFile.forEach((p, index) => {
                         copiedPagesDict[p.id] = copiedPages[index];
                     });
-                    // sourceDoc loses scope here and gets garbage collected by the browser natively
                 }
 
-                // Append in the correct final order based on user selection/re-ordering
                 for (const pageObj of selectedPages) {
                     if (copiedPagesDict[pageObj.id]) {
                         finalPdfDoc.addPage(copiedPagesDict[pageObj.id]);
@@ -838,11 +852,12 @@
                 });
 
                 const jpegImagesDict = {};
+                const pdfJs = typeof window.pdfjsLib !== 'undefined' ? window.pdfjsLib : pdfjsLib;
                 
                 for (const fileId in pagesByFile) {
                     const pagesForFile = pagesByFile[fileId];
                     const fileBuffer = await fileDataStore[fileId].file.arrayBuffer();
-                    const pdfJsDoc = await window.pdfjsLib.getDocument({data: new Uint8Array(fileBuffer)}).promise;
+                    const pdfJsDoc = await pdfJs.getDocument({data: new Uint8Array(fileBuffer)}).promise;
                     
                     for (const pageObj of pagesForFile) {
                         const page = await pdfJsDoc.getPage(pageObj.originalPageIndex + 1);
@@ -858,16 +873,13 @@
                             jpegImagesDict[pageObj.id] = await finalPdfDoc.embedJpg(dataUrl);
                         }
                         
-                        // Force free memory for massive batches
                         canvas.width = 0; canvas.height = 0; 
                         page.cleanup();
                     }
                     
-                    // Cleanup pdf.js memory to prevent tab crash
                     await pdfJsDoc.destroy();
                 }
 
-                // Re-assemble in order
                 for (const pageObj of selectedPages) {
                     const jpegImage = jpegImagesDict[pageObj.id];
                     if (jpegImage) {
