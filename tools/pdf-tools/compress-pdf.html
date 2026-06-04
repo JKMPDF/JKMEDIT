@@ -674,10 +674,19 @@
                     const context = canvas.getContext('2d');
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
+                    
+                    // NEW FIX: Fill background with white to prevent transparent backgrounds from turning black
+                    context.fillStyle = '#ffffff';
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+
                     await page.render({ canvasContext: context, viewport: viewport }).promise;
                     const dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.01, quality));
                     if (!dataUrl || dataUrl === 'data:,') continue;
-                    const jpegImage = await newPdfDoc.embedJpg(dataUrl);
+                    
+                    // NEW FIX: Strip the "data:image/jpeg;base64," prefix before passing it to pdf-lib
+                    const base64Data = dataUrl.split(',')[1];
+                    const jpegImage = await newPdfDoc.embedJpg(base64Data);
+                    
                     const newPage = newPdfDoc.addPage([jpegImage.width, jpegImage.height]);
                     newPage.drawImage(jpegImage, { x: 0, y: 0, width: newPage.getWidth(), height: newPage.getHeight() });
                 }
@@ -728,4 +737,3 @@
     <script src="/assets/cookie-consent.js" async></script>
 </body>
 </html>
-
