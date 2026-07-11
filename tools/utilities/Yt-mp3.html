@@ -436,6 +436,25 @@
         const loader = document.getElementById('loader');
         const resultsDiv = document.getElementById('results');
 
+        // --- LIMIT TRACKING LOGIC ---
+        function getDailyLimitData() {
+            const today = new Date().toDateString();
+            const stored = localStorage.getItem('yt_mp3_usage');
+            let data = stored ? JSON.parse(stored) : { date: today, count: 0 };
+            
+            if (data.date !== today) {
+                data = { date: today, count: 0 };
+                localStorage.setItem('yt_mp3_usage', JSON.stringify(data));
+            }
+            return data;
+        }
+
+        function incrementUsage() {
+            const data = getDailyLimitData();
+            data.count += 1;
+            localStorage.setItem('yt_mp3_usage', JSON.stringify(data));
+        }
+
         function getValidUrl(url) {
             if (!url.startsWith("http://") && !url.startsWith("https://")) {
                 return "https://" + url;
@@ -522,8 +541,9 @@
             let nextPageToken = "";
             let fetchMore = true;
             let hasItems = false;
+            let videoCount = 0; // Local counter for playlist limit
 
-            while (fetchMore) {
+            while (fetchMore && videoCount < 3) {
                 const pageTokenParam = nextPageToken ? `&pageToken=${nextPageToken}` : "";
                 const googleApiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${GOOGLE_API_KEY}${pageTokenParam}`;
                 
@@ -536,14 +556,18 @@
 
                 if (data.items && data.items.length > 0) {
                     hasItems = true;
-                    data.items.forEach(item => {
+                    for (const item of data.items) {
+                        if (videoCount >= 3) {
+                            fetchMore = false;
+                            break;
+                        }
                         const videoDetails = item.snippet;
                         const vidId = videoDetails.resourceId.videoId;
-                        // Skip deleted/private videos in the playlist missing proper titles
                         if (videoDetails.title !== "Private video" && videoDetails.title !== "Deleted video") {
                             renderVideoCard(videoDetails, vidId);
+                            videoCount++;
                         }
-                    });
+                    }
                     
                     nextPageToken = data.nextPageToken;
                     if (!nextPageToken) fetchMore = false;
@@ -554,6 +578,8 @@
 
             if (!hasItems) {
                 throw new Error("Playlist not found, private, or is empty.");
+            } else if (videoCount >= 3) {
+                alert("Note: For playlists, only the first 3 videos can be converted at a time.");
             }
         }
 
@@ -602,8 +628,18 @@
         }
 
       function loadDownloadWidget(videoId, btnElement) {
-            const container = btnElement.parentElement;
+            const usageData = getDailyLimitData();
 
+            // Check if user has exceeded 7 conversions today
+            if (usageData.count >= 7) {
+                alert("Daily Limit Reached! You can only convert 7 MP3s per day. Please try again tomorrow.");
+                return;
+            }
+
+            // Increment count for successful conversion attempt
+            incrementUsage();
+
+            const container = btnElement.parentElement;
             container.innerHTML = `
                 <iframe 
                     sandbox="allow-scripts allow-same-origin allow-downloads"
