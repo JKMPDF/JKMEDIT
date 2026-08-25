@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>TeraBox & DiskWala Media Gallery Vault</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #090d16;
+      --panel: #131b2e;
+      --panel-2: #1b2640;
+      --line: #223152;
+      --blue: #2563eb;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+      --ok: #16a34a;
+      --err: #ef4444;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 80px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    header {
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      color: var(--sky);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--ok);
+      box-shadow: 0 0 8px var(--ok);
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+    }
+
+    .accent {
+      background: linear-gradient(90deg, var(--blue), var(--sky));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* Input Console */
+    .input-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    textarea {
+      width: 100%;
+      height: 95px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel-2);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      padding: 12px;
+      outline: none;
+      resize: vertical;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    textarea:focus {
+      border-color: var(--sky);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: linear-gradient(90deg, var(--blue), var(--sky));
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.86rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button:hover { opacity: 0.9; }
+    button.btn-clear { background: #243049; color: var(--text-dim); }
+
+    /* Gallery Grid Layout */
+    .gallery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .gallery-header h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      width: 100%;
+    }
+
+    .gallery-item {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 16 / 11;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-3px);
+      border-color: var(--sky);
+    }
+
+    .provider-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 3px 8px;
+      font-size: 0.65rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      border-radius: 4px;
+      z-index: 5;
+      text-transform: uppercase;
+    }
+
+    .badge-terabox {
+      background: rgba(37, 99, 235, 0.85);
+      color: #fff;
+    }
+
+    .badge-diskwala {
+      background: rgba(168, 85, 247, 0.85);
+      color: #fff;
+    }
+
+    .gallery-thumb {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .play-badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      pointer-events: none;
+    }
+
+    .item-meta {
+      position: relative;
+      background: linear-gradient(180deg, transparent, rgba(9, 13, 22, 0.95) 70%);
+      padding: 10px 12px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 4;
+    }
+
+    .item-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--sky);
+    }
+
+    .item-loading, .item-error {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 16px;
+      text-align: center;
+      gap: 8px;
+      font-size: 0.75rem;
+    }
+
+    .item-error { color: var(--err); }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top-color: var(--sky);
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 50px 10px;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    /* Fullscreen Lightbox */
+    #galleryModal {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      z-index: 999999;
+      display: none;
+      flex-direction: column;
+    }
+
+    #galleryModal.active {
+      display: flex;
+    }
+
+    .modal-navbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 20;
+    }
+
+    .modal-back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .modal-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-action-btn {
+      background: linear-gradient(90deg, var(--blue), var(--sky));
+      border: none;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-stage {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-stage video {
+      width: 100%;
+      height: 100%;
+      max-height: 100vh;
+      object-fit: contain;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="eyebrow"><span class="dot"></span> TeraBox & DiskWala Enabled</div>
+    <h1>Media <span class="accent">Gallery Vault</span></h1>
+  </header>
+
+  <div class="input-card">
+    <textarea id="urlInput" placeholder="Paste single or bulk links (TeraBox or DiskWala, one per line)..."></textarea>
+    <div class="controls">
+      <button id="fetchBtn">Load into Gallery</button>
+      <button id="clearBtn" class="btn-clear">Clear All</button>
+    </div>
+  </div>
+
+  <div class="gallery-header">
+    <h2>Videos Gallery (<span id="galleryCount">0</span>)</h2>
+  </div>
+
+  <div class="gallery-grid" id="galleryGrid">
+    <div class="empty-state">No videos loaded yet. Paste TeraBox or DiskWala links above.</div>
+  </div>
+</div>
+
+<div id="galleryModal">
+  <div class="modal-navbar">
+    <button class="modal-back-btn" id="modalBackBtn">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+      </svg>
+      Back to Gallery
+    </button>
+    <div class="modal-actions">
+      <button class="modal-action-btn" id="modalDownloadBtn">
+        <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+          <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+        </svg>
+        Save MP4
+      </button>
+    </div>
+  </div>
+  <div class="modal-stage">
+    <video id="activePlayer" controls autoplay playsinline></video>
+  </div>
+</div>
+
+<script>
+  const WORKER_URL = 'https://terabox-proxy.freedekholive-577.workers.dev/';
+
+  const urlInput = document.getElementById('urlInput');
+  const fetchBtn = document.getElementById('fetchBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const galleryGrid = document.getElementById('galleryGrid');
+  const galleryCount = document.getElementById('galleryCount');
+  
+  const galleryModal = document.getElementById('galleryModal');
+  const modalBackBtn = document.getElementById('modalBackBtn');
+  const modalDownloadBtn = document.getElementById('modalDownloadBtn');
+  const activePlayer = document.getElementById('activePlayer');
+
+  let galleryItems = [];
+  let currentActiveIndex = null;
+
+  // ----------------------------------------------------
+  // Provider Detection (TeraBox vs DiskWala)
+  // ----------------------------------------------------
+  function detectProvider(url) {
+    if (/diskwala\.(net|com|fun|link)/i.test(url)) {
+      return 'diskwala';
+    }
+    return 'terabox';
+  }
+
+  // ----------------------------------------------------
+  // SCREEN LOCK: Prevent Refresh and Intercept Back Button
+  // ----------------------------------------------------
+  window.addEventListener('beforeunload', (e) => {
+    e.preventDefault();
+    e.returnValue = '';
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'F5' || ((e.ctrlKey || e.metaKey) && (e.key === 'r' || e.key === 'R'))) {
+      e.preventDefault();
+    }
+    if (e.key === 'Escape' && galleryModal.classList.contains('active')) {
+      closeFullscreenModal();
+    }
+  });
+
+  history.pushState(null, null, location.href);
+  window.addEventListener('popstate', () => {
+    if (galleryModal.classList.contains('active')) {
+      closeFullscreenModal();
+    }
+    history.pushState(null, null, location.href);
+  });
+
+  // ----------------------------------------------------
+  // Fullscreen Modal Gallery Controller
+  // ----------------------------------------------------
+  function openFullscreenModal(index) {
+    const item = galleryItems[index];
+    if (!item || item.status !== 'ready') return;
+
+    currentActiveIndex = index;
+    activePlayer.src = item.streamUrl;
+    galleryModal.classList.add('active');
+
+    if (galleryModal.requestFullscreen) {
+      galleryModal.requestFullscreen().catch(() => {});
+    } else if (galleryModal.webkitRequestFullscreen) {
+      galleryModal.webkitRequestFullscreen();
+    }
+  }
+
+  function closeFullscreenModal() {
+    activePlayer.pause();
+    activePlayer.src = '';
+    galleryModal.classList.remove('active');
+    currentActiveIndex = null;
+
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
+  }
+
+  modalBackBtn.addEventListener('click', closeFullscreenModal);
+
+  // ----------------------------------------------------
+  // Direct Blob Saver for DiskWala & TeraBox
+  // ----------------------------------------------------
+  async function downloadActiveVideo() {
+    if (currentActiveIndex === null) return;
+    const item = galleryItems[currentActiveIndex];
+    if (!item || !item.downloadUrl) return;
+
+    modalDownloadBtn.innerText = 'Saving...';
+    modalDownloadBtn.disabled = true;
+
+    try {
+      const res = await fetch(item.downloadUrl);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      const cleanTitle = (item.title || 'video').replace(/[/\\?%*:|"<>]/g, '_');
+      a.download = cleanTitle.toLowerCase().endsWith('.mp4') ? cleanTitle : `${cleanTitle}.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(blobUrl);
+        document.body.removeChild(a);
+      }, 2000);
+      modalDownloadBtn.innerText = '✓ Saved';
+    } catch (e) {
+      window.open(item.downloadUrl, '_blank');
+      modalDownloadBtn.innerText = 'Save MP4';
+    } finally {
+      setTimeout(() => {
+        modalDownloadBtn.innerText = 'Save MP4';
+        modalDownloadBtn.disabled = false;
+      }, 2500);
+    }
+  }
+
+  modalDownloadBtn.addEventListener('click', downloadActiveVideo);
+
+  // ----------------------------------------------------
+  // Recursive Media URL Search
+  // ----------------------------------------------------
+  function findPlayableUrl(obj) {
+    if (!obj || typeof obj !== 'object') return null;
+    for (const key in obj) {
+      const val = obj[key];
+      if (typeof val === 'string' && /^https?:\/\/.+\.(mp4|m3u8|mov|webm)(\?|$)/i.test(val)) return val;
+    }
+    for (const key in obj) {
+      if (typeof obj[key] === 'object') {
+        const found = findPlayableUrl(obj[key]);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  // ----------------------------------------------------
+  // Gallery Rendering
+  // ----------------------------------------------------
+  function renderGallery() {
+    galleryCount.innerText = galleryItems.length;
+
+    if (galleryItems.length === 0) {
+      galleryGrid.innerHTML = `<div class="empty-state">No videos loaded yet. Paste TeraBox or DiskWala links above.</div>`;
+      return;
+    }
+
+    galleryGrid.innerHTML = galleryItems.map((item, index) => {
+      const badgeClass = item.provider === 'diskwala' ? 'badge-diskwala' : 'badge-terabox';
+      const badgeLabel = item.provider === 'diskwala' ? 'DiskWala' : 'TeraBox';
+
+      if (item.status === 'loading') {
+        return `
+          <div class="gallery-item">
+            <span class="provider-badge ${badgeClass}">${badgeLabel}</span>
+            <div class="item-loading">
+              <div class="spinner"></div>
+              <span>Fetching...</span>
+            </div>
+          </div>`;
+      }
+
+      if (item.status === 'error') {
+        return `
+          <div class="gallery-item">
+            <span class="provider-badge ${badgeClass}">${badgeLabel}</span>
+            <div class="item-error">
+              <span>✕ Failed to load</span>
+            </div>
+          </div>`;
+      }
+
+      return `
+        <div class="gallery-item" onclick="openFullscreenModal(${index})">
+          <span class="provider-badge ${badgeClass}">${badgeLabel}</span>
+          ${item.thumbnail ? `<img class="gallery-thumb" src="${item.thumbnail}" alt="Thumbnail" />` : `<video class="gallery-thumb" src="${item.streamUrl}#t=0.5" preload="metadata"></video>`}
+          <div class="play-badge">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+              <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+            </svg>
+          </div>
+          <div class="item-meta">
+            <div class="item-title" title="${item.title}">${item.title}</div>
+            <div class="item-sub">${item.size || 'MP4 Video'}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ----------------------------------------------------
+  // Item Resolver (Handles TeraBox & DiskWala)
+  // ----------------------------------------------------
+  async function fetchItem(index) {
+    const item = galleryItems[index];
+    try {
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: item.originalUrl })
+      });
+      
+      const raw = await response.text();
+      let data;
+      try { data = JSON.parse(raw); } catch (e) { data = null; }
+
+      if (!response.ok || !data || data.ok === false) {
+        throw new Error();
+      }
+
+      const playUrl = data.stream_url || data.download_url || findPlayableUrl(data);
+      if (!playUrl) throw new Error();
+
+      galleryItems[index] = {
+        ...galleryItems[index],
+        status: 'ready',
+        title: data.title || (item.provider === 'diskwala' ? 'DiskWala Video' : 'TeraBox Video'),
+        size: data.size_str || data.size || '',
+        thumbnail: data.thumbnail || null,
+        streamUrl: playUrl,
+        downloadUrl: data.download_url || playUrl
+      };
+    } catch (err) {
+      galleryItems[index].status = 'error';
+    }
+    renderGallery();
+  }
+
+  async function handleBatchLoad() {
+    const raw = urlInput.value.trim();
+    if (!raw) return alert('Paste TeraBox or DiskWala links first.');
+
+    const urls = raw.split('\n').map(u => u.trim()).filter(u => u.length > 0);
+    urlInput.value = '';
+
+    const startIdx = galleryItems.length;
+    urls.forEach(url => {
+      galleryItems.push({ 
+        originalUrl: url, 
+        provider: detectProvider(url),
+        status: 'loading' 
+      });
+    });
+
+    renderGallery();
+
+    for (let i = startIdx; i < galleryItems.length; i++) {
+      await fetchItem(i);
+    }
+  }
+
+  fetchBtn.addEventListener('click', handleBatchLoad);
+  clearBtn.addEventListener('click', () => {
+    galleryItems = [];
+    renderGallery();
+  });
+</script>
+</body>
+</html>
