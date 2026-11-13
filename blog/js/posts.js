@@ -17,16 +17,16 @@ const CATEGORIES = ["All", "Finance", "Account", "GST", "Health", "Ayurveda", "M
 
 const POSTS = [
   {
-    slug: "budgeting-101",
-    title: "Budgeting 101: Where to Start",
-    date: "2026-11-12",
+    slug: "simple-interest-vs-compound-interest",
+    title: "simple interest vs compound interest",
+    date: "2026-11-13",
     category: "Finance",
-    image: "posts/finance/assets/budgeting-101.svg",
-    excerpt: "A simple framework for managing your money without stress."
+    image: "posts/finance/assets/simple-interest-vs-compound-interest.svg",
+    excerpt: "Learn the difference between simple and compound interest with easy formulas, worked examples, calculations and a comparison table."
   },
  {
     slug: "what-is-present-value",
-    title: "what-is-present-value",
+    title: "what is present value?",
     date: "2026-11-13",
     category: "Finance",
     image: "posts/finance/assets/what-is-present-value.svg",
