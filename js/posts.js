@@ -24,6 +24,14 @@ const POSTS = [
     image: "posts/finance/assets/budgeting-101.svg",
     excerpt: "A simple framework for managing your money without stress."
   },
+ {
+    slug: "what-is-present-value",
+    title: "what-is-present-value",
+    date: "2026-11-13",
+    category: "Finance",
+    image: "posts/finance/assets/what-is-present-value.svg",
+    excerpt: "Know how to calculate present value of future cashflow."
+  },
   {
     slug: "morning-routine-for-energy",
     title: "My Morning Routine for All-Day Energy",
